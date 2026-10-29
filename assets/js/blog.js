@@ -554,7 +554,7 @@ async function openBlog(id){
           if(x.type==="break") return `<br>`;
           if(x.type==="image") return `<img class="bimg" loading="lazy" src="${esc(x.src)}" alt="" data-photo="${photos.indexOf(x.src)}">`;
           return "";
-        }).join("")}</div><p style="color:var(--muted);font-size:12px">${d.source==="official"?"本文は公式ブログから取り込んだものです。":"本文・写真は旧サイト『坂道日和』の保存データです。"}</p>`;
+        }).join("")}</div><p style="color:var(--muted);font-size:12px">${d.source==="official"?"本文は公式ブログから取り込んだものです。":d.source==="archive"?"本文・写真は Sakamichi Blog Archive の保存データです。":"本文・写真は旧サイト『坂道日和』の保存データです。"}</p>`;
       }
     }catch(e){}
   }
