@@ -168,7 +168,7 @@ def hina_page(ct, page):
         if not (tm and dtm and dm):
             continue
         imgs = []
-        for u in re.findall(r'<img src="(https://[^"]+moblog[^"]+)"', b):
+        for u in re.findall(r'<img\s+src="(https://[^"]+moblog[^"]+)"', b):
             if u not in imgs:
                 imgs.append(u)
         url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'
@@ -413,6 +413,19 @@ def extract_imgs_scoped(url, html):
                 out.append(u)
         return out
     if 'hinatazaka46.com' in url:
+        # 本文コンテナ内に限れば、その記事自身の写真だけを文書順に取得できる
+        i = html.find('c-blog-article__text')
+        if i >= 0:
+            open_idx = html.rfind('<div', 0, i)
+            if open_idx >= 0:
+                seg = _slice_div(html, open_idx)
+                out = []
+                for m in _MOBLOG_PAT.finditer(seg):
+                    u = urljoin(url, m.group(0))
+                    if u not in out:
+                        out.append(u)
+                if out:
+                    return out
         m = re.search(r'property="og:image" content="([^"]+)"', html)
         return [m.group(1)] if m else []
     out = []
@@ -567,7 +580,7 @@ def _feed_cards(site, page):
             if not (tm and dtm and dm):
                 continue
             imgs = []
-            for u in re.findall(r'<img src="(https://[^"]+moblog[^"]+)"', b):
+            for u in re.findall(r'<img\s+src="(https://[^"]+moblog[^"]+)"', b):
                 if u not in imgs:
                     imgs.append(u)
             url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'

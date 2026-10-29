@@ -97,13 +97,14 @@ def main():
                     b['time'] = t
                     times += 1
                     dirty.add(b['date'][:4])
-            if b['group'] != '日向坂46':
-                got = bf.extract_imgs_scoped(b['url'], html)
-                if len(got) > (b.get('imgn') or 0):
-                    y = b['date'][:4]
-                    imgs.setdefault(y, {})[b['id']] = got
-                    b['imgn'] = len(got)
-                    dirty.add(y)
+            got = bf.extract_imgs_scoped(b['url'], html)
+            if len(got) > (b.get('imgn') or 0):
+                y = b['date'][:4]
+                imgs.setdefault(y, {})[b['id']] = got
+                b['imgn'] = len(got)
+                if not b.get('thumb'):
+                    b['thumb'] = got[0]
+                dirty.add(y)
         elif status in (404, 410):
             if not b.get('urldead'):
                 b['urldead'] = True
