@@ -64,6 +64,8 @@ def main():
     targets = []
     for lst in years.values():
         for b in lst:
+            if b.get('arch'):
+                continue  # 外部アーカイブ復元分は公式に残っていないので巡回対象外
             if not os.path.exists(os.path.join(bf.BODIES_DIR, b['id'] + '.json')):
                 targets.append(b)
     targets.sort(key=lambda b: (b['date'], b.get('time') or '00:00'), reverse=True)

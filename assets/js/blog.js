@@ -569,7 +569,7 @@ async function openBlog(id){
       html+=`<p style="color:var(--muted)">この記事の写真は保存されていません。</p>`;
     }
   }
-  if(b.url) html+=`<p><a class="btn" href="${esc(b.url)}" target="_blank" rel="noopener">公式記事を見る</a></p>`;
+  if(b.url&&!b.urldead) html+=`<p><a class="btn" href="${esc(b.url)}" target="_blank" rel="noopener">公式記事を見る</a></p>`;
   body.innerHTML=html;
   body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>openLightbox(photos, +img.dataset.photo)));
 }
