@@ -1,4 +1,26 @@
 let DATA=[]; const DETAILS={};
+let INDEX=null; const SEXTRA={}; // 曲名・メンバー検索の索引（あとから読み込む）
+function memberMatch(l, name, role){
+  const e=INDEX && INDEX[l.id]; if(!e) return false;
+  if(role==="center") return (e.c||[]).includes(name);
+  if(role==="perf") return (e.p||[]).includes(name);
+  return (e.c||[]).includes(name) || (e.p||[]).includes(name);
+}
+function buildMemberOptions(roster){
+  const sel=document.getElementById("member");
+  const inIndex=new Set();
+  Object.values(INDEX).forEach(v=>{ (v.c||[]).forEach(n=>inIndex.add(n)); (v.p||[]).forEach(n=>inIndex.add(n)); });
+  const byGroup={};
+  roster.forEach(m=>{ if(inIndex.has(m.name)){ (byGroup[m.group] ||= []).push(m.name); inIndex.delete(m.name); } });
+  const addOpts=(label,names)=>{
+    if(!names.length) return;
+    const og=document.createElement("optgroup"); og.label=label;
+    names.forEach(n=>{ const o=document.createElement("option"); o.value=n; o.textContent=n; og.appendChild(o); });
+    sel.appendChild(og);
+  };
+  ["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"].forEach(g=>addOpts(g, byGroup[g]||[]));
+  addOpts("その他", [...inIndex].sort());
+}
 const KINDS=[
   {label:"全国ツアー", tag:"全国ツアー"},
   {label:"真夏の全国ツアー", tag:"真夏の全国ツアー"},
@@ -82,24 +104,37 @@ async function init(){
     kt.querySelectorAll(".ychip.on").forEach(b=>b.classList.remove("on"));
     document.getElementById("sort").value="auto";
     regionSel.value="";
+    document.getElementById("member").value="";
+    document.getElementById("role").value="any";
     document.getElementById("from").value="";
     document.getElementById("to").value="";
     render();
   });
-  ["q","group","year","sort","region","from","to"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  ["q","group","year","sort","region","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   render();
+  // 曲名・メンバー検索の索引は裏で読み込み、届いたら絞り込みに反映する
+  loadJSON("live-index.json").then(async idx=>{
+    if(!idx || Array.isArray(idx)) return;
+    INDEX=idx;
+    for(const [id,v] of Object.entries(idx)) SEXTRA[id]=(v.s||[]).join(" ");
+    const members=await loadJSON("members.json");
+    buildMemberOptions(Array.isArray(members)?members:[]);
+    render();
+  }).catch(()=>{});
 }
 function render(){
   const q=document.getElementById("q").value, g=document.getElementById("group").value, y=document.getElementById("year").value;
   const srt=document.getElementById("sort").value, region=document.getElementById("region").value;
   const from=document.getElementById("from").value, to=document.getElementById("to").value;
+  const member=document.getElementById("member").value, role=document.getElementById("role").value;
   const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
-  const advActive=!!(KSEL.size || region || from || to || srt!=="auto");
+  const advActive=!!(KSEL.size || region || from || to || srt!=="auto" || member);
   advToggle.textContent=`詳細設定 ${advPanel.hidden?"▼":"▲"}${advActive?"（設定中）":""}`;
   const rows=DATA.filter(l=>(!g||l.group===g)&&(!y||l.date.startsWith(y))
     &&(!region||l.region===region)&&(!from||l.date>=from)&&(!to||l.date<=to)
+    &&(!member || memberMatch(l, member, role))
     &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
-    &&includesAll(itemText([l.title,l.group,l.venue,l.region,l.date,l.tags]),q))
+    &&includesAll(itemText([l.title,l.group,l.venue,l.region,l.date,l.tags,SEXTRA[l.id]||""]),q))
     .sort((a,b)=>{
       if(srt==="songs") return (b.songCount-a.songCount) || b.date.localeCompare(a.date);
       const key=x=>[x.date||"", x.time||"", x.id||""];

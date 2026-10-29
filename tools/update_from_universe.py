@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import name_expand as nx  # 備考の略称（C影山など）をフルネーム化する共通処理
+import build_live_index as bli  # 曲名・メンバー検索の索引
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(BASE, 'tools', '.universe-cache')
@@ -161,6 +162,9 @@ def update_lives(summary):
             added.append(f"{date} {group} {head['liveseries']}")
     if added:
         json.dump(lives, open(lp, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    if added or not os.path.exists(os.path.join(BASE, 'data/live-index.json')):
+        bli.write_index(BASE)
+        summary['live_index'] = 'rebuilt'
     summary['lives_added'] = added
     summary['lives_total'] = len(lives)
 
