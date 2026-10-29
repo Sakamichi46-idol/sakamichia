@@ -1,6 +1,13 @@
 let INDEX=null; const YEARS={}; const IMGS={};
 let MEMBERS=[]; let VIEW="articles"; let WALL=[]; const WPHOTO=96;
 let yearSel=null; let loadingYears=false; let apage=1, ppage=1; let ROWS=[];
+const GSEL=new Set();
+function syncGroupChips(){
+  document.querySelectorAll(".gchip").forEach(ch=>{
+    const g=ch.dataset.g;
+    ch.classList.toggle("on", g==="" ? GSEL.size===0 : GSEL.has(g));
+  });
+}
 let MEDIA=""; const GENMAP={};
 function photoN(b){ return (b.media||0)||(b.imgn||0); }
 function dtVal(b){ return b.date+"T"+(b.time||"00:00"); }
@@ -16,7 +23,7 @@ function saveState(){
   try{ localStorage.setItem(SKEY, JSON.stringify({
     year:yearSel,
     q:document.getElementById("q").value,
-    group:document.getElementById("group").value,
+    groups:[...GSEL],
     member:document.getElementById("member").value,
     from:document.getElementById("from").value,
     to:document.getElementById("to").value,
@@ -40,7 +47,13 @@ async function init(){
   MEMBERS=await loadJSON("members.json");
   buildMemberOptions();
   buildGenOptions();
-  document.getElementById("group").addEventListener("change",()=>{ buildMemberOptions(); resetPages(); render(); saveState(); });
+  document.querySelectorAll(".gchip").forEach(ch=>ch.addEventListener("click",()=>{
+    const g=ch.dataset.g;
+    if(g==="") GSEL.clear();
+    else if(GSEL.has(g)) GSEL.delete(g);
+    else GSEL.add(g);
+    syncGroupChips(); buildMemberOptions(); resetPages(); render(); saveState();
+  }));
   document.getElementById("viewArticles").addEventListener("click",()=>setView("articles"));
   document.getElementById("viewPhotos").addEventListener("click",()=>setView("photos"));
   const latest=years[0]; LATEST=latest;
@@ -59,7 +72,9 @@ async function init(){
     loadingYears=false; syncChips(); render();
   })();
   if(saved){
-    if(saved.group){ document.getElementById("group").value=saved.group; buildMemberOptions(); }
+    const sg = Array.isArray(saved.groups) ? saved.groups : (saved.group ? [saved.group] : []);
+    sg.forEach(g=>{ if(GORDER.includes(g)) GSEL.add(g); });
+    if(GSEL.size){ syncGroupChips(); buildMemberOptions(); }
     if(saved.member) document.getElementById("member").value=saved.member;
     if(saved.q) document.getElementById("q").value=saved.q;
     if(saved.from) document.getElementById("from").value=saved.from;
@@ -75,7 +90,7 @@ async function init(){
     if(+saved.aPage>=1) apage=+saved.aPage;
     if(+saved.pPage>=1) ppage=+saved.pPage;
   }
-  ["q","group","member","from","to","sort","gen"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
+  ["q","member","from","to","sort","gen"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.querySelectorAll(".mchip").forEach(ch=>ch.addEventListener("click",()=>{ MEDIA=ch.dataset.media; syncMediaChips(); resetPages(); render(); syncAdvBtn(); saveState(); }));
   document.querySelectorAll("[data-preset]").forEach(ch=>ch.addEventListener("click",()=>applyPreset(ch.dataset.preset)));
   syncMediaChips();
@@ -137,23 +152,24 @@ function syncChips(){
 }
 const GORDER=["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"];
 function buildMemberOptions(){
-  const g=document.getElementById("group").value;
+  const groups=GSEL.size?GORDER.filter(x=>GSEL.has(x)):GORDER;
+  const single=groups.length===1;
   const sel=document.getElementById("member");
   const prev=sel.value;
   let html=`<option value="">すべてのメンバー</option>`;
   const MC=(INDEX&&INDEX.memberCounts)||null;
-  for(const gr of (g?[g]:GORDER)){
+  for(const gr of groups){
     const mem=MEMBERS.filter(m=>(m.groups||[m.group]).includes(gr) && (!MC || (MC[gr+"|"+m.name]||0)>0));
     const gens=[...new Set(mem.map(m=>m.gen))].sort((a,b)=>(a===0?99:a)-(b===0?99:b));
     for(const gen of gens){
-      const label=(g?"":gr+"・")+(gen>=1?gen+"期生":"その他");
+      const label=(single?"":gr+"・")+(gen>=1?gen+"期生":"その他");
       const opts=mem.filter(m=>m.gen===gen).sort((a,b)=>String(a.reading).localeCompare(String(b.reading),"ja"))
         .map(m=>`<option value="${esc(m.name)}">${esc(m.name)}</option>`).join("");
       if(opts) html+=`<optgroup label="${label}">${opts}</optgroup>`;
     }
     const RELAYS={"乃木坂46":["3期生リレーブログ","4期生リレーブログ","新4期生リレーブログ","5期生リレーブログ","6期生リレーブログ"],"櫻坂46":["櫻坂46三期生リレーブログ","櫻坂46四期生リレーブログ"],"欅坂46":["欅坂46新二期生リレーブログ"],"日向坂46":["日向坂46新三期生リレーブログ","日向坂46四期生リレーブログ","日向坂46五期生リレーブログ"]};
     if(RELAYS[gr]){
-      html+=`<optgroup label="${g?"":gr+"・"}リレーブログ">${RELAYS[gr].map(r=>`<option value="${r}">${r}</option>`).join("")}</optgroup>`;
+      html+=`<optgroup label="${single?"":gr+"・"}リレーブログ">${RELAYS[gr].map(r=>`<option value="${r}">${r}</option>`).join("")}</optgroup>`;
     }
   }
   sel.innerHTML=html;
@@ -168,14 +184,14 @@ function setView(v){
 function poolYears(){ return yearSel?[yearSel]:Object.keys(INDEX.years).sort().reverse(); }
 function pool(){ return poolYears().flatMap(y=>YEARS[y]||[]); }
 function filtered(){
-  const q=document.getElementById("q").value, g=document.getElementById("group").value;
+  const q=document.getElementById("q").value;
   const mv=document.getElementById("member").value;
   const from=document.getElementById("from").value, to=document.getElementById("to").value;
   const gv=document.getElementById("gen").value, sv=document.getElementById("sort").value;
   const arr=pool().filter(b=>{
       const mHit=mv&&(b.member===mv||b.series===mv);
       if(mv&&!mHit) return false;
-      if(g&&b.group!==g&&!mHit) return false;
+      if(GSEL.size&&!GSEL.has(b.group)&&!mHit) return false;
       if(gv){ const [gg,gn]=gv.split("|"); if(b.group!==gg||GENMAP[b.group+"|"+b.member]!==+gn) return false; }
       if(MEDIA==="photo"&&photoN(b)<=0) return false;
       if(MEDIA==="body"&&!b.body) return false;

@@ -1,4 +1,4 @@
-let DATA=[]; let FORMS={}; const SEL=new Set();
+let DATA=[]; let FORMS={}; const SEL=new Set(); const YSEL=new Set();
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
 async function init(){
   [DATA, FORMS]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json")]);
@@ -20,6 +20,21 @@ async function init(){
     }
     render();
   }));
+  const years=[...new Set(DATA.map(s=>s.year).filter(Boolean))].sort((a,b)=>b-a);
+  const ybox=document.getElementById("yearTabs");
+  ybox.innerHTML=`<button data-y="" class="on">すべての年</button>`+years.map(y=>`<button data-y="${y}">${y}年</button>`).join("")+`<span class="tabhint">年もタップで複数選択できます</span>`;
+  ybox.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    const y=b.dataset.y;
+    if(y==="") YSEL.clear();
+    else if(YSEL.has(+y)) YSEL.delete(+y);
+    else YSEL.add(+y);
+    ybox.querySelectorAll("button").forEach(x=>{
+      const on = x.dataset.y==="" ? YSEL.size===0 : YSEL.has(+x.dataset.y);
+      x.classList.toggle("on", on);
+      x.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    render();
+  }));
   ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   render();
 }
@@ -34,7 +49,7 @@ function matchG(s){
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s])=>matchG(s)&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s])=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
   if(sort==="title"){
     rows.sort((a,b)=>a[0].title.localeCompare(b[0].title,"ja"));
   } else {
