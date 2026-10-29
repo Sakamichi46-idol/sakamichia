@@ -1,6 +1,6 @@
 name: deploy-server
 
-# ドラフト対戦サーバー（Worker + Durable Objects）をデプロイする
+# ドラフト対戦サーバー（Worker + Durable Objects）をデプロイし、疎通確認まで行う
 on:
   push:
     branches: [main]
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   deploy:
@@ -22,4 +22,30 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 deploy --config server/wrangler.toml
+        run: |
+          set -o pipefail
+          npx --yes wrangler@4 deploy --config server/wrangler.toml 2>&1 | tee /tmp/deploy.log
+          URL=$(grep -o 'https://sakamichia-draft[A-Za-z0-9._-]*workers\.dev' /tmp/deploy.log | head -1)
+          echo "WORKER_URL=$URL" >> "$GITHUB_ENV"
+          test -n "$URL"
+      - name: Smoke test (health + WebSocket ping)
+        run: |
+          curl -sf "$WORKER_URL/api/health"
+          WORKER_URL="$WORKER_URL" node -e '
+            const url = process.env.WORKER_URL.replace("https://", "wss://") + "/api/room/SMOKE1";
+            const ws = new WebSocket(url);
+            const timer = setTimeout(() => { console.error("timeout"); process.exit(2); }, 15000);
+            ws.onopen = () => ws.send(JSON.stringify({ t: "ping" }));
+            ws.onmessage = e => { console.log("received:", e.data); clearTimeout(timer); process.exit(String(e.data).includes("pong") ? 0 : 1); };
+            ws.onerror = () => { clearTimeout(timer); process.exit(3); };
+          '
+      - name: Record worker URL in repo
+        run: |
+          if [ -n "$WORKER_URL" ] && [ "$(cat server/URL.txt 2>/dev/null)" != "$WORKER_URL" ]; then
+            printf '%s' "$WORKER_URL" > server/URL.txt
+            git config user.name "Muse"
+            git config user.email "muse@example.com"
+            git add server/URL.txt
+            git commit -m "対戦サーバーのURLを記録"
+            git push
+          fi
