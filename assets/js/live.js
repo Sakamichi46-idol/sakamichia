@@ -64,18 +64,47 @@ async function init(){
     });
     kt.appendChild(b);
   });
-  ["q","group","year"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  const regionSel=document.getElementById("region");
+  const regionCount={};
+  DATA.forEach(l=>{ const r=l.region||""; if(r) regionCount[r]=(regionCount[r]||0)+1; });
+  Object.keys(regionCount).sort((a,b)=>regionCount[b]-regionCount[a]).forEach(r=>{
+    const o=document.createElement("option"); o.value=r; o.textContent=r; regionSel.appendChild(o);
+  });
+  const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
+  advToggle.addEventListener("click",()=>{
+    const open=advPanel.hidden;
+    advPanel.hidden=!open;
+    advToggle.setAttribute("aria-expanded", String(open));
+    render();
+  });
+  document.getElementById("advClear").addEventListener("click",()=>{
+    KSEL.clear();
+    kt.querySelectorAll(".ychip.on").forEach(b=>b.classList.remove("on"));
+    document.getElementById("sort").value="auto";
+    regionSel.value="";
+    document.getElementById("from").value="";
+    document.getElementById("to").value="";
+    render();
+  });
+  ["q","group","year","sort","region","from","to"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   render();
 }
 function render(){
   const q=document.getElementById("q").value, g=document.getElementById("group").value, y=document.getElementById("year").value;
+  const srt=document.getElementById("sort").value, region=document.getElementById("region").value;
+  const from=document.getElementById("from").value, to=document.getElementById("to").value;
+  const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
+  const advActive=!!(KSEL.size || region || from || to || srt!=="auto");
+  advToggle.textContent=`詳細設定 ${advPanel.hidden?"▼":"▲"}${advActive?"（設定中）":""}`;
   const rows=DATA.filter(l=>(!g||l.group===g)&&(!y||l.date.startsWith(y))
+    &&(!region||l.region===region)&&(!from||l.date>=from)&&(!to||l.date<=to)
     &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
     &&includesAll(itemText([l.title,l.group,l.venue,l.region,l.date,l.tags]),q))
     .sort((a,b)=>{
+      if(srt==="songs") return (b.songCount-a.songCount) || b.date.localeCompare(a.date);
       const key=x=>[x.date||"", x.time||"", x.id||""];
       const ka=key(a), kb=key(b);
-      for(let i=0;i<3;i++){ const c=ka[i].localeCompare(kb[i]); if(c) return y ? c : -c; }
+      for(let i=0;i<3;i++){ const c=ka[i].localeCompare(kb[i]); if(c) return (srt==="new"||(srt==="auto"&&!y)) ? -c : c; }
       return 0;
     });
   document.getElementById("count").textContent=`${rows.length}件の公演`;

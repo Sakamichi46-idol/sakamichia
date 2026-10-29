@@ -6,8 +6,16 @@
 <main class="wrap"><section class="page"><h2 class="title">歴代ライブ</h2><p class="lead">あの日、どこで、どんな公演があった？ グループ・年・会場・曲名から探せます。</p>
 <div class="filters"><input id="q" type="search" placeholder="キーワード（公演名・会場・曲名）" size="28">
 <select id="group"><option value="">すべてのグループ</option><option>乃木坂46</option><option>櫻坂46</option><option>日向坂46</option><option>欅坂46</option><option>けやき坂46</option></select>
-<select id="year"><option value="">すべての年</option></select></div>
+<select id="year"><option value="">すべての年</option></select>
+<button type="button" class="sub" id="advToggle" aria-expanded="false">詳細設定 ▼</button></div>
+<div id="advPanel" hidden>
 <div class="filters advrow" style="align-items:center"><span style="font-weight:700;font-size:14px">種類（複数選択可）：</span><span id="kindTabs" style="display:flex;gap:6px;flex-wrap:wrap"></span></div>
+<div class="filters advrow"><label>並び替え <select id="sort"><option value="auto">おまかせ（年を選ぶと古い順）</option><option value="new">新しい順</option><option value="old">古い順</option><option value="songs">曲数が多い順</option></select></label>
+<label>地域 <select id="region"><option value="">すべての地域</option></select></label></div>
+<div class="filters advrow"><label>開始日 <input type="date" id="from"></label>
+<label>終了日 <input type="date" id="to"></label>
+<button type="button" class="sub" id="advClear">条件をクリア</button></div>
+</div>
 <p class="count" id="count"></p><div class="grid" id="list"></div></section></main>
 <dialog id="dlg"><div id="dlgBody"></div><p><button class="sub" onclick="document.getElementById('dlg').close()">閉じる</button> <button type="button" id="saveSetlistImg" hidden>このセットリストを画像で保存</button></p><p id="saveImgMsg" style="color:var(--muted);font-size:12px"></p></dialog>
 <footer><div class="wrap">セットリストは旧サイト『坂道日和』のアーカイブデータをもとに掲載しています。センター表記は、公演当日の記録が確認できたもののみ表示しています。（データ出典：Sakamichi Universe 公開データほか）</div></footer>
