@@ -81,7 +81,7 @@ async function openLive(id){
       segs[segs.length-1].items.push(s);
     }
     html+=segs.map(seg=>`<h4 style="margin:16px 0 4px">${SECNAME[seg.sec]||"本編"}</h4><div class="setlist">${seg.items.map((s,i)=>
-      `<div class="srow"><span class="sno">${i+1}</span><div class="smain"><div class="stitle">${esc(s.title)}</div>${s.remark?`<div class="sremark">${esc(s.remark)}</div>`:""}</div>${(s.center||s.perf)?`<div class="scredits">${s.center?`<div class="sc-center">センター：${esc(s.center)}</div>`:""}${s.perf?`<div>出演：${esc(s.perf.join("、"))}</div>`:""}</div>`:""}</div>`).join("")}</div>`).join("");
+      `<div class="srow"><span class="sno">${i+1}</span><div class="smain"><div class="stitle">${esc(s.title)}</div>${s.remark?`<div class="sremark">${esc(s.remark)}</div>`:""}</div>${(s.center||s.perf)?`<div class="scredits">${s.center?`<div class="sc-center">センター：${esc(s.center)}</div>`:""}${s.perf?`<div>参加：${esc(s.perf.join("、"))}</div>`:""}</div>`:""}</div>`).join("")}</div>`).join("");
   } else {
     html+=`<p>セットリストはまだ登録されていません。</p>`;
   }
@@ -115,7 +115,7 @@ async function openLive(id){
             : s.sec==="encore" ? "EN"+cnt.encore : "WEN"+cnt.double;
           const clauses=(s.remark||"").split("、").map(x=>x.trim()).filter(Boolean);
           const zenin=clauses.some(c=>/^全員(歌唱|バージョン)?$/.test(c));
-          let memberText=(s.perf||[]).join("、");
+          let memberText=(s.perf||[]).length ? "参加："+s.perf.join("、") : "";
           let meta=clauses;
           if(zenin){
             memberText="（全員参加）";
