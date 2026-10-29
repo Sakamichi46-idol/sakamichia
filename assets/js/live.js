@@ -1,5 +1,15 @@
 let DATA=[]; const DETAILS={};
 let INDEX=null; const SEXTRA={}; // 曲名・メンバー検索の索引（あとから読み込む）
+// 日付欄はテキスト入力（枠の中に「年/月/日」と表示）。読み取り時は ISO 形式に直す。
+function parseDateText(v){
+  const d=String(v||"").replace(/[^\d]/g,"");
+  if(d.length!==8) return "";
+  const mo=+d.slice(4,6), da=+d.slice(6,8);
+  if(mo<1||mo>12||da<1||da>31) return "";
+  return `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+}
+function dateVal(id){ return parseDateText(document.getElementById(id).value); }
+function fmtDateText(iso){ return iso ? iso.replace(/-/g,"/") : ""; }
 function memberMatch(l, name, role){
   const e=INDEX && INDEX[l.id]; if(!e) return false;
   if(role==="center") return (e.c||[]).includes(name);
@@ -133,6 +143,10 @@ async function init(){
     render();
   });
   ["q","year","sort","region","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+    const el=document.getElementById(id), iso=parseDateText(el.value);
+    if(iso) el.value=fmtDateText(iso);
+  }));
   render();
   // 曲名・メンバー検索の索引は裏で読み込み、届いたら絞り込みに反映する
   loadJSON("live-index.json").then(async idx=>{
@@ -148,7 +162,7 @@ function render(){
   const q=document.getElementById("q").value, y=document.getElementById("year").value;
   document.body.dataset.group = GSEL.size===1 ? [...GSEL][0] : "";
   const srt=document.getElementById("sort").value, region=document.getElementById("region").value;
-  const from=document.getElementById("from").value, to=document.getElementById("to").value;
+  const from=dateVal("from"), to=dateVal("to");
   const member=document.getElementById("member").value, role=document.getElementById("role").value;
   const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
   const advActive=!!(KSEL.size || region || from || to || srt!=="auto" || member);
