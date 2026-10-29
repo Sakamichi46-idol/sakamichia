@@ -33,7 +33,6 @@ function buildMemberOptions(roster){
 }
 const KINDS=[
   {label:"全国ツアー", tag:"全国ツアー"},
-  {label:"真夏の全国ツアー", tag:"真夏の全国ツアー"},
   {label:"アンダーライブ", tag:"アンダーライブ"},
   {label:"BIRTHDAY LIVE", tag:"BIRTHDAY LIVE"},
   {label:"ANNIVERSARY LIVE", tag:"ANNIVERSARY LIVE"},

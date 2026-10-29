@@ -136,6 +136,11 @@ def update_lives(summary):
             for g in [clean_genre(head.get('livegenre2')), clean_genre(head.get('livegenre'))]:
                 if g and g not in tags:
                     tags.append(g)
+            if group == '乃木坂46':
+                # 乃木坂の「真夏の全国ツアー」は「全国ツアー」にまとめる（ユーザー指定）
+                tags = ['/'.join('全国ツアー' if seg == '真夏の全国ツアー' else seg
+                                 for seg in t.split('/')) for t in tags]
+                tags = list(dict.fromkeys(tags))
             lives.append({'id': sid, 'date': date, 'group': group, 'title': head['liveseries'],
                           'venue': head['stage'], 'region': head['region'], 'tags': tags,
                           'songCount': len(tracks), 'time': head['starttime']})
