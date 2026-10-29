@@ -28,6 +28,8 @@ async function openLive(id){
   const l=DATA.find(x=>x.id===id); if(!l) return;
   const body=document.getElementById("dlgBody");
   body.innerHTML=`${groupChip(l.group)}<h3>${esc(l.title)}</h3><p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""} ・ ${esc(l.venue)}</p><p>セットリストを読み込んでいます…</p>`;
+  const sb0=document.getElementById("saveSetlistImg"); if(sb0) sb0.hidden=true;
+  const sm0=document.getElementById("saveImgMsg"); if(sm0) sm0.textContent="";
   document.getElementById("dlg").showModal();
   if(!DETAILS[id]){
     try{ const r=await fetch(BASE+"data/shows/"+id+".json"); DETAILS[id]= r.ok ? await r.json() : {setlist:[]}; }
@@ -45,7 +47,6 @@ async function openLive(id){
     }
     html+=segs.map(seg=>`<h4 style="margin:16px 0 4px">${SECNAME[seg.sec]||"本編"}</h4><div class="setlist">${seg.items.map((s,i)=>
       `<div class="srow"><span class="sno">${i+1}</span><div class="smain"><div class="stitle">${esc(s.title)}</div>${s.remark?`<div class="sremark">${esc(s.remark)}</div>`:""}</div>${(s.center||s.perf)?`<div class="scredits">${s.center?`<div class="sc-center">センター：${esc(s.center)}</div>`:""}${s.perf?`<div>出演：${esc(s.perf.join("、"))}</div>`:""}</div>`:""}</div>`).join("")}</div>`).join("");
-    html+=`<p style="margin-top:18px"><button type="button" id="saveSetlistImg">このセットリストを画像で保存</button></p><p id="saveImgMsg" style="color:var(--muted);font-size:12px"></p>`;
   } else {
     html+=`<p>セットリストはまだ登録されていません。</p>`;
   }
@@ -57,7 +58,9 @@ async function openLive(id){
     if(cr && cr.offsetHeight>66) row.classList.add("stacked");
   });
   const saveBtn=document.getElementById("saveSetlistImg");
-  if(saveBtn) saveBtn.addEventListener("click", async ()=>{
+  if(saveBtn){
+    saveBtn.hidden=!(segs&&segs.length);
+    saveBtn.onclick=async ()=>{
     const msg=document.getElementById("saveImgMsg");
     saveBtn.disabled=true; if(msg) msg.textContent="画像を作っています…";
     try{
@@ -74,6 +77,7 @@ async function openLive(id){
     }catch(e){
       if(msg) msg.textContent="画像を作れませんでした。";
     }finally{ saveBtn.disabled=false; }
-  });
+    };
+  }
 }
 init();
