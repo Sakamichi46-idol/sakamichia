@@ -54,11 +54,12 @@ def main():
         dt = datetime.fromisoformat(it['published_at'].replace('Z', '+00:00')) \
             .astimezone(timezone(timedelta(hours=9)))
         date, time = dt.strftime('%Y-%m-%d'), dt.strftime('%H:%M')
-        if rid in have_ids or (group, member, date, it['title']) in have_keys:
+        disp_group = 'けやき坂46' if (api == 'hinata' and date < '2019-03-27') else group
+        if rid in have_ids or (disp_group, member, date, it['title']) in have_keys:
             skipped_dup += 1
             continue
         images = it.get('images') or []
-        rec = {'id': rid, 'group': group, 'member': member, 'title': it['title'],
+        rec = {'id': rid, 'group': disp_group, 'member': member, 'title': it['title'],
                'date': date, 'time': time, 'url': it['url'], 'urldead': True,
                'arch': 'sakamichi.co', 'media': 0, 'imgn': len(images)}
         if images:
@@ -66,7 +67,7 @@ def main():
             imgs.setdefault(date[:4], {})[rid] = [im['url'] for im in images]
         years.setdefault(date[:4], []).append(rec)
         have_ids.add(rid)
-        have_keys.add((group, member, date, it['title']))
+        have_keys.add((disp_group, member, date, it['title']))
         added[member] += 1
         dirty.add(date[:4])
     bf.save_store(idx, years, imgs, dirty)
