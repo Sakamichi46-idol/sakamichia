@@ -14,6 +14,11 @@ function lastGroup(m) {
   for (const g of gs) { const r = (g in ERA_RANK) ? ERA_RANK[g] : 0; if (r > br) { br = r; best = g; } }
   return best;
 }
+// 並び順の「グループ」は改名をまたぐ系統で見る（櫻坂46・欅坂46は同一系統、日向坂46・けやき坂46も同一系統）。
+// 表示上の所属（lastGroup）は最後の所属のままだが、並びは系統→期→五十音とする
+// （欅坂46時代に卒業した1期生が、櫻坂46の2期生より下に来ないようにするため）。
+const FAMILY = { "乃木坂46": "乃木坂46", "櫻坂46": "櫻坂46", "欅坂46": "櫻坂46", "日向坂46": "日向坂46", "けやき坂46": "日向坂46" };
+function familyOf(m) { const lg = lastGroup(m); return FAMILY[lg] || lg; }
 const isExchange = m => m.name === "松井玲奈";   // SKE48からの交換留学生
 const genKey = m => (m.gen > 0 ? m.gen : 99);    // 期なし（ポカ・交換留学生）はグループ内の最後尾
 function centerSongsOf(name) { return SONGS.filter(s => s.center === name); }
@@ -52,7 +57,7 @@ function render() {
   if (fSort === "kana") list.sort((a, b) => (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   else if (fSort === "blog") list.sort((a, b) => (BLOGS[b.name] || 0) - (BLOGS[a.name] || 0));
   else if (fSort === "center") list.sort((a, b) => centerSongsOf(b.name).length - centerSongsOf(a.name).length);
-  else list.sort((a, b) => order(lastGroup(a)) - order(lastGroup(b)) || genKey(a) - genKey(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
+  else list.sort((a, b) => order(familyOf(a)) - order(familyOf(b)) || genKey(a) - genKey(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   document.getElementById("mbCount").textContent = `${list.length}人`;
   const grid = document.getElementById("mbGrid");
   grid.innerHTML = list.map(cardHTML).join("") || `<p style="color:var(--muted)">条件に合うメンバーがいません。</p>`;
