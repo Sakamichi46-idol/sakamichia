@@ -118,7 +118,7 @@ async function openLive(id){
           let memberText=(s.perf||[]).length ? "参加："+s.perf.join("、") : "";
           let meta=clauses;
           if(zenin){
-            memberText="（全員参加）";
+            memberText="参加：全員";
             meta=clauses.filter(c=>!/^全員(歌唱|バージョン)?$/.test(c));
           }
           rows.push({type:"song", number:num, title:s.title, center:s.center||"",
