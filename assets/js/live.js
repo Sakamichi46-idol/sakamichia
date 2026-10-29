@@ -1,15 +1,50 @@
 let DATA=[]; const DETAILS={};
+const KINDS=[
+  {label:"全国ツアー", tag:"全国ツアー"},
+  {label:"真夏の全国ツアー", tag:"真夏の全国ツアー"},
+  {label:"アンダーライブ", tag:"アンダーライブ"},
+  {label:"BIRTHDAY LIVE", tag:"BIRTHDAY LIVE"},
+  {label:"ANNIVERSARY LIVE", tag:"ANNIVERSARY LIVE"},
+  {label:"BACKS LIVE!!", tag:"BACKS LIVE!!"},
+  {label:"ひなた坂46LIVE", tag:"ひなた坂46LIVE"},
+  {label:"ひな誕祭", tag:"ひな誕祭"},
+  {label:"欅共和国／W-K FES.", tag:"欅共和国/W-K FES."},
+  {label:"がなくり・ひなくり", tag:"がなくり/ひなくり"},
+  {label:"合同公演", tag:"合同公演"},
+  {label:"外部のイベント", tag:"外部のイベント"},
+  {label:"ミニライブなど", tag:"ミニライブなど"},
+  {label:"単独主催公演（その他）", tag:null},
+];
+const KSEL=new Set();
+function kindMatch(l, kind){
+  const ts=l.tags||[];
+  if(kind.tag===null) return ts.length===1 && ts[0]==="単独主催公演";
+  return ts.includes(kind.tag) || ts.some(t=>String(t).split("/").includes(kind.tag));
+}
 async function init(){
   DATA = await loadJSON("lives.json");
   const years=[...new Set(DATA.map(l=>l.date.slice(0,4)))].sort().reverse();
   const sel=document.getElementById("year");
   years.forEach(y=>{const o=document.createElement("option");o.textContent=y+"年";o.value=y;sel.appendChild(o);});
+  const kt=document.getElementById("kindTabs");
+  KINDS.forEach(k=>{
+    const b=document.createElement("button");
+    b.type="button"; b.className="ychip"; b.textContent=k.label;
+    b.addEventListener("click",()=>{
+      if(KSEL.has(k.label)){ KSEL.delete(k.label); b.classList.remove("on"); }
+      else{ KSEL.add(k.label); b.classList.add("on"); }
+      render();
+    });
+    kt.appendChild(b);
+  });
   ["q","group","year"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   render();
 }
 function render(){
   const q=document.getElementById("q").value, g=document.getElementById("group").value, y=document.getElementById("year").value;
-  const rows=DATA.filter(l=>(!g||l.group===g)&&(!y||l.date.startsWith(y))&&includesAll(itemText([l.title,l.group,l.venue,l.region,l.date,l.tags]),q))
+  const rows=DATA.filter(l=>(!g||l.group===g)&&(!y||l.date.startsWith(y))
+    &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
+    &&includesAll(itemText([l.title,l.group,l.venue,l.region,l.date,l.tags]),q))
     .sort((a,b)=>{
       const key=x=>[x.date||"", x.time||"", x.id||""];
       const ka=key(a), kb=key(b);
