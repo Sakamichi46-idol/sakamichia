@@ -1,0 +1,64 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>条件ドラフト | サカミチア</title><meta name="description" content="スロットで決まる「グループ × 条件（期別・誕生月・干支・学年・出身地）」に合うメンバーを指名して、自分だけの坂道選抜を作る1人用ドラフトです。"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="条件ドラフト | サカミチア"><meta property="og:description" content="運命のスロットで決まる条件に合うメンバーを指名して選抜を作ろう。"><meta property="og:url" content="https://sakamichia.pages.dev/draft/solo/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=33"></head>
+<body data-base="../../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
+<a href="../../">ホーム</a><a href="../../live/">歴代ライブ</a><a href="../../matome/">まとめ</a><a href="../../blog/">ブログ</a><a href="../../news/">お知らせ</a><a href="../../songs/">楽曲図鑑</a><a href="../../members/">メンバー</a><a href="../../games/">ミニゲーム</a><a href="../" class="on">ドラフト</a><a href="../../setlist/">マイセットリスト</a><a href="../../formation/">フォーメーション作成</a></nav></div></header>
+<main class="wrap"><section class="page"><h2 class="title">条件ドラフト</h2><p class="lead">スロットで「グループ × 条件」を決定。選べるメンバーから1人ずつ指名して、あなただけの選抜を作ろう。途中経過は自動保存されます。</p>
+
+<details class="df-panel" id="dfConfig" open>
+<summary class="df-summary"><strong>ドラフト設定</strong><span id="dfConfigSummary" class="df-summary-text"></span></summary>
+<div class="df-settings">
+<label class="df-field"><span>スロットの種類</span><select id="dfMode">
+<option value="generation">期別</option><option value="birthday">誕生月</option><option value="birth_year">生まれ年</option><option value="school_year">学年</option><option value="zodiac">干支</option><option value="hometown">出身地</option><option value="random">おまかせ（6種類から抽選）</option></select></label>
+<div class="df-field"><span>対象グループ</span><div class="ychips" id="dfGroups"></div></div>
+<label class="df-field"><span>メンバー</span><select id="dfStatus"><option value="all">現役・卒業生</option><option value="active">現役のみ</option><option value="graduate">卒業生のみ</option></select></label>
+<label class="df-field"><span>条件の重複</span><select id="dfRepeat"><option value="yes">許可する</option><option value="no">同じ組み合わせは1回だけ</option></select></label>
+<label class="df-field"><span>パスできる回数</span><select id="dfPassLimit"><option value="3">3回</option><option value="0">パスなし</option><option value="1">1回</option><option value="5">5回</option><option value="-1">無制限</option></select></label>
+<label class="df-field"><span>指名後の配置</span><select id="dfPlacement"><option value="unplaced">未配置に追加（あとで並べる）</option><option value="now">指名時に自分で位置を選ぶ</option></select></label>
+<div class="df-field"><span>フォーメーション（<span id="dfCountLabel"></span>）</span>
+<div class="df-rowctl"><label>列数 <select id="dfCols"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><span id="dfRowCtl"></span></div>
+<label class="df-check"><input type="checkbox" id="dfCenter" checked> センター位置を表示</label></div>
+<p class="df-note" id="dfDataStatus">メンバーデータを読み込み中…</p>
+</div></details>
+
+<div class="df-panel">
+<div class="df-head"><h3>運命のスロット</h3><span id="dfRound" class="df-round"></span></div>
+<div class="df-wheels">
+<div class="df-wheel-box"><span class="df-wheel-cap">GROUP</span><div class="df-wheel" id="dfWheelGroup">？</div></div>
+<div class="df-x">×</div>
+<div class="df-wheel-box"><span class="df-wheel-cap">CONDITION</span><div class="df-wheel" id="dfWheelCond">？</div></div>
+</div>
+<p class="df-msg" id="dfMsg">設定を確認したら、スロットを回してください。選べる人が0人の条件は自動的に抽選対象から外れます。</p>
+<div class="df-actions"><button type="button" class="btn" id="dfSpin">スロットを回す</button><button type="button" class="btn" id="dfPass">パス</button></div>
+<div id="dfCands" class="fm-cands" style="margin-top:10px"></div>
+<div class="df-actions"><button type="button" class="btn" id="dfPick">指名する</button></div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>マイ坂道選抜</h3><span id="dfCounts" class="df-round"></span></div>
+<label class="df-field"><span>タイトル</span><input id="dfTitle" type="text" value="マイ坂道選抜" maxlength="40"></label>
+<div id="dfBoard" style="margin-top:10px"></div>
+<p class="df-note" id="dfPlaceHint">枠をタップして選択し、未配置のメンバーをタップすると入れ替え・配置ができます。</p>
+<h4 style="margin:12px 0 6px">指名済み・未配置（<span id="dfPoolCount">0人</span>）</h4>
+<div id="dfPool" class="fm-cands"></div>
+<div class="df-actions">
+<button type="button" class="btn" id="dfUndo">元に戻す</button>
+<button type="button" class="btn" id="dfRemove">選択中のメンバーを外す</button>
+<button type="button" class="btn" id="dfImg">画像を保存・共有</button>
+<button type="button" class="btn" id="dfReset">最初から</button>
+</div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>指名・パス履歴</h3><span id="dfHistCount" class="df-round">0件</span></div>
+<div id="dfHistory"></div>
+</div>
+</section></main>
+<footer><div class="wrap">条件の判定には n46db.com のプロフィール情報（誕生日・出身地）を参考にしています。画像は写真と名前だけのシンプルなものです。</div></footer>
+<dialog id="dfImgDlg"><div class="dlg-body">
+<p style="margin:0 0 8px"><b>フォーメーション画像</b></p>
+<div id="dfImgPreview" style="text-align:center"></div>
+<div class="dlg-actions"><button type="button" class="btn" id="dfImgShare">共有する</button><button type="button" class="btn" id="dfImgDl">ダウンロード</button><button type="button" class="btn" id="dfImgClose">閉じる</button></div>
+</div></dialog>
+<script src="../../assets/js/common.js"></script><script src="../../assets/js/draft-common.js"></script><script src="../../assets/js/solo-draft.js"></script>
+</body></html>

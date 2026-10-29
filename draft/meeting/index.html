@@ -1,0 +1,84 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ドラフト会議 | サカミチア</title><meta name="description" content="2〜4人で同じ端末を交代しながら坂道メンバーを指名するドラフト会議。指名が競合したらルーレット抽選、落選した人は再指名。フォーメーションまで完成させます。"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="ドラフト会議 | サカミチア"><meta property="og:description" content="2〜4人で指名を競うドラフト会議。競合はルーレット抽選で決着。"><meta property="og:url" content="https://sakamichia.pages.dev/draft/meeting/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=33"></head>
+<body data-base="../../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
+<a href="../../">ホーム</a><a href="../../live/">歴代ライブ</a><a href="../../matome/">まとめ</a><a href="../../blog/">ブログ</a><a href="../../news/">お知らせ</a><a href="../../songs/">楽曲図鑑</a><a href="../../members/">メンバー</a><a href="../../games/">ミニゲーム</a><a href="../" class="on">ドラフト</a><a href="../../setlist/">マイセットリスト</a><a href="../../formation/">フォーメーション作成</a></nav></div></header>
+<main class="wrap"><section class="page"><h2 class="title">ドラフト会議</h2><p class="lead">2〜4人で同じ端末を交代しながら指名します。指名が重なったらルーレット抽選、落選した人はその巡のうちに再指名。途中経過は自動保存されます。</p>
+
+<details class="df-panel" id="dmSetupPanel" open>
+<summary class="df-summary"><strong>会議の設定</strong><span id="dmSetupSummary" class="df-summary-text"></span></summary>
+<div class="df-settings">
+<div class="df-field"><span>指名対象グループ</span><div class="ychips" id="dmGroups"></div></div>
+<div class="df-field"><span>期別（グループごとに絞れます）</span><div id="dmGens"></div></div>
+<label class="df-check"><input type="checkbox" id="dmEra"> 時代を指定してドラフトする（基準日に在籍していたメンバーだけが対象）</label>
+<label class="df-field" id="dmEraDateWrap" hidden><span>基準日</span><input type="date" id="dmEraDate" value="2018-12-31" min="2011-08-21"></label>
+<label class="df-check"><input type="checkbox" id="dmGrad" checked> 卒業・活動終了メンバーも候補に含める</label>
+<label class="df-field"><span>参加人数（1人目が主催者）</span><select id="dmCount"><option value="2">2人</option><option value="3">3人</option><option value="4">4人</option></select></label>
+<div class="df-field"><span>プレイヤー名</span><div id="dmNames" class="df-names"></div></div>
+<div class="df-field"><span>フォーメーション（<span id="dmCountLabel"></span>＝指名巡数）</span>
+<div class="df-rowctl"><label>列数 <select id="dmCols"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><span id="dmRowCtl"></span></div>
+<label class="df-check"><input type="checkbox" id="dmCenter" checked> センター位置を表示</label></div>
+<label class="df-field"><span>配置のタイミング</span><select id="dmPlacement"><option value="after">ドラフト終了後に配置する</option><option value="during">指名と同時に配置する</option></select></label>
+<p class="df-note" id="dmPoolInfo">メンバーデータを読み込み中…</p>
+<div class="df-actions"><button type="button" class="btn" id="dmStart">この設定でドラフト開始</button></div>
+</div></details>
+
+<div id="dmGame" hidden>
+<div class="df-panel">
+<div class="df-head"><h3 id="dmRound">第1巡</h3><span id="dmReady" class="df-round"></span></div>
+<div id="dmPStats" class="df-pstats"></div>
+<p class="df-msg" id="dmMsg"></p>
+<div class="df-actions"><button type="button" class="btn" id="dmDraw">抽選する</button><button type="button" class="btn" id="dmUndoPick">選択中の指名を取り消す</button><button type="button" class="btn" id="dmReset">このドラフトを終了・リセット</button></div>
+</div>
+
+<div class="df-panel" id="dmDuringWrap" hidden>
+<div class="df-head"><h3>配置する枠（<span id="dmDuringName"></span>）</h3><span class="df-round">先に空き枠を選んでから指名</span></div>
+<div id="dmDuringBoard" style="margin-top:10px"></div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>指名候補</h3><span id="dmCandCount" class="df-round"></span></div>
+<div class="fm-filters"><input type="search" id="dmCandSearch" placeholder="名前・ふりがなで検索" aria-label="候補を検索"><select id="dmCandGen" aria-label="期別で絞り込む"><option value="all">すべての期</option></select></div>
+<div class="ychips" id="dmCandGroups" style="margin:4px 0 10px"></div>
+<div id="dmCands" class="fm-cands"></div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>抽選結果・獲得状況</h3><span id="dmHistCount" class="df-round"></span></div>
+<div id="dmResults"></div>
+<div id="dmOwned" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="dmFinish" hidden>
+<div class="df-panel">
+<div class="df-head"><h3>ドラフト終了！完成フォーメーション</h3><span id="dmFinishInfo" class="df-round"></span></div>
+<p class="df-msg" id="dmFinishMsg"></p>
+<div class="ychips" id="dmTabs" style="margin:8px 0"></div>
+<div id="dmBoard" style="margin-top:10px"></div>
+<h4 style="margin:12px 0 6px">獲得済み・未配置（<span id="dmPoolCount">0人</span>）</h4>
+<div id="dmPool" class="fm-cands"></div>
+<div class="df-actions">
+<button type="button" class="btn" id="dmImg">このプレイヤーを画像で保存</button>
+<button type="button" class="btn" id="dmImgAll">全員の結果を画像で保存</button>
+<button type="button" class="btn" id="dmReset2">新しいドラフトを始める</button>
+</div>
+<p class="df-note" id="dmPlaceHint">未配置のメンバーをタップして選び、配置したい枠をタップすると配置・入れ替えができます。配置済みの枠同士の入れ替えは、枠を2つ続けてタップします。</p>
+</div>
+</div>
+</section></main>
+<footer><div class="wrap">ドラフト会議は旧『坂道日和』のドラフト機能を移植したものです。在籍期間の判定には公開されている加入・卒業記録を使っています。</div></footer>
+<dialog id="dmLotDlg"><div class="dlg-body">
+<p style="margin:0 0 4px"><b>競合抽選ルーレット</b> <span id="dmLotCount" style="color:var(--muted)"></span></p>
+<p id="dmLotMember" style="margin:0 0 8px"></p>
+<div class="df-lot-name" id="dmLotName">…</div>
+<p id="dmLotResult" style="margin:8px 0 0"></p>
+<div class="dlg-actions"><button type="button" class="btn" id="dmLotNext">次へ</button></div>
+</div></dialog>
+<dialog id="dmImgDlg"><div class="dlg-body">
+<p style="margin:0 0 8px"><b>フォーメーション画像</b></p>
+<div id="dmImgPreview" style="text-align:center"></div>
+<div class="dlg-actions"><button type="button" class="btn" id="dmImgShare">共有する</button><button type="button" class="btn" id="dmImgDl">ダウンロード</button><button type="button" class="btn" id="dmImgClose">閉じる</button></div>
+</div></dialog>
+<script src="../../assets/js/common.js"></script><script src="../../assets/js/draft-common.js"></script><script src="../../assets/js/draft-meeting.js"></script>
+</body></html>

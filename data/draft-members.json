@@ -1,0 +1,2422 @@
+[
+ {
+  "id": "nogi-73f2c64d8bca",
+  "name": "伊藤理々杏",
+  "group": "nogi",
+  "generation": 3,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "いとうりりあ"
+ },
+ {
+  "id": "nogi-188425529a41",
+  "name": "岩本蓮加",
+  "group": "nogi",
+  "generation": 3,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "いわもとれんか"
+ },
+ {
+  "id": "nogi-4503034934cd",
+  "name": "遠藤さくら",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "えんどうさくら"
+ },
+ {
+  "id": "nogi-b5a8be8d322a",
+  "name": "賀喜遥香",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "かきはるか"
+ },
+ {
+  "id": "nogi-1dc4d1fbd257",
+  "name": "金川紗耶",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "かながわさや"
+ },
+ {
+  "id": "nogi-e86687a34844",
+  "name": "黒見明香",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "くろみはるか"
+ },
+ {
+  "id": "nogi-d83bd9f604bc",
+  "name": "柴田柚菜",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "しばたゆな"
+ },
+ {
+  "id": "nogi-36b5cebf531a",
+  "name": "田村真佑",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "たむらまゆ"
+ },
+ {
+  "id": "nogi-5f30cf6efb80",
+  "name": "筒井あやめ",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "つついあやめ"
+ },
+ {
+  "id": "nogi-31feaca85fae",
+  "name": "林瑠奈",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "はやしるな"
+ },
+ {
+  "id": "nogi-0105f12e2567",
+  "name": "弓木奈於",
+  "group": "nogi",
+  "generation": 4,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "ゆみきなお"
+ },
+ {
+  "id": "nogi-fd61617ea2f3",
+  "name": "五百城茉央",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "いおきまお"
+ },
+ {
+  "id": "nogi-c6583afaade7",
+  "name": "池田瑛紗",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "いけだてれさ"
+ },
+ {
+  "id": "nogi-57988f6fe2ba",
+  "name": "一ノ瀬美空",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "いちのせみく"
+ },
+ {
+  "id": "nogi-d9b17da25678",
+  "name": "井上和",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "いのうえなぎ"
+ },
+ {
+  "id": "nogi-244f9166374e",
+  "name": "岡本姫奈",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "おかもとひな"
+ },
+ {
+  "id": "nogi-1134243acb8d",
+  "name": "小川彩",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "おがわあや"
+ },
+ {
+  "id": "nogi-2b63348d3296",
+  "name": "奥田いろは",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "おくだいろは"
+ },
+ {
+  "id": "nogi-24d8f7cbda76",
+  "name": "川﨑桜",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "かわさきさくら"
+ },
+ {
+  "id": "nogi-e80a3f0eea95",
+  "name": "菅原咲月",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "すがわらさつき"
+ },
+ {
+  "id": "nogi-a898b02fe596",
+  "name": "冨里奈央",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "とみさとなお"
+ },
+ {
+  "id": "nogi-e1418ec0ddca",
+  "name": "中西アルノ",
+  "group": "nogi",
+  "generation": 5,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "なかにしあるの"
+ },
+ {
+  "id": "nogi-fce77cb8acb2",
+  "name": "愛宕心響",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "あたごここね"
+ },
+ {
+  "id": "nogi-27d5c8947be2",
+  "name": "大越ひなの",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "おおこしひなの"
+ },
+ {
+  "id": "nogi-41afd72f702b",
+  "name": "小津玲奈",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "おづれいな"
+ },
+ {
+  "id": "nogi-3d0a9258310d",
+  "name": "海邉朱莉",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "かいべあかり"
+ },
+ {
+  "id": "nogi-8439e60384ca",
+  "name": "川端晃菜",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "かわばたひな"
+ },
+ {
+  "id": "nogi-697490250c59",
+  "name": "鈴木佑捺",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "すずきゆうな"
+ },
+ {
+  "id": "nogi-ddb0d794bbf4",
+  "name": "瀬戸口心月",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "せとぐちみつき"
+ },
+ {
+  "id": "nogi-927791f5de88",
+  "name": "長嶋凛桜",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "ながしまりお"
+ },
+ {
+  "id": "nogi-9e3e6b6ae1c9",
+  "name": "増田三莉音",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "ますだみりね"
+ },
+ {
+  "id": "nogi-7e47f102c693",
+  "name": "森平麗心",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "もりひらうるみ"
+ },
+ {
+  "id": "nogi-fa8182d3deec",
+  "name": "矢田萌華",
+  "group": "nogi",
+  "generation": 6,
+  "groups": [
+   "nogi"
+  ],
+  "graduated": false,
+  "reading": "やだもえか"
+ },
+ {
+  "id": "sakura-13a594ed125e",
+  "name": "遠藤光莉",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "えんどうひかり"
+ },
+ {
+  "id": "sakura-d350623700a7",
+  "name": "大園玲",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "おおぞのれい"
+ },
+ {
+  "id": "sakura-5a585e0fab4c",
+  "name": "大沼晶保",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "おおぬまあきほ"
+ },
+ {
+  "id": "sakura-6c0658f15503",
+  "name": "幸阪茉里乃",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "こうさかまりの"
+ },
+ {
+  "id": "sakura-a244e2ad5367",
+  "name": "田村保乃",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "たむらほの"
+ },
+ {
+  "id": "sakura-ae28620cd5df",
+  "name": "藤吉夏鈴",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "ふじよしかりん"
+ },
+ {
+  "id": "sakura-3634a4e7476a",
+  "name": "増本綺良",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "ますもときら"
+ },
+ {
+  "id": "sakura-b7dbafbb4266",
+  "name": "松田里奈",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "まつだりな"
+ },
+ {
+  "id": "sakura-b4d4211fbaa4",
+  "name": "森田ひかる",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "もりたひかる"
+ },
+ {
+  "id": "sakura-ff0d103aedb7",
+  "name": "守屋麗奈",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "もりやれな"
+ },
+ {
+  "id": "sakura-03ee52545f56",
+  "name": "山﨑天",
+  "group": "sakura",
+  "generation": 2,
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "やまさきてん"
+ },
+ {
+  "id": "sakura-e280e786dffd",
+  "name": "石森璃花",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "いしもりりか"
+ },
+ {
+  "id": "sakura-5f3d55999590",
+  "name": "遠藤理子",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "えんどうりこ"
+ },
+ {
+  "id": "sakura-64e04f3023f9",
+  "name": "小田倉麗奈",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "おだくられいな"
+ },
+ {
+  "id": "sakura-403ee8a0b884",
+  "name": "小島凪紗",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "こじまなぎさ"
+ },
+ {
+  "id": "sakura-0d08e273acc6",
+  "name": "谷口愛季",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "たにぐちあいり"
+ },
+ {
+  "id": "sakura-b65aeae07a66",
+  "name": "中嶋優月",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "なかしまゆづき"
+ },
+ {
+  "id": "sakura-4bcba820ff53",
+  "name": "的野美青",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "まとのみお"
+ },
+ {
+  "id": "sakura-2d84c818dbbc",
+  "name": "向井純葉",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "むかいいとは"
+ },
+ {
+  "id": "sakura-4bb2b6a41571",
+  "name": "村井優",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "むらいゆう"
+ },
+ {
+  "id": "sakura-d808275a7018",
+  "name": "村山美羽",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "むらやまみう"
+ },
+ {
+  "id": "sakura-214378c52552",
+  "name": "山下瞳月",
+  "group": "sakura",
+  "generation": 3,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "やましたしづき"
+ },
+ {
+  "id": "sakura-94efe8778b72",
+  "name": "浅井恋乃未",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "あさいこのみ"
+ },
+ {
+  "id": "sakura-5ab93386483b",
+  "name": "稲熊ひな",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "いなぐまひな"
+ },
+ {
+  "id": "sakura-9da1c1c3f7db",
+  "name": "勝又春",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "かつまたはる"
+ },
+ {
+  "id": "sakura-791dd8185006",
+  "name": "佐藤愛桜",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "さとうねお"
+ },
+ {
+  "id": "sakura-5f75c8bd1492",
+  "name": "中川智尋",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "なかがわちひろ"
+ },
+ {
+  "id": "sakura-4c6e90fd8e31",
+  "name": "松本和子",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "まつもとわこ"
+ },
+ {
+  "id": "sakura-5e4f1814b92e",
+  "name": "目黒陽色",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "めぐろひいろ"
+ },
+ {
+  "id": "sakura-cbd4af728798",
+  "name": "山川宇衣",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "やまかわうい"
+ },
+ {
+  "id": "sakura-ec7e5e844f25",
+  "name": "山田桃実",
+  "group": "sakura",
+  "generation": 4,
+  "groups": [
+   "sakura"
+  ],
+  "graduated": false,
+  "reading": "やまだももみ"
+ },
+ {
+  "id": "hinata-9549d85c89f6",
+  "name": "金村美玖",
+  "group": "hinata",
+  "generation": 2,
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "かねむらみく"
+ },
+ {
+  "id": "hinata-ad08f57b94e5",
+  "name": "小坂菜緒",
+  "group": "hinata",
+  "generation": 2,
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "こさかなお"
+ },
+ {
+  "id": "hinata-c91120064072",
+  "name": "上村ひなの",
+  "group": "hinata",
+  "generation": 3,
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "かみむらひなの"
+ },
+ {
+  "id": "hinata-382044a7ba27",
+  "name": "髙橋未来虹",
+  "group": "hinata",
+  "generation": 3,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "たかはしみくに"
+ },
+ {
+  "id": "hinata-0ce590d8307a",
+  "name": "森本茉莉",
+  "group": "hinata",
+  "generation": 3,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "もりもとまりぃ"
+ },
+ {
+  "id": "hinata-139870062059",
+  "name": "山口陽世",
+  "group": "hinata",
+  "generation": 3,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "やまぐちはるよ"
+ },
+ {
+  "id": "hinata-886c3d24a6e1",
+  "name": "石塚瑶季",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "いしづかたまき"
+ },
+ {
+  "id": "hinata-15b8b0e80ac3",
+  "name": "小西夏菜実",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "こにしななみ"
+ },
+ {
+  "id": "hinata-eeab8c77416b",
+  "name": "清水理央",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "しみずりお"
+ },
+ {
+  "id": "hinata-fc56ba0d76fd",
+  "name": "正源司陽子",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "しょうげんじようこ"
+ },
+ {
+  "id": "hinata-cfd2a0f86dda",
+  "name": "竹内希来里",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "たけうちきらり"
+ },
+ {
+  "id": "hinata-6f4115cc1f77",
+  "name": "平尾帆夏",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "ひらおほのか"
+ },
+ {
+  "id": "hinata-14c540d572cf",
+  "name": "平岡海月",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "ひらおかみつき"
+ },
+ {
+  "id": "hinata-9d1d1455be31",
+  "name": "藤嶌果歩",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "ふじしまかほ"
+ },
+ {
+  "id": "hinata-2f2ec8a80a03",
+  "name": "宮地すみれ",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "みやちすみれ"
+ },
+ {
+  "id": "hinata-8cb0d497ec06",
+  "name": "山下葉留花",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "やましたはるか"
+ },
+ {
+  "id": "hinata-89ce3f952c7e",
+  "name": "渡辺莉奈",
+  "group": "hinata",
+  "generation": 4,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "わたなべりな"
+ },
+ {
+  "id": "hinata-1f5baa9ad58e",
+  "name": "大田美月",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "おおたみづき"
+ },
+ {
+  "id": "hinata-1b2f6b468b94",
+  "name": "大野愛実",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "おおのまなみ"
+ },
+ {
+  "id": "hinata-bc1060ee9bd8",
+  "name": "片山紗希",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "かたやまさき"
+ },
+ {
+  "id": "hinata-c063dd1e7a72",
+  "name": "蔵盛妃那乃",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "くらもりひなの"
+ },
+ {
+  "id": "hinata-03e7abad8231",
+  "name": "坂井新奈",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "さかいにいな"
+ },
+ {
+  "id": "hinata-d25f8be148ca",
+  "name": "佐藤優羽",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "さとうゆう"
+ },
+ {
+  "id": "hinata-b7864426e69f",
+  "name": "下田衣珠季",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "しもだいずき"
+ },
+ {
+  "id": "hinata-1e8d7c6907a3",
+  "name": "高井俐香",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "たかいりか"
+ },
+ {
+  "id": "hinata-4a5e9ed6d296",
+  "name": "鶴崎仁香",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "つるさきにこ"
+ },
+ {
+  "id": "hinata-d7101e741f18",
+  "name": "松尾桜",
+  "group": "hinata",
+  "generation": 5,
+  "groups": [
+   "hinata"
+  ],
+  "graduated": false,
+  "reading": "まつおさくら"
+ },
+ {
+  "id": "former-nogi-7087af48bfb7",
+  "name": "山本穂乃香",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "やまもとほのか"
+ },
+ {
+  "id": "former-nogi-796ca1ac0447",
+  "name": "吉本彩華",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "よしもとあやか"
+ },
+ {
+  "id": "former-nogi-f999998e752f",
+  "name": "岩瀬佑美子",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いわせゆみこ"
+ },
+ {
+  "id": "former-nogi-60830c1fe613",
+  "name": "安藤美雲",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "あんどうみくも"
+ },
+ {
+  "id": "former-nogi-c8868e536141",
+  "name": "柏幸奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "かしわゆきな"
+ },
+ {
+  "id": "former-nogi-e2cef35d6b1f",
+  "name": "宮澤成良",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "みやざわせいら"
+ },
+ {
+  "id": "former-nogi-c51b2fd66336",
+  "name": "市來玲奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いちきれな"
+ },
+ {
+  "id": "former-nogi-d465c9405535",
+  "name": "伊藤寧々",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いとうねね"
+ },
+ {
+  "id": "former-nogi-422dfe33c236",
+  "name": "大和里菜",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "やまとりな"
+ },
+ {
+  "id": "former-nogi-311fc0a693a0",
+  "name": "畠中清羅",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "はたなかせいら"
+ },
+ {
+  "id": "former-nogi-3abc74e6ff82",
+  "name": "永島聖羅",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "ながしませいら"
+ },
+ {
+  "id": "former-nogi-c64bb2f13313",
+  "name": "深川麻衣",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "ふかがわまい"
+ },
+ {
+  "id": "former-nogi-cd76c13b0a95",
+  "name": "橋本奈々未",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "はしもとななみ"
+ },
+ {
+  "id": "former-nogi-6bdd92729aba",
+  "name": "中元日芽香",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "なかもとひめか"
+ },
+ {
+  "id": "former-nogi-387651e1f1f3",
+  "name": "伊藤万理華",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いとうまりか"
+ },
+ {
+  "id": "former-nogi-af280c1e3329",
+  "name": "川村真洋",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "かわむらまひろ"
+ },
+ {
+  "id": "former-nogi-ec846819b4dc",
+  "name": "生駒里奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いこまりな"
+ },
+ {
+  "id": "former-nogi-a91d15a8143f",
+  "name": "斎藤ちはる",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さいとうちはる"
+ },
+ {
+  "id": "former-nogi-d2e98b7d1453",
+  "name": "若月佑美",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "わかつきゆみ"
+ },
+ {
+  "id": "former-nogi-91c1e560bd0c",
+  "name": "能條愛未",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "のうじょうあみ"
+ },
+ {
+  "id": "former-nogi-b486f7b65976",
+  "name": "川後陽菜",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "かわごひな"
+ },
+ {
+  "id": "former-nogi-b3868f9681f0",
+  "name": "西野七瀬",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "にしのななせ"
+ },
+ {
+  "id": "former-nogi-b5124e1ccfc7",
+  "name": "衛藤美彩",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "えとうみさ"
+ },
+ {
+  "id": "former-nogi-dfdb24423a02",
+  "name": "斉藤優里",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さいとうゆうり"
+ },
+ {
+  "id": "former-nogi-429ace74c49f",
+  "name": "桜井玲香",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さくらいれいか"
+ },
+ {
+  "id": "former-nogi-c4d91bbf2ee0",
+  "name": "井上小百合",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いのうえさゆり"
+ },
+ {
+  "id": "former-nogi-1f4dc4198b5b",
+  "name": "中田花奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "なかだかな"
+ },
+ {
+  "id": "former-nogi-d8810b897e63",
+  "name": "白石麻衣",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "しらいしまい"
+ },
+ {
+  "id": "former-nogi-542dc2d4acae",
+  "name": "松村沙友理",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "まつむらさゆり"
+ },
+ {
+  "id": "former-nogi-56dcad326bb1",
+  "name": "高山一実",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "たかやまかずみ"
+ },
+ {
+  "id": "former-nogi-a2c3ff311cd4",
+  "name": "生田絵梨花",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いくたえりか"
+ },
+ {
+  "id": "former-nogi-cc26cfa3c72a",
+  "name": "星野みなみ",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "ほしのみなみ"
+ },
+ {
+  "id": "former-nogi-1489a2ec776d",
+  "name": "樋口日奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "ひぐちひな"
+ },
+ {
+  "id": "former-nogi-bfc38777ffa8",
+  "name": "和田まあや",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "わだまあや"
+ },
+ {
+  "id": "former-nogi-dbe7bc9a1af1",
+  "name": "齋藤飛鳥",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さいとうあすか"
+ },
+ {
+  "id": "former-nogi-b968c0aa4ab0",
+  "name": "秋元真夏",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "あきもとまなつ"
+ },
+ {
+  "id": "former-nogi-1eafb9319a37",
+  "name": "西川七海",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "にしかわななみ"
+ },
+ {
+  "id": "former-nogi-dd58e9cd4b1c",
+  "name": "矢田里沙子",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "やだりさこ"
+ },
+ {
+  "id": "former-nogi-538e0447f12b",
+  "name": "米徳京花",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "よねとくきょうか"
+ },
+ {
+  "id": "former-nogi-c7aa525c2f48",
+  "name": "相楽伊織",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さがらいおり"
+ },
+ {
+  "id": "former-nogi-02f568c23b93",
+  "name": "伊藤かりん",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いとうかりん"
+ },
+ {
+  "id": "former-nogi-91f47e2cc34b",
+  "name": "佐々木琴子",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "ささきことこ"
+ },
+ {
+  "id": "former-nogi-c88bb8c60190",
+  "name": "堀未央奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "ほりみおな"
+ },
+ {
+  "id": "former-nogi-8ac1d616e63f",
+  "name": "伊藤純奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "いとうじゅんな"
+ },
+ {
+  "id": "former-nogi-1679899862e0",
+  "name": "渡辺みり愛",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "わたなべみりあ"
+ },
+ {
+  "id": "former-nogi-7e71e2f15643",
+  "name": "寺田蘭世",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "てらだらんぜ"
+ },
+ {
+  "id": "former-nogi-d60992e0085d",
+  "name": "新内眞衣",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "しんうちまい"
+ },
+ {
+  "id": "former-nogi-a6b1a04f1f15",
+  "name": "北野日奈子",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "きたのひなこ"
+ },
+ {
+  "id": "former-nogi-4715f561bcc5",
+  "name": "山崎怜奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "やまざきれな"
+ },
+ {
+  "id": "former-nogi-e7c3e9e2be08",
+  "name": "鈴木絢音",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "すずきあやね"
+ },
+ {
+  "id": "former-nogi-136b0cd88780",
+  "name": "大園桃子",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "おおぞのももこ"
+ },
+ {
+  "id": "former-nogi-a590d22bf861",
+  "name": "山下美月",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "やましたみづき"
+ },
+ {
+  "id": "former-nogi-629ff3ae47e9",
+  "name": "阪口珠美",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さかぐちたまみ"
+ },
+ {
+  "id": "former-nogi-29a76b4242c4",
+  "name": "向井葉月",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "むかいはづき"
+ },
+ {
+  "id": "former-nogi-fb5390014667",
+  "name": "与田祐希",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "よだゆうき"
+ },
+ {
+  "id": "former-nogi-d0f0b7534db6",
+  "name": "佐藤楓",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さとうかえで"
+ },
+ {
+  "id": "former-nogi-9faa75827532",
+  "name": "中村麗乃",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "なかむられの"
+ },
+ {
+  "id": "former-nogi-135a30e42071",
+  "name": "久保史緒里",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "くぼしおり"
+ },
+ {
+  "id": "former-nogi-3faf491ca06f",
+  "name": "梅澤美波",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "うめざわみなみ"
+ },
+ {
+  "id": "former-nogi-e12a0b9434b9",
+  "name": "吉田綾乃クリスティー",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 3,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "よしだあやのくりすてぃー"
+ },
+ {
+  "id": "former-nogi-3440e7a4b5ac",
+  "name": "北川悠理",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "きたがわゆり"
+ },
+ {
+  "id": "former-nogi-be2e629a0f61",
+  "name": "早川聖来",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "はやかわせいら"
+ },
+ {
+  "id": "former-nogi-b1545a1be8b3",
+  "name": "清宮レイ",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "せいみやれい"
+ },
+ {
+  "id": "former-nogi-51f895b1a1d0",
+  "name": "掛橋沙耶香",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "かけはしさやか"
+ },
+ {
+  "id": "former-nogi-a08bf779c7a3",
+  "name": "松尾美佑",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "まつおみゆ"
+ },
+ {
+  "id": "former-nogi-bca765776961",
+  "name": "矢久保美緒",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "やくぼみお"
+ },
+ {
+  "id": "former-nogi-728e6640a2b3",
+  "name": "佐藤璃果",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "さとうりか"
+ },
+ {
+  "id": "former-nogi-0fd2f3fc01bd",
+  "name": "松井玲奈",
+  "group": "nogi",
+  "groups": [
+   "nogi"
+  ],
+  "generation": 0,
+  "graduated": true,
+  "source": "nogi-2026",
+  "reading": "まついれな"
+ },
+ {
+  "id": "former-sakura-213987e17283",
+  "name": "平手友梨奈",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "ひらてゆりな"
+ },
+ {
+  "id": "former-sakura-5c888fe78d22",
+  "name": "鈴木泉帆",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "すずきみずほ"
+ },
+ {
+  "id": "former-sakura-d347048ed9fe",
+  "name": "米谷奈々未",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "よねたにななみ"
+ },
+ {
+  "id": "former-sakura-d10ea32677fa",
+  "name": "志田愛佳",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "しだまなか"
+ },
+ {
+  "id": "former-sakura-935f9e695657",
+  "name": "今泉佑唯",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "いまいずみゆい"
+ },
+ {
+  "id": "former-sakura-3ad6f10c5dc9",
+  "name": "織田奈那",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "おだなな"
+ },
+ {
+  "id": "former-sakura-b1d2cb67d2c8",
+  "name": "原田まゆ",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "はらだまゆ"
+ },
+ {
+  "id": "former-sakura-640419303cce",
+  "name": "鈴本美愉",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "すずもとみゆ"
+ },
+ {
+  "id": "former-sakura-1d3340d4d901",
+  "name": "石森虹花",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "いしもりにじか"
+ },
+ {
+  "id": "former-sakura-f04d9b1c6917",
+  "name": "長沢菜々香",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "ながさわななこ"
+ },
+ {
+  "id": "former-sakura-d2267020d634",
+  "name": "佐藤詩織",
+  "group": "keyaki",
+  "groups": [
+   "keyaki"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "さとうしおり"
+ },
+ {
+  "id": "former-sakura-77264eece14f",
+  "name": "長濱ねる",
+  "group": "keyaki",
+  "groups": [
+   "keyaki",
+   "hiragana"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "keyaki-history",
+  "reading": "ながはまねる",
+  "rosterNote": "特例加入。欅坂46・けやき坂46の1期生区分に表示（改名前の日向坂46には非所属）"
+ },
+ {
+  "id": "former-sakura-fe38228f09ec",
+  "name": "守屋茜",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "もりやあかね"
+ },
+ {
+  "id": "former-sakura-b2db1bef207a",
+  "name": "渡辺梨加",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "わたなべりか"
+ },
+ {
+  "id": "former-sakura-e4246795f6f6",
+  "name": "渡邉理佐",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "わたなべりさ"
+ },
+ {
+  "id": "former-sakura-d02c1d335b3c",
+  "name": "原田葵",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "はらだあおい"
+ },
+ {
+  "id": "former-sakura-3061efdd35bc",
+  "name": "尾関梨香",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "おぜきりか"
+ },
+ {
+  "id": "former-sakura-8750bff871ad",
+  "name": "菅井友香",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "すがいゆうか"
+ },
+ {
+  "id": "former-sakura-5d98e334888e",
+  "name": "土生瑞穂",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "はぶみづほ"
+ },
+ {
+  "id": "former-sakura-4eb6ce4989b3",
+  "name": "小林由依",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "こばやしゆい"
+ },
+ {
+  "id": "former-sakura-7d168e1d4e55",
+  "name": "齋藤冬優花",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "さいとうふゆか"
+ },
+ {
+  "id": "former-sakura-7ff3616f19e8",
+  "name": "上村莉菜",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "うえむらりな"
+ },
+ {
+  "id": "former-sakura-e56b1ee58fed",
+  "name": "小池美波",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "こいけみなみ"
+ },
+ {
+  "id": "former-sakura-678b8a98d2c5",
+  "name": "松平璃子",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "まつだいらりこ"
+ },
+ {
+  "id": "former-sakura-30cb6a8bfdc5",
+  "name": "関有美子",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "せきゆみこ"
+ },
+ {
+  "id": "former-sakura-1a06b0a1146a",
+  "name": "井上梨名",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "いのうえりな"
+ },
+ {
+  "id": "former-sakura-57777ccd54cc",
+  "name": "武元唯衣",
+  "group": "sakura",
+  "groups": [
+   "keyaki",
+   "sakura"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "sakura-2026",
+  "reading": "たけもとゆい"
+ },
+ {
+  "id": "former-hinata-c0e939692453",
+  "name": "柿崎芽実",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "かきざきめみ"
+ },
+ {
+  "id": "former-hinata-0c02d842e4a5",
+  "name": "井口眞緒",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "いぐちまお"
+ },
+ {
+  "id": "former-hinata-8d44064d3561",
+  "name": "影山優佳",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "かげやまゆうか"
+ },
+ {
+  "id": "former-hinata-b5755345ab70",
+  "name": "潮紗理菜",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "うしおさりな"
+ },
+ {
+  "id": "former-hinata-e5900e5fe5b4",
+  "name": "齊藤京子",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "さいとうきょうこ"
+ },
+ {
+  "id": "former-hinata-3992d2c73fea",
+  "name": "高本彩花",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "たかもとあやか"
+ },
+ {
+  "id": "former-hinata-bbb6d412b68f",
+  "name": "加藤史帆",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "かとうしほ"
+ },
+ {
+  "id": "former-hinata-8ac8ac0f9b41",
+  "name": "東村芽依",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "ひがしむらめい"
+ },
+ {
+  "id": "former-hinata-fa23fcaa4eb0",
+  "name": "佐々木美玲",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "ささきみれい"
+ },
+ {
+  "id": "former-hinata-97d26072d77c",
+  "name": "佐々木久美",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "ささきくみ"
+ },
+ {
+  "id": "former-hinata-ccccd4a22f34",
+  "name": "高瀬愛奈",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 1,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "たかせまな"
+ },
+ {
+  "id": "former-hinata-bc6cf38b16d0",
+  "name": "渡邉美穂",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "わたなべみほ"
+ },
+ {
+  "id": "former-hinata-ee97c13d0dd6",
+  "name": "宮田愛萌",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "みやたまなも"
+ },
+ {
+  "id": "former-hinata-73d9c9621af7",
+  "name": "濱岸ひより",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "はまぎしひより"
+ },
+ {
+  "id": "former-hinata-bb3e5e457157",
+  "name": "丹生明里",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "にぶあかり"
+ },
+ {
+  "id": "former-hinata-62711665bde9",
+  "name": "富田鈴花",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "とみたすずか"
+ },
+ {
+  "id": "former-hinata-c3a290ef0130",
+  "name": "河田陽菜",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "かわたひな"
+ },
+ {
+  "id": "former-hinata-28e67720f188",
+  "name": "松田好花",
+  "group": "hinata",
+  "groups": [
+   "hiragana",
+   "hinata"
+  ],
+  "generation": 2,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "まつだこのか"
+ },
+ {
+  "id": "former-hinata-a3da4b5124be",
+  "name": "岸帆夏",
+  "group": "hinata",
+  "groups": [
+   "hinata"
+  ],
+  "generation": 4,
+  "graduated": true,
+  "source": "hinata-2026",
+  "reading": "きしほのか"
+ }
+]

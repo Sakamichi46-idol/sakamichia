@@ -1,0 +1,1032 @@
+{
+ "version": 1,
+ "ready": true,
+ "generatedAt": "2026-10-21",
+ "members": {
+  "nogi-73f2c64d8bca": {
+   "joined": "2016-09-04",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-188425529a41": {
+   "joined": "2016-09-04",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-4503034934cd": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-b5a8be8d322a": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-1dc4d1fbd257": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-e86687a34844": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-d83bd9f604bc": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-36b5cebf531a": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-5f30cf6efb80": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-31feaca85fae": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-0105f12e2567": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-fd61617ea2f3": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-c6583afaade7": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-57988f6fe2ba": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-d9b17da25678": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-244f9166374e": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-1134243acb8d": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-2b63348d3296": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-24d8f7cbda76": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-e80a3f0eea95": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-a898b02fe596": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-e1418ec0ddca": {
+   "joined": "2022-02-01",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-fce77cb8acb2": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-27d5c8947be2": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-41afd72f702b": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-3d0a9258310d": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-8439e60384ca": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-697490250c59": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-ddb0d794bbf4": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-927791f5de88": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-9e3e6b6ae1c9": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-7e47f102c693": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "nogi-fa8182d3deec": {
+   "joined": "2025-02-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-13a594ed125e": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-d350623700a7": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-5a585e0fab4c": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-6c0658f15503": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-a244e2ad5367": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-ae28620cd5df": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-3634a4e7476a": {
+   "joined": "2020-02-16",
+   "left": "2026-09-30",
+   "uncertainEnd": false
+  },
+  "sakura-b7dbafbb4266": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-b4d4211fbaa4": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-ff0d103aedb7": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-03ee52545f56": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-e280e786dffd": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-5f3d55999590": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-64e04f3023f9": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-403ee8a0b884": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-0d08e273acc6": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-b65aeae07a66": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-4bcba820ff53": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-2d84c818dbbc": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-4bb2b6a41571": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-d808275a7018": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-214378c52552": {
+   "joined": "2023-01-05",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-94efe8778b72": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-5ab93386483b": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-9da1c1c3f7db": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-791dd8185006": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-5f75c8bd1492": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-4c6e90fd8e31": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-5e4f1814b92e": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-cbd4af728798": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "sakura-ec7e5e844f25": {
+   "joined": "2025-04-15",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-9549d85c89f6": {
+   "joined": "2017-08-13",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-ad08f57b94e5": {
+   "joined": "2017-08-13",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-c91120064072": {
+   "joined": "2018-11-29",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-382044a7ba27": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-0ce590d8307a": {
+   "joined": "2020-02-16",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-139870062059": {
+   "joined": "2020-02-16",
+   "left": "2026-08-23",
+   "uncertainEnd": false
+  },
+  "hinata-886c3d24a6e1": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-15b8b0e80ac3": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-eeab8c77416b": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-fc56ba0d76fd": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-cfd2a0f86dda": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-6f4115cc1f77": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-14c540d572cf": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-9d1d1455be31": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-2f2ec8a80a03": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-8cb0d497ec06": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-89ce3f952c7e": {
+   "joined": "2022-09-21",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-1f5baa9ad58e": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-1b2f6b468b94": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-bc1060ee9bd8": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-c063dd1e7a72": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-03e7abad8231": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-d25f8be148ca": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-b7864426e69f": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-1e8d7c6907a3": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-4a5e9ed6d296": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "hinata-d7101e741f18": {
+   "joined": "2025-03-10",
+   "left": null,
+   "uncertainEnd": false
+  },
+  "former-nogi-7087af48bfb7": {
+   "joined": "2011-08-21",
+   "left": "2011-09-22",
+   "uncertainEnd": false
+  },
+  "former-nogi-796ca1ac0447": {
+   "joined": "2011-08-21",
+   "left": "2011-09-22",
+   "uncertainEnd": false
+  },
+  "former-nogi-f999998e752f": {
+   "joined": "2011-08-21",
+   "left": "2012-11-18",
+   "uncertainEnd": false
+  },
+  "former-nogi-60830c1fe613": {
+   "joined": "2011-08-21",
+   "left": "2013-06-16",
+   "uncertainEnd": false
+  },
+  "former-nogi-c8868e536141": {
+   "joined": "2011-08-21",
+   "left": "2013-11-17",
+   "uncertainEnd": false
+  },
+  "former-nogi-e2cef35d6b1f": {
+   "joined": "2011-08-21",
+   "left": "2013-11-17",
+   "uncertainEnd": false
+  },
+  "former-nogi-c51b2fd66336": {
+   "joined": "2011-08-21",
+   "left": "2014-07-21",
+   "uncertainEnd": false
+  },
+  "former-nogi-d465c9405535": {
+   "joined": "2011-08-21",
+   "left": "2014-10-19",
+   "uncertainEnd": false
+  },
+  "former-nogi-422dfe33c236": {
+   "joined": "2011-08-21",
+   "left": "2014-12-15",
+   "uncertainEnd": false
+  },
+  "former-nogi-311fc0a693a0": {
+   "joined": "2011-08-21",
+   "left": "2015-04-04",
+   "uncertainEnd": false
+  },
+  "former-nogi-3abc74e6ff82": {
+   "joined": "2011-08-21",
+   "left": "2016-03-20",
+   "uncertainEnd": false
+  },
+  "former-nogi-c64bb2f13313": {
+   "joined": "2011-08-21",
+   "left": "2016-06-16",
+   "uncertainEnd": false
+  },
+  "former-nogi-cd76c13b0a95": {
+   "joined": "2011-08-21",
+   "left": "2017-02-20",
+   "uncertainEnd": false
+  },
+  "former-nogi-6bdd92729aba": {
+   "joined": "2011-08-21",
+   "left": "2017-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-387651e1f1f3": {
+   "joined": "2011-08-21",
+   "left": "2017-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-af280c1e3329": {
+   "joined": "2011-08-21",
+   "left": "2018-03-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-ec846819b4dc": {
+   "joined": "2011-08-21",
+   "left": "2018-05-06",
+   "uncertainEnd": false
+  },
+  "former-nogi-a91d15a8143f": {
+   "joined": "2011-08-21",
+   "left": "2018-07-16",
+   "uncertainEnd": false
+  },
+  "former-nogi-d2e98b7d1453": {
+   "joined": "2011-08-21",
+   "left": "2018-11-30",
+   "uncertainEnd": false
+  },
+  "former-nogi-91c1e560bd0c": {
+   "joined": "2011-08-21",
+   "left": "2018-12-15",
+   "uncertainEnd": false
+  },
+  "former-nogi-b486f7b65976": {
+   "joined": "2011-08-21",
+   "left": "2018-12-20",
+   "uncertainEnd": false
+  },
+  "former-nogi-b3868f9681f0": {
+   "joined": "2011-08-21",
+   "left": "2018-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-b5124e1ccfc7": {
+   "joined": "2011-08-21",
+   "left": "2019-03-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-dfdb24423a02": {
+   "joined": "2011-08-21",
+   "left": "2019-06-30",
+   "uncertainEnd": false
+  },
+  "former-nogi-429ace74c49f": {
+   "joined": "2011-08-21",
+   "left": "2019-09-01",
+   "uncertainEnd": false
+  },
+  "former-nogi-c4d91bbf2ee0": {
+   "joined": "2011-08-21",
+   "left": "2020-04-27",
+   "uncertainEnd": false
+  },
+  "former-nogi-1f4dc4198b5b": {
+   "joined": "2011-08-21",
+   "left": "2020-10-25",
+   "uncertainEnd": false
+  },
+  "former-nogi-d8810b897e63": {
+   "joined": "2011-08-21",
+   "left": "2020-10-28",
+   "uncertainEnd": false
+  },
+  "former-nogi-542dc2d4acae": {
+   "joined": "2011-08-21",
+   "left": "2021-07-13",
+   "uncertainEnd": false
+  },
+  "former-nogi-56dcad326bb1": {
+   "joined": "2011-08-21",
+   "left": "2021-11-21",
+   "uncertainEnd": false
+  },
+  "former-nogi-a2c3ff311cd4": {
+   "joined": "2011-08-21",
+   "left": "2021-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-cc26cfa3c72a": {
+   "joined": "2011-08-21",
+   "left": "2022-02-12",
+   "uncertainEnd": false
+  },
+  "former-nogi-1489a2ec776d": {
+   "joined": "2011-08-21",
+   "left": "2022-10-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-bfc38777ffa8": {
+   "joined": "2011-08-21",
+   "left": "2022-12-04",
+   "uncertainEnd": false
+  },
+  "former-nogi-dbe7bc9a1af1": {
+   "joined": "2011-08-21",
+   "left": "2022-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-b968c0aa4ab0": {
+   "joined": "2011-08-21",
+   "left": "2023-02-26",
+   "uncertainEnd": false
+  },
+  "former-nogi-1eafb9319a37": {
+   "joined": "2013-03-28",
+   "left": "2014-03-22",
+   "uncertainEnd": false
+  },
+  "former-nogi-dd58e9cd4b1c": {
+   "joined": "2013-03-28",
+   "left": "2014-10-18",
+   "uncertainEnd": false
+  },
+  "former-nogi-538e0447f12b": {
+   "joined": "2013-03-28",
+   "left": "2014-10-18",
+   "uncertainEnd": false
+  },
+  "former-nogi-c7aa525c2f48": {
+   "joined": "2013-03-28",
+   "left": "2018-07-16",
+   "uncertainEnd": false
+  },
+  "former-nogi-02f568c23b93": {
+   "joined": "2013-03-28",
+   "left": "2019-05-24",
+   "uncertainEnd": false
+  },
+  "former-nogi-91f47e2cc34b": {
+   "joined": "2013-03-28",
+   "left": "2020-03-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-c88bb8c60190": {
+   "joined": "2013-03-28",
+   "left": "2021-03-28",
+   "uncertainEnd": false
+  },
+  "former-nogi-8ac1d616e63f": {
+   "joined": "2013-03-28",
+   "left": "2021-08-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-1679899862e0": {
+   "joined": "2013-03-28",
+   "left": "2021-08-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-7e71e2f15643": {
+   "joined": "2013-03-28",
+   "left": "2021-12-12",
+   "uncertainEnd": false
+  },
+  "former-nogi-d60992e0085d": {
+   "joined": "2013-03-28",
+   "left": "2022-02-10",
+   "uncertainEnd": false
+  },
+  "former-nogi-a6b1a04f1f15": {
+   "joined": "2013-03-28",
+   "left": "2022-04-30",
+   "uncertainEnd": false
+  },
+  "former-nogi-4715f561bcc5": {
+   "joined": "2013-03-28",
+   "left": "2022-07-17",
+   "uncertainEnd": false
+  },
+  "former-nogi-e7c3e9e2be08": {
+   "joined": "2013-03-28",
+   "left": "2023-03-28",
+   "uncertainEnd": false
+  },
+  "former-nogi-136b0cd88780": {
+   "joined": "2016-09-04",
+   "left": "2021-09-04",
+   "uncertainEnd": false
+  },
+  "former-nogi-a590d22bf861": {
+   "joined": "2016-09-04",
+   "left": "2024-05-12",
+   "uncertainEnd": false
+  },
+  "former-nogi-629ff3ae47e9": {
+   "joined": "2016-09-04",
+   "left": "2024-07-15",
+   "uncertainEnd": false
+  },
+  "former-nogi-29a76b4242c4": {
+   "joined": "2016-09-04",
+   "left": "2024-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-fb5390014667": {
+   "joined": "2016-09-04",
+   "left": "2025-02-23",
+   "uncertainEnd": false
+  },
+  "former-nogi-d0f0b7534db6": {
+   "joined": "2016-09-04",
+   "left": "2025-05-06",
+   "uncertainEnd": false
+  },
+  "former-nogi-9faa75827532": {
+   "joined": "2016-09-04",
+   "left": "2025-06-26",
+   "uncertainEnd": false
+  },
+  "former-nogi-135a30e42071": {
+   "joined": "2016-09-04",
+   "left": "2025-11-27",
+   "uncertainEnd": false
+  },
+  "former-nogi-3faf491ca06f": {
+   "joined": "2016-09-04",
+   "left": "2026-05-21",
+   "uncertainEnd": false
+  },
+  "former-nogi-e12a0b9434b9": {
+   "joined": "2016-09-04",
+   "left": "2026-08-09",
+   "uncertainEnd": false
+  },
+  "former-nogi-3440e7a4b5ac": {
+   "joined": "2018-11-29",
+   "left": "2023-06-30",
+   "uncertainEnd": false
+  },
+  "former-nogi-be2e629a0f61": {
+   "joined": "2018-11-29",
+   "left": "2023-08-24",
+   "uncertainEnd": false
+  },
+  "former-nogi-b1545a1be8b3": {
+   "joined": "2018-11-29",
+   "left": "2024-07-17",
+   "uncertainEnd": false
+  },
+  "former-nogi-51f895b1a1d0": {
+   "joined": "2018-11-29",
+   "left": "2024-08-19",
+   "uncertainEnd": false
+  },
+  "former-nogi-a08bf779c7a3": {
+   "joined": "2020-02-16",
+   "left": "2025-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-bca765776961": {
+   "joined": "2018-11-29",
+   "left": "2025-12-31",
+   "uncertainEnd": false
+  },
+  "former-nogi-728e6640a2b3": {
+   "joined": "2020-02-16",
+   "left": "2026-05-02",
+   "uncertainEnd": false
+  },
+  "former-nogi-0fd2f3fc01bd": {
+   "joined": "2014-02-24",
+   "left": "2015-05-14",
+   "uncertainEnd": false
+  },
+  "former-sakura-213987e17283": {
+   "joined": "2015-08-21",
+   "left": "2020-01-23",
+   "uncertainEnd": false
+  },
+  "former-sakura-5c888fe78d22": {
+   "joined": "2015-08-21",
+   "left": "2015-08-21",
+   "uncertainEnd": false
+  },
+  "former-sakura-d347048ed9fe": {
+   "joined": "2015-08-21",
+   "left": "2018-12-22",
+   "uncertainEnd": false
+  },
+  "former-sakura-d10ea32677fa": {
+   "joined": "2015-08-21",
+   "left": "2018-11-16",
+   "uncertainEnd": false
+  },
+  "former-sakura-935f9e695657": {
+   "joined": "2015-08-21",
+   "left": "2018-11-04",
+   "uncertainEnd": false
+  },
+  "former-sakura-3ad6f10c5dc9": {
+   "joined": "2015-08-21",
+   "left": "2020-01-23",
+   "uncertainEnd": false
+  },
+  "former-sakura-b1d2cb67d2c8": {
+   "joined": "2015-08-21",
+   "left": "2015-11-11",
+   "uncertainEnd": false
+  },
+  "former-sakura-640419303cce": {
+   "joined": "2015-08-21",
+   "left": "2020-01-23",
+   "uncertainEnd": false
+  },
+  "former-sakura-1d3340d4d901": {
+   "joined": "2015-08-21",
+   "left": "2020-09-30",
+   "uncertainEnd": false
+  },
+  "former-sakura-f04d9b1c6917": {
+   "joined": "2015-08-21",
+   "left": "2020-03-31",
+   "uncertainEnd": false
+  },
+  "former-sakura-d2267020d634": {
+   "joined": "2015-08-21",
+   "left": "2020-10-13",
+   "uncertainEnd": false
+  },
+  "former-sakura-77264eece14f": {
+   "joined": "2015-11-30",
+   "left": "2019-07-30",
+   "uncertainEnd": false
+  },
+  "former-sakura-fe38228f09ec": {
+   "joined": "2015-08-21",
+   "left": "2021-12-19",
+   "uncertainEnd": false
+  },
+  "former-sakura-b2db1bef207a": {
+   "joined": "2015-08-21",
+   "left": "2021-12-19",
+   "uncertainEnd": false
+  },
+  "former-sakura-e4246795f6f6": {
+   "joined": "2015-08-21",
+   "left": "2022-05-22",
+   "uncertainEnd": false
+  },
+  "former-sakura-d02c1d335b3c": {
+   "joined": "2015-08-21",
+   "left": "2022-06-11",
+   "uncertainEnd": false
+  },
+  "former-sakura-3061efdd35bc": {
+   "joined": "2015-08-21",
+   "left": "2022-09-11",
+   "uncertainEnd": false
+  },
+  "former-sakura-8750bff871ad": {
+   "joined": "2015-08-21",
+   "left": "2022-11-09",
+   "uncertainEnd": false
+  },
+  "former-sakura-5d98e334888e": {
+   "joined": "2015-08-21",
+   "left": "2023-11-25",
+   "uncertainEnd": false
+  },
+  "former-sakura-4eb6ce4989b3": {
+   "joined": "2015-08-21",
+   "left": "2024-02-01",
+   "uncertainEnd": false
+  },
+  "former-sakura-7d168e1d4e55": {
+   "joined": "2015-08-21",
+   "left": "2025-01-13",
+   "uncertainEnd": false
+  },
+  "former-sakura-7ff3616f19e8": {
+   "joined": "2015-08-21",
+   "left": "2025-02-16",
+   "uncertainEnd": false
+  },
+  "former-sakura-e56b1ee58fed": {
+   "joined": "2015-08-21",
+   "left": "2025-05-30",
+   "uncertainEnd": false
+  },
+  "former-sakura-678b8a98d2c5": {
+   "joined": "2018-11-29",
+   "left": "2021-03-14",
+   "uncertainEnd": false
+  },
+  "former-sakura-30cb6a8bfdc5": {
+   "joined": "2018-11-29",
+   "left": "2023-04-30",
+   "uncertainEnd": false
+  },
+  "former-sakura-1a06b0a1146a": {
+   "joined": "2018-11-29",
+   "left": "2026-02-11",
+   "uncertainEnd": false
+  },
+  "former-sakura-57777ccd54cc": {
+   "joined": "2018-11-29",
+   "left": "2026-05-31",
+   "uncertainEnd": false
+  },
+  "former-hinata-c0e939692453": {
+   "joined": "2016-05-08",
+   "left": "2019-08-11",
+   "uncertainEnd": false
+  },
+  "former-hinata-0c02d842e4a5": {
+   "joined": "2016-05-08",
+   "left": "2020-03-29",
+   "uncertainEnd": false
+  },
+  "former-hinata-8d44064d3561": {
+   "joined": "2016-05-08",
+   "left": "2023-07-23",
+   "uncertainEnd": false
+  },
+  "former-hinata-b5755345ab70": {
+   "joined": "2016-05-08",
+   "left": "2023-12-31",
+   "uncertainEnd": false
+  },
+  "former-hinata-e5900e5fe5b4": {
+   "joined": "2016-05-08",
+   "left": "2024-04-05",
+   "uncertainEnd": false
+  },
+  "former-hinata-3992d2c73fea": {
+   "joined": "2016-05-08",
+   "left": "2024-07-31",
+   "uncertainEnd": false
+  },
+  "former-hinata-bbb6d412b68f": {
+   "joined": "2016-05-08",
+   "left": "2024-12-25",
+   "uncertainEnd": false
+  },
+  "former-hinata-8ac8ac0f9b41": {
+   "joined": "2016-05-08",
+   "left": "2025-01-25",
+   "uncertainEnd": false
+  },
+  "former-hinata-fa23fcaa4eb0": {
+   "joined": "2016-05-08",
+   "left": "2025-04-05",
+   "uncertainEnd": false
+  },
+  "former-hinata-97d26072d77c": {
+   "joined": "2016-05-08",
+   "left": "2025-04-06",
+   "uncertainEnd": false
+  },
+  "former-hinata-ccccd4a22f34": {
+   "joined": "2016-05-08",
+   "left": "2025-05-25",
+   "uncertainEnd": false
+  },
+  "former-hinata-bc6cf38b16d0": {
+   "joined": "2017-08-13",
+   "left": "2022-07-31",
+   "uncertainEnd": false
+  },
+  "former-hinata-ee97c13d0dd6": {
+   "joined": "2017-08-13",
+   "left": "2022-12-18",
+   "uncertainEnd": false
+  },
+  "former-hinata-73d9c9621af7": {
+   "joined": "2017-08-13",
+   "left": "2024-12-05",
+   "uncertainEnd": false
+  },
+  "former-hinata-bb3e5e457157": {
+   "joined": "2017-08-13",
+   "left": "2025-01-29",
+   "uncertainEnd": false
+  },
+  "former-hinata-62711665bde9": {
+   "joined": "2017-08-13",
+   "left": "2025-08-05",
+   "uncertainEnd": false
+  },
+  "former-hinata-c3a290ef0130": {
+   "joined": "2017-08-13",
+   "left": "2025-11-23",
+   "uncertainEnd": false
+  },
+  "former-hinata-28e67720f188": {
+   "joined": "2017-08-13",
+   "left": "2026-02-28",
+   "uncertainEnd": false
+  },
+  "former-hinata-a3da4b5124be": {
+   "joined": "2022-09-21",
+   "left": "2023-12-07",
+   "uncertainEnd": false
+  }
+ }
+}
