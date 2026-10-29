@@ -1,0 +1,55 @@
+name: daily-update
+
+# 毎朝07:23(JST)に Sakamichi Universe の公開データ同期・ブログ全メンバー新着確認・
+# 過去分バックフィル（120ページ分）を実行し、変更があれば自動デプロイする
+on:
+  schedule:
+    - cron: '23 22 * * *' # 22:23 UTC = 07:23 JST
+  workflow_dispatch:
+
+concurrency:
+  group: sakamichia-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run daily update
+        env:
+          SAKAMICHIA_NO_ZIP: '1'
+        run: python3 tools/update_from_universe.py
+
+      - name: Commit data updates
+        id: commit
+        run: |
+          git config user.name 'sakamichia-bot'
+          git config user.email 'actions@github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m 'data: daily update'
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy to Cloudflare Pages
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          mkdir -p /tmp/site
+          rsync -a --exclude tools --exclude .git --exclude .github ./ /tmp/site/
+          npx --yes wrangler@3 pages deploy /tmp/site --project-name=sakamichia --branch=main

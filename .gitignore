@@ -1,0 +1,7 @@
+tools/*.log
+tools/*.out
+tools/.store.lock
+tools/.universe-cache/
+__pycache__/
+*.zip
+.DS_Store

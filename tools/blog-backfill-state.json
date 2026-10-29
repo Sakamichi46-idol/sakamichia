@@ -1,0 +1,577 @@
+{
+ "nogi": {
+  "members": {
+   "36749": {
+    "name": "伊藤理々杏",
+    "next_page": 11,
+    "done": true,
+    "empty_count": 2
+   },
+   "36750": {
+    "name": "岩本蓮加",
+    "next_page": 19,
+    "done": true,
+    "empty_count": 2
+   },
+   "40001": {
+    "name": "新4期生",
+    "next_page": 16,
+    "done": true,
+    "relay": true,
+    "empty_count": 2
+   },
+   "40003": {
+    "name": "運営スタッフ",
+    "next_page": 40,
+    "done": true
+   },
+   "40004": {
+    "name": "３期生",
+    "next_page": 9,
+    "done": true,
+    "relay": true,
+    "empty_count": 2
+   },
+   "40005": {
+    "name": "４期生",
+    "next_page": 21,
+    "done": true,
+    "relay": true,
+    "empty_count": 2
+   },
+   "40007": {
+    "name": "5期生",
+    "next_page": 29,
+    "done": true,
+    "relay": true,
+    "empty_count": 2
+   },
+   "40008": {
+    "name": "6期生",
+    "next_page": 19,
+    "done": true,
+    "relay": true,
+    "empty_count": 2
+   },
+   "48006": {
+    "name": "遠藤さくら",
+    "next_page": 11,
+    "done": true,
+    "empty_count": 2
+   },
+   "48008": {
+    "name": "賀喜遥香",
+    "next_page": 12,
+    "done": true,
+    "empty_count": 2
+   },
+   "48010": {
+    "name": "金川紗耶",
+    "next_page": 19,
+    "done": true,
+    "empty_count": 2
+   },
+   "48013": {
+    "name": "柴田柚菜",
+    "next_page": 21,
+    "done": true,
+    "empty_count": 2
+   },
+   "48015": {
+    "name": "田村真佑",
+    "next_page": 2,
+    "done": false,
+    "empty_count": 0
+   },
+   "48017": {
+    "name": "筒井あやめ",
+    "next_page": 1,
+    "done": false
+   },
+   "55383": {
+    "name": "黒見明香",
+    "next_page": 1,
+    "done": false
+   },
+   "55385": {
+    "name": "林瑠奈",
+    "next_page": 1,
+    "done": false
+   },
+   "55387": {
+    "name": "弓木奈於",
+    "next_page": 1,
+    "done": false
+   },
+   "55389": {
+    "name": "井上和",
+    "next_page": 1,
+    "done": false
+   },
+   "55390": {
+    "name": "一ノ瀬美空",
+    "next_page": 1,
+    "done": false
+   },
+   "55391": {
+    "name": "菅原咲月",
+    "next_page": 1,
+    "done": false
+   },
+   "55392": {
+    "name": "小川彩",
+    "next_page": 1,
+    "done": false
+   },
+   "55393": {
+    "name": "冨里奈央",
+    "next_page": 1,
+    "done": false
+   },
+   "55394": {
+    "name": "奥田いろは",
+    "next_page": 1,
+    "done": false
+   },
+   "55395": {
+    "name": "中西アルノ",
+    "next_page": 1,
+    "done": false
+   },
+   "55396": {
+    "name": "五百城茉央",
+    "next_page": 1,
+    "done": false
+   },
+   "55397": {
+    "name": "池田瑛紗",
+    "next_page": 1,
+    "done": false
+   },
+   "55400": {
+    "name": "川﨑桜",
+    "next_page": 1,
+    "done": false
+   },
+   "55401": {
+    "name": "岡本姫奈",
+    "next_page": 1,
+    "done": false
+   },
+   "63101": {
+    "name": "愛宕心響",
+    "next_page": 1,
+    "done": false
+   },
+   "63102": {
+    "name": "大越ひなの",
+    "next_page": 1,
+    "done": false
+   },
+   "63103": {
+    "name": "小津玲奈",
+    "next_page": 1,
+    "done": false
+   },
+   "63104": {
+    "name": "海邉朱莉",
+    "next_page": 1,
+    "done": false
+   },
+   "63105": {
+    "name": "川端晃菜",
+    "next_page": 1,
+    "done": false
+   },
+   "63106": {
+    "name": "鈴木佑捺",
+    "next_page": 1,
+    "done": false
+   },
+   "63107": {
+    "name": "瀬戸口心月",
+    "next_page": 1,
+    "done": false
+   },
+   "63108": {
+    "name": "長嶋凛桜",
+    "next_page": 1,
+    "done": false
+   },
+   "63109": {
+    "name": "増田三莉音",
+    "next_page": 1,
+    "done": false
+   },
+   "63110": {
+    "name": "森平麗心",
+    "next_page": 1,
+    "done": false
+   },
+   "63111": {
+    "name": "矢田萌華",
+    "next_page": 1,
+    "done": false
+   }
+  },
+  "seeded": true,
+  "seeded_count": 39
+ },
+ "saku": {
+  "members": {
+   "06": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "46": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "47": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "48": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "50": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "51": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "53": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "54": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "55": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "56": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "57": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "58": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "59": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "60": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "61": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "62": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "63": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "64": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "65": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "66": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "67": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "68": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "69": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "70": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "71": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "72": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "73": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "74": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "75": {
+    "name": "",
+    "next_page": 2,
+    "done": false,
+    "empty_count": 1
+   },
+   "76": {
+    "name": "",
+    "next_page": 1,
+    "done": false
+   },
+   "77": {
+    "name": "",
+    "next_page": 1,
+    "done": false
+   },
+   "78": {
+    "name": "",
+    "next_page": 1,
+    "done": false
+   }
+  },
+  "seeded": true,
+  "seeded_count": 32
+ },
+ "hina": {
+  "members": {
+   "12": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "14": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "21": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "22": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "23": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "25": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "27": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "28": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "29": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "30": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "31": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "32": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "33": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "34": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "35": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "36": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "37": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "38": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "39": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "40": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "41": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "42": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "43": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "44": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "45": {
+    "name": "",
+    "next_page": 1,
+    "done": false,
+    "empty_count": 0
+   },
+   "46": {
+    "name": "",
+    "next_page": 2,
+    "done": false,
+    "empty_count": 1
+   }
+  },
+  "seeded": true,
+  "seeded_count": 26
+ }
+}

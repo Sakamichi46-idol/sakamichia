@@ -1,0 +1,19 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>マイセットリスト | サカミチア</title><meta name="description" content="好きな曲とMC・アンコールを並べて、自分だけのセットリストを作れるツール。非公式ファンサイトです。"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="マイセットリスト | サカミチア"><meta property="og:description" content="好きな曲とMC・アンコールを並べて、自分だけのセットリストを作れるツール。非公式ファンサイトです。"><meta property="og:url" content="https://sakamichia.pages.dev/setlist/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../assets/css/style.css?v=24"></head>
+<body data-base="../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
+<a href="../">ホーム</a><a href="../live/">歴代ライブ</a><a href="../matome/">まとめ</a><a href="../blog/">ブログ</a><a href="../songs/">楽曲図鑑</a><a href="../games/">ミニゲーム</a><a href="./" class="on">マイセットリスト</a></nav></div></header>
+<main class="wrap"><section class="page"><h2 class="title">マイセットリスト</h2><p class="lead">楽曲の間にMC・影ナレ・アンコールも入れられます。内容はこの端末に自動保存されます。</p>
+<div class="filters"><input id="title" type="text" placeholder="セットリスト名" size="24">
+<button class="sub" id="addMC">＋ MC</button><button class="sub" id="addEncore">＋ アンコール</button><button class="sub" id="addOverture">＋ OVERTURE</button>
+<label style="align-self:center;font-size:14px"><input type="checkbox" id="hideTitles"> 曲名を隠す（クイズ用）</label></div>
+<div class="filters"><input id="q" type="search" placeholder="追加する曲を検索" size="24"><select id="group"><option value="">すべてのグループ</option><option>乃木坂46</option><option>櫻坂46</option><option>日向坂46</option><option>欅坂46</option></select></div>
+<div class="grid" id="songs"></div>
+<h3>あなたのセットリスト（<span id="n">0</span>曲）</h3>
+<div id="mine"></div>
+<p><button id="copy">テキストでコピー</button> <button class="sub" id="clear">全部消す</button></p>
+<textarea id="out" readonly placeholder="コピー結果がここに出ます"></textarea>
+</section></main>
+<footer><div class="wrap">並び替えは ↑ ↓ ボタン、保存は localStorage（自動）です。</div></footer>
+<script src="../assets/js/common.js"></script><script src="../assets/js/setlist.js"></script>
+</body></html>

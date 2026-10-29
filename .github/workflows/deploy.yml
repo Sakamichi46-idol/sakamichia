@@ -1,0 +1,27 @@
+name: deploy-site
+
+# サイトのコード変更が push されたときに Cloudflare Pages へデプロイする
+# （bot のデータコミットは GITHUB_TOKEN 経由なので、このワークフローは起動しない）
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          mkdir -p /tmp/site
+          rsync -a --exclude tools --exclude .git --exclude .github ./ /tmp/site/
+          npx --yes wrangler@3 pages deploy /tmp/site --project-name=sakamichia --branch=main
