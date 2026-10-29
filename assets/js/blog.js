@@ -47,6 +47,7 @@ async function init(){
   MEMBERS=await loadJSON("members.json");
   buildMemberOptions();
   buildGenOptions();
+  syncGroupChips();
   document.querySelectorAll(".gchip").forEach(ch=>ch.addEventListener("click",()=>{
     const g=ch.dataset.g;
     if(g==="") GSEL.clear();
@@ -144,7 +145,7 @@ function syncAdvBtn(){
   tog.textContent=`詳細検索${!open&&advActive()?"（設定中）":""} ${open?"▲":"▼"}`;
 }
 function syncChips(){
-  document.querySelectorAll(".ychip").forEach(ch=>ch.classList.toggle("on", (ch.dataset.year||null)===yearSel));
+  document.querySelectorAll("#years .ychip").forEach(ch=>ch.classList.toggle("on", (ch.dataset.year||null)===yearSel));
   syncAdvBtn();
   document.getElementById("yearHint").textContent = yearSel
     ? `${yearSel}年だけを表示中です。もう一度押すか「全期間」を押すと全期間に戻ります。`
