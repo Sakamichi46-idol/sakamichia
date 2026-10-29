@@ -91,6 +91,11 @@ async function init(){
     if(+saved.aPage>=1) apage=+saved.aPage;
     if(+saved.pPage>=1) ppage=+saved.pPage;
   }
+  const qMember=new URLSearchParams(location.search).get("member");
+  if(qMember){
+    const msel=document.getElementById("member");
+    if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
+  }
   ["q","member","from","to","sort","gen"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
     const el=document.getElementById(id), iso=parseDateText(el.value);

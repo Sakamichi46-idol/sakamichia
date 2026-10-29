@@ -99,6 +99,7 @@ function openSong(i){
     }).join("")}</div>`;
     const all=f.rows.flat();
     html+=`<h4 style="margin:16px 0 4px">参加メンバー（${all.length}名）</h4><p style="line-height:2">${all.map(esc).join("、")}</p>`;
+    html+=`<p style="margin-top:14px"><button type="button" id="dlgEditFormation">このフォーメーションを編集する</button></p>`;
   } else if(f && f.vocal && f.vocal.length){
     html+=`<h4 style="margin:16px 0 4px">歌唱メンバー（${f.vocal.length}名）</h4><p style="line-height:2">${f.vocal.map(esc).join("、")}</p>`;
   } else if(f && f.note){
@@ -111,6 +112,13 @@ function openSong(i){
   document.getElementById("dlgBody").innerHTML=html;
   dlg.showModal();
   fitFormation();
+  const eb=document.getElementById("dlgEditFormation");
+  if(eb) eb.addEventListener("click",()=>{
+    const rows=[...f.rows].reverse();   // 作成ページは最前列（1列目）から順に持つ
+    const st={title:s.title, rows:rows.map(r=>r.length), showCenter:true, positions:rows.flat()};
+    try{ localStorage.setItem("sakamichia-formation-import", JSON.stringify(st)); }catch(e){}
+    location.href="../formation/";
+  });
 }
 init();
 function fitFormation(){

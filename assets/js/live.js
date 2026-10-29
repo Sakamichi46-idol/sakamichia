@@ -155,6 +155,11 @@ async function init(){
     for(const [id,v] of Object.entries(idx)) SEXTRA[id]=(v.s||[]).join(" ");
     const members=await loadJSON("members.json");
     buildMemberOptions(Array.isArray(members)?members:[]);
+    const qMember=new URLSearchParams(location.search).get("member");
+    if(qMember){
+      const msel=document.getElementById("member");
+      if([...msel.options].some(o=>o.value===qMember)) msel.value=qMember;
+    }
     render();
   }).catch(()=>{});
 }

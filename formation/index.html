@@ -1,0 +1,37 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>フォーメーション作成 | サカミチア</title><meta name="description" content="坂道グループのメンバー写真を選んで、自由にフォーメーションを組める非公式ファンサイトです。画像として保存・共有もできます。"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="フォーメーション作成 | サカミチア"><meta property="og:description" content="坂道グループのメンバー写真を選んで、自由にフォーメーションを組める非公式ファンサイトです。"><meta property="og:url" content="https://sakamichia.pages.dev/formation/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../assets/css/style.css?v=30"></head>
+<body data-base="../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
+<a href="../">ホーム</a><a href="../live/">歴代ライブ</a><a href="../matome/">まとめ</a><a href="../blog/">ブログ</a><a href="../songs/">楽曲図鑑</a><a href="../members/">メンバー</a><a href="../games/">ミニゲーム</a><a href="../setlist/">マイセットリスト</a><a href="./" class="on">フォーメーション作成</a></nav></div></header>
+<main class="wrap"><section class="page"><h2 class="title">フォーメーション作成</h2><p class="lead">メンバーを選んで、好きな場所に並べよう。下の段が最前列（1列目）です。配置はこの端末に自動保存されます。</p>
+
+<div class="card fm-settings">
+<h3>01 / フォーメーション設定</h3>
+<div class="fm-setrow"><label>列数 <select id="fmCols"><option value="1">1列</option><option value="2">2列</option><option value="3">3列</option><option value="4">4列</option><option value="5">5列</option></select></label><span>編成人数 <b id="fmTotal">18人</b></span><label><input type="checkbox" id="fmCenter" checked> センター位置を表示する</label></div>
+<div id="fmRowCounts" class="fm-rowcounts"></div>
+<p class="fm-note">列数や人数を変更すると、現在の配置は初期化されます。</p>
+</div>
+
+<div class="card fm-boardcard">
+<h3>02 / 配置</h3>
+<div class="fm-boardhead"><input id="fmTitle" type="text" maxlength="40" aria-label="フォーメーション名"><span id="fmPlaced">0 / 18人</span></div>
+<div id="fmBoard"></div>
+<div class="fm-actions"><button type="button" id="fmUndo" class="ms-small">↶ 元に戻す</button><button type="button" id="fmUnplace" class="ms-small">選択した配置を解除</button><button type="button" id="fmClear" class="ms-small">配置を全て外す</button><button type="button" id="fmReset" class="ms-small">最初から</button></div>
+<p class="fm-note">枠をタップして選んでからメンバーをタップすると、その枠に置けます。配置済みのメンバー同士は、タップで入れ替えもできます（PC・iPadではドラッグでも移動できます）。</p>
+<div class="fm-actions"><button type="button" id="fmExport">画像を保存・共有</button></div>
+</div>
+
+<div class="card fm-members">
+<h3>03 / メンバーを選ぶ</h3>
+<p class="fm-note">配置したメンバーは候補から消えます。<span id="fmCandCount"></span></p>
+<div class="fm-filters"><input id="fmQuery" type="search" placeholder="名前・よみがなで検索" aria-label="メンバー検索"><select id="fmStatus" aria-label="活動状況"><option value="all">全員</option><option value="active">現役</option><option value="grad">卒業・活動終了</option></select><select id="fmGen" aria-label="期生"><option value="all">すべての期</option></select></div>
+<div class="ychips" id="fmGroups"></div>
+<div id="fmCandidates" class="fm-cands"></div>
+</div>
+
+<p class="fm-note">メンバーの写真は <a href="https://n46db.com/" target="_blank" rel="noopener"><u>n46db.com</u></a> を参考に取り込んでいます。</p>
+</section></main>
+<footer><div class="wrap">作成内容はこの端末の中だけに保存されます。坂道ファンによる非公式サイトです。</div></footer>
+<dialog id="fmDlg"><div id="fmDlgBody"></div><div class="dlg-actions"><button type="button" id="fmShare">共有する</button><button type="button" id="fmDownload">ダウンロード</button><button type="button" onclick="document.getElementById('fmDlg').close()">閉じる</button></div></dialog>
+<script src="../assets/js/common.js"></script><script src="../assets/js/formation.js"></script>
+</body></html>
