@@ -43,14 +43,19 @@ async function openLive(id){
       if(!segs.length || segs[segs.length-1].sec!==s.sec) segs.push({sec:s.sec, items:[]});
       segs[segs.length-1].items.push(s);
     }
-    html+=segs.map(seg=>`<h4 style="margin:16px 0 4px">${SECNAME[seg.sec]||"本編"}</h4><ol class="setlist">${seg.items.map(s=>
-      `<li><div>${esc(s.title)}${s.center?` <span class="tag">センター：${esc(s.center)}</span>`:""}</div>${s.perf?`<div class="perf">出演：${esc(s.perf.join("、"))}</div>`:""}${s.remark?`<div class="cmt">${esc(s.remark)}</div>`:""}</li>`).join("")}</ol>`).join("");
+    html+=segs.map(seg=>`<h4 style="margin:16px 0 4px">${SECNAME[seg.sec]||"本編"}</h4><div class="setlist">${seg.items.map((s,i)=>
+      `<div class="srow"><span class="sno">${i+1}</span><div class="smain"><div class="stitle">${esc(s.title)}</div>${s.remark?`<div class="sremark">${esc(s.remark)}</div>`:""}</div>${(s.center||s.perf)?`<div class="scredits">${s.center?`<div class="sc-center">センター：${esc(s.center)}</div>`:""}${s.perf?`<div>出演：${esc(s.perf.join("、"))}</div>`:""}</div>`:""}</div>`).join("")}</div>`).join("");
     html+=`<p style="margin-top:18px"><button type="button" id="saveSetlistImg">このセットリストを画像で保存</button></p><p id="saveImgMsg" style="color:var(--muted);font-size:12px"></p>`;
   } else {
     html+=`<p>セットリストはまだ登録されていません。</p>`;
   }
   if(d.ref) html+=`<p style="font-size:13px"><a href="${esc(d.ref)}" target="_blank" rel="noopener">出典・参考ページ</a></p>`;
   body.innerHTML=html;
+  // 名前（クレジット）が右カラムで3行を超える行は、読みやすいよう曲名の下に回す（旧サイトの画像出力と同じ考え方）
+  body.querySelectorAll(".srow").forEach(row=>{
+    const cr=row.querySelector(".scredits");
+    if(cr && cr.offsetHeight>66) row.classList.add("stacked");
+  });
   const saveBtn=document.getElementById("saveSetlistImg");
   if(saveBtn) saveBtn.addEventListener("click", async ()=>{
     const msg=document.getElementById("saveImgMsg");
