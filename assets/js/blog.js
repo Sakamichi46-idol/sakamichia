@@ -53,9 +53,9 @@ async function init(){
   await loadYear(latest);
   if(yearSel) await loadYear(yearSel);
   syncChips();
-  // 全期間が対象なので、残りの年も裏で読み込んで順次反映する
+  // 全期間が対象なので、残りの年も裏で読み込む（点滅を避けるため、途中で再描画せず最後に1回だけ反映する）
   (async()=>{ loadingYears=true; syncChips();
-    for(const y of years){ if(!YEARS[y]){ await loadYear(y); render(); } }
+    for(const y of years){ if(!YEARS[y]){ await loadYear(y); } }
     loadingYears=false; syncChips(); render();
   })();
   if(saved){
