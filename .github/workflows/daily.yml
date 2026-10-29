@@ -30,6 +30,9 @@ jobs:
           SAKAMICHIA_NO_ZIP: '1'
         run: python3 tools/update_from_universe.py
 
+      - name: Pack blog bodies into shards
+        run: python3 tools/pack_bodies.py
+
       - name: Commit data updates
         id: commit
         run: |

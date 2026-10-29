@@ -547,6 +547,22 @@ function openLightbox(list, idx, metas){
   lbSetDrag(0);
   lbRender();
 }
+// 本文は配信用シャード（data/bodies-pack/<h3>.json）から読む。h3 は tools/pack_bodies.py の shard_of と一致
+function bodyShard(id){
+  let h=0x811c9dc5;
+  for(let i=0;i<id.length;i++){h^=id.charCodeAt(i);h=Math.imul(h,0x01000193);}
+  h^=h>>>16;h=Math.imul(h,0x85ebca6b);h^=h>>>13;h=Math.imul(h,0xc2b2ae35);h^=h>>>16;
+  return (h&0xfff).toString(16).padStart(3,"0");
+}
+const SHARD_CACHE={};
+async function loadBody(id){
+  const sh=bodyShard(id);
+  if(!(sh in SHARD_CACHE)){
+    SHARD_CACHE[sh]=fetch(BASE+"data/bodies-pack/"+sh+".json").then(r=>r.ok?r.json():{}).catch(()=>({}));
+  }
+  const pack=await SHARD_CACHE[sh];
+  return pack[id]||null;
+}
 async function openBlog(id){
   const b=pool().find(x=>x.id===id); if(!b) return;
   const body=document.getElementById("dlgBody");
@@ -557,9 +573,8 @@ async function openBlog(id){
   let photos=[];
   if(b.body){
     try{
-      const r=await fetch(BASE+"data/bodies/"+encodeURIComponent(id)+".json");
-      if(r.ok){
-        const d=await r.json();
+      const d=await loadBody(id);
+      if(d){
         photos=(d.blocks||[]).filter(x=>x.type==="image").map(x=>x.src);
         html+=`<div class="blog-body">${(d.blocks||[]).map(x=>{
           if(x.type==="paragraph") return `<p>${esc(x.text||"").replace(/\n/g,"<br>")}</p>`;
