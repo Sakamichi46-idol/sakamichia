@@ -11,6 +11,8 @@ header.site{position:sticky;top:0;z-index:20;background:rgba(250,249,251,.92);ba
 .searchbox{display:flex;gap:8px;max-width:680px;margin:22px auto 0}.searchbox input{flex:1;padding:14px 16px;border:2px solid var(--line);border-radius:999px;font-size:16px;background:#fff}
 button,.btn{border:0;background:var(--page);color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;cursor:pointer;font-size:15px}
 button.sub,.btn.sub{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card-actions .btn,.card-actions button{padding:8px 14px;font-size:13px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:18px 0 40px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 4px 14px rgba(120,80,40,.05)}
 .card h3{margin:6px 0 8px;font-size:17px;line-height:1.5}.card p{color:var(--muted);font-size:14px;line-height:1.7;margin:6px 0}

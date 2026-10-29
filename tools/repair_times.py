@@ -123,7 +123,7 @@ def main():
     log('phase C targets:', len(targets))
     done = 0
     for b in targets:
-        got, tm = bf.extract_detail(b['url'], b['date'])
+        got, tm, _blocks = bf.extract_detail(b['url'], b['date'])
         if tm:
             b['time'] = tm
             dirty.add(b['date'][:4])

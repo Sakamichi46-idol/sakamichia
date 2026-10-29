@@ -2,7 +2,7 @@ let INDEX=null; const YEARS={}; const IMGS={};
 let MEMBERS=[]; let VIEW="articles"; let WALL=[]; const WPHOTO=96;
 let yearSel=null; let loadingYears=false; let apage=1, ppage=1; let ROWS=[];
 let MEDIA=""; const GENMAP={};
-function photoN(b){ return b.body?(b.media||0):(b.imgn||0); }
+function photoN(b){ return (b.media||0)||(b.imgn||0); }
 function dtVal(b){ return b.date+"T"+(b.time||"00:00"); }
 function dateTime(b){ return b.date+(b.time?" "+b.time:""); }
 function resetPages(){ apage=1; ppage=1; }
@@ -197,7 +197,7 @@ function cardHTML(b){
   const badges=[nphoto?`<span class="badge">写真${nphoto}枚</span>`:"", b.body?`<span class="badge">本文あり</span>`:""].join("");
   return `<div class="card blog-card">${thumbHTML(b)}${groupChip(b.group)}
     <h3 data-open="${b.id}">${esc(b.title)}${badges}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p>
-    <p><button data-open="${b.id}">記事を見る</button></p></div>`;
+    <p class="card-actions"><button data-open="${b.id}">記事を見る</button>${b.url&&!b.urldead?`<a class="btn sub" href="${esc(b.url)}" target="_blank" rel="noopener">公式サイトへ</a>`:""}</p></div>`;
 }
 function render(){
   if(VIEW==="photos"){ renderPhotos(); return; }
@@ -536,7 +536,7 @@ async function openBlog(id){
           if(x.type==="paragraph") return `<p>${esc(x.text||"")}</p>`;
           if(x.type==="image") return `<img class="bimg" loading="lazy" src="${esc(x.src)}" alt="" data-photo="${photos.indexOf(x.src)}">`;
           return "";
-        }).join("")}</div><p style="color:var(--muted);font-size:12px">本文・写真は旧サイト『坂道日和』の保存データです。</p>`;
+        }).join("")}</div><p style="color:var(--muted);font-size:12px">${d.source==="official"?"本文は公式ブログから取り込んだものです。":"本文・写真は旧サイト『坂道日和』の保存データです。"}</p>`;
       }
     }catch(e){}
   }

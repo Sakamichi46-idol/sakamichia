@@ -41,7 +41,7 @@ RELAY_WINDOWS = [
     ('櫻坂46', '櫻坂46三期生リレーブログ', None, 3, '2023-03-07', '2023-10-06'),
     ('櫻坂46', '櫻坂46四期生リレーブログ', None, 4, '2025-06-16', '2025-09-30'),
     ('欅坂46', '欅坂46新二期生リレーブログ',
-     {'遠藤光莉', '大園玲', '大沼晶保', '幸阪茉里乃', '増本綺良', '守屋麗奈'}, None, '2020-04-06', '2020-10-13'),
+     {'遠藤光莉', '大園玲', '大沼晶保', '幸阪茉里乃', '増本綺良', '守屋麗奈'}, None, '2020-04-06', '2020-06-28'),
     ('日向坂46', '日向坂46新三期生リレーブログ',
      {'髙橋未来虹', '森本茉莉', '山口陽世'}, None, '2020-04-06', '2020-06-28'),
     ('日向坂46', '日向坂46四期生リレーブログ', None, 4, '2022-10-26', '2023-08-09'),
@@ -171,6 +171,7 @@ def hina_page(ct, page):
         for u in re.findall(r'<img src="(https://[^"]+moblog[^"]+)"', b):
             if u not in imgs:
                 imgs.append(u)
+        url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'
         posts.append({
             'detail': dm.group(1),
             'title': re.sub(r'<[^>]+>', '', tm.group(1)).strip(),
@@ -179,7 +180,8 @@ def hina_page(ct, page):
             'thumb': imgs[0] if imgs else None,
             'time': f'{int(dtm.group(4)):02d}:{dtm.group(5)}' if dtm.group(4) else None,
             'imgs': imgs,
-            'url': f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}',
+            'url': url,
+            'blocks': extract_body_blocks(url, b),
         })
     return posts
 
@@ -245,9 +247,123 @@ def detail_datetime(html, want_date=None):
 def extract_detail(url, want_date=None):
     try:
         html = fetch(url)
-        return extract_imgs_scoped(url, html), detail_datetime(html, want_date)
+        return extract_imgs_scoped(url, html), detail_datetime(html, want_date), extract_body_blocks(url, html)
     except Exception:
-        return [], None
+        return [], None, []
+
+
+# ---------- 本文の抽出と保存 ----------
+# 本文は公式記事ページの本文コンテナから blocks 形式（paragraph/break/image）で保存する。
+# 旧サイト保存分（sourceなし）とは区別し、source='official' を付ける。既存ファイルは上書きしない。
+import html as _html_lib
+from urllib.parse import urljoin as _urljoin
+
+BODIES_DIR = os.path.join(BASE, 'data', 'bodies')
+_BODY_MARKERS = (
+    ('nogizaka46.com', 'class="bd--edit"'),
+    ('sakurazaka46.com', 'class="box-article"'),
+    ('keyakizaka46.com', 'class="box-article"'),
+    ('hinatazaka46.com', 'c-blog-article__text'),
+)
+
+
+def _slice_div(html, open_idx):
+    """open_idx の <div> の内側HTMLを、divの入れ子を数えて切り出す。"""
+    gt = html.find('>', open_idx)
+    if gt < 0:
+        return ''
+    start = gt + 1
+    depth = 1
+    for m in re.finditer(r'<div\b|</div\s*>', html[start:]):
+        if m.group(0).startswith('</'):
+            depth -= 1
+            if depth == 0:
+                return html[start:start + m.start()]
+        else:
+            depth += 1
+    return html[start:]
+
+
+_IMG_TAG_RE = re.compile(r'<img[^>]+src="([^"]+)"[^>]*>', re.I)
+
+
+def html_to_blocks(inner, base_url):
+    """本文コンテナのHTMLを blocks 形式へ変換する。"""
+    imgs = []
+
+    def _sub(m):
+        imgs.append(_urljoin(base_url, m.group(1).replace('&amp;', '&')))
+        return f'\x01{len(imgs) - 1}\x01'
+
+    s = _IMG_TAG_RE.sub(_sub, inner)
+    s = re.sub(r'<br\s*/?>', '\n', s, flags=re.I)
+    s = re.sub(r'</p\s*>|<p[^>]*>', '\n\n', s, flags=re.I)
+    s = re.sub(r'<[^>]+>', '', s)
+    s = _html_lib.unescape(s)
+    blocks = []
+    pending_break = False
+    for raw in s.split('\n'):
+        parts = re.split(r'(\x01\d+\x01)', raw)
+        texts = []
+        for part in parts:
+            if part.startswith('\x01') and part.endswith('\x01') and part[1:-1].isdigit():
+                t = ''.join(texts).strip()
+                if t:
+                    if pending_break and blocks and blocks[-1]['type'] == 'paragraph':
+                        blocks.append({'type': 'break'})
+                    blocks.append({'type': 'paragraph', 'text': t})
+                    pending_break = False
+                texts = []
+                blocks.append({'type': 'image', 'src': imgs[int(part[1:-1])], 'alt': ''})
+            else:
+                texts.append(part)
+        t = ''.join(texts).strip()
+        if t:
+            if pending_break and blocks and blocks[-1]['type'] == 'paragraph':
+                blocks.append({'type': 'break'})
+            blocks.append({'type': 'paragraph', 'text': t})
+            pending_break = False
+        else:
+            pending_break = True
+    while blocks and blocks[0]['type'] == 'break':
+        blocks.pop(0)
+    while blocks and blocks[-1]['type'] == 'break':
+        blocks.pop()
+    text_len = sum(len(b.get('text', '')) for b in blocks if b['type'] == 'paragraph')
+    if text_len < 5 and not any(b['type'] == 'image' for b in blocks):
+        return []
+    return blocks
+
+
+def extract_body_blocks(url, html):
+    """詳細ページ全体（または日向坂の一覧ブロック断片）から本文 blocks を抽出する。"""
+    if not html:
+        return []
+    marker = next((mk for dom, mk in _BODY_MARKERS if dom in url), None)
+    if not marker:
+        return []
+    i = html.find(marker)
+    if i < 0:
+        return []
+    open_idx = html.rfind('<div', 0, i)
+    if open_idx < 0:
+        return []
+    return html_to_blocks(_slice_div(html, open_idx), url)
+
+
+def save_body(rec, blocks):
+    """本文ファイルが無い場合だけ保存し、rec['body'] を立てる。既存（旧サイト保存分）は守る。"""
+    if not blocks:
+        return False
+    os.makedirs(BODIES_DIR, exist_ok=True)
+    path = os.path.join(BODIES_DIR, rec['id'] + '.json')
+    if os.path.exists(path):
+        rec['body'] = True
+        return False
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump({'blocks': blocks, 'source': 'official'}, f, ensure_ascii=False)
+    rec['body'] = True
+    return True
 
 _MOBLOG_PAT = re.compile(r'(?:https://[^"\'\s<>]+)?/[^"\'\s<>]*moblog[^"\'\s<>]*\.(?:jpg|jpeg|png)', re.I)
 _PRE_PAT = re.compile(r'/files/46/_pre/blog/[^"\'\s<>]+\.(?:jpg|jpeg|png)', re.I)
@@ -388,14 +504,14 @@ def clean_relay_title(title, gen, author=''):
     return t0
 
 def relay_detail(p, gen):
-    """リレー記事の詳細を取得し、(著者名 or '', 写真リスト) を返す。"""
+    """リレー記事の詳細を取得し、(著者名 or '', 写真リスト, 時刻, 本文) を返す。"""
     try:
         html = fetch(p['url'])
     except Exception:
-        return '', [], None
+        return '', [], None, []
     author = resolve_relay_author(html, p['title'], gen)
     photos = extract_imgs_scoped(p['url'], html)
-    return author, photos, detail_datetime(html, p['date'])
+    return author, photos, detail_datetime(html, p['date']), extract_body_blocks(p['url'], html)
 
 GENERIC_AUTHOR = re.compile(r'運営スタッフ|スタッフ|研究生|.+期生')
 
@@ -446,25 +562,27 @@ def _feed_cards(site, page):
             for u in re.findall(r'<img src="(https://[^"]+moblog[^"]+)"', b):
                 if u not in imgs:
                     imgs.append(u)
+            url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'
             posts.append({'detail': dm.group(1),
                           'title': re.sub(r'<[^>]+>', '', tm.group(1)).strip(),
                           'date': f'{dtm.group(1)}-{int(dtm.group(2)):02d}-{int(dtm.group(3)):02d}',
                           'member': (nm.group(1) if nm else '').replace(' ', '').replace('　', ''),
                           'imgs': imgs,
                           'time': f'{int(dtm.group(4)):02d}:{dtm.group(5)}' if dtm.group(4) else None, 'thumb': imgs[0] if imgs else None,
-                          'url': f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'})
+                          'url': url,
+                          'blocks': extract_body_blocks(url, b)})
     return posts
 
 
 def _nogi_detail_info(url):
-    """乃木坂の詳細ページヘッダー（○○ 公式ブログ）から著者名と写真を取得する。"""
+    """乃木坂の詳細ページヘッダー（○○ 公式ブログ）から著者名と写真・本文を取得する。"""
     try:
         html = fetch(url)
     except Exception:
-        return '', [], None
+        return '', [], None, []
     m = re.search(r'MEMBER/list\?[^"]*ct=\d+">([^<]+?)\s*公式ブログ</a>', html)
     name = m.group(1).replace(' ', '').replace('　', '') if m else ''
-    return name, extract_imgs_scoped(url, html), detail_datetime(html)
+    return name, extract_imgs_scoped(url, html), detail_datetime(html), extract_body_blocks(url, html)
 
 
 def feed_newest_pass(max_pages=3):
@@ -480,7 +598,7 @@ def feed_newest_pass(max_pages=3):
             known[url_key(b['url'])] = b
     added, dirty, pages_used = [], set(), 0
 
-    def register(site, p, member, plist, series=None, title=None, tm=None):
+    def register(site, p, member, plist, series=None, title=None, tm=None, blocks=None):
         cfg = SITES[site]
         rec = {'id': f"ofc-{cfg['id_prefix']}-{p['detail']}",
                'group': cfg['group'](p['date'], member),
@@ -488,6 +606,8 @@ def feed_newest_pass(max_pages=3):
                'url': p['url'], 'media': 0, 'body': False,
                'thumb': p['thumb'] or (plist[0] if plist else None),
                'imgn': len(plist)}
+        if blocks:
+            save_body(rec, blocks)
         if tm:
             rec['time'] = tm
         if series:
@@ -517,21 +637,21 @@ def feed_newest_pass(max_pages=3):
                 if url_key(p['url']) in known:
                     continue
                 if site == 'nogi':
-                    name, plist, tm = _nogi_detail_info(p['url'])
+                    name, plist, tm, blocks = _nogi_detail_info(p['url'])
                     time.sleep(SLEEP)
                     if not name or GENERIC_AUTHOR.fullmatch(name):
                         continue
-                    register(site, p, name, plist, tm=tm)
+                    register(site, p, name, plist, tm=tm, blocks=blocks)
                 elif site == 'saku':
                     if not p['member'] or GENERIC_AUTHOR.fullmatch(p['member']):
                         continue
-                    plist, tm = extract_detail(p['url'], p['date'])
+                    plist, tm, blocks = extract_detail(p['url'], p['date'])
                     time.sleep(SLEEP)
-                    register(site, p, p['member'], plist or [], tm=tm)
+                    register(site, p, p['member'], plist or [], tm=tm, blocks=blocks)
                 else:
                     if not p['member'] or GENERIC_AUTHOR.fullmatch(p['member']):
                         continue
-                    register(site, p, p['member'], p['imgs'] or [], tm=p.get('time'))
+                    register(site, p, p['member'], p['imgs'] or [], tm=p.get('time'), blocks=p.get('blocks'))
                 new_here += 1
             if new_here == 0:
                 break
@@ -551,9 +671,9 @@ def feed_newest_pass(max_pages=3):
             if url_key(p['url']) in known:
                 continue
             sname = series_name(ms['name'])
-            author, plist, rtime = relay_detail(p, series_gen(ms['name']))
+            author, plist, rtime, blocks = relay_detail(p, series_gen(ms['name']))
             time.sleep(SLEEP)
-            register('nogi', p, author or sname, plist, series=sname, tm=rtime,
+            register('nogi', p, author or sname, plist, series=sname, tm=rtime, blocks=blocks,
                      title=clean_relay_title(p['title'], series_gen(ms['name']), author))
     if dirty:
         save_store(idx, years, imgs, dirty)
@@ -602,7 +722,7 @@ def newest_pass(max_extra_pages=3):
                         if key in known:
                             continue
                         sname = series_name(ms['name'])
-                        author, plist, rtime = relay_detail(p, series_gen(ms['name']))
+                        author, plist, rtime, blocks = relay_detail(p, series_gen(ms['name']))
                         time.sleep(SLEEP)
                         member = author or sname
                         rec = {'id': f"ofc-{cfg['id_prefix']}-{p['detail']}",
@@ -612,6 +732,8 @@ def newest_pass(max_extra_pages=3):
                                'url': p['url'], 'media': 0, 'body': False,
                                'thumb': p['thumb'] or (plist[0] if plist else None),
                                'imgn': len(plist)}
+                        if blocks:
+                            save_body(rec, blocks)
                         if rtime:
                             rec['time'] = rtime
                         y = p['date'][:4]
@@ -643,22 +765,30 @@ def newest_pass(max_extra_pages=3):
                             imgs.setdefault(yy, {})[rec['id']] = p['imgs']
                             rec['imgn'] = len(p['imgs'])
                             dirty.add(yy)
+                        if p.get('blocks') and not rec.get('body'):
+                            if save_body(rec, p['blocks']):
+                                dirty.add(rec['date'][:4])
                         continue
                     plist = p['imgs'] or []
                     tm = p.get('time')
+                    blocks = p.get('blocks')
                     if site in ('nogi', 'saku'):
-                        got, tm2 = extract_detail(p['url'], p['date'])
+                        got, tm2, blocks2 = extract_detail(p['url'], p['date'])
                         time.sleep(SLEEP)
                         if got:
                             plist = got
                         if tm2:
                             tm = tm2
+                        if blocks2:
+                            blocks = blocks2
                     rec = {'id': f"ofc-{cfg['id_prefix']}-{p['detail']}",
                            'group': cfg['group'](p['date'], author),
                            'member': author, 'date': p['date'], 'title': p['title'],
                            'url': p['url'], 'media': 0, 'body': False,
                            'thumb': p['thumb'] or (plist[0] if plist else None),
                            'imgn': len(plist)}
+                    if blocks:
+                        save_body(rec, blocks)
                     if tm:
                         rec['time'] = tm
                     y = p['date'][:4]
@@ -735,7 +865,7 @@ def run(budget_pages=120):
                         if key in known:
                             continue
                         sname = series_name(ms['name'])
-                        author, plist, rtime = relay_detail(p, series_gen(ms['name']))
+                        author, plist, rtime, blocks = relay_detail(p, series_gen(ms['name']))
                         time.sleep(SLEEP)
                         member = author or sname
                         rec = {'id': f"ofc-{cfg['id_prefix']}-{p['detail']}",
@@ -745,6 +875,8 @@ def run(budget_pages=120):
                                'url': p['url'], 'media': 0, 'body': False,
                                'thumb': p['thumb'] or (plist[0] if plist else None),
                                'imgn': len(plist)}
+                        if blocks:
+                            save_body(rec, blocks)
                         if rtime:
                             rec['time'] = rtime
                         y = p['date'][:4]
@@ -776,21 +908,38 @@ def run(budget_pages=120):
                             imgs.setdefault(yy, {})[rec['id']] = p['imgs']
                             rec['imgn'] = len(p['imgs'])
                             dirty.add(yy)
+                        if p.get('blocks') and not rec.get('body'):
+                            if save_body(rec, p['blocks']):
+                                dirty.add(rec['date'][:4])
                         continue
                     member = p.get('member') or ms['name']
+                    plist = p['imgs'] or []
+                    tm = p.get('time')
+                    blocks = p.get('blocks')
+                    if site in ('nogi', 'saku'):
+                        got, tm2, blocks2 = extract_detail(p['url'], p['date'])
+                        time.sleep(SLEEP)
+                        if got:
+                            plist = got
+                        if tm2:
+                            tm = tm2
+                        if blocks2:
+                            blocks = blocks2
                     rec = {'id': f"ofc-{cfg['id_prefix']}-{p['detail']}",
                            'group': cfg['group'](p['date'], member),
                            'member': member, 'date': p['date'], 'title': p['title'],
                            'url': p['url'], 'media': 0, 'body': False,
-                           'thumb': p['thumb'], 'imgn': len(p['imgs']) if p['imgs'] else 0}
-                    if p.get('time'):
-                        rec['time'] = p['time']
+                           'thumb': p['thumb'] or (plist[0] if plist else None), 'imgn': len(plist)}
+                    if blocks:
+                        save_body(rec, blocks)
+                    if tm:
+                        rec['time'] = tm
                     y = p['date'][:4]
                     years.setdefault(y, []).append(rec)
                     if y not in idx['years']:
                         idx['years'][y] = 0
-                    if p['imgs']:
-                        imgs.setdefault(y, {})[rec['id']] = p['imgs']
+                    if plist:
+                        imgs.setdefault(y, {})[rec['id']] = plist
                     known[key] = rec
                     dirty.add(y)
                     added.append(f"{rec['date']} {rec['group']} {rec['member']}「{rec['title']}」")
@@ -848,7 +997,7 @@ def run_relay(budget_pages=200):
                 key = url_key(p['url'])
                 if key in known:
                     continue
-                author, plist, rtime = relay_detail(p, gen)
+                author, plist, rtime, blocks = relay_detail(p, gen)
                 time.sleep(SLEEP)
                 member = author or sname
                 rec = {'id': f"ofc-{cfg['id_prefix']}-{p['detail']}",
@@ -858,6 +1007,8 @@ def run_relay(budget_pages=200):
                        'url': p['url'], 'media': 0, 'body': False,
                        'thumb': p['thumb'] or (plist[0] if plist else None),
                        'imgn': len(plist)}
+                if blocks:
+                    save_body(rec, blocks)
                 if rtime:
                     rec['time'] = rtime
                 y = p['date'][:4]
