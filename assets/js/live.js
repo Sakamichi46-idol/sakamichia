@@ -10,12 +10,36 @@ const KINDS=[
   {label:"ひな誕祭", tag:"ひな誕祭"},
   {label:"欅共和国／W-KEYAKI FES", match:l=>(l.tags||[]).includes("欅共和国/W-K FES.")||/欅共和国|W-KEYAKI FES/.test(l.title)},
   {label:"がなくり・ひなくり", tag:"がなくり/ひなくり"},
-  {label:"合同公演", match:l=>(l.tags||[]).includes("合同公演")&&!/欅共和国|W-KEYAKI FES/.test(l.title)},
+  {label:"合同公演", match:l=>((l.tags||[]).includes("合同公演")||JOINT_IDS.has(l.id))&&!/欅共和国|W-KEYAKI FES/.test(l.title)},
   {label:"外部のイベント", tag:"外部のイベント"},
   {label:"ミニライブなど", tag:"ミニライブなど"},
   {label:"単独主催公演（その他）", tag:null},
 ];
 const KSEL=new Set();
+let JOINT_IDS=new Set();
+// 同じ日・同じ公演名で複数グループの記録がある公演は「合同」とみなす
+// （例：欅坂46の握手会ミニライブやツアーに、けやき坂46・日向坂46が出演した回）。
+// 対象は欅坂46/櫻坂46 × けやき坂46/日向坂46 の組み合わせに限る（外部フェスの共演は含めない）。
+function computeJointIds(){
+  const GROUPS=["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"];
+  const keyOf=l=>{
+    let t=l.title, changed=true;
+    while(changed){ changed=false;
+      for(const g of GROUPS){ if(t.startsWith(g)){ t=t.slice(g.length).trim(); changed=true; } } }
+    return l.date+"|"+t;
+  };
+  const byKey={};
+  DATA.forEach(l=>{ (byKey[keyOf(l)] ||= []).push(l); });
+  const out=new Set();
+  Object.values(byKey).forEach(list=>{
+    const gs=new Set(list.map(x=>x.group));
+    if(gs.size<2) return;
+    const hasKanji=[...gs].some(g=>g==="欅坂46"||g==="櫻坂46");
+    const hasHira=[...gs].some(g=>g==="けやき坂46"||g==="日向坂46");
+    if(hasKanji&&hasHira) list.forEach(x=>out.add(x.id));
+  });
+  return out;
+}
 function kindMatch(l, kind){
   if(kind.match) return kind.match(l);
   const ts=l.tags||[];
@@ -24,6 +48,7 @@ function kindMatch(l, kind){
 }
 async function init(){
   DATA = await loadJSON("lives.json");
+  JOINT_IDS = computeJointIds();
   const years=[...new Set(DATA.map(l=>l.date.slice(0,4)))].sort().reverse();
   const sel=document.getElementById("year");
   years.forEach(y=>{const o=document.createElement("option");o.textContent=y+"年";o.value=y;sel.appendChild(o);});
