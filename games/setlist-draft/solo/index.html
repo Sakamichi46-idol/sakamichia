@@ -1,0 +1,58 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ソロ・セトリドラフト | サカミチア</title><meta name="description" content="スロットで決まる「グループ × 条件（種別・年代・センター）」に合う楽曲を指名して、自分だけのセットリストを作る1人用セトリドラフトです。"><link rel="icon" href="../../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="ソロ・セトリドラフト | サカミチア"><meta property="og:description" content="運命のスロットで決まる条件に合う曲を指名してセトリを作ろう。"><meta property="og:url" content="https://sakamichia.pages.dev/games/setlist-draft/solo/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../../assets/css/style.css?v=35"></head>
+<body data-base="../../../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../../../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
+<a href="../../../">ホーム</a><a href="../../../songs/">楽曲図鑑</a><a href="../../../live/">歴代ライブ</a><a href="../../../blog/">ブログ</a><a href="../../../members/">メンバー</a><a href="../../../matome/">まとめ</a><a href="../../../games/" class="on">ミニゲーム</a><a href="../../../formation/">フォーメーション作成</a><a href="../../../setlist/">マイセットリスト</a><a href="../../../news/">お知らせ</a></nav></div></header>
+<main class="wrap"><section class="page"><p style="margin:0 0 6px"><a href="../">← セトリドラフトのトップ</a></p><h2 class="title">ソロ・セトリドラフト</h2><p class="lead">スロットで「グループ × 条件」を決定。選べる曲から1曲ずつ指名して、あなただけのセットリストを作ろう。途中経過は自動保存されます。</p>
+
+<details class="df-panel" id="ssConfig" open>
+<summary class="df-summary"><strong>ドラフト設定</strong><span id="ssConfigSummary" class="df-summary-text"></span></summary>
+<div class="df-settings">
+<label class="df-field"><span>スロットの種類</span><select id="ssMode">
+<option value="type">種別</option><option value="era">年代</option><option value="center">センター</option><option value="random">おまかせ（3種類から抽選）</option></select></label>
+<div class="df-field"><span>対象グループ</span><div class="ychips" id="ssGroups"></div></div>
+<label class="df-field"><span>作る曲数</span><select id="ssCount"><option value="10">10曲</option><option value="15">15曲</option><option value="20" selected>20曲</option><option value="25">25曲</option><option value="30">30曲</option></select></label>
+<label class="df-field"><span>条件の重複</span><select id="ssRepeat"><option value="yes">許可する</option><option value="no">同じ組み合わせは1回だけ</option></select></label>
+<label class="df-field"><span>パスできる回数</span><select id="ssPassLimit"><option value="3">3回</option><option value="0">パスなし</option><option value="1">1回</option><option value="5">5回</option><option value="-1">無制限</option></select></label>
+<p class="df-note" id="ssDataStatus">楽曲データを読み込み中…</p>
+</div></details>
+
+<div class="df-panel">
+<div class="df-head"><h3>運命のスロット</h3><span id="ssRound" class="df-round"></span></div>
+<div class="df-wheels">
+<div class="df-wheel-box"><span class="df-wheel-cap">GROUP</span><div class="df-wheel" id="ssWheelGroup">？</div></div>
+<div class="df-x">×</div>
+<div class="df-wheel-box"><span class="df-wheel-cap">CONDITION</span><div class="df-wheel" id="ssWheelCond">？</div></div>
+</div>
+<p class="df-msg" id="ssMsg">設定を確認したら、スロットを回してください。</p>
+<div class="df-actions"><button type="button" class="btn" id="ssSpin">スロットを回す</button><button type="button" class="btn" id="ssPass">パス</button></div>
+<div id="ssCands" class="sg-list" style="margin-top:10px"></div>
+<div class="df-actions"><button type="button" class="btn" id="ssPick">指名する</button></div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>マイセットリスト</h3><span id="ssCounts" class="df-round"></span></div>
+<label class="df-field"><span>タイトル</span><input id="ssTitle" type="text" value="マイセットリスト" maxlength="40"></label>
+<label class="df-field" style="margin-top:8px"><span>アンコール</span><select id="ssEncore"></select></label>
+<div id="ssList" style="margin-top:10px"></div>
+<div class="df-actions">
+<button type="button" class="btn" id="ssUndo">元に戻す</button>
+<button type="button" class="btn" id="ssImg">画像を保存・共有</button>
+<button type="button" class="btn" id="ssReset">最初から</button>
+</div>
+<p class="df-note">曲の横の ↑↓ で順番を入れ替えられます。番号は本編 M01〜、アンコール EN1〜 です。</p>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>指名・パス履歴</h3><span id="ssHistCount" class="df-round">0件</span></div>
+<div id="ssHistory"></div>
+</div>
+</section></main>
+<footer><div class="wrap">ソロ・セトリドラフトは、楽曲図鑑の695曲から指名します。</div></footer>
+<dialog id="ssImgDlg"><div class="dlg-body">
+<p style="margin:0 0 8px"><b>セットリスト画像</b></p>
+<div id="ssImgPreview" style="text-align:center"></div>
+<div class="dlg-actions"><button type="button" class="btn" id="ssImgShare">共有する</button><button type="button" class="btn" id="ssImgDl">ダウンロード</button><button type="button" class="btn" id="ssImgClose">閉じる</button></div>
+</div></dialog>
+<script src="../../../assets/js/common.js"></script><script src="../../../assets/js/setlist-solo.js"></script>
+</body></html>

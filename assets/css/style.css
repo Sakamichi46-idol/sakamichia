@@ -318,6 +318,21 @@ dialog{max-height:92dvh}
 .df-state.ok{color:#3d8b4f;font-weight:700}
 .df-state.turn{color:var(--page);font-weight:700}
 .df-lot-name{border:2px solid var(--page);border-radius:12px;background:#fdfbff;font-weight:700;font-size:26px;padding:20px 6px;min-height:38px;display:flex;align-items:center;justify-content:center}
+.sg-list{display:flex;flex-direction:column;gap:6px}
+.sg-row{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;color:var(--ink)}
+.sg-bar{flex:none;width:6px;align-self:stretch;border-radius:3px}
+.sg-main{flex:1;min-width:0}
+.sg-title{font-weight:700;font-size:15px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg-sub{display:block;color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg-row.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.sg-row:disabled{opacity:.45;cursor:default}
+.sl-row{display:flex;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;margin:5px 0}
+.sl-num{font-weight:800;min-width:46px;color:var(--page);font-size:13.5px}
+.sl-title{flex:1;font-weight:600;font-size:14.5px;min-width:0}
+.sl-sub{color:var(--muted);font-size:11.5px;font-weight:400}
+.sl-mv{flex:none;width:34px;height:34px;padding:0;border-radius:9px;background:#f2e9fb;color:var(--ink);font-size:15px;line-height:1}
+.sl-mv:disabled{opacity:.3}
+.sl-encore-band{text-align:center;font-weight:700;color:var(--muted);margin:10px 0 4px;font-size:13px;letter-spacing:.25em}
 .nw-list{display:flex;flex-direction:column;gap:8px}
 .nw-row{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-decoration:none;color:var(--ink)}
 .nw-row:hover{border-color:var(--page)}

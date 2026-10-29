@@ -1,0 +1,72 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>セトリ会議（対戦セトリドラフト） | サカミチア</title><meta name="description" content="2〜4人で同じ端末を交代しながら坂道の楽曲を指名し合うセトリドラフト。指名が競合したらルーレット抽選、集めた曲を並べて自分だけのセットリストを完成させます。"><link rel="icon" href="../../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="セトリ会議 | サカミチア"><meta property="og:description" content="2〜4人で楽曲を指名し合うセトリドラフト。競合はルーレット抽選。"><meta property="og:url" content="https://sakamichia.pages.dev/games/setlist-draft/meeting/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../../assets/css/style.css?v=35"></head>
+<body data-base="../../../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../../../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
+<a href="../../../">ホーム</a><a href="../../../songs/">楽曲図鑑</a><a href="../../../live/">歴代ライブ</a><a href="../../../blog/">ブログ</a><a href="../../../members/">メンバー</a><a href="../../../matome/">まとめ</a><a href="../../../games/" class="on">ミニゲーム</a><a href="../../../formation/">フォーメーション作成</a><a href="../../../setlist/">マイセットリスト</a><a href="../../../news/">お知らせ</a></nav></div></header>
+<main class="wrap"><section class="page"><p style="margin:0 0 6px"><a href="../">← セトリドラフトのトップ</a></p><h2 class="title">セトリ会議</h2><p class="lead">2〜4人で同じ端末を交代しながら楽曲を指名します。指名が重なったらルーレット抽選、落選した人はその巡のうちに再指名。集めた曲を並べ替えて、各自のセットリストを完成させます。途中経過は自動保存されます。</p>
+
+<details class="df-panel" id="smSetupPanel" open>
+<summary class="df-summary"><strong>会議の設定</strong><span id="smSetupSummary" class="df-summary-text"></span></summary>
+<div class="df-settings">
+<div class="df-field"><span>指名対象グループ</span><div class="ychips" id="smGroups"></div></div>
+<label class="df-field"><span>参加人数（1人目が主催者）</span><select id="smCount"><option value="2">2人</option><option value="3">3人</option><option value="4">4人</option></select></label>
+<div class="df-field"><span>プレイヤー名</span><div id="smNames" class="df-names"></div></div>
+<label class="df-field"><span>1人あたりの曲数（＝指名巡数）</span><select id="smRounds"><option value="8">8曲</option><option value="10">10曲</option><option value="12" selected>12曲</option><option value="15">15曲</option><option value="20">20曲</option><option value="25">25曲</option></select></label>
+<p class="df-note" id="smPoolInfo">楽曲データを読み込み中…</p>
+<div class="df-actions"><button type="button" class="btn" id="smStart">この設定でドラフト開始</button></div>
+</div></details>
+
+<div id="smGame" hidden>
+<div class="df-panel">
+<div class="df-head"><h3 id="smRound">第1巡</h3><span id="smReady" class="df-round"></span></div>
+<div id="smPStats" class="df-pstats"></div>
+<p class="df-msg" id="smMsg"></p>
+<div class="df-actions"><button type="button" class="btn" id="smDraw">抽選する</button><button type="button" class="btn" id="smUndoPick">選択中の指名を取り消す</button><button type="button" class="btn" id="smReset">このドラフトを終了・リセット</button></div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>指名候補</h3><span id="smCandCount" class="df-round"></span></div>
+<div class="fm-filters"><input type="search" id="smCandSearch" placeholder="曲名・読み・センターで検索" aria-label="候補を検索"><select id="smCandType" aria-label="種別で絞り込む"><option value="all">すべての種別</option></select></div>
+<div class="ychips" id="smCandGroups" style="margin:4px 0 10px"></div>
+<div id="smCands" class="sg-list"></div>
+</div>
+
+<div class="df-panel">
+<div class="df-head"><h3>抽選結果・獲得状況</h3><span id="smHistCount" class="df-round"></span></div>
+<div id="smResults"></div>
+<div id="smOwned" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="smFinish" hidden>
+<div class="df-panel">
+<div class="df-head"><h3>ドラフト終了！完成セットリスト</h3><span id="smFinishInfo" class="df-round"></span></div>
+<p class="df-msg" id="smFinishMsg"></p>
+<div class="ychips" id="smTabs" style="margin:8px 0"></div>
+<label class="df-field"><span>セットリスト名</span><input id="smTitle" type="text" maxlength="40"></label>
+<label class="df-field" style="margin-top:8px"><span>アンコール</span><select id="smEncore"></select></label>
+<div id="smList" style="margin-top:10px"></div>
+<div class="df-actions">
+<button type="button" class="btn" id="smImg">このプレイヤーを画像で保存</button>
+<button type="button" class="btn" id="smImgAll">全員の結果を画像で保存</button>
+<button type="button" class="btn" id="smReset2">新しいドラフトを始める</button>
+</div>
+<p class="df-note">曲の横の ↑↓ で順番を入れ替えられます。番号は本編 M01〜、アンコール EN1〜 で表示されます。</p>
+</div>
+</div>
+</section></main>
+<footer><div class="wrap">セトリ会議は、楽曲図鑑の695曲から指名します。</div></footer>
+<dialog id="smLotDlg"><div class="dlg-body">
+<p style="margin:0 0 4px"><b>競合抽選ルーレット</b> <span id="smLotCount" style="color:var(--muted)"></span></p>
+<p id="smLotSong" style="margin:0 0 8px"></p>
+<div class="df-lot-name" id="smLotName">…</div>
+<p id="smLotResult" style="margin:8px 0 0"></p>
+<div class="dlg-actions"><button type="button" class="btn" id="smLotNext">次へ</button></div>
+</div></dialog>
+<dialog id="smImgDlg"><div class="dlg-body">
+<p style="margin:0 0 8px"><b>セットリスト画像</b></p>
+<div id="smImgPreview" style="text-align:center"></div>
+<div class="dlg-actions"><button type="button" class="btn" id="smImgShare">共有する</button><button type="button" class="btn" id="smImgDl">ダウンロード</button><button type="button" class="btn" id="smImgClose">閉じる</button></div>
+</div></dialog>
+<script src="../../../assets/js/common.js"></script><script src="../../../assets/js/setlist-meeting.js"></script>
+</body></html>
