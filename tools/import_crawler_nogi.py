@@ -18,6 +18,18 @@ import blog_backfill as bf
 BASE = bf.BASE
 ROOT = 'https://janelin612.github.io/n46-crawler'
 NUM_RE = re.compile(r'detail/(\d+)')
+OLD_RE = re.compile(r'/(\d{5,})\.php(?:$|\?)')
+
+
+def article_num(url):
+    """公式記事番号を正規化して返す（旧ブログ形式 064217.php は 64217 に揃える）。"""
+    mm = NUM_RE.search(url or '')
+    if mm:
+        return str(int(mm.group(1)))
+    mm = OLD_RE.search(url or '')
+    if mm:
+        return str(int(mm.group(1)))
+    return None
 
 
 def curl_json(url):
@@ -46,9 +58,9 @@ def main():
     for lst in years.values():
         for b in lst:
             if b['group'] == '乃木坂46':
-                mm = NUM_RE.search(b.get('url', ''))
-                if mm:
-                    held_nums.add(mm.group(1))
+                num = article_num(b.get('url', ''))
+                if num:
+                    held_nums.add(num)
                 held_keys.add((b['member'], b['date'], b['title']))
     added = Counter()
     skipped = 0
@@ -57,23 +69,31 @@ def main():
         posts = curl_json(f'{ROOT}/mb/{link}result.json')
         base = f'{ROOT}/mb/{link}'
         for p in posts:
-            mm = NUM_RE.search(p.get('url', ''))
-            if not mm:
+            raw_url = p.get('url') or ''
+            num = article_num(raw_url)
+            url_less = not num and raw_url in ('', '#')
+            if not num and not url_less:
                 continue
-            num = mm.group(1)
-            dt = p['datetime'].replace('.', '-')
-            date, time = dt.split(' ')
-            time = time[:5]
+            dt = (p.get('datetime') or '').replace('.', '-').replace('/', '-')
+            parts = dt.split(' ')
+            if len(parts) != 2 or not parts[0]:
+                print(f'  SKIP (datetime不正): {member} {raw_url}', flush=True)
+                continue
+            date, time = parts[0], parts[1][:5]
             title = p['title']
-            if num in held_nums or (member, date, title) in held_keys:
+            if (num and num in held_nums) or (member, date, title) in held_keys:
                 skipped += 1
                 continue
             html = re.sub(r'</div\s*>', '\n', p.get('content') or '', flags=re.I)
             blocks = bf.html_to_blocks(html, base)
             img_urls = [b['src'] for b in blocks if b['type'] == 'image']
-            rid = f'crw-nogi-{num}'
+            if num:
+                rid = f'crw-nogi-{num}'
+            else:
+                import hashlib
+                rid = 'crw-nogi-h' + hashlib.md5(f'{member}|{p["datetime"]}|{title}'.encode()).hexdigest()[:10]
             rec = {'id': rid, 'group': '乃木坂46', 'member': member, 'title': title,
-                   'date': date, 'time': time, 'url': p['url'], 'urldead': True,
+                   'date': date, 'time': time, 'url': raw_url if num else '', 'urldead': True,
                    'arch': 'n46-crawler', 'media': 0, 'imgn': len(img_urls)}
             if img_urls:
                 rec['thumb'] = img_urls[0]
