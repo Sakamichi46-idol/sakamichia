@@ -32,6 +32,7 @@ function computeJointIds(){
   DATA.forEach(l=>{ (byKey[keyOf(l)] ||= []).push(l); });
   const out=new Set();
   Object.values(byKey).forEach(list=>{
+    if(list.some(x=>(x.tags||[]).includes("外部のイベント"))) return; // 外部フェスの共演は合同に含めない
     const gs=new Set(list.map(x=>x.group));
     if(gs.size<2) return;
     const hasKanji=[...gs].some(g=>g==="欅坂46"||g==="櫻坂46");
