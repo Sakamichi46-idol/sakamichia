@@ -1,19 +1,52 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>マイセットリスト | サカミチア</title><meta name="description" content="好きな曲とMC・アンコールを並べて、自分だけのセットリストを作れるツール。非公式ファンサイトです。"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="マイセットリスト | サカミチア"><meta property="og:description" content="好きな曲とMC・アンコールを並べて、自分だけのセットリストを作れるツール。非公式ファンサイトです。"><meta property="og:url" content="https://sakamichia.pages.dev/setlist/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../assets/css/style.css?v=24"></head>
+<title>マイセットリスト | サカミチア</title><meta name="description" content="好きな曲を並べて自分だけのセットリストが作れるツール。MC・影ナレ・アンコールも追加でき、画像保存もできます。非公式ファンサイトです。"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="マイセットリスト | サカミチア"><meta property="og:description" content="好きな曲を並べて自分だけのセットリストが作れるツール。MC・影ナレ・アンコールも追加でき、画像保存もできます。非公式ファンサイトです。"><meta property="og:url" content="https://sakamichia.pages.dev/setlist/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../assets/css/style.css?v=27"></head>
 <body data-base="../">
 <header class="site"><div class="wrap nav"><a class="logo" href="../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav>
 <a href="../">ホーム</a><a href="../live/">歴代ライブ</a><a href="../matome/">まとめ</a><a href="../blog/">ブログ</a><a href="../songs/">楽曲図鑑</a><a href="../games/">ミニゲーム</a><a href="./" class="on">マイセットリスト</a></nav></div></header>
-<main class="wrap"><section class="page"><h2 class="title">マイセットリスト</h2><p class="lead">楽曲の間にMC・影ナレ・アンコールも入れられます。内容はこの端末に自動保存されます。</p>
-<div class="filters"><input id="title" type="text" placeholder="セットリスト名" size="24">
-<button class="sub" id="addMC">＋ MC</button><button class="sub" id="addEncore">＋ アンコール</button><button class="sub" id="addOverture">＋ OVERTURE</button>
-<label style="align-self:center;font-size:14px"><input type="checkbox" id="hideTitles"> 曲名を隠す（クイズ用）</label></div>
-<div class="filters"><input id="q" type="search" placeholder="追加する曲を検索" size="24"><select id="group"><option value="">すべてのグループ</option><option>乃木坂46</option><option>櫻坂46</option><option>日向坂46</option><option>欅坂46</option></select></div>
-<div class="grid" id="songs"></div>
-<h3>あなたのセットリスト（<span id="n">0</span>曲）</h3>
-<div id="mine"></div>
-<p><button id="copy">テキストでコピー</button> <button class="sub" id="clear">全部消す</button></p>
-<textarea id="out" readonly placeholder="コピー結果がここに出ます"></textarea>
+<main class="wrap"><section class="page"><h2 class="title">マイセットリスト</h2><p class="lead">楽曲の間にMC・影ナレ・アンコールも自由に追加できます。追加した内容はこの端末に自動保存されます。</p>
+<div class="ms-layout">
+<section class="ms-card"><h3>楽曲を追加</h3>
+<div class="ms-filters"><input id="msSearch" type="search" placeholder="曲名・作曲者で検索" aria-label="楽曲検索">
+<label>グループ <select id="msGroup"><option value="all">すべてのグループ</option><option>乃木坂46</option><option>欅坂46</option><option>櫻坂46</option><option>けやき坂46</option><option>日向坂46</option><option value="mixed">合同・コラボ楽曲（すべて）</option><option value="collab">坂道AKB</option><option value="selection">坂道選抜</option></select></label>
+<label>並び替え <select id="msSortMode"><option value="release">リリース順</option><option value="kana">50音順</option></select></label>
+<span class="ms-dir" id="msSortDir"><label><input type="radio" name="ms-dir" value="asc" checked> 昇順</label><label><input type="radio" name="ms-dir" value="desc"> 降順</label></span></div>
+<p class="ms-count" id="msCount">読み込み中</p>
+<p class="ms-help">初期設定はリリース順（古い順）。新しい順にしても、同じ作品の「表題曲→カップリング曲」の順番は維持します。</p>
+<div id="msCandidates" class="ms-list"></div></section>
+<section class="ms-card"><div class="ms-head"><h3>マイセットリスト</h3><span class="ms-pill" id="msTotal">0曲</span></div>
+<div class="ms-eventadd"><select id="msEventType" aria-label="追加する進行情報"><option value="kagenare">影ナレ</option><option value="overture">OVERTURE</option><option value="mc">MC</option><option value="encore">アンコール開始</option><option value="double">Wアンコール開始</option><option value="interlude">幕間</option><option value="custom">自由な区切り・メモ</option></select><button type="button" class="sub" id="msAddEvent">進行情報を追加</button></div>
+<div id="msSelected"></div>
+<section class="ms-options"><h4>表示設定</h4>
+<label class="ms-field"><span>セットリスト名</span><input id="msName" type="text" maxlength="90" placeholder="MY SETLIST"></label>
+<label class="ms-field"><span>曲順番号の付け方</span><select id="msNumberMode"><option value="section">本編 M1 / アンコール EN1</option><option value="continuous">通し番号 M1、M2…</option></select></label>
+<div class="ms-checks">
+<label><input type="checkbox" id="show-title"> セットリスト名</label>
+<label><input type="checkbox" id="show-number"> 曲順番号</label>
+<label><input type="checkbox" id="show-song"> 曲名（クイズ用に隠せます）</label>
+<label><input type="checkbox" id="show-group"> グループ名</label>
+<label><input type="checkbox" id="show-center"> センター</label>
+<label><input type="checkbox" id="show-members"> 参加メンバー</label>
+<label><input type="checkbox" id="show-composer"> 作曲者</label>
+<label><input type="checkbox" id="show-arranger"> 編曲者</label>
+<label><input type="checkbox" id="show-release"> リリース情報</label>
+<label><input type="checkbox" id="show-mc"> MC</label>
+<label><input type="checkbox" id="show-kagenare"> 影ナレ</label>
+<label><input type="checkbox" id="show-overture"> OVERTURE</label>
+<label><input type="checkbox" id="show-encore"> アンコール・Wアンコール</label>
+<label><input type="checkbox" id="show-interlude"> 幕間</label>
+<label><input type="checkbox" id="show-custom"> その他の区切り</label>
+<label><input type="checkbox" id="show-people"> 進行情報の担当者</label>
+<label><input type="checkbox" id="show-note"> 進行情報のメモ</label>
+</div>
+<p class="ms-help">表示をOFFにしても編集内容は消えません。保存画像は必ず1枚（960×1280px）で、収まり具合に応じて自動で1列・2列を切り替えます。</p></section>
+<section><h4>プレビュー</h4><div id="msPreview" class="ms-preview"></div></section>
+<div class="ms-actions"><button type="button" id="msImageMenu">画像を保存・共有</button><button type="button" class="sub" id="msCopy">表示内容をコピー</button><button type="button" class="sub" id="msExport">テキスト保存</button><button type="button" class="sub" id="msReset">最初から</button></div>
+<div id="msImageActions" class="ms-image-actions" hidden><label>保存画像の表示形式 <select id="msImageMode"><option value="compact">標準：5人以下は実名・6人以上は人数表示</option><option value="full">詳細：参加メンバー全員を表示</option></select></label>
+<button type="button" class="sub" id="msImgPreviewBtn">画像をプレビュー</button><button type="button" class="sub" id="msImgShareBtn">SNSなどに共有</button><button type="button" class="sub" id="msImgDownloadBtn">画像をダウンロード</button></div>
+<p class="ms-msg" id="msMsg" role="status"></p>
+</section></div>
 </section></main>
-<footer><div class="wrap">並び替えは ↑ ↓ ボタン、保存は localStorage（自動）です。</div></footer>
-<script src="../assets/js/common.js"></script><script src="../assets/js/setlist.js"></script>
+<dialog id="msDlg"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><strong>セットリスト画像</strong><button type="button" class="sub" id="msDlgClose">閉じる</button></div><p style="color:var(--muted);font-size:12px">iPad・スマートフォンでは画像を長押しして保存することもできます。</p><img id="msDlgImg" alt="画像保存用セットリスト" style="max-width:100%"></dialog>
+<footer><div class="wrap">楽曲・フォーメーションのデータ出典：Sakamichi Universe 公開データほか。作成内容はこの端末の中だけに保存されます。</div></footer>
+<script src="../assets/js/common.js"></script><script src="../assets/js/setlist-image-export.js"></script><script src="../assets/js/setlist.js"></script>
 </body></html>
