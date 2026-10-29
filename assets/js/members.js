@@ -1,10 +1,21 @@
 // メンバーページ：206人の一覧・検索と、ブログ/楽曲/ライブを横断した詳細表示
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
-let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, LIVEIDX = {};
-let fGroup = "all", fGen = "all", fStatus = "all", fQuery = "", fSort = "group";
+let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, LIVEIDX = {}, GAL = {};
+let fGroup = "all", fGen = "all", fShowGrad = true, fQuery = "", fSort = "group";
 
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
+function galURL(name, f) { const p = PHOTOS[name]; if (!p) return ""; return BASE + "assets/member-gallery/" + p.replace(/\.jpg$/, "") + "/" + f; }
+// 所属は「最後に所属していたグループ」で表す（改名・移籍の世代順で判定）
+const ERA_RANK = { "けやき坂46": 1, "欅坂46": 2, "櫻坂46": 3, "日向坂46": 3, "乃木坂46": 0 };
+function lastGroup(m) {
+  const gs = (m.groups && m.groups.length) ? m.groups : [m.group];
+  let best = m.group, br = -1;
+  for (const g of gs) { const r = (g in ERA_RANK) ? ERA_RANK[g] : 0; if (r > br) { br = r; best = g; } }
+  return best;
+}
+const isExchange = m => m.name === "松井玲奈";   // SKE48からの交換留学生
+const genKey = m => (m.gen > 0 ? m.gen : 99);    // 期なし（ポカ・交換留学生）はグループ内の最後尾
 function centerSongsOf(name) { return SONGS.filter(s => s.center === name); }
 function formCountOf(name) {
   let n = 0;
@@ -26,20 +37,22 @@ function liveStatsOf(name) {
 }
 function cardHTML(m) {
   const url = photoURL(m.name);
-  const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[m.group] || "#999"}">${esc(m.name.slice(0, 1))}</span>`;
-  return `<button type="button" class="mb-card" data-name="${esc(m.name)}"><span class="mb-photo">${ph}</span><span class="fm-name">${esc(m.name)}</span><span class="fm-sub">${esc(m.group)}${m.gen ? "・" + m.gen + "期" : ""}${m.graduated ? "・卒業" : ""}</span><span class="fm-sub">ブログ ${BLOGS[m.name] || 0}件</span></button>`;
+  const lg = lastGroup(m);
+  const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(m.name.slice(0, 1))}</span>`;
+  const genTxt = isExchange(m) ? "・交換留学生" : (m.gen ? "・" + m.gen + "期" : "");
+  return `<button type="button" class="mb-card" data-name="${esc(m.name)}"><span class="mb-photo">${ph}</span><span class="fm-name">${esc(m.name)}</span><span class="fm-sub">${esc(lg)}${genTxt}${m.graduated ? "・卒業" : ""}</span><span class="fm-sub">ブログ ${BLOGS[m.name] || 0}件</span></button>`;
 }
 function render() {
   let list = MEMBERS.filter(m =>
     (fGroup === "all" || (m.groups || [m.group]).includes(fGroup))
     && (fGen === "all" || m.gen === +fGen)
-    && (fStatus === "all" || (fStatus === "active" ? !m.graduated : !!m.graduated))
+    && (fShowGrad || !m.graduated)
     && (!fQuery || m.name.includes(fQuery) || (m.reading || "").includes(fQuery)));
   const order = g => GROUPS.indexOf(g);
   if (fSort === "kana") list.sort((a, b) => (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   else if (fSort === "blog") list.sort((a, b) => (BLOGS[b.name] || 0) - (BLOGS[a.name] || 0));
   else if (fSort === "center") list.sort((a, b) => centerSongsOf(b.name).length - centerSongsOf(a.name).length);
-  else list.sort((a, b) => order(a.group) - order(b.group) || a.gen - b.gen || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
+  else list.sort((a, b) => order(lastGroup(a)) - order(lastGroup(b)) || genKey(a) - genKey(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   document.getElementById("mbCount").textContent = `${list.length}人`;
   const grid = document.getElementById("mbGrid");
   grid.innerHTML = list.map(cardHTML).join("") || `<p style="color:var(--muted)">条件に合うメンバーがいません。</p>`;
@@ -51,21 +64,46 @@ function openMember(name) {
   const cs = centerSongsOf(name);
   const ls = liveStatsOf(name);
   const fc = formCountOf(name);
-  const others = (m.groups || []).filter(g => g !== m.group);
+  const lg = lastGroup(m);
+  const others = (m.groups || []).filter(g => g !== lg);
   const dlg = document.getElementById("dlg");
-  dlg.style.setProperty("--page", GCOL[m.group] || "#2b2430");
+  dlg.style.setProperty("--page", GCOL[lg] || "#2b2430");
+  const gal = GAL[name] || [];
+  const galHTML = (gal.length >= 2 || (gal.length === 1 && !gal[0].c)) ? `
+    <div class="mb-gal">
+      <h4 style="margin:14px 0 6px">歴代アー写（${gal.length}枚）</h4>
+      <div class="mb-gal-strip">${gal.map((g, i) => {
+        const cap = `${g.t ? g.t : "アー写"}${g.y ? `（${g.y}年）` : ""}${g.c ? "・現在" : ""}`;
+        const lab = g.y ? String(g.y) : (g.t ? g.t.slice(0, 6) : `${i + 1}枚目`);
+        return `<button type="button" class="mb-gal-th${g.c ? " on" : ""}" data-src="${esc(galURL(name, g.f))}" data-cap="${esc(cap)}"><img loading="lazy" src="${esc(galURL(name, g.f))}" alt=""><span>${esc(lab)}</span></button>`;
+      }).join("")}</div>
+      <p class="mb-gal-note">タップすると上の写真が切り替わります。上の写真をタップすると現在のアー写に戻ります。</p>
+    </div>` : "";
   document.getElementById("dlgBody").innerHTML = `
     <div class="mb-detail">
-      <div class="mb-dphoto">${url ? `<img src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[m.group] || "#999"}">${esc(name.slice(0, 1))}</span>`}</div>
+      <div class="mb-dphoto">${url ? `<img id="mbMainImg" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(name.slice(0, 1))}</span>`}<p class="mb-cap" id="mbMainCap">現在のアー写</p></div>
       <div class="mb-dinfo">
         <h3 style="margin:0 0 4px">${esc(name)}</h3>
         <p style="margin:0 0 2px;color:var(--muted)">${esc(m.reading || "")}</p>
-        <p>${groupChip(m.group)}${m.gen ? ` ${m.gen}期生` : ""}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
+        <p>${groupChip(lg)}${isExchange(m) ? " 交換留学生（SKE48から）" : (m.gen ? ` ${m.gen}期生` : "")}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
         <p>センター曲：<b>${cs.length}曲</b>　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
         ${cs.length ? `<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">${cs.map(s => esc(s.title)).join("、")}</p>` : ""}
         <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a></p>
       </div>
-    </div>`;
+    </div>${galHTML}`;
+  const mainImg = document.getElementById("mbMainImg"), mainCap = document.getElementById("mbMainCap");
+  if (mainImg) {
+    document.querySelectorAll(".mb-gal-th").forEach(th => th.addEventListener("click", () => {
+      mainImg.src = th.dataset.src;
+      if (mainCap) mainCap.textContent = th.dataset.cap;
+      document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", x === th));
+    }));
+    mainImg.addEventListener("click", () => {
+      mainImg.src = url;
+      if (mainCap) mainCap.textContent = "現在のアー写";
+      document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", !!gal.find((g, i) => g.c && galURL(name, g.f) === x.dataset.src)));
+    });
+  }
   dlg.showModal();
 }
 function syncGenOptions() {
@@ -87,6 +125,8 @@ async function init() {
   SONGS = await loadJSON("songs.json");
   FORMS = await loadJSON("formations.json");
   LIVEIDX = await loadJSON("live-index.json");
+  GAL = await loadJSON("member-galleries.json");
+  if (!GAL || Array.isArray(GAL)) GAL = {};
   if (!Array.isArray(MEMBERS)) MEMBERS = [];
   if (!Array.isArray(SONGS)) SONGS = [];
   if (!FORMS || Array.isArray(FORMS)) FORMS = {};
@@ -101,7 +141,7 @@ async function init() {
   }));
   syncGenOptions();
   document.getElementById("mbQuery").addEventListener("input", e => { fQuery = e.target.value.trim(); render(); });
-  document.getElementById("mbStatus").addEventListener("input", e => { fStatus = e.target.value; render(); });
+  document.getElementById("mbShowGrad").addEventListener("change", e => { fShowGrad = e.target.checked; render(); });
   document.getElementById("mbGen").addEventListener("input", e => { fGen = e.target.value; render(); });
   document.getElementById("mbSort").addEventListener("input", e => { fSort = e.target.value; render(); });
   // ?member= で直接詳細を開く
