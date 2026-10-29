@@ -533,7 +533,8 @@ async function openBlog(id){
         const d=await r.json();
         photos=(d.blocks||[]).filter(x=>x.type==="image").map(x=>x.src);
         html+=`<div class="blog-body">${(d.blocks||[]).map(x=>{
-          if(x.type==="paragraph") return `<p>${esc(x.text||"")}</p>`;
+          if(x.type==="paragraph") return `<p>${esc(x.text||"").replace(/\n/g,"<br>")}</p>`;
+          if(x.type==="break") return `<br>`;
           if(x.type==="image") return `<img class="bimg" loading="lazy" src="${esc(x.src)}" alt="" data-photo="${photos.indexOf(x.src)}">`;
           return "";
         }).join("")}</div><p style="color:var(--muted);font-size:12px">${d.source==="official"?"本文は公式ブログから取り込んだものです。":"本文・写真は旧サイト『坂道日和』の保存データです。"}</p>`;

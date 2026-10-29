@@ -288,7 +288,9 @@ _IMG_TAG_RE = re.compile(r'<img[^>]+src="([^"]+)"[^>]*>', re.I)
 
 
 def html_to_blocks(inner, base_url):
-    """本文コンテナのHTMLを blocks 形式へ変換する。"""
+    """本文コンテナのHTMLを blocks 形式へ変換する。
+    改行の量を本家に合わせるため、1つの改行は段落内の改行として保持し、
+    空行は break ブロックとして個数を保って記録する。"""
     imgs = []
 
     def _sub(m):
@@ -301,32 +303,38 @@ def html_to_blocks(inner, base_url):
     s = re.sub(r'<[^>]+>', '', s)
     s = _html_lib.unescape(s)
     blocks = []
-    pending_break = False
-    for raw in s.split('\n'):
-        parts = re.split(r'(\x01\d+\x01)', raw)
-        texts = []
-        for part in parts:
-            if part.startswith('\x01') and part.endswith('\x01') and part[1:-1].isdigit():
-                t = ''.join(texts).strip()
-                if t:
-                    if pending_break and blocks and blocks[-1]['type'] == 'paragraph':
-                        blocks.append({'type': 'break'})
-                    blocks.append({'type': 'paragraph', 'text': t})
-                    pending_break = False
-                texts = []
-                blocks.append({'type': 'image', 'src': imgs[int(part[1:-1])], 'alt': ''})
-            else:
-                texts.append(part)
-        t = ''.join(texts).strip()
-        if t:
-            if pending_break and blocks and blocks[-1]['type'] == 'paragraph':
+    cur = []      # 現在の段落の行
+    pending = 0   # 段落の間にある空行の数
+
+    def flush_para():
+        nonlocal cur
+        text = '\n'.join(cur).strip('\n')
+        cur = []
+        if text.strip():
+            blocks.append({'type': 'paragraph', 'text': text})
+
+    def close_gap():
+        nonlocal pending
+        flush_para()
+        if blocks and pending:
+            for _ in range(min(pending, 6)):
                 blocks.append({'type': 'break'})
-            blocks.append({'type': 'paragraph', 'text': t})
-            pending_break = False
-        else:
-            pending_break = True
-    while blocks and blocks[0]['type'] == 'break':
-        blocks.pop(0)
+        pending = 0
+
+    for raw in s.split('\n'):
+        line = raw.strip()
+        if not line:
+            pending += 1
+            continue
+        for part in re.split(r'(\x01\d+\x01)', line):
+            if part.startswith('\x01') and part.endswith('\x01') and part[1:-1].isdigit():
+                close_gap()
+                blocks.append({'type': 'image', 'src': imgs[int(part[1:-1])], 'alt': ''})
+            elif part.strip():
+                if pending:
+                    close_gap()
+                cur.append(part.strip())
+    flush_para()
     while blocks and blocks[-1]['type'] == 'break':
         blocks.pop()
     text_len = sum(len(b.get('text', '')) for b in blocks if b['type'] == 'paragraph')
