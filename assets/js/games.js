@@ -1,4 +1,4 @@
-// ミニゲーム：センター当て／グループ当て／条件ドラフト
+// ミニゲーム：センター当て／グループ当て（ドラフトは games/draft/ の専用ページ）
 let SONGS=[], MEMBERS=[];
 const area=document.getElementById("gameArea");
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -6,7 +6,7 @@ async function init(){
   [SONGS, MEMBERS]=await Promise.all([loadJSON("songs.json"), loadJSON("members.json")]);
   document.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click",()=>start(b.dataset.start)));
 }
-function start(kind){ if(kind==="draft") return draft(); quiz(kind); }
+function start(kind){ quiz(kind); }
 // ---- クイズ共通 ----
 let Q={list:[],i:0,score:0,kind:"center"};
 function quiz(kind){
@@ -38,30 +38,5 @@ function showQ(){
     area.querySelectorAll("[data-opt]").forEach(x=>x.disabled=true);
     setTimeout(()=>{Q.i++; showQ();}, 1100);
   }));
-}
-// ---- 条件ドラフト ----
-function draft(){
-  const groups=["乃木坂46","櫻坂46","日向坂46","欅坂46"];
-  const themes=["明るい曲が似合う5人","ダンスが映える5人","歌声で攻める5人","バラエティ班5人","夏曲最強の5人"];
-  const g=groups[Math.floor(Math.random()*groups.length)];
-  const t=themes[Math.floor(Math.random()*themes.length)];
-  const pool=shuffle(MEMBERS.filter(m=>m.group===g)).slice(0,12);
-  let picked=[];
-  area.innerHTML=`<div class="card" style="margin-bottom:40px"><h3>条件ドラフト</h3>
-  <p>条件：<b>${esc(g)}</b> から <b>${esc(t)}</b> を選ぼう（候補をタップで指名、もう一度タップで解除）</p>
-  <p>指名中：<span id="slots">${""}</span></p><div id="pool"></div>
-  <p><button class="sub" onclick="location.reload()">条件を引き直す</button></p><p id="done"></p></div>`;
-  const poolEl=document.getElementById("pool");
-  function draw(){
-    document.getElementById("slots").innerHTML=[0,1,2,3,4].map(i=>`<span class="slot">${esc(picked[i]||"―")}</span>`).join("");
-    poolEl.innerHTML=pool.map(m=>`<button class="quiz-opt" data-m="${esc(m.name)}" ${picked.includes(m.name)?'style="border-color:var(--accent)"':""}>${esc(m.name)}${m.centerSongs&&m.centerSongs.length?`（センター曲 ${m.centerSongs.length}）`:""}</button>`).join("");
-    poolEl.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{
-      const n=b.dataset.m;
-      picked = picked.includes(n) ? picked.filter(x=>x!==n) : (picked.length<5 ? [...picked,n] : picked);
-      draw();
-      if(picked.length===5) document.getElementById("done").innerHTML=`<b>完成！</b> あなたの「${esc(t)}」：${picked.map(esc).join("、")}`;
-    }));
-  }
-  draw();
 }
 init();
