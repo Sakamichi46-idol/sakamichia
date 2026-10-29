@@ -16,9 +16,12 @@
 出力: 変更内容のJSONサマリーを標準出力に表示。変更があれば配布用ZIPも生成する。
 """
 import csv, datetime, json, os, re, sys, urllib.parse, urllib.request, zipfile
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import name_expand as nx  # 備考の略称（C影山など）をフルネーム化する共通処理
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(BASE, 'tools', '.universe-cache')
@@ -92,6 +95,9 @@ def update_lives(summary):
     for fam, fn in [('N', 'Nlive_remarks'), ('S', 'Slive_remarks'), ('H', 'Hlive_remarks')]:
         for r in rows(fn):
             remarks[(fam, r['liveid'])] = r
+    members = json.load(open(os.path.join(BASE, 'data/members.json')))
+    all_names = set(m['name'] for m in members)
+    group_members = nx.build_group_members(members)
     added = []
     for fam, fn in [('N', 'Nsetlist'), ('S', 'Ssetlist'), ('H', 'Hsetlist')]:
         byshow = defaultdict(list)
@@ -131,6 +137,8 @@ def update_lives(summary):
                     det['note'] = rk['live_remarks']
                 if rk.get('reference_url'):
                     det['ref'] = rk['reference_url']
+            # 備考の略称をフルネーム化（C〜はセンターとして取り出す）
+            nx.normalize_show(det, group, members, group_members, all_names, Counter(), Counter())
             with open(os.path.join(BASE, 'data/shows', sid + '.json'), 'w', encoding='utf-8') as f:
                 json.dump(det, f, ensure_ascii=False, separators=(',', ':'))
             added.append(f"{date} {group} {head['liveseries']}")

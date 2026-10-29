@@ -60,10 +60,9 @@ async function openLive(id){
   const saveBtn=document.getElementById("saveSetlistImg");
   if(saveBtn){
     saveBtn.hidden=!(segs&&segs.length);
-    saveBtn.onclick=async ()=>{
-    const msg=document.getElementById("saveImgMsg");
-    saveBtn.disabled=true; if(msg) msg.textContent="画像を作っています…";
-    try{
+    // 画像はダイアログを開いた時点で先に作っておく（共有シートをすぐ開けるように）
+    let blobPromise=null;
+    if(segs&&segs.length){
       const rows=[];
       for(const seg of segs){
         rows.push({type:"event", text:SECNAME[seg.sec]||"本編"});
@@ -71,9 +70,32 @@ async function openLive(id){
           members:{full:(s.perf||[]).join("、")}, meta:s.remark?[s.remark]:[]}));
       }
       const header={title:l.title, date:`${l.date}${l.time?` ${l.time}開演`:""}`, venue:l.venue};
-      const {blob}=await window.SakamichiSetlistImageExport.create(rows, header, {mode:"full"});
-      window.SakamichiSetlistImageExport.download(blob, `${l.id}.png`);
-      if(msg) msg.textContent="画像を保存しました。";
+      blobPromise=window.SakamichiSetlistImageExport.create(rows, header, {mode:"full"})
+        .then(r=>r.blob).catch(()=>null);
+    }
+    saveBtn.onclick=async ()=>{
+    const msg=document.getElementById("saveImgMsg");
+    saveBtn.disabled=true; if(msg) msg.textContent="画像を作っています…";
+    try{
+      const blob=await blobPromise;
+      if(!blob) throw new Error("no blob");
+      const filename=`${l.id}.png`;
+      // iPhone/iPadでは共有シートから「画像を保存」で写真に入れられる。それ以外はダウンロード。
+      let shared=false;
+      try{
+        const file=new File([blob], filename, {type:"image/png"});
+        if(navigator.canShare && navigator.canShare({files:[file]})){
+          await navigator.share({files:[file]});
+          shared=true;
+        }
+      }catch(e){
+        if(e && e.name==="AbortError"){ shared=true; } // ユーザーが共有を閉じただけ
+      }
+      if(shared){ if(msg) msg.textContent=""; }
+      else{
+        window.SakamichiSetlistImageExport.download(blob, filename);
+        if(msg) msg.textContent="画像を保存しました。";
+      }
     }catch(e){
       if(msg) msg.textContent="画像を作れませんでした。";
     }finally{ saveBtn.disabled=false; }
