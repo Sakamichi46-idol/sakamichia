@@ -98,6 +98,22 @@ def update_lives(summary):
     members = json.load(open(os.path.join(BASE, 'data/members.json')))
     all_names = set(m['name'] for m in members)
     group_members = nx.build_group_members(members)
+
+    def _iso(d):
+        p = (d or '').strip().split('-')
+        return f'{int(p[0]):04d}-{int(p[1]):02d}-{int(p[2]):02d}' if len(p) == 3 else None
+
+    activity = {}
+    for fn in ('Nmember', 'Smember', 'Hmember'):
+        for r in rows(fn):
+            name = (r.get('name1') or '').strip()
+            join, grad = _iso(r.get('joindate')), _iso(r.get('graduatedate'))
+            if name and join:
+                if name in activity:
+                    old = activity[name]
+                    join = min(join, old[0])
+                    grad = None if (grad is None or old[1] is None) else max(grad, old[1])
+                activity[name] = (join, grad)
     added = []
     for fam, fn in [('N', 'Nsetlist'), ('S', 'Ssetlist'), ('H', 'Hsetlist')]:
         byshow = defaultdict(list)
@@ -137,8 +153,9 @@ def update_lives(summary):
                     det['note'] = rk['live_remarks']
                 if rk.get('reference_url'):
                     det['ref'] = rk['reference_url']
-            # 備考の略称をフルネーム化（C〜はセンターとして取り出す）
-            nx.normalize_show(det, group, members, group_members, all_names, Counter(), Counter())
+            # 備考の略称をフルネーム化（C〜はセンターとして取り出す。同姓は公演日の在籍で判別）
+            nx.normalize_show(det, group, members, group_members, all_names, Counter(), Counter(),
+                              date=date, activity=activity)
             with open(os.path.join(BASE, 'data/shows', sid + '.json'), 'w', encoding='utf-8') as f:
                 json.dump(det, f, ensure_ascii=False, separators=(',', ':'))
             added.append(f"{date} {group} {head['liveseries']}")

@@ -17,12 +17,37 @@ PAREN = re.compile(r'（[^）]*）')
 ARROW_SPLIT = re.compile(r'\s*→\s*')
 
 
+# 公演日と在籍期間による判別用コンテキスト（normalize_show が公演ごとに設定する）
+_CTX = {'date': None, 'activity': {}}
+
+
+def set_context(date, activity):
+    _CTX['date'] = date
+    _CTX['activity'] = activity or {}
+
+
+def _active_filter(cands):
+    """公演日に在籍していた候補だけに絞る。在籍情報が無い候補は残す。"""
+    date, act = _CTX['date'], _CTX['activity']
+    if not date or not act:
+        return cands
+    out = []
+    for n in cands:
+        rng = act.get(n)
+        if rng is None:
+            out.append(n)
+        elif rng[0] <= date and (rng[1] is None or date <= rng[1]):
+            out.append(n)
+    return out
+
+
 def _cands(token, pool):
     return [n for n in pool if n.startswith(token) or n.endswith(token)]
 
 
 def expand_token(token, pools, all_names):
-    """略称トークンをフルネームに展開。一意に決まらなければ None。"""
+    """略称トークンをフルネームに展開。一意に決まらなければ None。
+    同姓候補が複数ある場合は、公演日時点で在籍していたメンバーが1人だけならその人と判断する。"""
     token = token.strip()
     if not token or token in NEVER:
         return None
@@ -33,7 +58,12 @@ def expand_token(token, pools, all_names):
         if len(c) == 1:
             return c[0]
         if len(c) > 1:
-            return None  # 最も狭い候補プールで曖昧なら確定できない
+            f = _active_filter(c)
+            if len(f) == 1:
+                return f[0]
+            if len(f) > 1:
+                return None  # 在籍で絞っても曖昧なら確定できない
+            # 在籍情報で全員外れた場合は次のプールへ
     return None
 
 
@@ -279,7 +309,9 @@ def build_group_members(members):
     return g
 
 
-def normalize_show(detail, group, members, group_members, all_names, unresolved, stats):
+def normalize_show(detail, group, members, group_members, all_names, unresolved, stats,
+                   date=None, activity=None):
+    set_context(date, activity)
     show_perf = set()
     for s in detail.get('setlist', []):
         show_perf.update(s.get('perf') or [])
