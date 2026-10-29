@@ -23,3 +23,53 @@ document.addEventListener("DOMContentLoaded",()=>{
   sel.addEventListener("change",apply);
   apply();
 });
+
+// ヘッダーのメニューを「≡ボタン＋右サイドドロワー」に置き換える（旧サイト『坂道日和』方式）
+document.addEventListener("DOMContentLoaded",()=>{
+  const bar=document.querySelector("header.site .nav");
+  const nav=bar?bar.querySelector("nav"):null;
+  if(!bar||!nav) return;
+  const links=[...nav.querySelectorAll("a")];
+  if(!links.length) return;
+  const btn=document.createElement("button");
+  btn.type="button";btn.className="menu-btn";btn.textContent="≡";
+  btn.setAttribute("aria-label","メニューを開く");btn.setAttribute("aria-expanded","false");
+  bar.appendChild(btn);
+  const scrim=document.createElement("div");scrim.className="scrim";
+  const drawer=document.createElement("aside");
+  drawer.className="drawer";drawer.setAttribute("aria-label","サイトメニュー");drawer.setAttribute("aria-hidden","true");
+  const logo=document.querySelector("header.site .logo");
+  const head=document.createElement("div");head.className="drawer-head";
+  if(logo){const l=document.createElement("a");l.className="logo";l.href=logo.getAttribute("href");l.innerHTML=logo.innerHTML;head.appendChild(l);}
+  const close=document.createElement("button");
+  close.type="button";close.className="drawer-close";close.textContent="×";close.setAttribute("aria-label","メニューを閉じる");
+  head.appendChild(close);drawer.appendChild(head);
+  const list=document.createElement("nav");list.className="drawer-links";
+  links.forEach(a=>{
+    const c=document.createElement("a");
+    c.href=a.getAttribute("href");c.textContent=a.textContent;
+    if(a.classList.contains("on"))c.className="on";
+    list.appendChild(c);
+  });
+  drawer.appendChild(list);
+  const note=document.createElement("p");note.className="drawer-note";
+  note.textContent="坂道ファンによる非公式ファンサイトです。公式運営とは関係ありません。";
+  drawer.appendChild(note);
+  document.body.append(scrim,drawer);
+  document.body.classList.add("has-drawer");
+  const setOpen=(open)=>{
+    document.body.classList.toggle("drawer-open",open);
+    btn.setAttribute("aria-expanded",String(open));
+    btn.setAttribute("aria-label",open?"メニューを閉じる":"メニューを開く");
+    drawer.setAttribute("aria-hidden",String(!open));
+    if(open)close.focus({preventScroll:true});
+    else btn.focus({preventScroll:true});
+  };
+  btn.addEventListener("click",()=>setOpen(!document.body.classList.contains("drawer-open")));
+  close.addEventListener("click",()=>setOpen(false));
+  scrim.addEventListener("click",()=>setOpen(false));
+  list.addEventListener("click",()=>setOpen(false));
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&document.body.classList.contains("drawer-open"))setOpen(false);
+  });
+});
