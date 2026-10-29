@@ -50,7 +50,8 @@ img{max-width:100%}
 @media(hover:hover){a.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(120,80,40,.10)}}
 button,.btn{transition:filter .15s ease}
 button:hover,.btn:hover{filter:brightness(1.06)}
-@media(max-width:640px){.nav{gap:8px}.nav nav{flex-wrap:nowrap;overflow-x:auto;width:100%;margin-left:0;padding:2px 0 6px;scrollbar-width:none}.nav nav::-webkit-scrollbar{display:none}.nav nav a{white-space:nowrap;padding:9px 12px;background:#fff;border:1px solid var(--line)}.nav nav a.on{background:#f2e9fb}.hero{padding:30px 0 14px}h2.title{font-size:24px}}
+@media(max-width:900px){.nav{gap:8px;flex-wrap:nowrap}.nav nav{flex:1;flex-wrap:nowrap;overflow-x:auto;margin-left:0;padding:2px 0;scrollbar-width:none}.nav nav::-webkit-scrollbar{display:none}.nav nav a{white-space:nowrap;padding:9px 12px;background:#fff;border:1px solid var(--line)}.nav nav a.on{background:#f2e9fb}}
+@media(max-width:640px){.hero{padding:30px 0 14px}h2.title{font-size:24px}}
 
 .grad{color:var(--n);animation:groupcycle 9s ease-in-out infinite}
 
@@ -199,3 +200,25 @@ dialog[open]{display:flex;flex-direction:column}
 .ms-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .ms-image-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;font-size:14px}
 .ms-msg{font-size:13.5px;min-height:1.4em}
+
+/* レスポンシブ調整：スマホ・タブレット・PC それぞれで操作しやすく */
+body{overflow-x:clip}
+.filters select,.filters input{max-width:100%}
+dialog{max-height:92dvh}
+@media (pointer:coarse){
+  /* 入力欄の文字を16px以上にして、iPhone/iPadでフォーカス時の自動ズームを防ぐ */
+  input,select,textarea{font-size:16px}
+  /* 指で押しやすい大きさに */
+  .ychip{min-height:38px;padding:8px 14px}
+  .tabs button{min-height:42px}
+  .vtoggle button{min-height:38px;padding:8px 14px}
+  .ms-small{padding:8px 12px}
+  .lb-bar{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+}
+@media(max-width:640px){
+  dialog{padding:16px}
+  .srow{grid-template-columns:28px minmax(0,1fr) minmax(0,36%)}
+  .searchbox button{padding:12px 14px}
+  .ms-eventadd{flex-direction:column}
+  .ms-eventadd .sub{align-self:flex-start}
+}
