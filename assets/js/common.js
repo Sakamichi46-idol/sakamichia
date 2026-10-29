@@ -45,12 +45,33 @@ document.addEventListener("DOMContentLoaded",()=>{
   close.type="button";close.className="drawer-close";close.textContent="×";close.setAttribute("aria-label","メニューを閉じる");
   head.appendChild(close);drawer.appendChild(head);
   const list=document.createElement("nav");list.className="drawer-links";
-  links.forEach(a=>{
-    const c=document.createElement("a");
-    c.href=a.getAttribute("href");c.textContent=a.textContent;
-    if(a.classList.contains("on"))c.className="on";
-    list.appendChild(c);
+  // 案A（3カテゴリ型）の階層でドロワーを構成する：ホーム／調べる／遊ぶ・作る／お知らせ
+  const NAV_GROUPS=[
+    {label:"調べる", keys:["songs/","live/","blog/","members/","matome/"]},
+    {label:"遊ぶ・作る", keys:["games/","formation/","setlist/"]},
+  ];
+  const items=links.map(a=>{
+    let path="/";
+    try{ path=new URL(a.getAttribute("href"), location.href).pathname; }catch(e){}
+    return {a, path};
   });
+  const keyOf=it=>it.path==="/"?"/":(it.path.replace(/\/$/,"").split("/").pop()+"/");
+  const used=new Set();
+  const appendLink=it=>{
+    const c=document.createElement("a");
+    c.href=it.a.getAttribute("href");c.textContent=it.a.textContent;
+    if(it.a.classList.contains("on"))c.className="on";
+    list.appendChild(c);used.add(it);
+  };
+  items.filter(it=>keyOf(it)==="/").forEach(appendLink);
+  for(const g of NAV_GROUPS){
+    const members=g.keys.map(k=>items.find(it=>keyOf(it)===k)).filter(Boolean);
+    if(!members.length) continue;
+    const h=document.createElement("div");h.className="drawer-glabel";h.textContent=g.label;
+    list.appendChild(h);
+    members.forEach(appendLink);
+  }
+  items.filter(it=>!used.has(it)).forEach(appendLink);
   drawer.appendChild(list);
   const note=document.createElement("p");note.className="drawer-note";
   note.textContent="坂道ファンによる非公式ファンサイトです。公式運営とは関係ありません。";

@@ -43,4 +43,6 @@ function search(q){
   box.innerHTML = html || `<div class="empty">「${esc(q)}」は見つかりませんでした。<br>メンバー名・曲名・会場名で試してみてください。</div>`;
 }
 document.getElementById("searchForm").addEventListener("submit", e=>{ e.preventDefault(); search(document.getElementById("q").value); });
+// ブラウザのタブ復元（スナップショット表示）では古い件数が残るため、復元時は最新データで描き直す
+window.addEventListener("pageshow", e=>{ if(e.persisted) init(); });
 init();
