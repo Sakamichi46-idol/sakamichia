@@ -98,11 +98,32 @@ async function openLive(id){
     // 画像はダイアログを開いた時点で先に作っておく（共有シートをすぐ開けるように）
     let blobPromise=null;
     if(segs&&segs.length){
+      // 出力画像は旧サイト式：番号は M01/EN1/WEN1、区切りはアンコールのみ帯表示、
+      // 全員で歌う曲は名前を並べず「（全員参加）」と表記する
       const rows=[];
+      const cnt={main:0,encore:0,double:0};
+      let prevSec=null;
       for(const seg of segs){
-        rows.push({type:"event", text:SECNAME[seg.sec]||"本編"});
-        seg.items.forEach((s,i)=>rows.push({type:"song", number:String(i+1), title:s.title, center:s.center||"",
-          members:{full:(s.perf||[]).join("、")}, meta:s.remark?[s.remark]:[]}));
+        for(const s of seg.items){
+          if(s.sec!==prevSec){
+            if(s.sec==="encore") rows.push({type:"event", text:"アンコール"});
+            else if(s.sec==="double") rows.push({type:"event", text:"Wアンコール"});
+            prevSec=s.sec;
+          }
+          cnt[s.sec]=(cnt[s.sec]||0)+1;
+          const num=s.sec==="main" ? "M"+String(cnt.main).padStart(2,"0")
+            : s.sec==="encore" ? "EN"+cnt.encore : "WEN"+cnt.double;
+          const clauses=(s.remark||"").split("、").map(x=>x.trim()).filter(Boolean);
+          const zenin=clauses.some(c=>/^全員(歌唱|バージョン)?$/.test(c));
+          let memberText=(s.perf||[]).join("、");
+          let meta=clauses;
+          if(zenin){
+            memberText="（全員参加）";
+            meta=clauses.filter(c=>!/^全員(歌唱|バージョン)?$/.test(c));
+          }
+          rows.push({type:"song", number:num, title:s.title, center:s.center||"",
+            members:{full:memberText}, meta:meta.length?[meta.join("、")]:[]});
+        }
       }
       const header={title:l.title, date:`${l.date}${l.time?` ${l.time}開演`:""}`, venue:l.venue};
       blobPromise=window.SakamichiSetlistImageExport.create(rows, header, {mode:"full"})
