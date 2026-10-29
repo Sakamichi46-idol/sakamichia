@@ -25,8 +25,8 @@ function saveState(){
     q:document.getElementById("q").value,
     groups:[...GSEL],
     member:document.getElementById("member").value,
-    from:document.getElementById("from").value,
-    to:document.getElementById("to").value,
+    from:dateVal("from"),
+    to:dateVal("to"),
     sort:document.getElementById("sort").value,
     gen:document.getElementById("gen").value,
     media:MEDIA,
@@ -78,8 +78,8 @@ async function init(){
     if(GSEL.size){ syncGroupChips(); buildMemberOptions(); }
     if(saved.member) document.getElementById("member").value=saved.member;
     if(saved.q) document.getElementById("q").value=saved.q;
-    if(saved.from) document.getElementById("from").value=saved.from;
-    if(saved.to) document.getElementById("to").value=saved.to;
+    if(saved.from) document.getElementById("from").value=fmtDateText(saved.from);
+    if(saved.to) document.getElementById("to").value=fmtDateText(saved.to);
     if(saved.sort) document.getElementById("sort").value=saved.sort;
     if(saved.gen) document.getElementById("gen").value=saved.gen;
     if(saved.media){ MEDIA=saved.media; }
@@ -92,6 +92,10 @@ async function init(){
     if(+saved.pPage>=1) ppage=+saved.pPage;
   }
   ["q","member","from","to","sort","gen"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
+  ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+    const el=document.getElementById(id), iso=parseDateText(el.value);
+    if(iso) el.value=fmtDateText(iso);
+  }));
   document.querySelectorAll(".mchip").forEach(ch=>ch.addEventListener("click",()=>{ MEDIA=ch.dataset.media; syncMediaChips(); resetPages(); render(); syncAdvBtn(); saveState(); }));
   document.querySelectorAll("[data-preset]").forEach(ch=>ch.addEventListener("click",()=>applyPreset(ch.dataset.preset)));
   syncMediaChips();
@@ -112,7 +116,7 @@ async function init(){
 }
 let LATEST="";
 function advActive(){
-  const f=document.getElementById("from").value, t=document.getElementById("to").value;
+  const f=dateVal("from"), t=dateVal("to");
   return !!(f||t) || yearSel!==null || !!MEDIA
     || document.getElementById("sort").value!=="new"
     || !!document.getElementById("gen").value;
@@ -131,12 +135,20 @@ function buildGenOptions(){
   }).join("");
 }
 function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+// 日付欄はテキスト入力（枠の中に「年/月/日」と表示）。読み取り時は ISO 形式に直す。
+function parseDateText(v){
+  const d=String(v||"").replace(/[^\d]/g,"");
+  if(d.length!==8) return "";
+  const mo=+d.slice(4,6), da=+d.slice(6,8);
+  if(mo<1||mo>12||da<1||da>31) return "";
+  return `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+}
+function dateVal(id){ return parseDateText(document.getElementById(id).value); }
+function fmtDateText(iso){ return iso ? iso.replace(/-/g,"/") : ""; }
 function applyPreset(k){
-  const now=new Date(), F=document.getElementById("from"), T=document.getElementById("to");
-  if(k==="d30"){ const s=new Date(now); s.setDate(s.getDate()-29); F.value=ymd(s); T.value=ymd(now); }
-  else if(k==="thisyear"){ F.value=`${now.getFullYear()}-01-01`; T.value=`${now.getFullYear()}-12-31`; }
-  else if(k==="lastyear"){ F.value=`${now.getFullYear()-1}-01-01`; T.value=`${now.getFullYear()-1}-12-31`; }
-  else { F.value=""; T.value=""; }
+  if(k!=="clear") return;
+  document.getElementById("from").value="";
+  document.getElementById("to").value="";
   resetPages(); render(); syncAdvBtn(); saveState();
 }
 function syncAdvBtn(){
@@ -187,7 +199,7 @@ function pool(){ return poolYears().flatMap(y=>YEARS[y]||[]); }
 function filtered(){
   const q=document.getElementById("q").value;
   const mv=document.getElementById("member").value;
-  const from=document.getElementById("from").value, to=document.getElementById("to").value;
+  const from=dateVal("from"), to=dateVal("to");
   const gv=document.getElementById("gen").value, sv=document.getElementById("sort").value;
   const arr=pool().filter(b=>{
       const mHit=mv&&(b.member===mv||b.series===mv);

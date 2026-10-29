@@ -127,6 +127,7 @@ body[data-group="坂道選抜"]{--page:#2f9e8f}
 .adv-label{font-weight:700;font-size:13px;margin:10px 0 4px}
 .filters.period{align-items:flex-end;margin:6px 0 2px}
 .datefld{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--muted)}
+.datefld input{width:150px}
 .presets{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
 .filters.advrow{margin:2px 0 4px}
 .filters.advrow select{flex:1;min-width:0}
