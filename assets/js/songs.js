@@ -51,7 +51,8 @@ function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
   let rows=DATA.map((s,i)=>[s,i]).filter(([s])=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
   if(sort==="title"){
-    rows.sort((a,b)=>a[0].title.localeCompare(b[0].title,"ja"));
+    const ykey=s=>s.yomi||s.title;
+    rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
   } else {
     const desc = sort==="new";
     const relKey = s => `${s.group}|${s.release||""}|${s.date||"9999-12-31"}`;

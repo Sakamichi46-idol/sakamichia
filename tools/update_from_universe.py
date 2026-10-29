@@ -65,6 +65,12 @@ def rows(name):
 def norm(s):
     return (s or '').replace(' ', '').replace('　', '')
 
+def song_yomi(reading):
+    """楽曲シートの reading（「本読み、略称」形式）から本読みだけを取り、ひらがなに統一する。"""
+    r = (reading or '').split('、')[0].strip()
+    r = re.sub(r'^[！!？?・〜~\s]+|[！!？?・〜~\s]+$', '', r)
+    return ''.join(chr(ord(c) - 0x60) if 'ァ' <= c <= 'ヶ' else c for c in r)
+
 def clean_genre(g):
     return re.sub(r'^\d+', '', (g or '').strip())
 
@@ -192,6 +198,11 @@ def update_songs_and_formations(summary):
     songs = json.load(open(sp))
     by_title = {norm(s['title']): s for s in songs}
     csv_forms = build_formations()
+    readings = {}
+    for sf in ['Nsongs', 'Ssongs', 'Hsongs']:
+        for r in rows(sf):
+            if r.get('title') and r.get('reading'):
+                readings[norm(r['title'])] = song_yomi(r['reading'])
     writers, arrangers = defaultdict(list), defaultdict(list)
     for sf, wf, af in [('Nsongs', 'Nwriter', 'Narranger'), ('Ssongs', 'Swriter', 'Sarranger'), ('Hsongs', 'Hwriter', 'Harranger')]:
         s_map = {r['songid']: r['title'] for r in rows(sf)}
@@ -230,7 +241,7 @@ def update_songs_and_formations(summary):
                      'year': int(date[:4]) if date[:4].isdigit() else 0, 'date': date,
                      'type': song_type(r.get('genre')), 'center': '', 'release': r.get('release') or '',
                      'writers': writers.get(t, []), 'arrangers': arrangers.get(t, []),
-                     'ord': None, 'genre': r.get('genre') or ''}
+                     'ord': None, 'genre': r.get('genre') or '', 'yomi': song_yomi(r.get('reading'))}
             if special:
                 entry['special'] = special
             f = csv_forms.get(t)
@@ -252,6 +263,9 @@ def update_songs_and_formations(summary):
         s = by_title.get(norm(title))
         if s:
             s['center'] = center
+    for s in songs:
+        if not s.get('yomi') and readings.get(norm(s['title'])):
+            s['yomi'] = readings[norm(s['title'])]
     json.dump(songs, open(sp, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     summary['songs_added'] = added
     summary['centers_filled'] = filled
