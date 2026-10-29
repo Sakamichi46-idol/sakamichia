@@ -8,15 +8,16 @@ const KINDS=[
   {label:"BACKS LIVE!!", tag:"BACKS LIVE!!"},
   {label:"ひなた坂46LIVE", tag:"ひなた坂46LIVE"},
   {label:"ひな誕祭", tag:"ひな誕祭"},
-  {label:"欅共和国／W-K FES.", tag:"欅共和国/W-K FES."},
+  {label:"欅共和国／W-KEYAKI FES", match:l=>(l.tags||[]).includes("欅共和国/W-K FES.")||/欅共和国|W-KEYAKI FES/.test(l.title)},
   {label:"がなくり・ひなくり", tag:"がなくり/ひなくり"},
-  {label:"合同公演", tag:"合同公演"},
+  {label:"合同公演", match:l=>(l.tags||[]).includes("合同公演")&&!/欅共和国|W-KEYAKI FES/.test(l.title)},
   {label:"外部のイベント", tag:"外部のイベント"},
   {label:"ミニライブなど", tag:"ミニライブなど"},
   {label:"単独主催公演（その他）", tag:null},
 ];
 const KSEL=new Set();
 function kindMatch(l, kind){
+  if(kind.match) return kind.match(l);
   const ts=l.tags||[];
   if(kind.tag===null) return ts.length===1 && ts[0]==="単独主催公演";
   return ts.includes(kind.tag) || ts.some(t=>String(t).split("/").includes(kind.tag));
