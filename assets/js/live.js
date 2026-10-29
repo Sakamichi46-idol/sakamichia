@@ -38,6 +38,8 @@ const KINDS=[
   {label:"単独主催公演（その他）", tag:null},
 ];
 const KSEL=new Set();
+const GSEL=new Set();
+const GROUP_LIST=["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"];
 let JOINT_IDS=new Set();
 // 同じ日・同じ公演名で複数グループの記録がある公演は「合同」とみなす
 // （例：欅坂46の握手会ミニライブやツアーに、けやき坂46・日向坂46が出演した回）。
@@ -75,6 +77,26 @@ async function init(){
   const years=[...new Set(DATA.map(l=>l.date.slice(0,4)))].sort().reverse();
   const sel=document.getElementById("year");
   years.forEach(y=>{const o=document.createElement("option");o.textContent=y+"年";o.value=y;sel.appendChild(o);});
+  const gc=document.getElementById("groupChips");
+  const syncGroupChips=()=>{
+    gc.querySelectorAll(".gchip").forEach(b=>{
+      const g=b.dataset.g;
+      b.classList.toggle("on", g==="" ? GSEL.size===0 : GSEL.has(g));
+    });
+  };
+  [["", "すべてのグループ"], ...GROUP_LIST.map(g=>[g,g])].forEach(([g,label])=>{
+    const b=document.createElement("button");
+    b.type="button"; b.className="ychip gchip"; b.dataset.g=g; b.textContent=label;
+    b.addEventListener("click",()=>{
+      if(g==="") GSEL.clear();
+      else if(GSEL.has(g)) GSEL.delete(g);
+      else GSEL.add(g);
+      syncGroupChips();
+      render();
+    });
+    gc.appendChild(b);
+  });
+  syncGroupChips();
   const kt=document.getElementById("kindTabs");
   KINDS.forEach(k=>{
     const b=document.createElement("button");
@@ -110,7 +132,7 @@ async function init(){
     document.getElementById("to").value="";
     render();
   });
-  ["q","group","year","sort","region","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  ["q","year","sort","region","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   render();
   // 曲名・メンバー検索の索引は裏で読み込み、届いたら絞り込みに反映する
   loadJSON("live-index.json").then(async idx=>{
@@ -123,14 +145,15 @@ async function init(){
   }).catch(()=>{});
 }
 function render(){
-  const q=document.getElementById("q").value, g=document.getElementById("group").value, y=document.getElementById("year").value;
+  const q=document.getElementById("q").value, y=document.getElementById("year").value;
+  document.body.dataset.group = GSEL.size===1 ? [...GSEL][0] : "";
   const srt=document.getElementById("sort").value, region=document.getElementById("region").value;
   const from=document.getElementById("from").value, to=document.getElementById("to").value;
   const member=document.getElementById("member").value, role=document.getElementById("role").value;
   const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
   const advActive=!!(KSEL.size || region || from || to || srt!=="auto" || member);
   advToggle.textContent=`詳細設定 ${advPanel.hidden?"▼":"▲"}${advActive?"（設定中）":""}`;
-  const rows=DATA.filter(l=>(!g||l.group===g)&&(!y||l.date.startsWith(y))
+  const rows=DATA.filter(l=>(!GSEL.size||GSEL.has(l.group))&&(!y||l.date.startsWith(y))
     &&(!region||l.region===region)&&(!from||l.date>=from)&&(!to||l.date<=to)
     &&(!member || memberMatch(l, member, role))
     &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
