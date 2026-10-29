@@ -29,6 +29,9 @@ jobs:
           SAKAMICHIA_NO_ZIP: '1'
         run: python3 tools/newest_check.py
 
+      - name: Fetch official news
+        run: python3 tools/fetch_news.py
+
       - name: Pack blog bodies into shards
         run: python3 tools/pack_bodies.py
 

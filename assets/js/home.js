@@ -1,12 +1,22 @@
 // トップ：横断検索
 let DB = {};
 async function init(){
-  const [lives, matome, bidx, songs, members] = await Promise.all([
+  const [lives, matome, bidx, songs, members, newsData] = await Promise.all([
     loadJSON("lives.json"), loadJSON("matome.json"), loadJSON("blogs/index.json"),
-    loadJSON("songs.json"), loadJSON("members.json")]);
+    loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news.json")]);
   const latestYear = Math.max(...Object.keys(bidx.years).map(Number));
   const blogs = await loadJSON(`blogs/y${latestYear}.json`);
-  DB = {lives, matome, blogs, songs, members};
+  const news = (newsData && newsData.items) || [];
+  DB = {lives, matome, blogs, songs, members, news};
+  const WD = ["日", "月", "火", "水", "木", "金", "土"];
+  document.getElementById("homeNews").innerHTML = news.slice(0, 5).map(n => {
+    const dt = new Date(n.d + "T00:00:00+09:00");
+    const [, mm, dd] = n.d.split("-");
+    return `<a class="nw-row" href="${esc(n.url)}" target="_blank" rel="noopener">
+      <span class="nw-date"><b>${+mm}/${+dd}</b>${n.d.slice(0, 4)}（${WD[dt.getDay()]}）</span>
+      <span class="nw-main"><span class="nw-meta">${groupChip(n.g)}${n.c ? `<span class="nw-cat">${esc(n.c)}</span>` : ""}</span>
+      <span class="nw-title">${esc(n.title)}</span></span></a>`;
+  }).join("");
   document.getElementById("counts").textContent =
     `登録データ：ライブ ${lives.length}件 / まとめ ${matome.length}件 / ブログ ${bidx.total}件 / 楽曲 ${songs.length}曲 / メンバー ${members.length}人`;
   const q = new URLSearchParams(location.search).get("q");
@@ -27,7 +37,9 @@ function search(q){
     `<div class="card">${groupChip(m.group)}<h3>${esc(m.name)}</h3><p>${esc([m.gen?m.gen+"期生":"", m.graduated?"卒業":""].filter(Boolean).join(" ・ "))}<br>センター曲：${esc((m.centerSongs||[]).slice(0,8).join("、") || "—")}${(m.centerSongs||[]).length>8?" ほか":""}</p></div>`);
   const blogCards = DB.blogs.filter(b=>hit([b.title,b.group,b.member,b.date])).map(b=>
     `<a class="card" href="blog/">${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(b.date)} ・ ${esc(b.member)}</p></a>`);
-  const html = sec("歴代ライブ",liveCards)+sec("まとめ",matomeCards)+sec("楽曲",songCards)+sec("メンバー",memberCards)+sec("ブログ",blogCards);
+  const newsCards = (DB.news||[]).filter(n=>hit([n.title,n.g,n.c])).map(n=>
+    `<a class="card" href="${esc(n.url)}" target="_blank" rel="noopener">${groupChip(n.g)}<h3>${esc(n.title)}</h3><p>${esc(n.d)}${n.c?` ・ ${esc(n.c)}`:""}（公式サイト）</p></a>`);
+  const html = sec("歴代ライブ",liveCards)+sec("まとめ",matomeCards)+sec("お知らせ",newsCards)+sec("楽曲",songCards)+sec("メンバー",memberCards)+sec("ブログ",blogCards);
   box.innerHTML = html || `<div class="empty">「${esc(q)}」は見つかりませんでした。<br>メンバー名・曲名・会場名で試してみてください。</div>`;
 }
 document.getElementById("searchForm").addEventListener("submit", e=>{ e.preventDefault(); search(document.getElementById("q").value); });
