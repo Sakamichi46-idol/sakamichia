@@ -9,6 +9,9 @@ function kqShuffle(a) {
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
+function kqUtaLink(e) {
+  return e.uta ? `<p style="margin-top:10px"><a class="btn sub" href="${esc(e.uta)}" target="_blank" rel="noopener">歌詞を歌ネットで見る</a></p>` : "";
+}
 function kqPoints(revealed) {
   // 最初の5文字は100点。以後、1文字出すごとに -1点（最低10点）
   return Math.max(10, 100 - Math.max(0, revealed - KQ_FIRST));
@@ -33,6 +36,7 @@ function kqRender() {
     const ok = KQ.picked === q.title;
     html += `<p class="score">${ok ? `正解！ +${KQ.gained}点` : `残念… 正解は「${esc(q.title)}」でした`}</p>
     <p>答え：<b>${esc(q.title)}</b>（${esc(q.group)}${q.year ? "・" + q.year + "年" : ""}）／ 漢字は全${total}文字でした。</p>
+    ${kqUtaLink(q)}
     <p><button type="button" id="kqNext" class="primary">${KQ.i + 1 < KQ.list.length ? "次の問題へ" : "結果を見る"}</button></p>`;
   }
   area.innerHTML = html + "</div>";
@@ -72,8 +76,11 @@ function kqChoices(q) {
 function kqResult() {
   const area = document.getElementById("kqArea");
   const max = KQ.list.length * 100;
+  const songList = KQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.title)}』（${esc(e.group)}）${e.uta ? ` <a href="${esc(e.uta)}" target="_blank" rel="noopener">歌詞を見る</a>` : ""}</p>`).join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${KQ.score} / ${max} 点</p>
+  <h4 style="margin:18px 0 6px">出題された曲の歌詞を確認する（歌ネット）</h4>
+  ${songList}
   <p>${KQ.score >= max * 0.8 ? "すごい！かなりの早さで分かりましたね。" : KQ.score >= max * 0.5 ? "なかなかの勘の良さです。" : KQ.score >= max * 0.3 ? "もう少し早く当てられるようになると、さらに楽しいですよ。" : "漢字の並びから曲を当てるのは意外と難しいですよね。"}</p>
   <p><button type="button" class="primary" onclick="location.reload()">モード選択に戻る</button></p></div>`;
 }

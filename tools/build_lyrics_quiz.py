@@ -32,10 +32,13 @@ def main():
             print(f"skip (漢字なし): {e.get('title')}")
             continue
         cat = by_title.get(e['title'])
-        out.append({'title': e['title'],
-                    'group': (cat or {}).get('group') or e.get('group') or '',
-                    'year': (cat or {}).get('year') or 0,
-                    'kanji': kanji})
+        item = {'title': e['title'],
+                'group': (cat or {}).get('group') or e.get('group') or '',
+                'year': (cat or {}).get('year') or 0,
+                'kanji': kanji}
+        if e.get('uta'):
+            item['uta'] = e['uta']
+        out.append(item)
     path = os.path.join(BASE, 'data/lyrics-quiz.json')
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
