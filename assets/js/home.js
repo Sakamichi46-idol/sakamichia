@@ -23,7 +23,7 @@ async function init(){
     const dt = new Date(n.d + "T00:00:00+09:00");
     const [, mm, dd] = n.d.split("-");
     return `<a class="nw-row" href="${esc(n.url)}" target="_blank" rel="noopener">
-      <span class="nw-date"><b>${+mm}/${+dd}</b>${n.d.slice(0, 4)}（${WD[dt.getDay()]}）</span>
+      <span class="nw-date"><b>${n.d.slice(0, 4)}/${+mm}/${+dd}</b>（${WD[dt.getDay()]}）</span>
       <span class="nw-main"><span class="nw-meta">${groupChip(n.g)}${n.c ? `<span class="nw-cat">${esc(n.c)}</span>` : ""}</span>
       <span class="nw-title">${esc(n.title)}</span></span></a>`;
   }).join("");
@@ -42,7 +42,7 @@ function search(q){
   const songCards = DB.songs.filter(s=>hit([s.title,s.group,s.center,s.year])).map(s=>
     `<a class="card" href="songs/">${groupChip(s.group)}<h3>${esc(s.title)}</h3><p>${esc(s.year)}年${s.center?` ・ センター：${esc(s.center)}`:""}</p></a>`);
   const memberCards = DB.members.filter(m=>hit([m.name,m.group,m.reading,m.centerSongs])).map(m=>
-    `<div class="card">${groupChip(m.group)}<h3>${esc(m.name)}</h3><p>${esc([m.gen?m.gen+"期生":"", m.graduated?"卒業":""].filter(Boolean).join(" ・ "))}<br>センター曲：${esc((m.centerSongs||[]).slice(0,8).join("、") || "—")}${(m.centerSongs||[]).length>8?" ほか":""}</p></div>`);
+    `<a class="card" href="members/?member=${encodeURIComponent(m.name)}">${groupChip(m.group)}<h3>${esc(m.name)}</h3><p>${esc([m.gen?m.gen+"期生":"", m.graduated?"卒業":""].filter(Boolean).join(" ・ "))}<br>センター曲：${esc((m.centerSongs||[]).slice(0,8).join("、") || "—")}${(m.centerSongs||[]).length>8?" ほか":""}</p></a>`);
   const blogCards = DB.blogs.filter(b=>hit([b.title,b.group,b.member,b.date])).map(b=>
     `<a class="card" href="blog/">${groupChip(b.group)}<h3 class="${blogFontCls(b)}">${esc(b.title)}</h3><p>${esc(b.date)} ・ ${esc(b.member)}</p></a>`);
   const newsCards = (DB.news||[]).filter(n=>hit([n.title,n.g,n.c])).map(n=>

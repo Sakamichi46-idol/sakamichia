@@ -62,7 +62,9 @@ function render() {
   else if (fSort === "center") list.sort((a, b) => centerSongsOf(b.name).length - centerSongsOf(a.name).length);
   else if (fSort === "centerT") list.sort((a, b) => centerSongsOf(b.name, true).length - centerSongsOf(a.name, true).length);
   else list.sort((a, b) => order(familyOf(a)) - order(familyOf(b)) || genKey(a) - genKey(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
-  document.getElementById("mbCount").textContent = `${list.length}人`;
+  document.getElementById("mbCount").textContent = fShowGrad
+    ? `${list.length}人`
+    : `現役 ${list.length}人を表示中（全${MEMBERS.length}人）`;
   const grid = document.getElementById("mbGrid");
   if (!list.length) {
     grid.innerHTML = `<p style="color:var(--muted)">条件に合うメンバーがいません。</p>`;
@@ -144,6 +146,8 @@ function syncGenOptions() {
   fGen = sel.value;
 }
 async function init() {
+  document.getElementById("mbCount").textContent = "読み込み中…";
+  document.getElementById("mbGrid").innerHTML = `<p style="color:var(--muted)">読み込み中…</p>`;
   MEMBERS = await loadJSON("members.json");
   PHOTOS = await loadJSON("member-photos.json");
   const bidx = await loadJSON("blogs/index.json");

@@ -65,6 +65,8 @@ function renderYearChips(){
   syncChips();
 }
 async function init(){
+  document.getElementById("count").textContent="読み込み中…";
+  document.getElementById("list").innerHTML=`<div class="empty">読み込み中…</div>`;
   INDEX=await loadJSON("blogs/index.json");
   const years=Object.keys(INDEX.years).sort().reverse();
   renderYearChips();
@@ -151,12 +153,17 @@ async function init(){
   render();
 }
 let LATEST="";
-function advActive(){
-  const f=dateVal("from"), t=dateVal("to");
-  return !!(f||t) || yearSel!==null || !!MEDIA
-    || document.getElementById("sort").value!=="new"
-    || !!document.getElementById("gen").value
-    || !!document.getElementById("bq").value;
+// 詳細検索（.advanced）内で有効になっている条件の数。トグルのバッジ表示に使う
+function advCount(){
+  let n=0;
+  if(dateVal("from")) n++;
+  if(dateVal("to")) n++;
+  if(yearSel!==null) n++;
+  if(MEDIA) n++;
+  if(document.getElementById("sort").value!=="new") n++;
+  if(document.getElementById("gen").value) n++;
+  if(document.getElementById("bq").value) n++;
+  return n;
 }
 function syncMediaChips(){
   document.querySelectorAll(".mchip").forEach(ch=>ch.classList.toggle("on", ch.dataset.media===MEDIA));
@@ -191,7 +198,8 @@ function applyPreset(k){
 function syncAdvBtn(){
   const tog=document.getElementById("advToggle"); if(!tog) return;
   const open=!document.getElementById("advanced").hidden;
-  tog.textContent=`詳細検索${!open&&advActive()?"（設定中）":""} ${open?"▲":"▼"}`;
+  const n=advCount();
+  tog.innerHTML=`詳細検索${n?` <span class="adv-badge">${n}</span>`:""} ${open?"▲":"▼"}`;
 }
 function syncChips(){
   document.querySelectorAll("#years .ychip").forEach(ch=>ch.classList.toggle("on", (ch.dataset.year||null)===yearSel));

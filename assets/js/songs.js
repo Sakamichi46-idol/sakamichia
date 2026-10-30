@@ -1,4 +1,24 @@
-let DATA=[]; let FORMS={}; const SEL=new Set(); const YSEL=new Set();
+let DATA=[]; let FORMS={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set();
+// グループ・年・曲種チップの選択状態表示と「選択をクリア」ボタンの表示をまとめて同期する
+function syncTabs(){
+  document.querySelectorAll("#groupTabs button").forEach(x=>{
+    const on = x.dataset.g==="" ? SEL.size===0 : SEL.has(x.dataset.g);
+    x.classList.toggle("on", on);
+    x.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  document.querySelectorAll("#yearTabs button").forEach(x=>{
+    const on = x.dataset.y==="" ? YSEL.size===0 : YSEL.has(+x.dataset.y);
+    x.classList.toggle("on", on);
+    x.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  document.querySelectorAll("#typeTabs button").forEach(x=>{
+    const on = x.dataset.t==="" ? TSEL.size===0 : TSEL.has(x.dataset.t);
+    x.classList.toggle("on", on);
+    x.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  const clr=document.getElementById("clearSel");
+  if(clr) clr.hidden = !(SEL.size||YSEL.size||TSEL.size);
+}
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
 async function init(){
   [DATA, FORMS]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json")]);
@@ -7,11 +27,7 @@ async function init(){
     if(key==="") SEL.clear();
     else if(SEL.has(key)) SEL.delete(key);
     else SEL.add(key);
-    document.querySelectorAll("#groupTabs button").forEach(x=>{
-      const on = x.dataset.g==="" ? SEL.size===0 : SEL.has(x.dataset.g);
-      x.classList.toggle("on", on);
-      x.setAttribute("aria-pressed", on ? "true" : "false");
-    });
+    syncTabs();
     if(SEL.size===1){
       const only=[...document.querySelectorAll("#groupTabs button")].find(x=>x.dataset.g===[...SEL][0]);
       document.body.dataset.group=only ? (only.dataset.acc||"") : "";
@@ -28,14 +44,31 @@ async function init(){
     if(y==="") YSEL.clear();
     else if(YSEL.has(+y)) YSEL.delete(+y);
     else YSEL.add(+y);
-    ybox.querySelectorAll("button").forEach(x=>{
-      const on = x.dataset.y==="" ? YSEL.size===0 : YSEL.has(+x.dataset.y);
-      x.classList.toggle("on", on);
-      x.setAttribute("aria-pressed", on ? "true" : "false");
-    });
+    syncTabs();
     render();
   }));
+  // 曲種チップ（データ内の type の実値から作る。複数選択可）
+  const typeCounts={};
+  DATA.forEach(s=>{ const t=s.type||""; if(t) typeCounts[t]=(typeCounts[t]||0)+1; });
+  const types=Object.keys(typeCounts).sort((a,b)=>typeCounts[b]-typeCounts[a]);
+  const tbox=document.getElementById("typeTabs");
+  tbox.innerHTML=`<button data-t="" class="on">すべての曲種</button>`+types.map(t=>`<button data-t="${esc(t)}">${esc(t)}</button>`).join("")+`<span class="tabhint">曲種もタップで複数選択できます</span>`;
+  tbox.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    const t=b.dataset.t;
+    if(t==="") TSEL.clear();
+    else if(TSEL.has(t)) TSEL.delete(t);
+    else TSEL.add(t);
+    syncTabs();
+    render();
+  }));
+  document.getElementById("clearSel").addEventListener("click",()=>{
+    SEL.clear(); YSEL.clear(); TSEL.clear();
+    document.body.dataset.group="";
+    syncTabs();
+    render();
+  });
   ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  syncTabs();
   render();
 }
 function matchG(s){
@@ -49,7 +82,7 @@ function matchG(s){
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s])=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s])=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&(TSEL.size===0||TSEL.has(s.type||""))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
