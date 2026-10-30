@@ -336,7 +336,7 @@ async function renderPhotos(){
   for(const b of ROWS){
     const imgs=(IMGS[b.date.slice(0,4)]||{})[b.id];
     const photos=(imgs&&imgs.length)?imgs:(b.thumb?[b.thumb]:[]);
-    photos.forEach(u=>WALL.push({u, id:b.id, cap:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}${b.time?" "+b.time:""}`, label:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`}));
+    photos.forEach(u=>WALL.push({u, id:b.id, cap:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}`, label:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`}));
   }
   document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真${WALL.length}枚）`;
   const pages=Math.max(1, Math.ceil(WALL.length/WPHOTO));
