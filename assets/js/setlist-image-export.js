@@ -13,9 +13,36 @@
  const clean=s=>String(s||'').normalize('NFKC').replace(/[\s\u3000・「」『』ー―-]/g,'').toLocaleLowerCase('ja');
  const tidy=s=>String(s||'').trim();
  const squeeze=(ctx,text,width,font)=>{
-  const result=[];ctx.font=font;let line='';
-  for(const c of Array.from(String(text||''))){if(line&&ctx.measureText(line+c).width>width){result.push(line);line='';}line+=c;}
-  if(line)result.push(line);return result.length?result:[''];
+  ctx.font=font;
+  const src=String(text||'');
+  // 英単語の途中で改行しない(タイトルが ROCKE/STRA のように割れるのを防ぐ)。
+  // 日本語は1文字ずつ、英数字の並びは単語単位でトークン化して貪欲に詰める。
+  const tokens=[];let word='';
+  const flush=()=>{if(word){tokens.push(word);word='';}};
+  for(const c of Array.from(src)){
+   if(/[A-Za-z0-9'’.\-]/.test(c)){word+=c;continue;}
+   flush();
+   tokens.push(c===' '||c==='　'?' ':c);
+  }
+  flush();
+  const hardSplit=t=>{
+   const parts=[];let cur='';
+   for(const c of Array.from(t)){if(cur&&ctx.measureText(cur+c).width>width){parts.push(cur);cur='';}cur+=c;}
+   if(cur)parts.push(cur);return parts;
+  };
+  const units=[];
+  for(const t of tokens){
+   if(t!==' '&&ctx.measureText(t).width>width)units.push(...hardSplit(t));
+   else units.push(t);
+  }
+  const result=[];let line='';
+  for(const u of units){
+   if(u===' '){if(line&&ctx.measureText(line+' ').width<=width)line+=' ';continue;}
+   if(line&&ctx.measureText(line+u).width>width){result.push(line.replace(/\s+$/,''));line='';}
+   line+=u;
+  }
+  if(line)result.push(line.replace(/\s+$/,''));
+  return result.length?result:[''];
  };
  function normalizeRows(input,mode='compact'){
   const out=[];
@@ -104,26 +131,29 @@
   const widths=[W-2*MARGIN,(W-2*MARGIN-COLUMN_GAP)/2];
   const singleColumnSizes=(opts.singleColumnSizes||[32,31,30,29,28,27,26,25,24,23,22,21,20,19,18]).filter(Number.isFinite);
   const twoColumnSizes=(opts.twoColumnSizes||[32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10]).filter(Number.isFinite);
-  let chosen=null;
+  let chosen=null,fallback=null;
   for(const ncols of [1,2]){
-   // Prefer a readable single-column view when it fits. Only switch to two
-   // columns when one column would need to shrink too far. This prevents
-   // medium-length setlists from becoming sparse two-column pages.
+   // 読みやすさ優先:1列・2列の両方を試し、より大きな文字で収まる方を選ぶ
+   // (同サイズなら1列)。2列にしてもいいから見やすく、というユーザーの指定。
    const sizes=ncols===1?singleColumnSizes:twoColumnSizes;
    for(const fontSize of sizes){
     const measured=rows.map(r=>measure(ctx,r,widths[ncols-1],fontSize,ncols===1));
     const columns=ncols===1?[measured]:splitColumns(measured);
     const heights=columns.map(c=>c.reduce((s,r)=>s+r.height,0));
     const high=Math.max(...heights);
-    if(high<=available){chosen={columns,heights,fontSize,cols:ncols,overflow:false,contentScale:1};break;}
+    if(high<=available){
+     const cand={columns,heights,fontSize,cols:ncols,overflow:false,contentScale:1};
+     if(!chosen||cand.fontSize>chosen.fontSize)chosen=cand;
+     break;
+    }
     if(ncols===2&&fontSize===sizes[sizes.length-1]){
      // Extreme input (>100 rows, long notes): preserve ALL content in one
      // exported image and warn. Never silently truncate any track.
-     chosen={columns,heights,fontSize,cols:ncols,overflow:true,contentScale:available/high};
+     fallback={columns,heights,fontSize,cols:ncols,overflow:true,contentScale:available/high};
     }
    }
-   if(chosen)break;
   }
+  if(!chosen)chosen=fallback;
   // Spread only a modest amount of remaining height between rows. Keep the
   // order and upper alignment; avoid a conspicuous empty strip at the bottom.
   const rowGap=chosen.cols===1&&chosen.columns[0].length>1
