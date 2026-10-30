@@ -5,6 +5,7 @@ const area=document.getElementById("gameArea");
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 async function init(){
   [SONGS, MEMBERS]=await Promise.all([loadJSON("songs.json"), loadJSON("members.json")]);
+  if(window.QUIZ_KIND){ start(window.QUIZ_KIND); return; }
   document.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click",()=>start(b.dataset.start)));
 }
 function start(kind){
@@ -54,7 +55,10 @@ function showQ(){
     <p>クリアタイム：<b>${fmtTime(ms)}</b>${isBest?"（ベスト更新！）":""}</p>
     ${best?`<p style="color:var(--muted)">ベスト：${best.score}問正解 ／ ${fmtTime(best.ms)}</p>`:""}
     <p>${Q.score>=9?"すごい、ほぼ完璧です！":Q.score>=6?"かなり詳しいですね。":Q.score>=3?"楽曲図鑑で復習するともっと伸びます。":"まずは楽曲図鑑からどうぞ。"}</p>
-    <button onclick="location.reload()">もう一度遊ぶ</button></div>`; return;
+    <p><button onclick="location.reload()">もう一度遊ぶ</button> <button type="button" class="primary" id="qShare">結果を共有</button></p></div>`;
+    const qsh=document.getElementById("qShare");
+    if(qsh) qsh.addEventListener("click",()=>shareContent({text:`サカミチア「${Q.kind==="center"?"センター当て":"グループ当て"}クイズ」で${Q.score}／${Q.list.length}問正解！ タイムは ${fmtTime(ms)} でした。`, url:location.href}, qsh));
+    return;
   }
   const s=Q.list[Q.i];
   let question, answer, pool;

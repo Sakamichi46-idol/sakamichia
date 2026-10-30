@@ -14,6 +14,19 @@ function includesAll(hay, q){
 }
 function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 
+// 共有：対応環境では共有シートを開き、なければクリップボードへコピーする
+async function shareContent(data, btn){
+  const payload={title:data.title||document.title, text:data.text||"", url:data.url||location.href};
+  if(navigator.share){
+    try{ await navigator.share(payload); }catch(e){ /* キャンセル時は何もしない */ }
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText((payload.text?payload.text+" ":"")+payload.url);
+    if(btn){ const t=btn.textContent; btn.textContent="コピーしました"; setTimeout(()=>{btn.textContent=t;},1800); }
+  }catch(e){ if(btn){ const t=btn.textContent; btn.textContent="コピーできませんでした"; setTimeout(()=>{btn.textContent=t;},1800); } }
+}
+
 // グループ絞り込みに連動して、ページの差し色をそのグループの色に切り替える
 document.addEventListener("DOMContentLoaded",()=>{
   const sel=document.getElementById("group");
@@ -73,6 +86,10 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
   items.filter(it=>!used.has(it)).forEach(appendLink);
   drawer.appendChild(list);
+  const shareBtn=document.createElement("button");
+  shareBtn.type="button";shareBtn.className="btn sub drawer-share";shareBtn.textContent="このページを共有する";
+  shareBtn.addEventListener("click",()=>shareContent({},shareBtn));
+  drawer.appendChild(shareBtn);
   const note=document.createElement("p");note.className="drawer-note";
   note.textContent="坂道ファンによる非公式ファンサイトです。公式運営とは関係ありません。";
   drawer.appendChild(note);
