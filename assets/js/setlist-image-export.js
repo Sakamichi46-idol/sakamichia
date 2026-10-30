@@ -137,19 +137,18 @@
   const logo=options.logoImage||null;
   if(options.hideTitle){ /* Title deliberately hidden by the user. */ }
   else if(logo&&options.logoMode==='bg'){
-   // 背景モード:ロゴをタイトル代わりにせず、ヘッダー右側に薄く敷いて
-   // タイトル文字は通常どおり左に表示する(KVからの切り抜き等の素材向け)。
-   const bh=data.headerH-30,bw=Math.round(bh*(logo.width/logo.height));
-   const bx=W-MARGIN-bw,by=15;
-   ctx.save();ctx.globalAlpha=0.30;ctx.drawImage(logo,bx,by,bw,bh);ctx.restore();
-   ctx.save();ctx.globalAlpha=0.30;ctx.fillStyle=COLORS.paper;ctx.fillRect(bx,by,bw,bh);ctx.restore();
+   // 背景モード:ロゴをヘッダーではなく、セトリ全体の背景に大きく薄く敷く
+   // ウォーターマーク表現(ユーザーが参考として示したファンメイド画像の方式)。
+   // ヘッダーはロゴ無しの場合と同じくタイトル文字で作る。
+   const wmW=W-2*MARGIN,wmH=Math.round(wmW*(logo.height/logo.width));
+   const wx=MARGIN,wy=data.top+6;
+   ctx.save();ctx.globalAlpha=0.16;ctx.drawImage(logo,wx,wy,wmW,wmH);ctx.restore();
+   ctx.save();ctx.globalAlpha=0.20;ctx.fillStyle=COLORS.paper;ctx.fillRect(wx,wy,wmW,wmH);ctx.restore();
    const title=tidy(header.title)||'マイセットリスト';
-   const titleLines=squeeze(ctx,title,Math.max(200,bx-MARGIN-24),`bold 30px ${JP}`).slice(0,3);
+   const titleLines=squeeze(ctx,title,W-140,`bold 30px ${JP}`).slice(0,3);
    const titleY=Math.max(35,85-titleLines.length*16);
-   ctx.fillStyle=COLORS.ink;ctx.font=`700 30px ${JP}`;
-   titleLines.forEach((s,i)=>ctx.fillText(s,MARGIN,titleY+i*39));
-   ctx.fillStyle=COLORS.secondary;ctx.font=`500 18px ${JP}`;
-   ctx.fillText([header.date,header.venue].filter(Boolean).join('　 /　 '),MARGIN,titleY+titleLines.length*39+12);
+   titleLines.forEach((s,i)=>drawCentered(ctx,s,titleY+i*39,30,COLORS.ink,true));
+   drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),titleY+titleLines.length*39+12,18,COLORS.secondary);
   }
   else if(logo){
    const maxW=770,maxH=138,scale=Math.min(maxW/logo.width,maxH/logo.height,1.5);
@@ -227,7 +226,7 @@
   const logoImage=options.logoImage||null;
   const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvasを使用できません。');
-  const layout=render(ctx,rawRows,header,{...options,logoImage,hasLogo:!!logoImage});
+  const layout=render(ctx,rawRows,header,{...options,logoImage,hasLogo:!!logoImage&&options.logoMode!=='bg'});
   const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('画像を生成できませんでした。')),'image/png'));
   return {blob,layout};
  }
