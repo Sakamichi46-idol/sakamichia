@@ -239,6 +239,17 @@ async function openLive(id){
   const saveBtn=document.getElementById("saveSetlistImg");
   if(saveBtn){
     saveBtn.hidden=!(segs&&segs.length);
+    // 前の公演のプレビューが残らないよう、開くたびにリセットする
+    const pvWrap=document.getElementById("imgPreviewWrap"), pvImg=document.getElementById("imgPreview");
+    if(pvWrap) pvWrap.hidden=true;
+    if(pvImg){
+      if(pvImg.dataset.url){ URL.revokeObjectURL(pvImg.dataset.url); pvImg.dataset.url=""; }
+      pvImg.removeAttribute("src");
+      pvImg.onclick=()=>{
+        const f=document.getElementById("imgFullImg"), d=document.getElementById("imgFullDlg");
+        if(f&&d&&pvImg.src){ f.src=pvImg.src; d.showModal(); }
+      };
+    }
     // 画像はダイアログを開いた時点で先に作っておく（共有シートをすぐ開けるように）
     let blobPromise=null;
     if(segs&&segs.length){
@@ -277,6 +288,12 @@ async function openLive(id){
       blobPromise=window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", logoShow)
         .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
         .then(r=>r.blob).catch(()=>null);
+      // 生成できたら、保存前に中身を確認できるようプレビューに出す
+      blobPromise.then(blob=>{
+        if(!blob||!pvWrap||!pvImg) return;
+        const url=URL.createObjectURL(blob);
+        pvImg.dataset.url=url; pvImg.src=url; pvWrap.hidden=false;
+      });
     }
     saveBtn.onclick=async ()=>{
     const msg=document.getElementById("saveImgMsg");
