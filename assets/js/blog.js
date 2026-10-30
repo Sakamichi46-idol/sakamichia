@@ -22,6 +22,25 @@ function thumbSrc(u){
 function thumbFallback(img, original){
   img.addEventListener("error", ()=>{ if(img.src!==original) img.src=original; }, {once:true});
 }
+// スタンプ（小さい装飾画像）の寸法判定。本文中の画像と同じく、幅・高さとも
+// 128px以下をスタンプとする。写真一覧とフォールバックグリッドのサムネイルは
+// weserv が 360×360 に拡大して返すため、表示中の img の naturalWidth では
+// 判定できない。そこで weserv の output=json で原寸の寸法だけを問い合わせる
+// （結果はURL単位でキャッシュ）。寸法が確定できなかった場合は安全側に倒し、
+// 写真として残す（通常の写真を誤って消さないため）。
+const STAMP_MAX=128;
+const DIMCACHE=new Map();
+function probeDims(u){
+  if(!/^https?:\/\//.test(u||"")) return Promise.resolve(null);
+  if(!DIMCACHE.has(u)){
+    const purl="https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&output=json";
+    DIMCACHE.set(u, fetch(purl).then(r=>r.ok?r.json():null)
+      .then(j=>(j&&+j.width>0&&+j.height>0)?{w:+j.width,h:+j.height}:null)
+      .catch(()=>null));
+  }
+  return DIMCACHE.get(u);
+}
+function isStampDims(d){ return !!d&&d.w<=STAMP_MAX&&d.h<=STAMP_MAX; }
 function dtVal(b){ return b.date+"T"+(b.time||"00:00"); }
 function dateTime(b){ return b.date+(b.time?" "+b.time:""); }
 function resetPages(){ apage=1; ppage=1; }
@@ -482,12 +501,29 @@ function renderArticles(){
 function pcellHTML(p,i){
   return `<figure class="pcell" data-wi="${i}"><img loading="lazy" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(p.cap||p.label)}</figcaption></figure>`;
 }
+function wallCountText(){
+  return `${ROWS.length}件の記事情報（写真${WALL.filter(p=>!p.stamp).length}枚）`;
+}
 function bindWall(scope){
   scope.querySelectorAll("[data-wi]").forEach(el=>{
+    const entry=WALL[+el.dataset.wi];
+    if(!entry) return;
+    if(entry.stamp){ el.remove(); return; }
     const img=el.querySelector("img");
-    if(img) thumbFallback(img, WALL[+el.dataset.wi].u);
+    if(img) thumbFallback(img, entry.u);
     el.addEventListener("click",()=>{
-      openLightbox(WALL.map(p=>p.u), +el.dataset.wi, WALL.map(p=>({id:p.id, label:p.label})));
+      const keep=WALL.filter(p=>!p.stamp);
+      const idx=keep.indexOf(entry);
+      if(idx<0) return;
+      openLightbox(keep.map(p=>p.u), idx, keep.map(p=>({id:p.id, label:p.label})));
+    });
+    // スタンプは写真として扱わない：原寸の寸法が確定したらタイルを取り除き
+    // （グリッドは自動で詰まる）、件数表示とライトボックスの対象からも外す
+    probeDims(entry.u).then(d=>{
+      if(!isStampDims(d)||WALL[+el.dataset.wi]!==entry) return;
+      entry.stamp=true;
+      if(el.isConnected) el.remove();
+      if(VIEW==="photos") document.getElementById("count").textContent=wallCountText();
     });
   });
 }
@@ -503,7 +539,7 @@ function buildWall(){
   }
 }
 function drawWall(){
-  document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真${WALL.length}枚）`;
+  document.getElementById("count").textContent=wallCountText();
   const pages=Math.max(1, Math.ceil(WALL.length/WPHOTO));
   if(ppage>pages) ppage=pages;
   const start=(ppage-1)*WPHOTO;
@@ -852,11 +888,30 @@ async function openBlog(id){
     if(img.complete&&img.naturalWidth) classifyStamp(img);
     else img.addEventListener("load",()=>classifyStamp(img),{once:true});
   });
+  // 本文の無い記事のフォールバック写真グリッドでも、スタンプは写真として
+  // 扱わない。原寸の寸法が確定したものだけをグリッドから取り除く（写真が
+  // 1枚も残らなければグリッドと注記ごと外す）。ライトボックスはクリック時に
+  // 残っているグリッド画像だけで組み立てるため、自動的に対象から外れる。
+  body.querySelectorAll(".photo-grid img").forEach(img=>{
+    probeDims(photos[+img.dataset.photo]).then(d=>{
+      if(!isStampDims(d)||!img.isConnected) return;
+      const grid=img.closest(".photo-grid");
+      img.remove();
+      if(grid&&!grid.querySelector("img")){
+        const note=grid.nextElementSibling;
+        grid.remove();
+        if(note&&note.tagName==="P"&&!note.querySelector("a")) note.remove();
+      }
+    });
+  });
   body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>{
     if(img.classList.contains("bstamp")) return;
     if(img.classList.contains("bimg")){
       const bigs=[...body.querySelectorAll("img.bimg:not(.bstamp)")];
       if(bigs.length) openLightbox(bigs.map(x=>x.getAttribute("src")), bigs.indexOf(img));
+    } else if(img.closest(".photo-grid")){
+      const gimgs=[...body.querySelectorAll(".photo-grid img")];
+      if(gimgs.length) openLightbox(gimgs.map(x=>photos[+x.dataset.photo]), gimgs.indexOf(img));
     } else openLightbox(photos, +img.dataset.photo);
   }));
   body.querySelectorAll(".photo-grid img[data-photo]").forEach(img=>thumbFallback(img, photos[+img.dataset.photo]));
