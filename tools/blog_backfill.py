@@ -299,8 +299,12 @@ _IMG_TAG_RE = re.compile(r'<img[^>]+src="([^"]+)"[^>]*>', re.I)
 
 def html_to_blocks(inner, base_url):
     """本文コンテナのHTMLを blocks 形式へ変換する。
-    改行の量を本家に合わせるため、1つの改行は段落内の改行として保持し、
-    空行は break ブロックとして個数を保って記録する。"""
+    改行・空白は元のまま保持する（ユーザー指定：勝手に減らさない）。
+    1つの改行は段落内の改行として保持し、空行は break ブロックとして
+    個数をそのまま（上限なしで）記録する。文字のある行は、行頭・行末の
+    空白（全角スペースや &nbsp; を含む）を切り取らずにそのまま格納する。
+    空白だけの行は空行として数える（全角スペースだけの行も、公式の
+    見た目では空白行のため）。"""
     imgs = []
 
     def _sub(m):
@@ -318,7 +322,7 @@ def html_to_blocks(inner, base_url):
 
     def flush_para():
         nonlocal cur
-        text = '\n'.join(cur).strip('\n')
+        text = '\n'.join(cur)
         cur = []
         if text.strip():
             blocks.append({'type': 'paragraph', 'text': text})
@@ -327,13 +331,13 @@ def html_to_blocks(inner, base_url):
         nonlocal pending
         flush_para()
         if blocks and pending:
-            for _ in range(min(pending, 6)):
+            for _ in range(pending):
                 blocks.append({'type': 'break'})
         pending = 0
 
     for raw in s.split('\n'):
-        line = raw.strip()
-        if not line:
+        line = raw.rstrip('\r')
+        if not line.strip():
             pending += 1
             continue
         for part in re.split(r'(\x01\d+\x01)', line):
@@ -343,10 +347,11 @@ def html_to_blocks(inner, base_url):
             elif part.strip():
                 if pending:
                     close_gap()
-                cur.append(part.strip())
+                cur.append(part)
+            elif part and cur:
+                # 画像の前後などにある空白だけの断片は、直前の行の末尾に付けて保持する
+                cur[-1] += part
     flush_para()
-    while blocks and blocks[-1]['type'] == 'break':
-        blocks.pop()
     text_len = sum(len(b.get('text', '')) for b in blocks if b['type'] == 'paragraph')
     if text_len < 5 and not any(b['type'] == 'image' for b in blocks):
         return []
