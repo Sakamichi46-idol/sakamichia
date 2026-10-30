@@ -5,6 +5,29 @@
 <a href="../../../">ホーム</a><a href="../../../songs/">楽曲図鑑</a><a href="../../../live/">歴代ライブ</a><a href="../../../blog/">ブログ</a><a href="../../../members/">メンバー</a><a href="../../../matome/">まとめ</a><a href="../../../games/" class="on">ミニゲーム</a><a href="../../../formation/">フォーメーション作成</a><a href="../../../setlist/">マイセットリスト</a><a href="../../../news/">お知らせ</a></nav></div></header>
 <main class="wrap"><section class="page"><p style="margin:0 0 6px"><a href="../">← セトリドラフトのトップ</a></p><h2 class="title">セトリ会議</h2><p class="lead">2〜4人で同じ端末を交代しながら楽曲を指名します。指名が重なったらルーレット抽選、落選した人はその巡のうちに再指名。集めた曲を並べ替えて、各自のセットリストを完成させます。途中経過は自動保存されます。</p>
 
+<div class="df-panel" id="smModePanel">
+<div class="df-head"><h3>対戦方法</h3><span id="smNetStatus" class="df-round">オフライン</span></div>
+<div class="ychips" id="smModeChips">
+<button type="button" class="ychip on" data-mode="local">この端末で交代</button>
+<button type="button" class="ychip" data-mode="online">オンライン（部屋コード）</button>
+</div>
+<div id="smOnlineBox" hidden>
+<label class="df-field"><span>あなたの名前</span><input id="smMyName" type="text" maxlength="20" placeholder="名前"></label>
+<div class="df-actions"><button type="button" class="btn" id="smCreate">下の設定で部屋を作る</button></div>
+<label class="df-field"><span>部屋コードで参加</span><span style="display:flex;gap:8px"><input id="smJoinCode" type="text" maxlength="8" placeholder="例：K7QX2" style="flex:1;text-transform:uppercase"><button type="button" class="btn" id="smJoin">参加する</button></span></label>
+<p class="df-note">部屋を作る人は、先に下の「会議の設定」で対象グループと曲数を決めてください。参加する人はコードと名前だけでOKです。各プレイヤーが自分の端末から指名し、全員そろうと自動で抽選します。完成したセットリストの並び順も全員で共有されます。</p>
+</div>
+</div>
+
+<div class="df-panel" id="smLobby" hidden>
+<div class="df-head"><h3>ロビー</h3><span id="smLobbyPhase" class="df-round"></span></div>
+<p style="margin:4px 0">部屋コード：<b id="smRoomCode" style="font-size:24px;letter-spacing:.18em"></b> <button type="button" class="btn" id="smCopyCode">コードをコピー</button></p>
+<p class="df-note" id="smLobbyInfo"></p>
+<div id="smLobbyPlayers" style="margin:8px 0"></div>
+<div class="df-actions"><button type="button" class="btn" id="smNetStart">対戦開始</button><button type="button" class="btn" id="smLeave">部屋を出る</button></div>
+<p class="df-note" id="smLobbyMsg"></p>
+</div>
+
 <details class="df-panel" id="smSetupPanel" open>
 <summary class="df-summary"><strong>会議の設定</strong><span id="smSetupSummary" class="df-summary-text"></span></summary>
 <div class="df-settings">
@@ -56,6 +79,44 @@
 </div>
 </section></main>
 <footer><div class="wrap">セトリ会議は、楽曲図鑑の695曲から指名します。</div></footer>
+<div id="smNetGame" hidden>
+<div class="df-panel">
+<div class="df-head"><h3 id="smNetRound">第1巡</h3><span id="smNetReady" class="df-round"></span></div>
+<div id="smNetPStats" class="df-pstats"></div>
+<p class="df-msg" id="smNetMsg"></p>
+<div class="df-actions"><button type="button" class="btn" id="smNetUnpick">自分の指名を取り消す</button></div>
+</div>
+<div class="df-panel">
+<div class="df-head"><h3>指名候補</h3><span id="smNetCandCount" class="df-round"></span></div>
+<div class="fm-filters"><input type="search" id="smNetCandSearch" placeholder="曲名・読み・センターで検索" aria-label="候補を検索"><select id="smNetCandType" aria-label="種別で絞り込む"><option value="all">すべての種別</option></select></div>
+<div class="ychips" id="smNetCandGroups" style="margin:4px 0 10px"></div>
+<div id="smNetCands" class="sg-list"></div>
+</div>
+<div class="df-panel">
+<div class="df-head"><h3>抽選結果・獲得状況</h3><span id="smNetHistCount" class="df-round"></span></div>
+<div id="smNetResults"></div>
+<div id="smNetOwned" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="smNetFinish" hidden>
+<div class="df-panel">
+<div class="df-head"><h3>ドラフト終了！完成セットリスト</h3><span id="smNetFinishInfo" class="df-round"></span></div>
+<p class="df-msg" id="smNetFinishMsg"></p>
+<div class="ychips" id="smNetTabs" style="margin:8px 0"></div>
+<label class="df-field"><span>セットリスト名</span><input id="smNetTitle" type="text" maxlength="40"></label>
+<label class="df-field" style="margin-top:8px"><span>アンコール</span><select id="smNetEncore"></select></label>
+<div id="smNetList" style="margin-top:10px"></div>
+<div class="df-actions">
+<button type="button" class="btn" id="smNetImg">このプレイヤーを画像で保存</button>
+<button type="button" class="btn" id="smNetImgAll">全員の結果を画像で保存</button>
+<button type="button" class="btn" id="smNetToLobby">ロビーに戻る（主催者）</button>
+<button type="button" class="btn" id="smNetLeave2">部屋を出る</button>
+</div>
+<p class="df-note">自分のタブでは ↑↓ で順番を入れ替えられ、並び順は全員に共有されます。</p>
+</div>
+</div>
+
 <dialog id="smLotDlg"><div class="dlg-body">
 <p style="margin:0 0 4px"><b>競合抽選ルーレット</b> <span id="smLotCount" style="color:var(--muted)"></span></p>
 <p id="smLotSong" style="margin:0 0 8px"></p>

@@ -517,7 +517,7 @@ function netConnect(code, create) {
       renderNet();
     } else if (m.t === "error") {
       netStatus("エラー");
-      const el = $("dmLobby").hidden ? null : $("dmLobbyMsg");
+      const el = !$("dmLobby").hidden ? $("dmLobbyMsg") : (NET.state ? $("dmNetMsg") : null);
       if (el) el.textContent = m.message;
       else alert(m.message);
       if (/存在しません|満員|始まっています/.test(m.message)) netLeave();
