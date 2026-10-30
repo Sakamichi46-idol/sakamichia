@@ -11,8 +11,9 @@ function start(kind){ quiz(kind); }
 // ---- クイズ共通（タイムアタック） ----
 let Q={list:[],i:0,score:0,kind:"center",t0:0,timer:null};
 function fmtTime(ms){
-  const t=Math.max(0,ms)/1000, m=Math.floor(t/60), s=t-m*60;
-  return `${m}:${s<10?"0":""}${s.toFixed(1)}`;
+  const cs=Math.round(Math.max(0,ms)/10);
+  const m=Math.floor(cs/6000), s=Math.floor((cs%6000)/100), c=cs%100;
+  return `${m}:${String(s).padStart(2,"0")}.${String(c).padStart(2,"0")}`;
 }
 function bestKey(kind){ return `sakamichia-best-${kind}`; }
 function loadBest(kind){ try{ return JSON.parse(localStorage.getItem(bestKey(kind))||"null"); }catch{ return null; } }
@@ -32,7 +33,7 @@ function quiz(kind){
   if(Q.timer) clearInterval(Q.timer);
   const pool = kind==="center" ? SONGS.filter(s=>s.center) : SONGS;
   Q={kind, i:0, score:0, list:shuffle(pool).slice(0,10), t0:performance.now(), timer:null};
-  Q.timer=setInterval(tick, 100);
+  Q.timer=setInterval(tick, 10);
   showQ();
 }
 function showQ(){
