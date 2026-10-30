@@ -2,20 +2,45 @@
 const Core = window.SakamichiSorterCore;
 const area = document.getElementById("sorterArea");
 let MEMBERS = [], PHOTOS = {};
-let scope = {group: "all", grad: false}; // grad=false: 現役のみ
+const LINEAGES = ["乃木坂46", "櫻坂46", "日向坂46"];
+// groups / gens は複数選択（Set）。gens は系統ごとの「選んだ期」の Set で、空ならその系統は全期が対象。
+// grad=false: 現役のみ
+let scope = {groups: new Set(LINEAGES), grad: false,
+  gens: {"乃木坂46": new Set(), "櫻坂46": new Set(), "日向坂46": new Set()}};
 let pool = [], sorter = null, inBattle = false;
 let shareBlob = null;
 
 function shuffle(a){ a = [...a]; for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function photoURL(m){ const f = PHOTOS[m.name]; return f ? BASE + "assets/member-photos/" + f : null; }
 function genLabel(m){ if(m.name === "松井玲奈") return "交換留学生"; return m.gen ? m.gen + "期生" : ""; }
+// その系統に実在する期の値（昇順、期なし=0 は最後）
+function gensOf(lin){
+  const set = new Set();
+  MEMBERS.forEach(m => { if(Core.memberLineage(m) === lin) set.add(m.gen || 0); });
+  return [...set].sort((a, b) => (a === 0 ? 99 : a) - (b === 0 ? 99 : b));
+}
+function genChipLabel(g){ return g === 0 ? "期なし" : g + "期生"; }
 function scopePool(){
-  return MEMBERS.filter(m =>
-    (scope.group === "all" || Core.memberLineage(m) === scope.group) &&
-    (scope.grad || !m.graduated));
+  return MEMBERS.filter(m => {
+    const lin = Core.memberLineage(m);
+    if(!scope.groups.has(lin)) return false;
+    if(!scope.grad && m.graduated) return false;
+    const gs = scope.gens[lin];
+    if(gs && gs.size && !gs.has(m.gen || 0)) return false;
+    return true;
+  });
+}
+function lineageLabel(lin){
+  const gs = scope.gens[lin];
+  if(!gs || !gs.size) return lin;
+  const labels = [...gs].sort((a, b) => (a === 0 ? 99 : a) - (b === 0 ? 99 : b))
+    .map(g => g === 0 ? "期なし" : g + "期");
+  return `${lin}（${labels.join("・")}）`;
 }
 function scopeLabel(){
-  const gl = scope.group === "all" ? "全グループ" : scope.group;
+  const sel = LINEAGES.filter(l => scope.groups.has(l));
+  const allPlain = sel.length === LINEAGES.length && LINEAGES.every(l => !scope.gens[l].size);
+  const gl = allPlain ? "全グループ" : (sel.map(lineageLabel).join("・") || "未選択");
   return `${gl} ・ ${scope.grad ? "卒業生も含む" : "現役のみ"}（${pool.length}人）`;
 }
 
@@ -36,27 +61,51 @@ function marqueeHTML(){
 }
 function renderStart(){
   inBattle = false; sorter = null; shareBlob = null;
-  const gchips = [["all", "すべて"], ["乃木坂46", "乃木坂46"], ["櫻坂46", "櫻坂46"], ["日向坂46", "日向坂46"]]
-    .map(([v, l]) => `<button type="button" data-g="${v}" class="${scope.group === v ? "on" : ""}">${l}</button>`).join("");
-  const tchips = [["0", "現役のみ"], ["1", "卒業生も含む"]]
-    .map(([v, l]) => `<button type="button" data-t="${v}" class="${(scope.grad ? "1" : "0") === v ? "on" : ""}">${l}</button>`).join("");
   area.innerHTML = `
   ${marqueeHTML()}
   <div class="card" style="margin-bottom:40px">
     <h3 style="margin-top:0">範囲を選んでスタート</h3>
-    <p style="margin:4px 0 2px;color:var(--muted);font-size:13px">グループ</p>
-    <div class="tabs sort-tabs" id="sortGroups">${gchips}</div>
+    <p style="margin:4px 0 2px;color:var(--muted);font-size:13px">グループ（複数選択できます）</p>
+    <div class="tabs sort-tabs" id="sortGroups"></div>
+    <div id="sortGens"></div>
     <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">対象</p>
-    <div class="tabs sort-tabs" id="sortGrad">${tchips}</div>
+    <div class="tabs sort-tabs" id="sortGrad"></div>
     <p id="sortInfo" style="margin:12px 0 4px"></p>
     <p id="sortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
     <p style="margin:10px 0 0"><button type="button" id="sortStart">スタート</button></p>
-    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46時代のメンバー、日向坂46にはけやき坂46時代のメンバーも含まれます。対戦数が多い範囲は時間がかかります。</p>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46時代のメンバー、日向坂46にはけやき坂46時代のメンバーも含まれます。期を選ばないグループは全期が対象です。「期なし」は期を持たないメンバー（日向坂46のポカ、交換留学生の松井玲奈）です。対戦数が多い範囲は時間がかかります。</p>
   </div>`;
-  document.querySelectorAll("#sortGroups button").forEach(b => b.addEventListener("click", () => { scope.group = b.dataset.g; renderStart(); }));
-  document.querySelectorAll("#sortGrad button").forEach(b => b.addEventListener("click", () => { scope.grad = b.dataset.t === "1"; renderStart(); }));
-  updateInfo();
+  refreshSelection();
   document.getElementById("sortStart").addEventListener("click", startBattle);
+}
+// 選択チップ（グループ・期・対象）を現在の scope で描き直し、件数表示を更新する
+function refreshSelection(){
+  const allOn = scope.groups.size === LINEAGES.length;
+  const gEl = document.getElementById("sortGroups");
+  gEl.innerHTML =
+    `<button type="button" data-g="all" class="${allOn ? "on" : ""}">すべて</button>` +
+    LINEAGES.map(l => `<button type="button" data-g="${esc(l)}" class="${scope.groups.has(l) ? "on" : ""}">${esc(l)}</button>`).join("");
+  gEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if(b.dataset.g === "all") scope.groups = allOn ? new Set() : new Set(LINEAGES);
+    else if(scope.groups.has(b.dataset.g)) scope.groups.delete(b.dataset.g);
+    else scope.groups.add(b.dataset.g);
+    refreshSelection();
+  }));
+  const genEl = document.getElementById("sortGens");
+  genEl.innerHTML = LINEAGES.filter(l => scope.groups.has(l)).map(lin => `
+    <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">${esc(lin)}の期（複数選択可・選ばなければ全期）</p>
+    <div class="tabs sort-tabs">${gensOf(lin).map(g =>
+      `<button type="button" data-lin="${esc(lin)}" data-gen="${g}" class="${scope.gens[lin].has(g) ? "on" : ""}">${esc(genChipLabel(g))}</button>`).join("")}</div>`).join("");
+  genEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    const set = scope.gens[b.dataset.lin], g = Number(b.dataset.gen);
+    if(set.has(g)) set.delete(g); else set.add(g);
+    refreshSelection();
+  }));
+  const tEl = document.getElementById("sortGrad");
+  tEl.innerHTML = [["0", "現役のみ"], ["1", "卒業生も含む"]]
+    .map(([v, l]) => `<button type="button" data-t="${v}" class="${(scope.grad ? "1" : "0") === v ? "on" : ""}">${l}</button>`).join("");
+  tEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { scope.grad = b.dataset.t === "1"; refreshSelection(); }));
+  updateInfo();
 }
 function updateInfo(){
   const list = scopePool();

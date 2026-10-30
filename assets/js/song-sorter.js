@@ -3,7 +3,9 @@ const Core = window.SakamichiSorterCore;
 const area = document.getElementById("songSortArea");
 const GCOL = {"乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639", "坂道AKB": "#d24a43", "坂道選抜": "#2f9e8f"};
 let SONGS = [], TYPES = [];
-let scope = {group: "all", type: "all"}; // group: 系統名 or 'all' / type: type値 or 'all'
+const LINEAGES = ["乃木坂46", "櫻坂46", "日向坂46", "合同"];
+// groups / types は複数選択（Set）。types の初期値（全種別）は init で入れる
+let scope = {groups: new Set(LINEAGES), types: new Set()};
 let pool = [], sorter = null, inBattle = false;
 let shareBlob = null;
 
@@ -24,14 +26,14 @@ function releaseLabel(s){
   return parts.join(" ・ ");
 }
 function scopePool(){
-  return SONGS.filter(s =>
-    (scope.group === "all" || Core.songLineage(s) === scope.group) &&
-    (scope.type === "all" || (s.type || "") === scope.type));
+  return SONGS.filter(s => scope.groups.has(Core.songLineage(s)) && scope.types.has(s.type || ""));
 }
 function scopeLabel(){
-  const gl = scope.group === "all" ? "全グループ" : scope.group;
-  const tl = scope.type === "all" ? "全種別" : scope.type;
-  return `${gl} ・ ${tl}（${pool.length}曲）`;
+  const gl = scope.groups.size === LINEAGES.length ? "全グループ"
+    : (LINEAGES.filter(l => scope.groups.has(l)).join("・") || "未選択");
+  const tl = scope.types.size === TYPES.length ? "全種別"
+    : (TYPES.filter(t => scope.types.has(t)).join("・") || "未選択");
+  return `${gl}／${tl}（${pool.length}曲）`;
 }
 
 async function init(){
@@ -40,6 +42,7 @@ async function init(){
   const counts = {};
   SONGS.forEach(s => { const t = s.type || ""; if(t) counts[t] = (counts[t] || 0) + 1; });
   TYPES = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  scope.types = new Set(TYPES); // 初期状態は全種別（従来の「すべての種別」と同じ）
   renderStart();
 }
 
@@ -54,27 +57,47 @@ function marqueeHTML(){
 }
 function renderStart(){
   inBattle = false; sorter = null; shareBlob = null;
-  const gchips = [["all", "すべて"], ["乃木坂46", "乃木坂46"], ["櫻坂46", "櫻坂46"], ["日向坂46", "日向坂46"]]
-    .map(([v, l]) => `<button type="button" data-g="${v}" class="${scope.group === v ? "on" : ""}">${l}</button>`).join("");
-  const tchips = [["all", "すべての種別"], ...TYPES.map(t => [t, t])]
-    .map(([v, l]) => `<button type="button" data-t="${esc(v)}" class="${scope.type === v ? "on" : ""}">${esc(l)}</button>`).join("");
   area.innerHTML = `
   ${marqueeHTML()}
   <div class="card" style="margin-bottom:40px">
     <h3 style="margin-top:0">範囲を選んでスタート</h3>
-    <p style="margin:4px 0 2px;color:var(--muted);font-size:13px">グループ</p>
-    <div class="tabs sort-tabs" id="songSortGroups">${gchips}</div>
-    <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">種別</p>
-    <div class="tabs sort-tabs" id="songSortTypes">${tchips}</div>
+    <p style="margin:4px 0 2px;color:var(--muted);font-size:13px">グループ（複数選択できます）</p>
+    <div class="tabs sort-tabs" id="songSortGroups"></div>
+    <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">種別（複数選択できます）</p>
+    <div class="tabs sort-tabs" id="songSortTypes"></div>
     <p id="songSortInfo" style="margin:12px 0 4px"></p>
     <p id="songSortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
     <p style="margin:10px 0 0"><button type="button" id="songSortStart">スタート</button></p>
     <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46の曲、日向坂46にはけやき坂46の曲も含まれます。全曲（696曲）だと対戦数が非常に多くなるため、「表題曲のみ」やグループ別がおすすめです。</p>
   </div>`;
-  document.querySelectorAll("#songSortGroups button").forEach(b => b.addEventListener("click", () => { scope.group = b.dataset.g; renderStart(); }));
-  document.querySelectorAll("#songSortTypes button").forEach(b => b.addEventListener("click", () => { scope.type = b.dataset.t; renderStart(); }));
-  updateInfo();
+  refreshSelection();
   document.getElementById("songSortStart").addEventListener("click", startBattle);
+}
+// 選択チップ（グループ・種別）を現在の scope で描き直し、件数表示を更新する
+function refreshSelection(){
+  const gAll = scope.groups.size === LINEAGES.length;
+  const gEl = document.getElementById("songSortGroups");
+  gEl.innerHTML =
+    `<button type="button" data-g="all" class="${gAll ? "on" : ""}">すべて</button>` +
+    LINEAGES.map(l => `<button type="button" data-g="${esc(l)}" class="${scope.groups.has(l) ? "on" : ""}">${esc(l)}</button>`).join("");
+  gEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if(b.dataset.g === "all") scope.groups = gAll ? new Set() : new Set(LINEAGES);
+    else if(scope.groups.has(b.dataset.g)) scope.groups.delete(b.dataset.g);
+    else scope.groups.add(b.dataset.g);
+    refreshSelection();
+  }));
+  const tAll = scope.types.size === TYPES.length;
+  const tEl = document.getElementById("songSortTypes");
+  tEl.innerHTML =
+    `<button type="button" data-t="all" class="${tAll ? "on" : ""}">すべて</button>` +
+    TYPES.map(t => `<button type="button" data-t="${esc(t)}" class="${scope.types.has(t) ? "on" : ""}">${esc(t)}</button>`).join("");
+  tEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if(b.dataset.t === "all") scope.types = tAll ? new Set() : new Set(TYPES);
+    else if(scope.types.has(b.dataset.t)) scope.types.delete(b.dataset.t);
+    else scope.types.add(b.dataset.t);
+    refreshSelection();
+  }));
+  updateInfo();
 }
 function updateInfo(){
   const list = scopePool();
