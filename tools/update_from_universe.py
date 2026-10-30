@@ -92,6 +92,8 @@ def update_lives(summary):
     for l in lives:
         p = l['id'].split('-')
         have[FAM_OF_PREFIX[p[0]]].add(p[1])
+    # 重複追加防止: (グループ, タイトル, 日付, 時刻, 会場) が既存と一致する公演は追加しない
+    have_key = {(l['group'], l['title'], l['date'], l.get('time'), l.get('venue')) for l in lives}
     remarks = {}
     for fam, fn in [('N', 'Nlive_remarks'), ('S', 'Slive_remarks'), ('H', 'Hlive_remarks')]:
         for r in rows(fn):
@@ -130,6 +132,10 @@ def update_lives(summary):
             if '【中止】' in head['liveseries']:
                 continue
             group = live_group(fam, date)
+            dup_key = (group, head['liveseries'], date, head['starttime'], head['stage'])
+            if dup_key in have_key:
+                continue
+            have_key.add(dup_key)
             prefix = GROUP_PREFIX[group]
             sid = f"{prefix}-{lid}-{date}-{head['starttime']}".replace(':', '')
             tags = []
