@@ -1,7 +1,7 @@
 "use strict";
 /* 漢字だけ歌詞クイズ: 歌詞の漢字だけを順に表示し、どこで曲名が分かるかを当てる。
    データ: data/lyrics-quiz.json [{title, group, year, kanji}]（tools/build_lyrics_quiz.py で生成） */
-const KQ_MAX = 10, KQ_FIRST = 5, KQ_STEP = 5;
+const KQ_MAX = 10, KQ_FIRST = 5, KQ_STEP = 1;
 let KQ = null;
 
 function kqShuffle(a) {
@@ -10,9 +10,8 @@ function kqShuffle(a) {
   return a;
 }
 function kqPoints(revealed) {
-  // 最初の5文字は100点。以後、追加で出すたびに下がる（最低10点）
-  const extra = Math.max(0, Math.ceil((revealed - KQ_FIRST) / KQ_STEP));
-  return Math.max(10, 100 - extra * 15);
+  // 最初の5文字は100点。以後、1文字出すごとに -1点（最低10点）
+  return Math.max(10, 100 - Math.max(0, revealed - KQ_FIRST));
 }
 function kqRender() {
   const area = document.getElementById("kqArea");
@@ -24,7 +23,7 @@ function kqRender() {
   <div class="kq-stage">${esc(shown)}${KQ.revealed < total ? '<span class="kq-more">…</span>' : ""}</div>
   <p style="color:var(--muted)">${KQ.revealed} / ${total} 文字目まで表示</p>`;
   if (!KQ.answering && !KQ.done) {
-    html += `<p><button type="button" id="kqMore" ${KQ.revealed >= total ? "disabled" : ""}>もっと出す（+${KQ_STEP}文字）</button>
+    html += `<p><button type="button" id="kqMore" ${KQ.revealed >= total ? "disabled" : ""}>1文字出す（-1点）</button>
     <button type="button" id="kqAnswer" class="primary">わかった！答える</button></p>`;
   }
   if (KQ.answering && !KQ.done) {
