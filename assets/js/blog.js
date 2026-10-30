@@ -15,6 +15,8 @@ function photoN(b){ return (b.media||0)||(b.imgn||0); }
 // 拡大表示は従来どおり公式の原寸を使う。プロキシが失敗したら原寸に戻す。
 function thumbSrc(u){
   if(!/^https?:\/\//.test(u||"")) return u;
+  // 二重エンコードURL（%25 を含む）は weserv が取得できないため、原寸を直接表示する
+  if(u.includes("%25")) return u;
   return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=360&h=360&fit=cover&q=62&output=webp";
 }
 function thumbFallback(img, original){
@@ -838,7 +840,25 @@ async function openBlog(id){
   }
   if(b.url&&!b.urldead) html+=`<p><a class="btn" href="${esc(b.url)}" target="_blank" rel="noopener">公式記事を見る</a></p>`;
   body.innerHTML=`<div class="${fontCls(b)}">${html}</div>`;
-  body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>openLightbox(photos, +img.dataset.photo)));
+  // 本文中の小さな画像（スタンプ・絵文字）は写真として扱わず、文字サイズ程度に表示して拡大対象から外す
+  const STAMP_MAX=128;
+  const classifyStamp=img=>{
+    if(img.naturalWidth&&img.naturalWidth<=STAMP_MAX&&img.naturalHeight&&img.naturalHeight<=STAMP_MAX){
+      img.classList.add("bstamp");
+      img.removeAttribute("data-photo");
+    }
+  };
+  body.querySelectorAll("img.bimg").forEach(img=>{
+    if(img.complete&&img.naturalWidth) classifyStamp(img);
+    else img.addEventListener("load",()=>classifyStamp(img),{once:true});
+  });
+  body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>{
+    if(img.classList.contains("bstamp")) return;
+    if(img.classList.contains("bimg")){
+      const bigs=[...body.querySelectorAll("img.bimg:not(.bstamp)")];
+      if(bigs.length) openLightbox(bigs.map(x=>x.getAttribute("src")), bigs.indexOf(img));
+    } else openLightbox(photos, +img.dataset.photo);
+  }));
   body.querySelectorAll(".photo-grid img[data-photo]").forEach(img=>thumbFallback(img, photos[+img.dataset.photo]));
 }
 init();
