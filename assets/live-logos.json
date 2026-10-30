@@ -34,6 +34,18 @@
    "group": "nogi",
    "url": "/assets/live-logos/tour-nogi-14th-birthday.png",
    "source": "https://www.nogizaka46.com/s/n46/page/14th_birthday_live"
+  },
+  {
+   "match": "ARENA TOUR 2026",
+   "group": "sakura",
+   "url": "/assets/live-logos/tour-sakura-arena-2026.jpg",
+   "source": "https://sakurazaka46.com/s/s46/page/nationaltour2026 （KVからロゴ部分を切り抜き）"
+  },
+  {
+   "match": "7回目のひな誕祭",
+   "group": "hinata",
+   "url": "/assets/live-logos/tour-hinata-hinatansai-7.jpg",
+   "source": "https://www.hinatazaka46.com/7th-anniversary/ （KVからロゴ部分を切り抜き）"
   }
  ]
 }
