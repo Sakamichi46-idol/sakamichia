@@ -81,6 +81,10 @@ async function init(){
     syncGroupChips(); buildMemberOptions(); renderYearChips(); resetPages(); render(); saveState();
   }));
   document.getElementById("viewArticles").addEventListener("click",()=>setView("articles"));
+  // 「写真」ボタンに触れた時点で写真データを先読みし、切り替えを速くする
+  const prefetchImgs=()=>{ if(INDEX&&INDEX.years) Object.keys(INDEX.years).forEach(y=>ensureImgs(y)); };
+  document.getElementById("viewPhotos").addEventListener("pointerenter",prefetchImgs);
+  document.getElementById("viewPhotos").addEventListener("focus",prefetchImgs);
   document.getElementById("viewPhotos").addEventListener("click",()=>setView("photos"));
   const latest=years[0]; LATEST=latest;
   // 前回の状態を復元（再読み込みしても検索条件と表示モードを保持する）
@@ -328,16 +332,18 @@ function bindWall(scope){
     });
   });
 }
-async function renderPhotos(){
-  ROWS=filtered();
-  document.getElementById("count").textContent=`${ROWS.length}件の記事情報`;
-  for(const y of poolYears()) await ensureImgs(y);
+let wallToken=0;
+function buildWall(){
   WALL=[];
   for(const b of ROWS){
-    const imgs=(IMGS[b.date.slice(0,4)]||{})[b.id];
+    const yi=b.date.slice(0,4);
+    if(!IMGS[yi]) continue; // 未取得の年は丸ごと飛ばし、そろった分だけで先に描く
+    const imgs=IMGS[yi][b.id];
     const photos=(imgs&&imgs.length)?imgs:(b.thumb?[b.thumb]:[]);
     photos.forEach(u=>WALL.push({u, id:b.id, cap:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}`, label:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`}));
   }
+}
+function drawWall(){
   document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真${WALL.length}枚）`;
   const pages=Math.max(1, Math.ceil(WALL.length/WPHOTO));
   if(ppage>pages) ppage=pages;
@@ -347,6 +353,26 @@ async function renderPhotos(){
     : `<div class="empty">写真のある記事がありません。</div>`;
   bindWall(list);
   bindPager(list, ppage, pages, p=>{ ppage=p; renderPhotos(); scrollToList(); saveState(); });
+}
+// 写真データは年別ファイル合計25MBあり、全年そろうまで待つと切り替えが
+// 重かった。年別ファイルを並行取得し、現在のページが埋まった時点で先に
+// 描く（残りは裏で読み込み、そろったら最終描画する）。
+async function renderPhotos(){
+  const token=++wallToken;
+  ROWS=filtered();
+  const years=poolYears();
+  const allReady=years.every(y=>IMGS[y]);
+  if(!allReady) document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真を読み込んでいます…）`;
+  let shown=false;
+  const step=(final)=>{
+    if(token!==wallToken||VIEW!=="photos") return;
+    buildWall();
+    if(final||WALL.length>=ppage*WPHOTO){ drawWall(); shown=true; }
+  };
+  if(allReady){ step(true); return; }
+  let done=0;
+  await Promise.all(years.map(y=>ensureImgs(y).then(()=>{ done++; step(done>=years.length); })));
+  if(token===wallToken&&VIEW==="photos"&&!shown) step(true);
 }
 function bindOpen(scope){
   scope.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openBlog(el.dataset.open)));
