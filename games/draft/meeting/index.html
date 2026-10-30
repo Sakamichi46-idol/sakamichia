@@ -35,7 +35,7 @@
 <label class="df-check"><input type="checkbox" id="dmEra"> 時代を指定してドラフトする（基準日に在籍していたメンバーだけが対象）</label>
 <label class="df-field" id="dmEraDateWrap" hidden><span>基準日</span><input type="date" id="dmEraDate" value="2018-12-31" min="2011-08-21"></label>
 <label class="df-check"><input type="checkbox" id="dmGrad" checked> 卒業・活動終了メンバーも候補に含める</label>
-<label class="df-field"><span>参加人数（1人目が主催者）</span><select id="dmCount"><option value="2">2人</option><option value="3">3人</option><option value="4">4人</option></select></label>
+<label class="df-field"><span>参加人数（1人目が主催者）</span><input id="dmCount" type="number" min="2" max="50" step="1" value="2"></label>
 <div class="df-field"><span>プレイヤー名</span><div id="dmNames" class="df-names"></div></div>
 <div class="df-field"><span>フォーメーション（<span id="dmCountLabel"></span>＝指名巡数）</span>
 <div class="df-rowctl"><label>列数 <select id="dmCols"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><span id="dmRowCtl"></span></div>
@@ -130,6 +130,13 @@
 </div>
 </div>
 
+<dialog id="dmPickDlg"><div class="dlg-body">
+<p style="margin:0 0 8px"><b id="dmPickTitle">配置するメンバーを選ぶ</b></p>
+<div class="fm-filters"><input type="search" id="dmPickSearch" placeholder="名前・読みで検索" aria-label="候補を検索"><select id="dmPickGen" aria-label="期で絞り込む"><option value="all">すべての期</option></select></div>
+<div class="ychips" id="dmPickGroups" style="margin:4px 0 10px"></div>
+<div id="dmPickList" class="fm-grid"></div>
+<div class="dlg-actions"><button type="button" class="btn" id="dmPickRemove">ベンチに戻す（外す）</button><button type="button" class="btn" id="dmPickClose">閉じる</button></div>
+</div></dialog>
 <dialog id="dmLotDlg"><div class="dlg-body">
 <p style="margin:0 0 4px"><b>競合抽選ルーレット</b> <span id="dmLotCount" style="color:var(--muted)"></span></p>
 <p id="dmLotMember" style="margin:0 0 8px"></p>

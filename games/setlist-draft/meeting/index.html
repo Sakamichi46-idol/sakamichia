@@ -32,9 +32,9 @@
 <summary class="df-summary"><strong>会議の設定</strong><span id="smSetupSummary" class="df-summary-text"></span></summary>
 <div class="df-settings">
 <div class="df-field"><span>指名対象グループ</span><div class="ychips" id="smGroups"></div></div>
-<label class="df-field"><span>参加人数（1人目が主催者）</span><select id="smCount"><option value="2">2人</option><option value="3">3人</option><option value="4">4人</option></select></label>
+<label class="df-field"><span>参加人数（1人目が主催者）</span><input id="smCount" type="number" min="2" max="50" step="1" value="2"></label>
 <div class="df-field"><span>プレイヤー名</span><div id="smNames" class="df-names"></div></div>
-<label class="df-field"><span>1人あたりの曲数（＝指名巡数）</span><select id="smRounds"><option value="8">8曲</option><option value="10">10曲</option><option value="12" selected>12曲</option><option value="15">15曲</option><option value="20">20曲</option><option value="25">25曲</option></select></label>
+<label class="df-field"><span>1人あたりの曲数（＝指名巡数）</span><input id="smRounds" type="number" min="1" max="100" step="1" value="12"></label>
 <p class="df-note" id="smPoolInfo">楽曲データを読み込み中…</p>
 <div class="df-actions"><button type="button" class="btn" id="smStart">この設定でドラフト開始</button></div>
 </div></details>

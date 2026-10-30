@@ -14,7 +14,7 @@
 // サーバー → クライアント:
 //   {t:"state", you, state}  変化のたび全員へ（you は自分のプレイヤーID）
 //   {t:"error", message}
-const MAX_PLAYERS = 4;
+const MAX_PLAYERS = 50;
 
 export class DraftRoom {
   constructor(ctx, env) {
@@ -131,7 +131,7 @@ export class DraftRoom {
         if (!msg.create || !msg.create.config) { this.err(ws, "この部屋は存在しません。コードを確認してください。"); return; }
         const cfg = msg.create.config;
         const pool = Array.isArray(cfg.pool) ? cfg.pool.filter(x => typeof x === "string") : [];
-        const rounds = Math.max(1, Math.min(40, +cfg.rounds || 12));
+        const rounds = Math.max(1, Math.min(200, +cfg.rounds || 12));
         const maxPlayers = Math.max(2, Math.min(MAX_PLAYERS, +cfg.maxPlayers || 4));
         if (pool.length < 2 * rounds) { this.err(ws, "候補プールが不足しています。設定を見直してください。"); return; }
         const extra = (cfg.extra && typeof cfg.extra === "object" && JSON.stringify(cfg.extra).length < 4000) ? cfg.extra : null;

@@ -10,6 +10,8 @@ let curPid = null, candGroup = "all", candType = "all", candQuery = "";
 let lastEvents = [], finishTab = null, lotQueue = [], lotIdx = 0, lotTimer = null, imgBlob = null;
 
 const $ = id => document.getElementById(id);
+const smCountVal = () => Math.max(2, Math.min(50, +$("smCount").value || 2));
+const smRoundsVal = () => Math.max(1, Math.min(100, +$("smRounds").value || 12));
 const song = id => BYID.get(id);
 const playerName = pid => S?.players.find(p => p.id === pid)?.name || pid;
 function save() {
@@ -79,7 +81,7 @@ function playerNames() {
 }
 function probe() {
   const pool = SONGS.filter(s => suGroups.has(s.group)).length;
-  const n = +$("smCount").value, r = +$("smRounds").value;
+  const n = smCountVal(), r = smRoundsVal();
   const ok = pool >= n * r;
   $("smPoolInfo").textContent = ok
     ? `候補は ${pool} 曲 ／ 必要 ${n * r} 曲（${n}人 × ${r}曲）。この設定で開始できます。`
@@ -99,7 +101,7 @@ function renderSetup() {
     renderSetup();
   }));
   const names = $("smNames");
-  const count = +$("smCount").value;
+  const count = smCountVal();
   const prev = [...names.querySelectorAll("input")].map(i => i.value);
   names.innerHTML = Array.from({ length: count }, (_, i) =>
     `<input type="text" maxlength="20" placeholder="プレイヤー${i + 1}${i === 0 ? "（主催者）" : ""}" value="${esc(prev[i] || "")}">`).join("");
@@ -107,7 +109,7 @@ function renderSetup() {
 }
 function startGame() {
   try {
-    S = newSession(playerNames(), [...suGroups], +$("smRounds").value);
+    S = newSession(playerNames(), [...suGroups], smRoundsVal());
   } catch (e) { alert(e.message); return; }
   order = {}; enc = {}; titles = {};
   curPid = S.players[0].id;
@@ -677,8 +679,8 @@ function netInit() {
   $("smCreate").addEventListener("click", () => {
     if (!SONGS.length) { alert("データを読み込み中です。少し待ってからもう一度押してください。"); return; }
     const groups = [...suGroups];
-    const rounds = +$("smRounds").value;
-    const maxPlayers = +$("smCount").value;
+    const rounds = smRoundsVal();
+    const maxPlayers = smCountVal();
     const pool = SONGS.filter(x => groups.includes(x.group)).map(x => x.id);
     if (pool.length < 2 * rounds) { alert("候補が不足しています。設定を見直してください。"); return; }
     const code = Array.from({ length: 5 }, () => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 31)]).join("");

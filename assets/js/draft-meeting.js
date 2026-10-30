@@ -78,8 +78,9 @@ function renderSetup() {
     suGens[g] = sel;
     renderSetup();
   }));
+  $("dmCols").value = String(suRows.length);
   const names = $("dmNames");
-  const count = +$("dmCount").value;
+  const count = Math.max(2, Math.min(50, +$("dmCount").value || 2));
   const prev = [...names.querySelectorAll("input")].map(i => i.value);
   names.innerHTML = Array.from({ length: count }, (_, i) =>
     `<input type="text" maxlength="20" placeholder="プレイヤー${i + 1}${i === 0 ? "（主催者）" : ""}" value="${esc(prev[i] || "")}">`).join("");
@@ -232,6 +233,7 @@ function doDraw() {
   lotQueue = lastEvents.filter(ev => ev.wasContested);
   lotIdx = 0;
   if (lotQueue.length) openLot();
+  else nextCur();
   renderGame();
   if (session.status === "finished") renderGame();
   else if (!lotQueue.length) msg(session.message);
@@ -308,22 +310,61 @@ function renderFinish() {
   }));
 }
 function onFinishSlot(gi) {
-  try {
-    if (selPoolId) {
-      session = E.placeMember(session, finishTab, gi, selPoolId);
-      selPoolId = null;
-    } else if (selSlotIdx === null) {
-      if (session.placements[finishTab][gi]) selSlotIdx = gi; else return;
-    } else if (selSlotIdx === gi) {
-      session = E.placeMember(session, finishTab, gi, null);
-      selSlotIdx = null;
-    } else {
-      const mid = session.placements[finishTab][selSlotIdx];
-      if (mid) session = E.placeMember(session, finishTab, gi, mid);
-      selSlotIdx = null;
+  if (selPoolId) {
+    try { session = E.placeMember(session, finishTab, gi, selPoolId); }
+    catch (e) { msg(e.message); return; }
+    selPoolId = null;
+    save(); renderFinish();
+    return;
+  }
+  const cur = session.placements[finishTab][gi];
+  openSlotPicker({
+    title: `配置するメンバーを選ぶ（${gi + 1}枠目）`,
+    ids: session.acquired[finishTab].filter(id => id !== cur),
+    current: cur,
+    onChoose: id => {
+      try { session = E.placeMember(session, finishTab, gi, id); }
+      catch (e) { msg(e.message); return; }
+      save(); renderFinish();
     }
-  } catch (e) { msg(e.message); return; }
-  save(); renderFinish();
+  });
+}
+
+/* ---------- 配置先タップで開く候補ピッカー（ローカル・オンライン共用） ---------- */
+let pickCtx = null, pickGroup = "all", pickGen = "all";
+function openSlotPicker(ctx) {
+  pickCtx = ctx; pickGroup = "all"; pickGen = "all";
+  $("dmPickSearch").value = "";
+  $("dmPickTitle").textContent = ctx.title;
+  $("dmPickRemove").style.display = ctx.current ? "" : "none";
+  renderSlotPicker();
+  $("dmPickDlg").showModal();
+}
+function renderSlotPicker() {
+  if (!pickCtx) return;
+  const ids = pickCtx.ids;
+  const gbox = $("dmPickGroups");
+  const groups = GKEY_ORDER.filter(g => ids.some(id => { const m = member(id); return m && E.memberInGroup(m, g); }));
+  gbox.innerHTML = ["all", ...groups].map(g => `<button type="button" class="ychip${pickGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "全グループ" : GLABEL[g]}</button>`).join("");
+  gbox.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { pickGroup = b.dataset.g; renderSlotPicker(); }));
+  const genSel = $("dmPickGen");
+  const gens = [...new Set(ids.map(id => member(id)?.generation).filter(g => g !== undefined))].sort((a, b) => a - b);
+  genSel.innerHTML = `<option value="all">すべての期</option>` + gens.map(g => `<option value="${g}">${g === 0 ? "交換留学生" : g + "期生"}</option>`).join("");
+  if (!gens.includes(+pickGen)) pickGen = "all";
+  genSel.value = pickGen;
+  const q = ($("dmPickSearch").value || "").trim();
+  const list = ids.map(id => member(id)).filter(m => m
+    && (pickGroup === "all" || E.memberInGroup(m, pickGroup))
+    && (pickGen === "all" || m.generation === +pickGen)
+    && (!q || m.name.includes(q) || (m.reading || "").includes(q)));
+  const sorted = [...list].sort((a, b) => E.compareMembersForGroup(a, b, pickGroup));
+  $("dmPickList").innerHTML = sorted.map(m => netCandHTML(m, false)).join("")
+    || `<p style="color:var(--muted)">候補がいません。絞り込みを変えてください。</p>`;
+  $("dmPickList").querySelectorAll(".fm-cand").forEach(c => c.addEventListener("click", () => {
+    const id = c.dataset.id;
+    $("dmPickDlg").close();
+    pickCtx?.onChoose(id);
+  }));
 }
 
 /* ---------- 画像出力 ---------- */
@@ -424,6 +465,7 @@ async function init() {
     if (lotIdx < lotQueue.length) { openLot(); return; }
     $("dmLotDlg").close();
     msg(session.status === "finished" ? session.message : (session.message || ""));
+    nextCur();
     renderGame();
   });
   const dlg = $("dmImgDlg");
@@ -743,20 +785,26 @@ function netRenderFinish() {
   $("dmNetBoard").querySelectorAll(".fm-tile").forEach(t => t.addEventListener("click", () => {
     const gi = +t.dataset.slot;
     // 配置の入れ替え規則は draft-engine の placeMember と同一（サーバーセッションが無いので同規則をここで適用）
-    const pos = [...netPlace.placements];
-    const placeOp = mid => {
-      if (mid === null) { pos[gi] = null; return; }
-      const old = pos.indexOf(mid), displaced = pos[gi];
-      pos[gi] = mid;
-      if (old >= 0 && old !== gi) pos[old] = displaced;
+    const placeInto = mid => {
+      const pos = [...netPlace.placements];
+      if (mid === null) pos[gi] = null;
+      else {
+        const old = pos.indexOf(mid), displaced = pos[gi];
+        pos[gi] = mid;
+        if (old >= 0 && old !== gi) pos[old] = displaced;
+      }
+      netPlace.placements = pos;
+      netSavePlace();
+      netRenderFinish();
     };
-    if (netSelPool) { placeOp(netSelPool); netSelPool = null; }
-    else if (netSelSlot === null) { if (pos[gi]) netSelSlot = gi; else return; }
-    else if (netSelSlot === gi) { placeOp(null); netSelSlot = null; }
-    else { const mid = pos[netSelSlot]; if (mid) placeOp(mid); netSelSlot = null; }
-    netPlace.placements = pos;
-    netSavePlace();
-    netRenderFinish();
+    if (netSelPool) { placeInto(netSelPool); netSelPool = null; return; }
+    const cur = netPlace.placements[gi];
+    openSlotPicker({
+      title: `配置するメンバーを選ぶ（${gi + 1}枠目）`,
+      ids: (NET.state.session.acquired[NET.you] || []).filter(id => id !== cur),
+      current: cur,
+      onChoose: id => placeInto(id)
+    });
   }));
 }
 async function netBuildImage() {
@@ -834,3 +882,9 @@ function netInit() {
   }
 }
 netInit();
+
+/* 配置ピッカーの配線 */
+$("dmPickSearch").addEventListener("input", renderSlotPicker);
+$("dmPickGen").addEventListener("input", e => { pickGen = e.target.value; renderSlotPicker(); });
+$("dmPickClose").addEventListener("click", () => $("dmPickDlg").close());
+$("dmPickRemove").addEventListener("click", () => { $("dmPickDlg").close(); pickCtx?.onChoose(null); });

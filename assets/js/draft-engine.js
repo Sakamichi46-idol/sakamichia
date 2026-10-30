@@ -84,7 +84,7 @@
       placements:Object.fromEntries(s.players.map(p=>[p.id,Array(size).fill(null)])),pickSlots:{}};
   }
   function isValidSession(s) {
-    if (!s || s.version!==4 || !Array.isArray(s.players) || s.players.length<2 || s.players.length>4 ||
+    if (!s || s.version!==4 || !Array.isArray(s.players) || s.players.length<2 || s.players.length>50 ||
       !Array.isArray(s.allowedGroups) || !s.allowedGroups.length ||
       new Set(s.allowedGroups).size!==s.allowedGroups.length ||
       s.allowedGroups.some(g=>!AVAILABLE_GROUPS.includes(g)) ||
@@ -128,7 +128,7 @@
     return true;
   }
   function createSession(names,opts={}) {
-    if (!Array.isArray(names)||names.length<2||names.length>4) throw new Error('参加人数は2〜4人にしてください。');
+    if (!Array.isArray(names)||names.length<2||names.length>50) throw new Error('参加人数は2人以上にしてください（最大50人）。');
     const allowedGroups=Array.isArray(opts.allowedGroups)?opts.allowedGroups:AVAILABLE_GROUPS;
     const allowedGenerations=opts.allowedGenerations||{};
     const formation=opts.formation?{rows:[...opts.formation.rows],placement:opts.formation.placement,showCenter:opts.formation.showCenter}:defaultFormation();

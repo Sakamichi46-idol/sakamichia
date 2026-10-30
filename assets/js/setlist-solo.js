@@ -68,7 +68,7 @@ function numLabel(i) {
 function renderSettings() {
   const s = state.settings;
   $("ssMode").value = s.mode;
-  $("ssCount").value = String(s.count);
+  if (document.activeElement !== $("ssCount")) $("ssCount").value = String(s.count);
   $("ssRepeat").value = s.repeat ? "yes" : "no";
   $("ssPassLimit").value = String(s.passLimit);
   $("ssTitle").value = state.title || "マイセットリスト";
@@ -230,7 +230,7 @@ async function init() {
   state = load();
   $("ssDataStatus").textContent = `対象 ${SONGS.length}曲`;
   $("ssMode").addEventListener("input", e => { state.settings.mode = e.target.value; save(); renderSettings(); });
-  $("ssCount").addEventListener("input", e => { state.settings.count = +e.target.value; save(); renderSettings(); renderSlot(); renderList(); });
+  $("ssCount").addEventListener("input", e => { const v = parseInt(e.target.value, 10); if (Number.isFinite(v) && v >= 1 && v <= 100) { state.settings.count = v; save(); renderSettings(); renderSlot(); renderList(); } });
   $("ssRepeat").addEventListener("input", e => { state.settings.repeat = e.target.value === "yes"; save(); renderSettings(); });
   $("ssPassLimit").addEventListener("input", e => { state.settings.passLimit = +e.target.value; save(); renderSlot(); });
   $("ssTitle").addEventListener("input", e => { state.title = e.target.value; save(); });

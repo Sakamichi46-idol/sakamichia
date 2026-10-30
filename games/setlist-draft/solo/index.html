@@ -11,7 +11,7 @@
 <label class="df-field"><span>スロットの種類</span><select id="ssMode">
 <option value="type">種別</option><option value="era">年代</option><option value="center">センター</option><option value="random">おまかせ（3種類から抽選）</option></select></label>
 <div class="df-field"><span>対象グループ</span><div class="ychips" id="ssGroups"></div></div>
-<label class="df-field"><span>作る曲数</span><select id="ssCount"><option value="10">10曲</option><option value="15">15曲</option><option value="20" selected>20曲</option><option value="25">25曲</option><option value="30">30曲</option></select></label>
+<label class="df-field"><span>作る曲数</span><input id="ssCount" type="number" min="1" max="100" step="1" value="20"></label>
 <label class="df-field"><span>条件の重複</span><select id="ssRepeat"><option value="yes">許可する</option><option value="no">同じ組み合わせは1回だけ</option></select></label>
 <label class="df-field"><span>パスできる回数</span><select id="ssPassLimit"><option value="3">3回</option><option value="0">パスなし</option><option value="1">1回</option><option value="5">5回</option><option value="-1">無制限</option></select></label>
 <p class="df-note" id="ssDataStatus">楽曲データを読み込み中…</p>
