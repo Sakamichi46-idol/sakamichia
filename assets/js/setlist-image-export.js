@@ -63,13 +63,13 @@
  function resolveLogoEntry(manifest,show){
   if(!manifest||!show)return null;
   const direct=manifest.shows?.[String(show.id||'')];
-  if(typeof direct==='string')return {url:direct,mode:'title'};
-  if(direct&&typeof direct.url==='string'&&(!direct.group||direct.group===show.group))return {url:direct.url,mode:direct.mode==='bg'?'bg':'title'};
+  if(typeof direct==='string')return {url:direct,mode:'side'};
+  if(direct&&typeof direct.url==='string'&&(!direct.group||direct.group===show.group))return {url:direct.url,mode:direct.mode==='bg'?'bg':'side'};
   // Longer, more specific title match wins. No guesses from unrelated groups.
   const name=clean(show.title),arr=(manifest.tours||[]).filter(e=>e&&typeof e.match==='string'&&typeof e.url==='string'&&e.group===show.group&&clean(e.match)&&name.includes(clean(e.match)));
   arr.sort((a,b)=>clean(b.match).length-clean(a.match).length);
   const hit=arr[0];
-  return hit?{url:hit.url,mode:hit.mode==='bg'?'bg':'title'}:null;
+  return hit?{url:hit.url,mode:hit.mode==='bg'?'bg':'side'}:null;
  }
  function resolveLogo(manifest,show){return resolveLogoEntry(manifest,show)?.url||'';}
  function measure(ctx,row,width,fontSize,useRightCredits=false){
@@ -184,34 +184,48 @@
   lines.forEach((s,i)=>drawCentered(ctx,s,titleY+i*step,size,COLORS.ink,true));
   drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),titleY+(lines.length-1)*step+size+14,18,COLORS.secondary);
  }
+ // 素材をセトリ全体の背景に薄く敷く(ウォーターマーク)。リスト領域全体を
+ // 覆うよう cover で敷き、はみ出しはクリップする。
+ function drawWatermark(ctx,logo,data,alpha,wash){
+  const areaW=W-2*MARGIN,areaH=Math.max(120,data.H-data.top-30);
+  const wScale=Math.max(areaW/logo.width,areaH/logo.height);
+  const dw=Math.round(logo.width*wScale),dh=Math.round(logo.height*wScale);
+  const dx=Math.round(MARGIN+(areaW-dw)/2),dy=Math.round(data.top+(areaH-dh)/2);
+  ctx.save();
+  ctx.beginPath();ctx.rect(MARGIN,data.top,areaW,areaH);ctx.clip();
+  ctx.globalAlpha=alpha;ctx.drawImage(logo,dx,dy,dw,dh);
+  ctx.globalAlpha=wash;ctx.fillStyle=COLORS.paper;ctx.fillRect(MARGIN,data.top,areaW,areaH);
+  ctx.restore();
+ }
  function render(ctx,rawRows,header={},options={}){
   const data=plan(ctx,rawRows,header,options);ctx.save();ctx.fillStyle=COLORS.paper;ctx.fillRect(0,0,W,H);ctx.textBaseline='top';
   ctx.fillStyle='#f7f8fc';ctx.fillRect(0,0,W,13);
   const logo=options.logoImage||null;
+  const sideMode=!!logo&&options.logoMode!=='bg';
+  // 透かし(F)はロゴがある場合の共通要素として本文背景に敷く
+  if(logo&&!options.hideTitle)drawWatermark(ctx,logo,data,sideMode?0.10:0.13,sideMode?0.25:0.22);
   if(options.hideTitle){ /* Title deliberately hidden by the user. */ }
   else if(logo&&options.logoMode==='bg'){
-   // 背景モード:ロゴ(またはKV全体)をヘッダーではなく、セトリ全体の背景に
-   // 薄く敷くウォーターマーク表現(ユーザーが参考として示したファンメイド
-   // 画像の方式)。素材はリスト領域全体を覆うよう cover で敷き、はみ出しは
-   // クリップする。ヘッダーはロゴ無しの場合と同じくタイトル文字で作る。
-   const areaW=W-2*MARGIN,areaH=Math.max(120,data.H-data.top-30);
-   const wScale=Math.max(areaW/logo.width,areaH/logo.height);
-   const dw=Math.round(logo.width*wScale),dh=Math.round(logo.height*wScale);
-   const dx=Math.round(MARGIN+(areaW-dw)/2),dy=Math.round(data.top+(areaH-dh)/2);
-   ctx.save();
-   ctx.beginPath();ctx.rect(MARGIN,data.top,areaW,areaH);ctx.clip();
-   ctx.globalAlpha=0.13;ctx.drawImage(logo,dx,dy,dw,dh);
-   ctx.globalAlpha=0.22;ctx.fillStyle=COLORS.paper;ctx.fillRect(MARGIN,data.top,areaW,areaH);
-   ctx.restore();
+   // 背景モード:ヘッダーはタイトル文字のみ(素材は透かしとして全体に敷く)
    drawTitleBlock(ctx,header);
   }
   else if(logo){
-   const maxW=770,maxH=138,scale=Math.min(maxW/logo.width,maxH/logo.height,1.5);
-   const w=logo.width*scale,h=logo.height*scale;
-   ctx.drawImage(logo,(W-w)/2,30,w,h);
-   ctx.font=`700 22px ${JP}`;ctx.fillStyle=COLORS.ink;
-   if(header.title&&options.showTitleWithLogo){for(const [i,l] of squeeze(ctx,header.title,W-140,`700 22px ${JP}`).slice(0,2).entries())ctx.fillText(l,80,169+i*26);}
-   drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),219,19,COLORS.secondary);
+   // サイド方式(B):ロゴを左に置き、タイトル文字を右に組む。ロゴだけでは
+   // 読めない公演名を、文字のタイトルで必ず読めるようにする(ユーザー指定)。
+   const maxW=320,maxH=170,scale=Math.min(maxW/logo.width,maxH/logo.height);
+   const w=Math.round(logo.width*scale),h=Math.round(logo.height*scale);
+   const lx=MARGIN,ly=Math.round((data.headerH-h)/2)+6;
+   ctx.drawImage(logo,lx,ly,w,h);
+   const tx=lx+w+28,tw=W-MARGIN-tx;
+   const title=tidy(header.title)||'マイセットリスト';
+   const {lines,size}=titleLayout(ctx,title,tw);
+   const step=Math.round(size*1.32);
+   const blockH=lines.length*step+32;
+   const ty=Math.max(24,Math.round((data.headerH-blockH)/2));
+   ctx.fillStyle=COLORS.ink;ctx.font=`700 ${size}px ${JP}`;
+   lines.forEach((s,i)=>ctx.fillText(s,tx,ty+i*step));
+   ctx.fillStyle=COLORS.secondary;ctx.font=`500 18px ${JP}`;
+   ctx.fillText([header.date,header.venue].filter(Boolean).join('　 /　 '),tx,ty+(lines.length-1)*step+size+12);
   }else{
    drawTitleBlock(ctx,header);
   }
@@ -301,5 +315,5 @@
   const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('画像を生成できませんでした。')),'image/png'));
   return {blob,layout};
  }
- return Object.freeze({version:'2.2.0',W,H,normalizeRows,resolveLogo,resolveLogoEntry,plan,render,getLogo,preloadLogos,create,download});
+ return Object.freeze({version:'2.3.0',W,H,normalizeRows,resolveLogo,resolveLogoEntry,plan,render,getLogo,preloadLogos,create,download});
 });
