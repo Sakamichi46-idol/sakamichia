@@ -2,7 +2,7 @@
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
 let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, LIVEIDX = {}, GAL = {};
-let fGroup = "all", fGen = "all", fShowGrad = true, fQuery = "", fSort = "group";
+let fGroup = "all", fGen = "all", fShowGrad = false, fQuery = "", fSort = "group";
 
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
 function galURL(name, f) { const p = PHOTOS[name]; if (!p) return ""; return BASE + "assets/member-gallery/" + p.replace(/\.jpg$/, "") + "/" + f; }
