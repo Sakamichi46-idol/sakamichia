@@ -12,7 +12,7 @@ function start(kind){
   if(Q.timer){ clearInterval(Q.timer); Q.timer=null; }
   const best=loadBest(kind);
   area.innerHTML=`<div class="card" style="margin-bottom:40px"><h3>${kind==="center"?"センター当て":"グループ当て"}クイズ</h3>
-  <p>全10問の4択クイズです。タイムアタック方式で、スタートを押した瞬間から計測します。</p>
+  <p>全10問の4択クイズです。タイムアタック方式で、スタートを押した瞬間から計測します。正解するとすぐ次の問題に進みます（待たずに進みたいときは、回答後に画面をタップしても進めます）。</p>
   ${best?`<p style="color:var(--muted)">ベスト：${best.score}問正解 ／ ${fmtTime(best.ms)}</p>`:""}
   <p><button type="button" class="primary" id="qStart">スタート</button></p></div>`;
   document.getElementById("qStart").addEventListener("click",()=>quiz(kind));
@@ -82,7 +82,11 @@ function showQ(){
     if(ok) Q.score++;
     document.getElementById("fb").innerHTML= ok?"正解！" : `残念、正解は「${esc(answer)}」でした。`;
     area.querySelectorAll("[data-opt]").forEach(x=>x.disabled=true);
-    setTimeout(()=>{Q.i++; showQ();}, 1100);
+    // タイムアタック用に切り替えを高速化：正解0.4秒／不正解0.8秒、待たずに画面をタップしても即次へ
+    let advanced=false, advTimer=null;
+    const advance=()=>{ if(advanced) return; advanced=true; clearTimeout(advTimer); area.removeEventListener("pointerdown",advance); Q.i++; showQ(); };
+    advTimer=setTimeout(advance, ok?400:800);
+    area.addEventListener("pointerdown",advance);
   }));
 }
 init();
