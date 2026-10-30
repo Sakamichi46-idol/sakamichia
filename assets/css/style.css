@@ -135,6 +135,11 @@ body[data-group="坂道選抜"]{--page:#2f9e8f}
 .lightbox button:disabled{opacity:.4}
 .lb-zoom{display:inline-flex;gap:6px}
 .lb-zoom button{min-width:42px}
+/* スマホ・タブレット(タッチ主体)ではズームボタン(+/-/等倍)を隠す。
+   ピンチとダブルタップで代替できるため(ユーザー指定)。PCでは残す。 */
+@media (hover:none) and (pointer:coarse){
+  .lb-zoom{display:none}
+}
 .more-wrap{text-align:center;margin:6px 0 44px}
 .pager{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin:14px 0 44px}
 .pager button{background:#fff;color:var(--ink);border:2px solid var(--line)}
