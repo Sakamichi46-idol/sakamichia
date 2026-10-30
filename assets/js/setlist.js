@@ -131,7 +131,7 @@ function checkImport() {
   if (!items.length) { applyImport('replace'); return; }
   const dlg = $('msImportDlg');
   if (dlg && dlg.showModal) {
-    $('msImportText').textContent = `「${payload.name}」（${payload.date || ''}）のセットリスト全${payload.rows.length}曲を取り込みます。今のマイセットリスト（${items.length}件）はどうしますか？`;
+    $('msImportText').textContent = `「${payload.name}」（${payload.date || ''}）のセットリスト全${payload.rows.length}曲を取り込みます。今のマイセットリスト（${items.filter(i => i.type === 'song').length}曲）はどうしますか？`;
     dlg.showModal();
   } else if (confirm(`「${payload.name}」のセットリストを取り込みます。今の内容の末尾に追加しますか？（キャンセル＝置き換え）`)) {
     applyImport('append');
