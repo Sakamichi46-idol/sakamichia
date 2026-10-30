@@ -1,17 +1,22 @@
 name: body-backfill
 
-# 6時間おきに、本文がまだ無い既存記事を公式ページから少しずつ（300件ずつ）
+# 3時間おきに、本文がまだ無い既存記事を公式ページから少しずつ（400件ずつ）
 # 取り込み、自動デプロイする。本文が揃うまで自動で進み、揃った後は
 # 対象0件ですぐ終わる。取り込み状況は tools/body-backfill-state.json に残る。
 # あわせて、改行・空白を保持する新ロジックで取り込み済み本文の取り直しも
-# 300件ずつ進める（tools/reextract_bodies.py、進捗は body-reextract-state.json）。
+# 400件ずつ進める（tools/reextract_bodies.py、進捗は body-reextract-state.json）。
+# 未取得分の取り込みと取り直しは、それぞれ終わった時点で個別に
+# コミット＆push する（後半が timeout 等で落ちても前半の成果は残る）。
+# push は他のワークフローのコミットと競合し得るので、rebase して
+# 最大5回まで再試行する。concurrency は専用グループにして、新着チェック等の
+# 実行に順番待ちを押し出されないようにしている。
 on:
   schedule:
-    - cron: '41 */6 * * *'
+    - cron: '41 */3 * * *'
   workflow_dispatch:
 
 concurrency:
-  group: sakamichia-data
+  group: sakamichia-body-backfill
   cancel-in-progress: false
 
 permissions:
@@ -20,7 +25,7 @@ permissions:
 jobs:
   backfill:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
 
@@ -28,13 +33,15 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Backfill blog bodies (300 per run)
+      - name: Configure git identity
+        run: |
+          git config user.name 'sakamichia-bot'
+          git config user.email 'actions@github.com'
+
+      - name: Backfill blog bodies (400 per run)
         env:
           SAKAMICHIA_NO_ZIP: '1'
-        run: python3 tools/backfill_bodies.py --limit 300
-
-      - name: Re-extract existing bodies with whitespace-preserving logic (300 per run)
-        run: python3 tools/reextract_bodies.py --limit 300
+        run: python3 tools/backfill_bodies.py --limit 400
 
       - name: Pack blog bodies into shards
         run: python3 tools/pack_bodies.py
@@ -45,22 +52,64 @@ jobs:
       - name: Build body keyword search index
         run: python3 tools/build_body_index.py
 
-      - name: Commit data updates
-        id: commit
+      - name: Commit backfill results
+        id: commit1
         run: |
-          git config user.name 'sakamichia-bot'
-          git config user.email 'actions@github.com'
           git add -A
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m 'blog: body backfill'
-            git push
+            for i in 1 2 3 4 5; do
+              if git push origin HEAD:main; then
+                break
+              fi
+              if [ "$i" = "5" ]; then
+                echo "push failed after 5 attempts" >&2
+                exit 1
+              fi
+              git fetch origin main
+              git rebase origin/main
+            done
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-extract existing bodies with whitespace-preserving logic (400 per run)
+        run: python3 tools/reextract_bodies.py --limit 400
+
+      - name: Pack blog bodies into shards (after re-extract)
+        run: python3 tools/pack_bodies.py
+
+      - name: Sync body flags with packed bodies (after re-extract)
+        run: python3 tools/sync_body_flags.py
+
+      - name: Build body keyword search index (after re-extract)
+        run: python3 tools/build_body_index.py
+
+      - name: Commit re-extract results
+        id: commit2
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m 'blog: body backfill'
+            for i in 1 2 3 4 5; do
+              if git push origin HEAD:main; then
+                break
+              fi
+              if [ "$i" = "5" ]; then
+                echo "push failed after 5 attempts" >&2
+                exit 1
+              fi
+              git fetch origin main
+              git rebase origin/main
+            done
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Deploy to Cloudflare Pages
-        if: steps.commit.outputs.changed == 'true'
+        if: steps.commit1.outputs.changed == 'true' || steps.commit2.outputs.changed == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
