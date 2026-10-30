@@ -161,6 +161,29 @@
    :0;
   return {...chosen,W,H,headerH,top,available,rowGap,rowCount:rows.length,headers:header||{},widths};
  }
+ // タイトルはなるべく1行に収める。収まらなければ少し縮小し、それでも無理な
+ // 場合は末尾の［DAY1］等の括弧だけを2行目に回す(ユーザー指定:本体の途中での
+ // 改行は避け、括弧部分が分かれるのは可)。
+ function titleLayout(ctx,title,maxWidth){
+  const fits=(s,text)=>{ctx.font=`700 ${s}px ${JP}`;return ctx.measureText(text).width<=maxWidth;};
+  for(let s=30;s>=20;s--)if(fits(s,title))return {lines:[title],size:s};
+  const m=String(title).match(/^(.*?)\s*((?:［[^］]*］|【[^】]*】|\[[^\]]*\])\s*)$/);
+  if(m&&m[1]){
+   for(let s=30;s>=20;s--)if(fits(s,m[1])&&fits(s,m[2]))return {lines:[m[1],m[2]],size:s};
+   const lines=squeeze(ctx,m[1],maxWidth,`700 24px ${JP}`).slice(0,2);
+   lines.push(m[2]);
+   return {lines,size:24};
+  }
+  return {lines:squeeze(ctx,title,maxWidth,`700 24px ${JP}`).slice(0,3),size:24};
+ }
+ function drawTitleBlock(ctx,header){
+  const title=tidy(header.title)||'マイセットリスト';
+  const {lines,size}=titleLayout(ctx,title,W-140);
+  const step=Math.round(size*1.32);
+  const titleY=Math.max(28,Math.round(86-(lines.length*step)/2-size*0.30));
+  lines.forEach((s,i)=>drawCentered(ctx,s,titleY+i*step,size,COLORS.ink,true));
+  drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),titleY+(lines.length-1)*step+size+14,18,COLORS.secondary);
+ }
  function render(ctx,rawRows,header={},options={}){
   const data=plan(ctx,rawRows,header,options);ctx.save();ctx.fillStyle=COLORS.paper;ctx.fillRect(0,0,W,H);ctx.textBaseline='top';
   ctx.fillStyle='#f7f8fc';ctx.fillRect(0,0,W,13);
@@ -180,11 +203,7 @@
    ctx.globalAlpha=0.13;ctx.drawImage(logo,dx,dy,dw,dh);
    ctx.globalAlpha=0.22;ctx.fillStyle=COLORS.paper;ctx.fillRect(MARGIN,data.top,areaW,areaH);
    ctx.restore();
-   const title=tidy(header.title)||'マイセットリスト';
-   const titleLines=squeeze(ctx,title,W-140,`bold 30px ${JP}`).slice(0,3);
-   const titleY=Math.max(35,85-titleLines.length*16);
-   titleLines.forEach((s,i)=>drawCentered(ctx,s,titleY+i*39,30,COLORS.ink,true));
-   drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),titleY+titleLines.length*39+12,18,COLORS.secondary);
+   drawTitleBlock(ctx,header);
   }
   else if(logo){
    const maxW=770,maxH=138,scale=Math.min(maxW/logo.width,maxH/logo.height,1.5);
@@ -194,11 +213,7 @@
    if(header.title&&options.showTitleWithLogo){for(const [i,l] of squeeze(ctx,header.title,W-140,`700 22px ${JP}`).slice(0,2).entries())ctx.fillText(l,80,169+i*26);}
    drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),219,19,COLORS.secondary);
   }else{
-   const title=tidy(header.title)||'マイセットリスト';
-   const titleLines=squeeze(ctx,title,W-140,`bold 30px ${JP}`).slice(0,3);
-   const titleY=Math.max(35,85-titleLines.length*16);
-   titleLines.forEach((s,i)=>drawCentered(ctx,s,titleY+i*39,30,COLORS.ink,true));
-   drawCentered(ctx,[header.date,header.venue].filter(Boolean).join('　 /　 '),titleY+titleLines.length*39+12,18,COLORS.secondary);
+   drawTitleBlock(ctx,header);
   }
   ctx.fillStyle=COLORS.line;ctx.fillRect(MARGIN,data.headerH,W-2*MARGIN,1);
   const colW=data.widths[data.cols-1];
