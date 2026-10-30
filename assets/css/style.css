@@ -270,6 +270,7 @@ dialog{max-height:92dvh}
 .fm-filters input{flex:1;min-width:160px;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:15px}
 .fm-filters select{padding:10px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:15px}
 .fm-cands,.mb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.mb-sec{grid-column:1/-1;font-weight:700;font-size:1.02rem;color:var(--page);border-bottom:2px solid var(--page);padding:12px 2px 4px;margin-top:4px}
 .fm-cand,.mb-card{padding:0;border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;color:var(--ink);text-align:center}
 .fm-cand img,.mb-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
 .fm-cand .fm-name,.mb-card .fm-name{display:block;padding:4px 2px 0;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

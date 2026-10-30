@@ -1,7 +1,7 @@
 // メンバーページ：206人の一覧・検索と、ブログ/楽曲/ライブを横断した詳細表示
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
-let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, LIVEIDX = {}, GAL = {};
+let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, MEMBERLIVE = {}, GAL = {};
 let fGroup = "all", fGen = "all", fShowGrad = false, fQuery = "", fSort = "group";
 
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
@@ -21,7 +21,11 @@ const FAMILY = { "乃木坂46": "乃木坂46", "櫻坂46": "櫻坂46", "欅坂46
 function familyOf(m) { const lg = lastGroup(m); return FAMILY[lg] || lg; }
 const isExchange = m => m.name === "松井玲奈";   // SKE48からの交換留学生
 const genKey = m => (m.gen > 0 ? m.gen : 99);    // 期なし（ポカ・交換留学生）はグループ内の最後尾
-function centerSongsOf(name) { return SONGS.filter(s => s.center === name); }
+function centerSongsOf(name) {
+  // Wセンターは「A・B」形式なので分割して判定し、時系列順（発売日→収録順）で返す
+  return SONGS.filter(s => s.center && s.center.split("・").includes(name))
+    .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.ord || 0) - (b.ord || 0));
+}
 function formCountOf(name) {
   let n = 0;
   for (const k in FORMS) {
@@ -31,14 +35,9 @@ function formCountOf(name) {
   return n;
 }
 function liveStatsOf(name) {
-  let shows = 0, centers = 0;
-  for (const id in LIVEIDX) {
-    const e = LIVEIDX[id];
-    const inp = (e.p || []).includes(name), inc = (e.c || []).includes(name);
-    if (inp || inc) shows++;
-    if (inc) centers++;
-  }
-  return { shows, centers };
+  // data/member-live.json（全員歌唱曲のある公演は当日在籍メンバー全員を参加として集計済み）
+  const s = MEMBERLIVE[name] || {};
+  return { shows: s.shows || 0, centers: s.centers || 0 };
 }
 function cardHTML(m) {
   const url = photoURL(m.name);
@@ -60,7 +59,24 @@ function render() {
   else list.sort((a, b) => order(familyOf(a)) - order(familyOf(b)) || genKey(a) - genKey(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   document.getElementById("mbCount").textContent = `${list.length}人`;
   const grid = document.getElementById("mbGrid");
-  grid.innerHTML = list.map(cardHTML).join("") || `<p style="color:var(--muted)">条件に合うメンバーがいません。</p>`;
+  if (!list.length) {
+    grid.innerHTML = `<p style="color:var(--muted)">条件に合うメンバーがいません。</p>`;
+  } else if (fSort === "group") {
+    // グループ・期生順のときは系統ごとに区切り見出しを入れる
+    const FAMLABEL = { "乃木坂46": "乃木坂46", "櫻坂46": "櫻坂46・欅坂46", "日向坂46": "日向坂46・けやき坂46" };
+    let html = "", lastFam = null;
+    for (const m of list) {
+      const fam = familyOf(m);
+      if (fam !== lastFam) {
+        lastFam = fam;
+        html += `<div class="mb-sec" style="--page:${GCOL[fam] || "#999"}">${esc(FAMLABEL[fam] || fam)}</div>`;
+      }
+      html += cardHTML(m);
+    }
+    grid.innerHTML = html;
+  } else {
+    grid.innerHTML = list.map(cardHTML).join("");
+  }
   grid.querySelectorAll(".mb-card").forEach(c => c.addEventListener("click", () => openMember(c.dataset.name)));
 }
 function openMember(name) {
@@ -129,13 +145,13 @@ async function init() {
   }
   SONGS = await loadJSON("songs.json");
   FORMS = await loadJSON("formations.json");
-  LIVEIDX = await loadJSON("live-index.json");
+  MEMBERLIVE = await loadJSON("member-live.json");
   GAL = await loadJSON("member-galleries.json");
   if (!GAL || Array.isArray(GAL)) GAL = {};
   if (!Array.isArray(MEMBERS)) MEMBERS = [];
   if (!Array.isArray(SONGS)) SONGS = [];
   if (!FORMS || Array.isArray(FORMS)) FORMS = {};
-  if (!LIVEIDX || Array.isArray(LIVEIDX)) LIVEIDX = {};
+  if (!MEMBERLIVE || Array.isArray(MEMBERLIVE)) MEMBERLIVE = {};
   const chips = document.getElementById("mbGroups");
   chips.innerHTML = ["all", ...GROUPS].map(g =>
     `<button type="button" class="ychip${fGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "すべてのグループ" : g}</button>`).join("");
