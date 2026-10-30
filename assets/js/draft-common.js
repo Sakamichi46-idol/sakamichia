@@ -10,6 +10,22 @@ window.DraftData = (function () {
         loadJSON("draft-members.json"), loadJSON("member-photos.json"),
         loadJSON("member-meta.json"), loadJSON("draft-timeline.json")]);
       const list = Array.isArray(roster) ? roster : [];
+      // 並び順はメンバーページ（members.js）と統一する：系統→期→五十音（reading）。
+      // 系統は改名をまたぎ、所属歴から ERA_RANK で決めた「最後の所属」で判定する
+      // （nogi=乃木坂系統、keyaki/sakura=櫻坂系統、hiragana/hinata=日向坂系統）。
+      // 期なし・0期は members.js の genKey と同じく系統内の最後尾（99）。
+      const ERA_RANK = { nogi: 0, hiragana: 1, keyaki: 2, sakura: 3, hinata: 3 };
+      const FAMILY_RANK = { nogi: 0, keyaki: 1, sakura: 1, hiragana: 2, hinata: 2 };
+      const lastGroupId = (m) => {
+        const gs = (m.groups && m.groups.length) ? m.groups : [m.group];
+        let best = m.group, br = -1;
+        for (const g of gs) { const r = (g in ERA_RANK) ? ERA_RANK[g] : 0; if (r > br) { br = r; best = g; } }
+        return best;
+      };
+      list.sort((a, b) =>
+        (FAMILY_RANK[lastGroupId(a)] ?? 3) - (FAMILY_RANK[lastGroupId(b)] ?? 3) ||
+        (a.generation > 0 ? a.generation : 99) - (b.generation > 0 ? b.generation : 99) ||
+        String(a.reading || a.name).localeCompare(String(b.reading || b.name), "ja"));
       window.SakamichiMembersData = list;
       const byName = new Map(list.map(m => [m.name, m]));
       const soloMeta = {};

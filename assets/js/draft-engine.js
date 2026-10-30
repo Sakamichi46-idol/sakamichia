@@ -6,20 +6,32 @@
     { id: 'sakura', label: '櫻坂46' }, { id: 'hiragana', label: 'けやき坂46' },
     { id: 'hinata', label: '日向坂46' }
   ];
-  // 並び順はグループ -> 期別 -> メンバー名（読みの50音順）で統一。
-  // グループ順: 乃木坂46 -> 欅坂46 -> 櫻坂46 -> けやき坂46 -> 日向坂46。
-  // 改名前後に所属したメンバーは内部IDが1つで、代表グループ (member.group) で
-  // 一度だけ表示する。旧グループでの絞り込みは member.groups の所属履歴に対応。
-  const groupRank = new Map(GROUPS.map((group, index) => [group.id, index]));
+  // 並び順はメンバーページ（members.js）と統一：系統 -> 期別 -> メンバー名（読みの50音順）。
+  // 系統は改名をまたぎ、乃木坂46 -> 櫻坂46（欅坂46を含む）-> 日向坂46（けやき坂46を含む）。
+  // 系統判定は members.js と同じく、所属歴から ERA_RANK で決めた「最後の所属」を系統へ寄せる。
+  // 改名前後に所属したメンバーは内部IDが1つで、一度だけ表示する。
+  // 旧グループでの絞り込みは member.groups の所属履歴に対応。
+  const ERA_RANK = { nogi: 0, hiragana: 1, keyaki: 2, sakura: 3, hinata: 3 };
+  const FAMILY_RANK = { nogi: 0, keyaki: 1, sakura: 1, hiragana: 2, hinata: 2 };
+  const lastGroupId = (m) => {
+    const gs = (m.groups && m.groups.length) ? m.groups : [m.group];
+    let best = m.group, br = -1;
+    for (const g of gs) { const r = (g in ERA_RANK) ? ERA_RANK[g] : 0; if (r > br) { br = r; best = g; } }
+    return best;
+  };
+  const familyRank = (m) => FAMILY_RANK[lastGroupId(m)] ?? GROUPS.length;
+  // 期は members.js の genKey と同じ：期なし・0期は系統内の最後尾。
+  const genKey = (m) => (m.generation > 0 ? m.generation : 99);
   const kanaKey = (m) => String(m.reading || m.name).normalize('NFKC')
     .replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0)-0x60));
   const codepointCompare = (a,b) => a < b ? -1 : a > b ? 1 : 0;
-  // 0期（交換留学生）は、各グループ内で通常の1期生よりも先に並べる。
+  // グループ指定時の整列（compareMembersForGroup）専用：0期（交換留学生）は、
+  // 各グループ内で通常の1期生よりも先に並べる（従来仕様のまま）。
   const generationOrder = (m) => m.generation===0 ? -1 : m.generation;
   const compareMembers = (a,b) =>
-    (groupRank.get(a.group) ?? GROUPS.length) - (groupRank.get(b.group) ?? GROUPS.length) ||
-    generationOrder(a) - generationOrder(b) ||
-    codepointCompare(kanaKey(a),kanaKey(b)) ||
+    familyRank(a) - familyRank(b) ||
+    genKey(a) - genKey(b) ||
+    String(a.reading || a.name).localeCompare(String(b.reading || b.name), 'ja') ||
     codepointCompare(a.name,b.name) ||
     codepointCompare(a.id,b.id);
   const MEMBERS = Object.freeze((root.SakamichiMembersData || [])

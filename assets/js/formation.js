@@ -3,6 +3,18 @@ const KEY = "sakamichia-formation-v1";
 const IMPORT_KEY = "sakamichia-formation-import";
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
+// 並び順はメンバーページ（members.js）と統一：系統（改名をまたぐ）→期→五十音。
+// 系統は所属歴から決めた「最後の所属」を系統へ寄せて判定し、期なし・0期は系統内の最後尾。
+const ERA_RANK = { "けやき坂46": 1, "欅坂46": 2, "櫻坂46": 3, "日向坂46": 3, "乃木坂46": 0 };
+function lastGroupOf(m) {
+  const gs = (m.groups && m.groups.length) ? m.groups : [m.group];
+  let best = m.group, br = -1;
+  for (const g of gs) { const r = (g in ERA_RANK) ? ERA_RANK[g] : 0; if (r > br) { br = r; best = g; } }
+  return best;
+}
+const FAMILY = { "乃木坂46": "乃木坂46", "櫻坂46": "櫻坂46", "欅坂46": "櫻坂46", "日向坂46": "日向坂46", "けやき坂46": "日向坂46" };
+const familyOf = m => FAMILY[lastGroupOf(m)] || lastGroupOf(m);
+const genKeyOf = m => (m.gen > 0 ? m.gen : 99);
 const MAXROWS = 5, MAXPERROW = 12;
 let MEMBERS = [], PHOTOS = {}, BYNAME = {};
 let state = { title: "マイ坂道選抜", rows: [5, 6, 7], showCenter: true, positions: Array(18).fill(null) };
@@ -92,7 +104,7 @@ function renderCandidates() {
     && (fStatus === "all" || (fStatus === "active" ? !m.graduated : !!m.graduated))
     && (!fQuery || m.name.includes(fQuery) || (m.reading || "").includes(fQuery)));
   const order = g => GROUPS.indexOf(g);
-  list.sort((a, b) => order(a.group) - order(b.group) || a.gen - b.gen || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
+  list.sort((a, b) => order(familyOf(a)) - order(familyOf(b)) || genKeyOf(a) - genKeyOf(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   document.getElementById("fmCandCount").textContent = `候補 ${list.length}人`;
   const host = document.getElementById("fmCandidates");
   host.innerHTML = list.map(m =>
