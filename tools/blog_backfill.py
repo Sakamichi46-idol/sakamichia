@@ -101,11 +101,18 @@ def save_store(idx, years, imgs, dirty_years):
                 if os.path.exists(fp):
                     os.remove(fp)
     counts = {}
-    for lst in years.values():
+    myears = {}
+    for y, lst in years.items():
         for b in lst:
             k = f"{b['group']}|{b['member']}"
             counts[k] = counts.get(k, 0) + 1
+            # メンバー（著者名）別・シリーズ別の年別件数。ブログ画面の年チップ表示に使う
+            for key in {b['member'], b.get('series')}:
+                if key:
+                    d = myears.setdefault(key, {})
+                    d[str(y)] = d.get(str(y), 0) + 1
     idx['memberCounts'] = counts
+    idx['memberYears'] = myears
     idx['total'] = sum(idx['years'].values())
     json.dump(idx, open(os.path.join(BASE, 'data/blogs/index.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 

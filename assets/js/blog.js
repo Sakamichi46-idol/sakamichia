@@ -33,17 +33,30 @@ function saveState(){
     view:VIEW, aPage:apage, pPage:ppage })); }catch(e){}
 }
 function loadState(){ try{ return JSON.parse(localStorage.getItem(SKEY)||"null"); }catch(e){ return null; } }
-async function init(){
-  INDEX=await loadJSON("blogs/index.json");
-  const years=Object.keys(INDEX.years).sort().reverse();
+// 年チップの件数：メンバー（またはシリーズ）指定時は、その人の年別件数を出す
+function yearCounts(){
+  const mv=(document.getElementById("member")||{}).value||"";
+  if(mv && INDEX.memberYears && INDEX.memberYears[mv]) return INDEX.memberYears[mv];
+  return INDEX.years;
+}
+function renderYearChips(){
+  const mv=(document.getElementById("member")||{}).value||"";
+  const counts=yearCounts();
+  const years=Object.keys(INDEX.years).sort().reverse().filter(y=>!mv || (counts[y]||0)>0);
   const box=document.getElementById("years");
-  box.innerHTML=`<button type="button" class="ychip" data-year="">全期間</button>`+years.map(y=>`<button type="button" class="ychip" data-year="${y}">${y}年（${INDEX.years[y]}件）</button>`).join("");
+  box.innerHTML=`<button type="button" class="ychip" data-year="">全期間</button>`+years.map(y=>`<button type="button" class="ychip" data-year="${y}">${y}年（${counts[y]||0}件）</button>`).join("");
   box.querySelectorAll(".ychip").forEach(ch=>ch.addEventListener("click", async ()=>{
     const y=ch.dataset.year;
     yearSel = (!y || yearSel===y) ? null : y;
     if(yearSel) await loadYear(yearSel);
     syncChips(); resetPages(); render(); saveState();
   }));
+  syncChips();
+}
+async function init(){
+  INDEX=await loadJSON("blogs/index.json");
+  const years=Object.keys(INDEX.years).sort().reverse();
+  renderYearChips();
   MEMBERS=await loadJSON("members.json");
   buildMemberOptions();
   buildGenOptions();
@@ -53,7 +66,7 @@ async function init(){
     if(g==="") GSEL.clear();
     else if(GSEL.has(g)) GSEL.delete(g);
     else GSEL.add(g);
-    syncGroupChips(); buildMemberOptions(); resetPages(); render(); saveState();
+    syncGroupChips(); buildMemberOptions(); renderYearChips(); resetPages(); render(); saveState();
   }));
   document.getElementById("viewArticles").addEventListener("click",()=>setView("articles"));
   document.getElementById("viewPhotos").addEventListener("click",()=>setView("photos"));
@@ -96,7 +109,9 @@ async function init(){
     const msel=document.getElementById("member");
     if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
   }
+  renderYearChips();
   ["q","member","from","to","sort","gen"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
+  document.getElementById("member").addEventListener("input",()=>renderYearChips());
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
     const el=document.getElementById(id), iso=parseDateText(el.value);
     if(iso) el.value=fmtDateText(iso);
@@ -164,9 +179,11 @@ function syncAdvBtn(){
 function syncChips(){
   document.querySelectorAll("#years .ychip").forEach(ch=>ch.classList.toggle("on", (ch.dataset.year||null)===yearSel));
   syncAdvBtn();
+  const mv=(document.getElementById("member")||{}).value||"";
+  const effTotal=(mv && INDEX.memberYears && INDEX.memberYears[mv]) ? Object.values(INDEX.memberYears[mv]).reduce((a,b)=>a+b,0) : INDEX.total;
   document.getElementById("yearHint").textContent = yearSel
     ? `${yearSel}年だけを表示中です。もう一度押すか「全期間」を押すと全期間に戻ります。`
-    : (loadingYears ? `全期間が対象です（他の年を読み込み中…）。` : `全期間（${INDEX.total}件）が対象です。年を押すとその年だけに絞れます。`);
+    : (loadingYears ? `全期間が対象です（他の年を読み込み中…）。` : `全期間（${effTotal}件）が対象です。年を押すとその年だけに絞れます。`);
 }
 const GORDER=["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"];
 function buildMemberOptions(){
