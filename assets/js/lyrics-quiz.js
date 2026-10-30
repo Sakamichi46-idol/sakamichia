@@ -75,7 +75,31 @@ function kqResult() {
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${KQ.score} / ${max} 点</p>
   <p>${KQ.score >= max * 0.8 ? "すごい！かなりの早さで分かりましたね。" : KQ.score >= max * 0.5 ? "なかなかの勘の良さです。" : KQ.score >= max * 0.3 ? "もう少し早く当てられるようになると、さらに楽しいですよ。" : "漢字の並びから曲を当てるのは意外と難しいですよね。"}</p>
-  <p><button type="button" class="primary" onclick="location.reload()">もう一度遊ぶ</button></p></div>`;
+  <p><button type="button" class="primary" onclick="location.reload()">モード選択に戻る</button></p></div>`;
+}
+function kqStartPanel(data, songs) {
+  const area = document.getElementById("kqArea");
+  const counts = {};
+  for (const e of data) counts[e.group] = (counts[e.group] || 0) + 1;
+  const groups = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  let mode = "all";
+  const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${data.length}曲）</button>`,
+    ...groups.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}曲）</button>`)].join("");
+  area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
+  <p style="color:var(--muted)">グループ別に絞って遊べます。収録曲が10曲未満のモードは、ある曲すべてが出題されます。</p>
+  <div class="filters" style="margin:10px 0">${chips}</div>
+  <p><button type="button" class="primary" id="kqStart">スタート</button></p></div>`;
+  area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
+    mode = b.dataset.m;
+    area.querySelectorAll("[data-m]").forEach(x => x.classList.toggle("on", x === b));
+  }));
+  document.getElementById("kqStart").addEventListener("click", () => {
+    const pool = mode === "all" ? data : data.filter(e => e.group === mode);
+    KQ = { list: kqShuffle(pool).slice(0, KQ_MAX), songs, mode,
+           i: 0, score: 0, revealed: KQ_FIRST, answering: false, done: false, picked: null, gained: 0, choices: [] };
+    KQ.choices = kqChoices(KQ.list[0]);
+    kqRender();
+  });
 }
 async function kqInit() {
   const area = document.getElementById("kqArea");
@@ -85,9 +109,6 @@ async function kqInit() {
     area.innerHTML = `<div class="card"><p>出題データがまだありません。</p></div>`;
     return;
   }
-  KQ = { list: kqShuffle(data).slice(0, KQ_MAX), songs: Array.isArray(songs) ? songs : [],
-         i: 0, score: 0, revealed: KQ_FIRST, answering: false, done: false, picked: null, gained: 0, choices: [] };
-  KQ.choices = kqChoices(KQ.list[0]);
-  kqRender();
+  kqStartPanel(data, Array.isArray(songs) ? songs : []);
 }
 document.addEventListener("DOMContentLoaded", kqInit);
