@@ -10,6 +10,16 @@ function syncGroupChips(){
 }
 let MEDIA=""; const GENMAP={};
 function photoN(b){ return (b.media||0)||(b.imgn||0); }
+// 一覧表示のサムネイルは画像プロキシ経由で小さく軽くする(原寸約250KB→約7KB)。
+// 通信制限中でも一覧が見られるようにするため(ユーザー要望)。タップ後の
+// 拡大表示は従来どおり公式の原寸を使う。プロキシが失敗したら原寸に戻す。
+function thumbSrc(u){
+  if(!/^https?:\/\//.test(u||"")) return u;
+  return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=360&h=360&fit=cover&q=62&output=webp";
+}
+function thumbFallback(img, original){
+  img.addEventListener("error", ()=>{ if(img.src!==original) img.src=original; }, {once:true});
+}
 function dtVal(b){ return b.date+"T"+(b.time||"00:00"); }
 function dateTime(b){ return b.date+(b.time?" "+b.time:""); }
 function resetPages(){ apage=1; ppage=1; }
@@ -305,12 +315,16 @@ function renderArticles(){
   bindPager(list, apage, pages, p=>{ apage=p; renderArticles(); scrollToList(); saveState(); });
 }
 function pcellHTML(p,i){
-  return `<figure class="pcell" data-wi="${i}"><img loading="lazy" src="${esc(p.u)}" alt=""><figcaption>${esc(p.label)}</figcaption></figure>`;
+  return `<figure class="pcell" data-wi="${i}"><img loading="lazy" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(p.label)}</figcaption></figure>`;
 }
 function bindWall(scope){
-  scope.querySelectorAll("[data-wi]").forEach(el=>el.addEventListener("click",()=>{
-    openLightbox(WALL.map(p=>p.u), +el.dataset.wi, WALL.map(p=>({id:p.id, label:p.label})));
-  }));
+  scope.querySelectorAll("[data-wi]").forEach(el=>{
+    const img=el.querySelector("img");
+    if(img) thumbFallback(img, WALL[+el.dataset.wi].u);
+    el.addEventListener("click",()=>{
+      openLightbox(WALL.map(p=>p.u), +el.dataset.wi, WALL.map(p=>({id:p.id, label:p.label})));
+    });
+  });
 }
 async function renderPhotos(){
   ROWS=filtered();
@@ -623,7 +637,7 @@ async function openBlog(id){
     await ensureImgs(b.date.slice(0,4));
     photos=(IMGS[b.date.slice(0,4)]||{})[id]||[];
     if(photos.length){
-      html+=`<div class="photo-grid">${photos.map((u,i)=>`<img loading="lazy" src="${esc(u)}" alt="" data-photo="${i}">`).join("")}</div><p style="color:var(--muted);font-size:12px">公式ブログの写真を表示しています（タップで拡大）。</p>`;
+      html+=`<div class="photo-grid">${photos.map((u,i)=>`<img loading="lazy" src="${esc(thumbSrc(u))}" alt="" data-photo="${i}">`).join("")}</div><p style="color:var(--muted);font-size:12px">公式ブログの写真を表示しています（タップで拡大）。</p>`;
     } else if(b.thumb){
       html+=`<div class="bthumb" style="aspect-ratio:auto"><img src="${esc(b.thumb)}" alt=""></div>`;
     } else {
@@ -633,5 +647,6 @@ async function openBlog(id){
   if(b.url&&!b.urldead) html+=`<p><a class="btn" href="${esc(b.url)}" target="_blank" rel="noopener">公式記事を見る</a></p>`;
   body.innerHTML=`<div class="${fontCls(b)}">${html}</div>`;
   body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>openLightbox(photos, +img.dataset.photo)));
+  body.querySelectorAll(".photo-grid img[data-photo]").forEach(img=>thumbFallback(img, photos[+img.dataset.photo]));
 }
 init();
