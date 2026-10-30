@@ -25,9 +25,9 @@ const FAMILY = { "乃木坂46": "乃木坂46", "櫻坂46": "櫻坂46", "欅坂46
 function familyOf(m) { const lg = lastGroup(m); return FAMILY[lg] || lg; }
 const isExchange = m => m.name === "松井玲奈";   // SKE48からの交換留学生
 const genKey = m => (m.gen > 0 ? m.gen : 99);    // 期なし（ポカ・交換留学生）はグループ内の最後尾
-function centerSongsOf(name) {
+function centerSongsOf(name, titleOnly = false) {
   // Wセンターは「A・B」形式なので分割して判定し、時系列順（発売日→収録順）で返す
-  return SONGS.filter(s => s.center && s.center.split("・").includes(name))
+  return SONGS.filter(s => s.center && s.center.split("・").includes(name) && (!titleOnly || s.type === "表題曲"))
     .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.ord || 0) - (b.ord || 0));
 }
 function formCountOf(name) {
@@ -60,6 +60,7 @@ function render() {
   if (fSort === "kana") list.sort((a, b) => (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   else if (fSort === "blog") list.sort((a, b) => (BLOGS[b.name] || 0) - (BLOGS[a.name] || 0));
   else if (fSort === "center") list.sort((a, b) => centerSongsOf(b.name).length - centerSongsOf(a.name).length);
+  else if (fSort === "centerT") list.sort((a, b) => centerSongsOf(b.name, true).length - centerSongsOf(a.name, true).length);
   else list.sort((a, b) => order(familyOf(a)) - order(familyOf(b)) || genKey(a) - genKey(b) || (a.reading || a.name).localeCompare(b.reading || b.name, "ja"));
   document.getElementById("mbCount").textContent = `${list.length}人`;
   const grid = document.getElementById("mbGrid");
