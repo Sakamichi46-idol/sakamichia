@@ -79,24 +79,27 @@
    },
    "48015": {
     "name": "田村真佑",
-    "next_page": 2,
-    "done": false,
-    "empty_count": 0
+    "next_page": 10,
+    "done": true,
+    "empty_count": 2
    },
    "48017": {
     "name": "筒井あやめ",
-    "next_page": 1,
-    "done": false
+    "next_page": 11,
+    "done": true,
+    "empty_count": 2
    },
    "55383": {
     "name": "黒見明香",
-    "next_page": 1,
-    "done": false
+    "next_page": 12,
+    "done": true,
+    "empty_count": 2
    },
    "55385": {
     "name": "林瑠奈",
-    "next_page": 1,
-    "done": false
+    "next_page": 6,
+    "done": false,
+    "empty_count": 0
    },
    "55387": {
     "name": "弓木奈於",
@@ -222,12 +225,12 @@
    "06": {
     "name": "",
     "next_page": 1,
-    "done": false,
-    "empty_count": 0
+    "done": true,
+    "empty_count": 2
    },
    "46": {
     "name": "",
-    "next_page": 1,
+    "next_page": 39,
     "done": false,
     "empty_count": 0
    },
@@ -416,13 +419,13 @@
   "members": {
    "12": {
     "name": "",
-    "next_page": 1,
-    "done": false,
-    "empty_count": 0
+    "next_page": 34,
+    "done": true,
+    "empty_count": 2
    },
    "14": {
     "name": "",
-    "next_page": 1,
+    "next_page": 6,
     "done": false,
     "empty_count": 0
    },
