@@ -419,6 +419,7 @@ async function init() {
   $("dmCandSearch").addEventListener("input", e => { candQuery = e.target.value; renderCands(); });
   $("dmCandGen").addEventListener("input", e => { candGen = e.target.value; renderCands(); });
   $("dmLotNext").addEventListener("click", () => {
+    if (NET) return; // オンライン時は netLotStep 側が進める
     lotIdx++;
     if (lotIdx < lotQueue.length) { openLot(); return; }
     $("dmLotDlg").close();
@@ -470,3 +471,366 @@ async function init() {
   if (!session) probe();
 }
 init();
+
+/* ================= オンライン対戦（部屋コード式） =================
+   サーバー（Worker + Durable Objects）が対戦の正。ここは接続と表示のみ。
+   配置（フォーメーションへの割り当て）は端末ローカルで行う。 */
+const NET_DEFAULT = "https://sakamichia-draft.pnlg11vs18ge.workers.dev";
+const NET_BASE = (() => { try { return localStorage.getItem("sakamichia-net-base") || NET_DEFAULT; } catch (e) { return NET_DEFAULT; } })();
+const GKEY_ORDER = ["nogi", "sakura", "hinata", "keyaki", "hiragana"];
+let NET = null;
+let netCandGroup = "all", netCandGen = "all", netTab = null;
+let netSelPool = null, netSelSlot = null, netPlace = null, netLotBusy = false, netLastSeq = 0, netLotQueue = [];
+
+function netToken() {
+  try {
+    let t = localStorage.getItem("sakamichia-player-token");
+    if (!t) { t = "tok-" + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem("sakamichia-player-token", t); }
+    return t;
+  } catch (e) { return "tok-ephemeral-" + Math.random().toString(36).slice(2); }
+}
+function netMyName() { return ($("dmMyName").value || "").trim().slice(0, 20) || "プレイヤー"; }
+function netStatus(t) { $("dmNetStatus").textContent = t; }
+function netSend(o) { try { NET?.ws?.send(JSON.stringify(o)); } catch (e) {} }
+function netCandHTML(m, sel) {
+  if (!m) return "";
+  const url = photoOf(m.id);
+  const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL_D[m.group]}">${esc(m.name.slice(0, 1))}</span>`;
+  return `<button type="button" class="fm-cand${sel ? " sel" : ""}" data-id="${m.id}"><span class="mb-photo">${ph}</span><span class="fm-name">${esc(m.name)}</span><span class="fm-sub">${GLABEL[m.group]}${m.generation ? "・" + m.generation + "期" : "・交換留学生"}${m.graduated ? "・卒業" : ""}</span></button>`;
+}
+function netPlayer(pid) { return NET?.state?.players.find(p => p.id === pid); }
+function netIsHost() { return NET?.state?.players.find(p => p.id === NET.you)?.host; }
+
+function netConnect(code, create) {
+  netLeave(true);
+  const ws = new WebSocket(NET_BASE.replace(/^http/, "ws") + "/api/room/" + encodeURIComponent(code));
+  NET = { ws, code, you: null, state: null, intentional: false };
+  netStatus(`接続中…（部屋 ${code}）`);
+  ws.onopen = () => netSend({ t: "hello", token: netToken(), name: netMyName(), create: create || undefined });
+  ws.onmessage = e => {
+    let m = {};
+    try { m = JSON.parse(e.data); } catch (err) { return; }
+    if (m.t === "state") {
+      NET.you = m.you; NET.state = m.state;
+      try { sessionStorage.setItem("dm-room", code); } catch (err) {}
+      netStatus(`接続中（部屋 ${code}）`);
+      renderNet();
+    } else if (m.t === "error") {
+      netStatus("エラー");
+      const el = $("dmLobby").hidden ? null : $("dmLobbyMsg");
+      if (el) el.textContent = m.message;
+      else alert(m.message);
+      if (/存在しません|満員|始まっています/.test(m.message)) netLeave();
+    }
+  };
+  ws.onclose = () => {
+    if (!NET || NET.intentional) return;
+    netStatus("再接続中…");
+    setTimeout(() => { if (NET && !NET.intentional) netConnect(code, null); }, 2500);
+  };
+}
+function netLeave(silent) {
+  if (NET) { NET.intentional = true; try { NET.ws.close(); } catch (e) {} NET = null; }
+  try { sessionStorage.removeItem("dm-room"); } catch (e) {}
+  $("dmLobby").hidden = true; $("dmNetGame").hidden = true; $("dmNetFinish").hidden = true;
+  netStatus("オフライン");
+  if (!silent) { $("dmSetupPanel").open = true; if (session) renderGame(); }
+}
+function netShowPanels() {
+  const st = NET?.state;
+  $("dmLobby").hidden = !(st && st.phase === "lobby");
+  $("dmNetGame").hidden = !(st && st.phase === "active");
+  $("dmNetFinish").hidden = !(st && st.phase === "finished");
+  if (st) { $("dmGame").hidden = true; $("dmFinish").hidden = true; $("dmSetupPanel").open = false; }
+}
+function renderNet() {
+  if (!NET?.state) return;
+  if (!window.SakamichiMembersData || !E) { setTimeout(renderNet, 700); return; }
+  netShowPanels();
+  const st = NET.state;
+  if (st.phase === "lobby") netRenderLobby();
+  else if (st.phase === "active") netRenderGame();
+  else if (st.phase === "finished") netRenderFinish();
+  netMaybeLottery();
+}
+
+/* ---------- ロビー ---------- */
+function netRenderLobby() {
+  const st = NET.state;
+  $("dmRoomCode").textContent = st.code || NET.code;
+  $("dmLobbyPhase").textContent = `${st.players.length} / ${st.config.maxPlayers} 人`;
+  $("dmLobbyInfo").textContent = st.config.label || "";
+  $("dmLobbyPlayers").innerHTML = st.players.map(p =>
+    `<p class="df-hist">${p.id === NET.you ? "👉 " : ""}<b>${esc(p.name)}</b>${p.host ? "（主催者）" : ""} ・ ${p.connected ? "接続中" : "切断（再接続待ち）"}</p>`).join("");
+  const start = $("dmNetStart");
+  start.disabled = !(netIsHost() && st.players.length >= 2);
+  start.textContent = netIsHost()
+    ? (st.players.length >= 2 ? `対戦開始（${st.players.length}人）` : "対戦開始（2人以上で開始できます）")
+    : "主催者が開始するのを待っています";
+  $("dmLobbyMsg").textContent = "部屋コードを一緒に遊ぶ人に伝えてください。全員そろったら主催者が開始します。";
+}
+
+/* ---------- 対戦 ---------- */
+function netPending() {
+  const s = NET.state.session;
+  return NET.state.players.filter(p => !s.roundWinners.includes(p.id));
+}
+function netRenderGame() {
+  const st = NET.state, s = st.session;
+  const pend = netPending();
+  const pickedCount = pend.filter(p => s.picks[p.id]).length;
+  $("dmNetRound").textContent = `第${s.round}巡 ／ 全${st.config.rounds}巡`;
+  $("dmNetReady").textContent = `${pickedCount} / ${pend.length} 人が指名済み`;
+  $("dmNetPStats").innerHTML = st.players.map(p => {
+    const won = s.roundWinners.includes(p.id);
+    const pick = s.picks[p.id];
+    const state = won ? `<span class="df-state ok">この巡は確定</span>`
+      : pick ? `<span class="df-state ok">指名済み：${esc(member(pick)?.name || "")}</span>`
+      : (p.id === NET.you ? `<span class="df-state turn">あなたの番です</span>` : `<span class="df-state">未指名</span>`);
+    return `<div class="df-pstat"><b>${esc(p.name)}</b>${p.host ? "（主催者）" : ""}${p.id === NET.you ? "（あなた）" : ""}<br>獲得 ${s.acquired[p.id].length}人 ・ ${p.connected ? "接続中" : "切断中"}<br>${state}</div>`;
+  }).join("");
+  $("dmNetMsg").textContent = s.message || "";
+  $("dmNetUnpick").disabled = !s.picks[NET.you];
+  netRenderCands();
+  netRenderResults();
+}
+function netRenderCands() {
+  const st = NET.state, s = st.session;
+  const pool = st.config.pool || [];
+  const acquiredAny = new Set(Object.values(s.acquired).flat());
+  const groups = GKEY_ORDER.filter(g => pool.some(id => { const m = member(id); return m && E.memberInGroup(m, g); }));
+  const gbox = $("dmNetCandGroups");
+  gbox.innerHTML = ["all", ...groups].map(g => `<button type="button" class="ychip${netCandGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "全グループ" : GLABEL[g]}</button>`).join("");
+  gbox.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { netCandGroup = b.dataset.g; netRenderCands(); }));
+  const genSel = $("dmNetCandGen");
+  const gens = [...new Set(pool.map(id => member(id)?.generation).filter(g => g !== undefined))].sort((a, b) => a - b);
+  genSel.innerHTML = `<option value="all">すべての期</option>` + gens.map(g => `<option value="${g}">${g === 0 ? "交換留学生" : g + "期生"}</option>`).join("");
+  if (!gens.includes(+netCandGen)) netCandGen = "all";
+  genSel.value = netCandGen;
+  const q = ($("dmNetCandSearch").value || "").trim();
+  const myTurn = netPending().some(p => p.id === NET.you) && !s.roundWinners.includes(NET.you);
+  const list = pool.map(id => member(id)).filter(m => m && !acquiredAny.has(m.id)
+    && (netCandGroup === "all" || E.memberInGroup(m, netCandGroup))
+    && (netCandGen === "all" || m.generation === +netCandGen)
+    && (!q || m.name.includes(q) || (m.reading || "").includes(q)));
+  const sorted = [...list].sort((a, b) => E.compareMembersForGroup(a, b, netCandGroup));
+  $("dmNetCandCount").textContent = myTurn ? `あなたの指名中 ／ 候補 ${sorted.length} 人` : `候補 ${sorted.length} 人（他の人の指名待ち）`;
+  $("dmNetCands").innerHTML = sorted.map(m => netCandHTML(m, s.picks[NET.you] === m.id)).join("")
+    || `<p style="color:var(--muted)">候補がいません。条件を変えてください。</p>`;
+  $("dmNetCands").querySelectorAll(".fm-cand").forEach(c => c.addEventListener("click", () => {
+    if (!myTurn) return;
+    netSend({ t: "pick", item: c.dataset.id });
+  }));
+}
+function netRenderResults() {
+  const st = NET.state, s = st.session;
+  $("dmNetHistCount").textContent = `全${s.history.length}件`;
+  const evs = st.lastEvents || [];
+  $("dmNetResults").innerHTML = evs.length
+    ? `<p class="df-note" style="margin-bottom:4px">直近の抽選結果</p>` + evs.map(ev => {
+        const losers = ev.candidates.filter(p => p !== ev.winner);
+        return `<p class="df-hist">${esc(member(ev.item)?.name || "")} → <b>${esc(netPlayer(ev.winner)?.name || "")}</b>${ev.wasContested ? `（競合：${losers.map(p => esc(netPlayer(p)?.name || "")).join("・")} と抽選）` : ""}</p>`;
+      }).join("")
+    : `<p style="color:var(--muted)">まだ抽選結果はありません。</p>`;
+  $("dmNetOwned").innerHTML = st.players.map(p => {
+    const names = s.acquired[p.id].map(id => esc(member(id)?.name || "")).join("、");
+    return `<p class="df-hist"><b>${esc(p.name)}</b>（${s.acquired[p.id].length}人）：${names || "―"}</p>`;
+  }).join("");
+}
+/* 競合ルーレット（サーバーの抽選結果をアニメーションで見せるだけ） */
+function netMaybeLottery() {
+  const st = NET?.state;
+  if (!st || st.eventSeq === netLastSeq) return;
+  netLastSeq = st.eventSeq;
+  const contested = (st.lastEvents || []).filter(ev => ev.wasContested);
+  if (!contested.length || netLotBusy) return;
+  netLotQueue = contested; netLotBusy = true;
+  netLotStep(0);
+}
+function netLotStep(i) {
+  const ev = netLotQueue[i];
+  if (!ev) { netLotBusy = false; try { $("dmLotDlg").close(); } catch (e) {} return; }
+  $("dmLotCount").textContent = `${i + 1} / ${netLotQueue.length} 件目の競合`;
+  $("dmLotMember").innerHTML = `指名が競合：<b>${esc(member(ev.item)?.name || "")}</b>（${ev.candidates.map(p => esc(netPlayer(p)?.name || "")).join(" vs ")}）`;
+  $("dmLotResult").textContent = "";
+  const next = $("dmLotNext");
+  next.disabled = true;
+  const dlg = $("dmLotDlg");
+  if (!dlg.open) dlg.showModal();
+  const names = ev.candidates.map(p => netPlayer(p)?.name || "");
+  let step = 0;
+  const el = $("dmLotName");
+  clearInterval(lotTimer);
+  lotTimer = setInterval(() => {
+    el.textContent = names[step % names.length];
+    step++;
+    if (step > 16) {
+      clearInterval(lotTimer);
+      el.textContent = netPlayer(ev.winner)?.name || "";
+      $("dmLotResult").innerHTML = `<b>${esc(netPlayer(ev.winner)?.name || "")}</b> さんが獲得しました！`;
+      next.disabled = false;
+      next.textContent = i + 1 < netLotQueue.length ? "次の抽選へ" : "結果を見る";
+      next.onclick = () => netLotStep(i + 1);
+    }
+  }, 75);
+}
+
+/* ---------- 終了・配置 ---------- */
+function netPlaceKey() { return `dm-net-place-${NET.code}-${NET.you}`; }
+function netEnsurePlace() {
+  const st = NET.state, ex = st.config.extra || {};
+  const rows = ex.formation?.rows || [st.config.rounds];
+  const total = rows.reduce((a, b) => a + b, 0);
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(netPlaceKey())); } catch (e) {}
+  const mine = st.session.acquired[NET.you] || [];
+  if (!saved || !Array.isArray(saved.placements) || saved.placements.length !== total
+      || saved.placements.some(id => id && !mine.includes(id))) {
+    netPlace = { placements: Array(total).fill(null) };
+  } else netPlace = saved;
+  return rows;
+}
+function netSavePlace() { try { localStorage.setItem(netPlaceKey(), JSON.stringify(netPlace)); } catch (e) {} }
+function netBoardHTML(rows) {
+  const st = NET.state, ex = st.config.extra || {};
+  const f = { rows, showCenter: !!ex.formation?.showCenter };
+  const pos = netPlace.placements;
+  const maxn = Math.max(...rows);
+  let html = `<div style="--maxn:${maxn}">`;
+  for (let v = rows.length - 1; v >= 0; v--) {
+    const count = rows[v];
+    html += `<div class="fm-row">`;
+    for (let c = 0; c < count; c++) {
+      const gi = slotIndexOf(rows, v, c);
+      const id = pos[gi], m = id ? member(id) : null, url = id ? photoOf(id) : "";
+      const ctr = isCenterSlot(f, v, c, count);
+      const ph = m ? (url ? `<img src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL_D[m.group]}">${esc(m.name.slice(0, 1))}</span>`) : "";
+      html += `<button type="button" class="fm-tile${m ? " filled" : ""}${ctr ? " ctr" : ""}${netSelSlot === gi ? " sel" : ""}" data-slot="${gi}">${ph}<span class="fm-name">${m ? esc(m.name) : "―"}</span>${ctr ? `<span class="fm-star">★</span>` : ""}</button>`;
+    }
+    html += `</div>`;
+  }
+  return html + `</div>`;
+}
+function netRenderFinish() {
+  const st = NET.state, s = st.session;
+  const rows = netEnsurePlace();
+  if (!netTab || !st.players.some(p => p.id === netTab)) netTab = NET.you;
+  $("dmNetFinishInfo").textContent = `全${st.config.rounds}人 × ${st.players.length}人`;
+  $("dmNetFinishMsg").textContent = s.message || "";
+  $("dmNetTabs").innerHTML = st.players.map(p =>
+    `<button type="button" class="ychip${netTab === p.id ? " on" : ""}" data-pid="${p.id}">${esc(p.name)}（${s.acquired[p.id].length}人）${p.id === NET.you ? "・あなた" : ""}</button>`).join("");
+  $("dmNetTabs").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { netTab = b.dataset.pid; netSelPool = null; netSelSlot = null; netRenderFinish(); }));
+  $("dmNetToLobby").disabled = !netIsHost();
+  $("dmNetToLobby").textContent = netIsHost() ? "ロビーに戻る（主催者）" : "ロビーに戻る（主催者のみ）";
+  if (netTab !== NET.you) {
+    $("dmNetPlaceBox").hidden = true;
+    $("dmNetImg").disabled = true;
+    $("dmNetView").innerHTML = `<div class="fm-grid">` + s.acquired[netTab].map(id => netCandHTML(member(id), false)).join("") + `</div>`;
+    return;
+  }
+  $("dmNetPlaceBox").hidden = false;
+  $("dmNetImg").disabled = false;
+  const placed = netPlace.placements.filter(Boolean).length;
+  const unplaced = s.acquired[NET.you].filter(id => !netPlace.placements.includes(id));
+  $("dmNetView").innerHTML = `<div id="dmNetBoard">${netBoardHTML(rows)}</div>
+    <p class="df-note" style="margin:8px 0 4px">未配置 ${unplaced.length}人（配置済み ${placed}人）</p>
+    <div class="fm-grid">` + unplaced.map(id => netCandHTML(member(id), netSelPool === id)).join("") + `</div>`;
+  $("dmNetView").querySelectorAll(".fm-cand").forEach(c => c.addEventListener("click", () => {
+    netSelPool = netSelPool === c.dataset.id ? null : c.dataset.id;
+    netSelSlot = null;
+    netRenderFinish();
+  }));
+  $("dmNetBoard").querySelectorAll(".fm-tile").forEach(t => t.addEventListener("click", () => {
+    const gi = +t.dataset.slot;
+    // 配置の入れ替え規則は draft-engine の placeMember と同一（サーバーセッションが無いので同規則をここで適用）
+    const pos = [...netPlace.placements];
+    const placeOp = mid => {
+      if (mid === null) { pos[gi] = null; return; }
+      const old = pos.indexOf(mid), displaced = pos[gi];
+      pos[gi] = mid;
+      if (old >= 0 && old !== gi) pos[old] = displaced;
+    };
+    if (netSelPool) { placeOp(netSelPool); netSelPool = null; }
+    else if (netSelSlot === null) { if (pos[gi]) netSelSlot = gi; else return; }
+    else if (netSelSlot === gi) { placeOp(null); netSelSlot = null; }
+    else { const mid = pos[netSelSlot]; if (mid) placeOp(mid); netSelSlot = null; }
+    netPlace.placements = pos;
+    netSavePlace();
+    netRenderFinish();
+  }));
+}
+async function netBuildImage() {
+  const st = NET.state, ex = st.config.extra || {};
+  const rows = ex.formation?.rows || [st.config.rounds];
+  const keep = session;
+  session = { players: st.players.map(p => ({ id: p.id, name: p.name })),
+    formation: { rows, placement: "after", showCenter: !!ex.formation?.showCenter },
+    placements: { [NET.you]: netPlace.placements }, acquired: st.session.acquired };
+  try { return await buildImage([NET.you]); }
+  finally { session = keep; }
+}
+
+/* ---------- 初期化 ---------- */
+function netInit() {
+  try { $("dmMyName").value = localStorage.getItem("dm-myname") || ""; } catch (e) {}
+  $("dmMyName").addEventListener("input", e => { try { localStorage.setItem("dm-myname", e.target.value); } catch (err) {} });
+  $("dmModeChips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if (NET) { alert("オンライン対戦中です。先に「部屋を出る」を押してください。"); return; }
+    $("dmModeChips").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    $("dmOnlineBox").hidden = b.dataset.mode !== "online";
+  }));
+  const roomParam = new URLSearchParams(location.search).get("room");
+  if (roomParam) {
+    $("dmJoinCode").value = roomParam.toUpperCase();
+    $("dmModeChips").querySelector('[data-mode="online"]').click();
+  }
+  $("dmCreate").addEventListener("click", () => {
+    if (!E) { alert("データを読み込み中です。少し待ってからもう一度押してください。"); return; }
+    let probeS;
+    try { probeS = E.createSession(["主催者", "参加者"], buildOpts()); }
+    catch (e) { alert(e.message); return; }
+    const pool = E.eligibleMembers(probeS).map(m => m.id || m);
+    const maxPlayers = +$("dmCount").value;
+    if (pool.length < 2 * probeS.roundLimit) { alert("候補が不足しています。設定を見直してください。"); return; }
+    const code = Array.from({ length: 5 }, () => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 31)]).join("");
+    const label = `${[...suGroups].map(g => GLABEL[g]).join("・")}／${probeS.roundLimit}人編成${$("dmEra").checked && $("dmEraDate").value ? `／${$("dmEraDate").value} 時点` : ""}`;
+    netConnect(code, { code, config: { kind: "members", rounds: probeS.roundLimit, maxPlayers, pool, label,
+      extra: { formation: buildOpts().formation } } });
+  });
+  $("dmJoin").addEventListener("click", () => {
+    const code = ($("dmJoinCode").value || "").trim().toUpperCase();
+    if (code.length < 4) { alert("部屋コードを入力してください。"); return; }
+    netConnect(code, null);
+  });
+  $("dmCopyCode").addEventListener("click", async () => {
+    const link = `${location.origin}${location.pathname}?room=${NET ? NET.code : ""}`;
+    try { await navigator.clipboard.writeText(link); $("dmLobbyMsg").textContent = "参加用リンクをコピーしました。このリンクを開くとコードが入力された状態になります。"; }
+    catch (e) { $("dmLobbyMsg").textContent = `参加用リンク：${link}`; }
+  });
+  $("dmNetStart").addEventListener("click", () => netSend({ t: "start" }));
+  $("dmLeave").addEventListener("click", () => netLeave());
+  $("dmLeave2").addEventListener("click", () => netLeave());
+  $("dmNetUnpick").addEventListener("click", () => netSend({ t: "unpick" }));
+  $("dmNetCandSearch").addEventListener("input", () => netRenderCands());
+  $("dmNetCandGen").addEventListener("input", e => { netCandGen = e.target.value; netRenderCands(); });
+  $("dmNetToLobby").addEventListener("click", () => netSend({ t: "backToLobby" }));
+  $("dmNetImg").addEventListener("click", async () => {
+    imgBlob = await netBuildImage();
+    const box = $("dmImgPreview");
+    box.innerHTML = "";
+    if (imgBlob) {
+      const im = document.createElement("img");
+      im.src = URL.createObjectURL(imgBlob);
+      im.style.maxWidth = "100%";
+      box.appendChild(im);
+    }
+    $("dmImgDlg").showModal();
+  });
+  let savedRoom = null;
+  try { savedRoom = sessionStorage.getItem("dm-room"); } catch (e) {}
+  if (savedRoom) {
+    $("dmModeChips").querySelector('[data-mode="online"]').click();
+    netConnect(savedRoom, null);
+  }
+}
+netInit();

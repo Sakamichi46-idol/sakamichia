@@ -4,6 +4,29 @@
 <header class="site"><div class="wrap nav"><a class="logo" href="../../../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="../../../">ホーム</a><a href="../../../songs/">楽曲図鑑</a><a href="../../../live/">歴代ライブ</a><a href="../../../blog/">ブログ</a><a href="../../../members/">メンバー</a><a href="../../../matome/">まとめ</a><a href="../../../games/" class="on">ミニゲーム</a><a href="../../../formation/">フォーメーション作成</a><a href="../../../setlist/">マイセットリスト</a><a href="../../../news/">お知らせ</a></nav></div></header>
 <main class="wrap"><section class="page"><p style="margin:0 0 6px"><a href="../">← ドラフトのトップ</a></p><h2 class="title">ドラフト会議</h2><p class="lead">2〜4人で同じ端末を交代しながら指名します。指名が重なったらルーレット抽選、落選した人はその巡のうちに再指名。途中経過は自動保存されます。</p>
 
+<div class="df-panel" id="dmModePanel">
+<div class="df-head"><h3>対戦方法</h3><span id="dmNetStatus" class="df-round">オフライン</span></div>
+<div class="ychips" id="dmModeChips">
+<button type="button" class="ychip on" data-mode="local">この端末で交代</button>
+<button type="button" class="ychip" data-mode="online">オンライン（部屋コード）</button>
+</div>
+<div id="dmOnlineBox" hidden>
+<label class="df-field"><span>あなたの名前</span><input id="dmMyName" type="text" maxlength="20" placeholder="名前"></label>
+<div class="df-actions"><button type="button" class="btn" id="dmCreate">下の設定で部屋を作る</button></div>
+<label class="df-field"><span>部屋コードで参加</span><span style="display:flex;gap:8px"><input id="dmJoinCode" type="text" maxlength="8" placeholder="例：K7QX2" style="flex:1;text-transform:uppercase"><button type="button" class="btn" id="dmJoin">参加する</button></span></label>
+<p class="df-note">部屋を作る人は、先に下の「会議の設定」で対象・巡数・フォーメーションを決めてください。参加する人はコードと名前だけでOKです。各プレイヤーが自分の端末から指名し、全員そろうと自動で抽選します。</p>
+</div>
+</div>
+
+<div class="df-panel" id="dmLobby" hidden>
+<div class="df-head"><h3>ロビー</h3><span id="dmLobbyPhase" class="df-round"></span></div>
+<p style="margin:4px 0">部屋コード：<b id="dmRoomCode" style="font-size:24px;letter-spacing:.18em"></b> <button type="button" class="btn" id="dmCopyCode">コードをコピー</button></p>
+<p class="df-note" id="dmLobbyInfo"></p>
+<div id="dmLobbyPlayers" style="margin:8px 0"></div>
+<div class="df-actions"><button type="button" class="btn" id="dmNetStart">対戦開始</button><button type="button" class="btn" id="dmLeave">部屋を出る</button></div>
+<p class="df-note" id="dmLobbyMsg"></p>
+</div>
+
 <details class="df-panel" id="dmSetupPanel" open>
 <summary class="df-summary"><strong>会議の設定</strong><span id="dmSetupSummary" class="df-summary-text"></span></summary>
 <div class="df-settings">
@@ -67,6 +90,46 @@
 </div>
 </section></main>
 <footer><div class="wrap">ドラフト会議は旧『坂道日和』のドラフト機能を移植したものです。在籍期間の判定には公開されている加入・卒業記録を使っています。</div></footer>
+<div id="dmNetGame" hidden>
+<div class="df-panel">
+<div class="df-head"><h3 id="dmNetRound">第1巡</h3><span id="dmNetReady" class="df-round"></span></div>
+<div id="dmNetPStats" class="df-pstats"></div>
+<p class="df-msg" id="dmNetMsg"></p>
+<div class="df-actions"><button type="button" class="btn" id="dmNetUnpick">自分の指名を取り消す</button></div>
+</div>
+<div class="df-panel">
+<div class="df-head"><h3>指名候補</h3><span id="dmNetCandCount" class="df-round"></span></div>
+<div class="fm-filters"><input type="search" id="dmNetCandSearch" placeholder="名前・読みで検索" aria-label="候補を検索"><select id="dmNetCandGen" aria-label="期で絞り込む"><option value="all">すべての期</option></select></div>
+<div class="ychips" id="dmNetCandGroups" style="margin:4px 0 10px"></div>
+<div id="dmNetCands" class="fm-grid"></div>
+</div>
+<div class="df-panel">
+<div class="df-head"><h3>抽選結果・獲得状況</h3><span id="dmNetHistCount" class="df-round"></span></div>
+<div id="dmNetResults"></div>
+<div id="dmNetOwned" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="dmNetFinish" hidden>
+<div class="df-panel">
+<div class="df-head"><h3>ドラフト終了！結果</h3><span id="dmNetFinishInfo" class="df-round"></span></div>
+<p class="df-msg" id="dmNetFinishMsg"></p>
+<div class="ychips" id="dmNetTabs" style="margin:8px 0"></div>
+<div id="dmNetView"></div>
+<div id="dmNetPlaceBox">
+<h4 style="margin:12px 0 4px">あなたのフォーメーション配置</h4>
+<p class="df-note" id="dmNetPlaceHint">ベンチのメンバーをタップ→配置先をタップ。配置済みをタップするとベンチに戻ります。配置はこの端末にだけ保存されます。</p>
+<div id="dmNetStage" class="fm-stage"></div>
+<div id="dmNetBench" class="fm-bench"></div>
+</div>
+<div class="df-actions">
+<button type="button" class="btn" id="dmNetImg">自分のチームを画像で保存</button>
+<button type="button" class="btn" id="dmNetToLobby">ロビーに戻る（主催者）</button>
+<button type="button" class="btn" id="dmLeave2">部屋を出る</button>
+</div>
+</div>
+</div>
+
 <dialog id="dmLotDlg"><div class="dlg-body">
 <p style="margin:0 0 4px"><b>競合抽選ルーレット</b> <span id="dmLotCount" style="color:var(--muted)"></span></p>
 <p id="dmLotMember" style="margin:0 0 8px"></p>
