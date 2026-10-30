@@ -238,8 +238,18 @@ function filtered(){
   return arr;
 }
 const LOGOS={"乃木坂46":"nogi","櫻坂46":"sakura","欅坂46":"keyaki","日向坂46":"hinata","けやき坂46":"hiragana"};
-// タイトル・本文のフォントを各グループ公式ブログに合わせるためのクラス
-function fontCls(g){ return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata"; }
+// タイトル・本文のフォントを各グループ公式ブログに合わせるためのクラス。
+// 原則は記事のグループで判定する。グループが無い記事（卒業メンバーの復元記事など）は、
+// 著者が所属していたグループ（名簿の group 欄＝最後の所属）から判定する。
+const FONT_GROUPS=["乃木坂46","櫻坂46","欅坂46","日向坂46","けやき坂46"];
+function fontCls(b){
+  let g=(b&&b.group)||"";
+  if(!FONT_GROUPS.includes(g)){
+    const m=MEMBERS.find(x=>x.name===(b&&b.member));
+    if(m) g=m.group||"";
+  }
+  return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata";
+}
 function thumbHTML(b){
   if(b.thumb) return `<div class="bthumb" data-open="${b.id}"><img loading="lazy" src="${esc(b.thumb)}" alt=""></div>`;
   const logo=LOGOS[b.group]||"nogi";
@@ -249,7 +259,7 @@ function cardHTML(b){
   const nphoto=photoN(b);
   const badges=[nphoto?`<span class="badge">写真${nphoto}枚</span>`:"", b.body?`<span class="badge">本文あり</span>`:""].join("");
   return `<div class="card blog-card">${thumbHTML(b)}${groupChip(b.group)}
-    <h3 class="${fontCls(b.group)}" data-open="${b.id}">${esc(b.title)}${badges}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p>
+    <h3 class="${fontCls(b)}" data-open="${b.id}">${esc(b.title)}${badges}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p>
     <p class="card-actions"><button data-open="${b.id}">記事を見る</button>${b.url&&!b.urldead?`<a class="btn sub" href="${esc(b.url)}" target="_blank" rel="noopener">公式サイトへ</a>`:""}</p></div>`;
 }
 function render(){
@@ -591,7 +601,7 @@ async function openBlog(id){
   const b=pool().find(x=>x.id===id); if(!b) return;
   const body=document.getElementById("dlgBody");
   const dlg=document.getElementById("dlg");
-  body.innerHTML=`<div class="${fontCls(b.group)}">${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p><p>読み込んでいます…</p></div>`;
+  body.innerHTML=`<div class="${fontCls(b)}">${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p><p>読み込んでいます…</p></div>`;
   dlg.showModal();
   let html=`${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p>`;
   let photos=[];
@@ -621,7 +631,7 @@ async function openBlog(id){
     }
   }
   if(b.url&&!b.urldead) html+=`<p><a class="btn" href="${esc(b.url)}" target="_blank" rel="noopener">公式記事を見る</a></p>`;
-  body.innerHTML=`<div class="${fontCls(b.group)}">${html}</div>`;
+  body.innerHTML=`<div class="${fontCls(b)}">${html}</div>`;
   body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>openLightbox(photos, +img.dataset.photo)));
 }
 init();
