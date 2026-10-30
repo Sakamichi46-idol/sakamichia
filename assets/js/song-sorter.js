@@ -1,0 +1,258 @@
+// 楽曲ソート：2曲から好きな方を選んで自分のランキングを作る（エンジンは sorter-core.js、メンバーソートと共用）
+const Core = window.SakamichiSorterCore;
+const area = document.getElementById("songSortArea");
+const GCOL = {"乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639", "坂道AKB": "#d24a43", "坂道選抜": "#2f9e8f"};
+let SONGS = [], TYPES = [];
+let scope = {group: "all", type: "all"}; // group: 系統名 or 'all' / type: type値 or 'all'
+let pool = [], sorter = null, inBattle = false;
+let shareBlob = null;
+
+function shuffle(a){ a = [...a]; for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function releaseLabel(s){
+  const r = s.release || "";
+  let base = "";
+  if(/SG$/.test(r)) base = r.replace(/SG$/, "シングル");
+  else if(/BestAL$/.test(r)) base = r.replace(/BestAL$/, "ベストアルバム");
+  else if(/UnderAL$/.test(r)) base = r.replace(/UnderAL$/, "アンダーアルバム");
+  else if(/AL$/.test(r)) base = r.replace(/AL$/, "アルバム");
+  else if(/Digital$/.test(r)) base = "配信シングル";
+  else if(/Unreleased$/.test(r)) base = "未発売";
+  else base = r;
+  const parts = [];
+  if(base) parts.push(base + "収録");
+  if(s.year) parts.push(s.year + "年");
+  return parts.join(" ・ ");
+}
+function scopePool(){
+  return SONGS.filter(s =>
+    (scope.group === "all" || Core.songLineage(s) === scope.group) &&
+    (scope.type === "all" || (s.type || "") === scope.type));
+}
+function scopeLabel(){
+  const gl = scope.group === "all" ? "全グループ" : scope.group;
+  const tl = scope.type === "all" ? "全種別" : scope.type;
+  return `${gl} ・ ${tl}（${pool.length}曲）`;
+}
+
+async function init(){
+  SONGS = await loadJSON("songs.json");
+  if(!SONGS.length){ area.innerHTML = `<p style="color:var(--muted)">楽曲データを読み込めませんでした。</p>`; return; }
+  const counts = {};
+  SONGS.forEach(s => { const t = s.type || ""; if(t) counts[t] = (counts[t] || 0) + 1; });
+  TYPES = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  renderStart();
+}
+
+// ---------- スタート画面 ----------
+function marqueeHTML(){
+  const titles = shuffle(SONGS.filter(s => s.type === "表題曲"));
+  const rows = [titles.slice(0, 12), titles.slice(12, 24)];
+  return `<div class="mq" aria-hidden="true">${rows.map((row, ri) =>
+    `<div class="mq-row${ri === 1 ? " rev" : ""}">${[0, 1].map(() =>
+      row.map(s => `<span class="mq-song" style="border-left-color:${GCOL[s.group] || "#2b2430"}">${esc(s.title)}</span>`).join("")
+    ).join("")}</div>`).join("")}</div>`;
+}
+function renderStart(){
+  inBattle = false; sorter = null; shareBlob = null;
+  const gchips = [["all", "すべて"], ["乃木坂46", "乃木坂46"], ["櫻坂46", "櫻坂46"], ["日向坂46", "日向坂46"]]
+    .map(([v, l]) => `<button type="button" data-g="${v}" class="${scope.group === v ? "on" : ""}">${l}</button>`).join("");
+  const tchips = [["all", "すべての種別"], ...TYPES.map(t => [t, t])]
+    .map(([v, l]) => `<button type="button" data-t="${esc(v)}" class="${scope.type === v ? "on" : ""}">${esc(l)}</button>`).join("");
+  area.innerHTML = `
+  ${marqueeHTML()}
+  <div class="card" style="margin-bottom:40px">
+    <h3 style="margin-top:0">範囲を選んでスタート</h3>
+    <p style="margin:4px 0 2px;color:var(--muted);font-size:13px">グループ</p>
+    <div class="tabs sort-tabs" id="songSortGroups">${gchips}</div>
+    <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">種別</p>
+    <div class="tabs sort-tabs" id="songSortTypes">${tchips}</div>
+    <p id="songSortInfo" style="margin:12px 0 4px"></p>
+    <p id="songSortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
+    <p style="margin:10px 0 0"><button type="button" id="songSortStart">スタート</button></p>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46の曲、日向坂46にはけやき坂46の曲も含まれます。全曲（696曲）だと対戦数が非常に多くなるため、「表題曲のみ」やグループ別がおすすめです。</p>
+  </div>`;
+  document.querySelectorAll("#songSortGroups button").forEach(b => b.addEventListener("click", () => { scope.group = b.dataset.g; renderStart(); }));
+  document.querySelectorAll("#songSortTypes button").forEach(b => b.addEventListener("click", () => { scope.type = b.dataset.t; renderStart(); }));
+  updateInfo();
+  document.getElementById("songSortStart").addEventListener("click", startBattle);
+}
+function updateInfo(){
+  const list = scopePool();
+  const est = Core.estimate(list.length);
+  document.getElementById("songSortInfo").innerHTML =
+    `対象：<b>${list.length}曲</b> ／ 目安：約<b>${est}対戦</b>`;
+  document.getElementById("songSortWarn").textContent =
+    est > 400 ? "対戦数がとても多い範囲です。種別やグループで絞ると進めやすくなります。" : "";
+  document.getElementById("songSortStart").disabled = list.length < 2;
+}
+
+// ---------- 対戦画面 ----------
+function startBattle(){
+  pool = shuffle(scopePool());
+  if(pool.length < 2) return;
+  sorter = Core.createSorter(pool.length);
+  inBattle = true;
+  renderBattle();
+}
+function songCard(s, side, tieSize){
+  return `<button type="button" class="sort-card song" data-side="${side}">
+    <span class="band" style="background:${GCOL[s.group] || "#2b2430"}"></span>
+    <span class="ttl">${esc(s.title)}</span>
+    <span>${groupChip(s.group)}<span class="tag">${esc(s.type || "")}</span></span>
+    <span class="meta">${esc(releaseLabel(s))}</span>
+    ${s.center ? `<span class="meta">センター：${esc(s.center)}</span>` : ""}
+    ${tieSize > 1 ? `<span class="meta">他${tieSize - 1}曲と同順位で対戦中</span>` : ""}
+  </button>`;
+}
+function renderBattle(){
+  const p = sorter.pair();
+  if(!p){ renderResult(); return; }
+  const a = pool[p.a], b = pool[p.b];
+  const pct = sorter.progress();
+  area.innerHTML = `
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+    <b>${sorter.battles() + 1}戦目</b>
+    <span style="color:var(--muted);font-size:13px">${esc(scopeLabel())} ・ 進捗 約${pct}%</span>
+  </div>
+  <div class="sort-prog"><i style="width:${pct}%"></i></div>
+  <p style="margin:10px 0 0;color:var(--muted);font-size:13.5px">好きな方をタップ（←／→キーでも選べます）</p>
+  <div class="sort-vs">
+    ${songCard(a, "left", p.aSize)}
+    <span class="sort-mid">VS</span>
+    ${songCard(b, "right", p.bSize)}
+  </div>
+  <div class="sort-actions">
+    <button type="button" class="sub" id="songSortDraw">引き分け</button>
+    <button type="button" class="sub" id="songSortUndo" ${sorter.canUndo() ? "" : "disabled"}>1つ戻る</button>
+    <button type="button" class="sub" id="songSortQuit">やめる</button>
+  </div>`;
+  area.querySelector('[data-side="left"]').addEventListener("click", () => answer("left"));
+  area.querySelector('[data-side="right"]').addEventListener("click", () => answer("right"));
+  document.getElementById("songSortDraw").addEventListener("click", () => answer("draw"));
+  document.getElementById("songSortUndo").addEventListener("click", () => { if(sorter.undo()) renderBattle(); });
+  document.getElementById("songSortQuit").addEventListener("click", renderStart);
+}
+function answer(choice){
+  if(!inBattle || !sorter) return;
+  if(sorter.answer(choice)){
+    if(sorter.done()){ inBattle = false; renderResult(); }
+    else renderBattle();
+  }
+}
+document.addEventListener("keydown", e => {
+  if(!inBattle) return;
+  if(e.key === "ArrowLeft") answer("left");
+  else if(e.key === "ArrowRight") answer("right");
+});
+
+// ---------- 結果画面 ----------
+function rankedRows(){
+  const groups = sorter.result() || [];
+  const rows = [];
+  let rank = 1;
+  for(const g of groups){
+    for(const idx of g) rows.push({rank, s: pool[idx]});
+    rank += g.length;
+  }
+  return rows;
+}
+function renderResult(){
+  inBattle = false;
+  const rows = rankedRows();
+  area.innerHTML = `
+  <div class="card" style="margin-bottom:18px">
+    <h3 style="margin-top:0">あなたの楽曲ランキング</h3>
+    <p style="color:var(--muted);margin:4px 0">${esc(scopeLabel())} ・ ${sorter.battles()}対戦で決定</p>
+    <p style="margin:10px 0 0">
+      <button type="button" id="songSortShareGen">上位10曲の画像を作る</button>
+      <button type="button" class="sub" id="songSortAgain">もう一度（同じ範囲）</button>
+      <button type="button" class="sub" id="songSortBack">範囲を変える</button>
+    </p>
+    <div id="songSortShareBox"></div>
+  </div>
+  <div class="sort-rank">${rows.map(r => `<div class="sort-rrow">
+      <span class="sort-rnum ${r.rank <= 3 ? "r" + r.rank : ""}">${r.rank}</span>
+      <span class="sort-rname">${esc(r.s.title)}</span>
+      <span class="sort-rmeta">${esc(r.s.group)} ・ ${esc(r.s.type || "")}${r.s.center ? " ・ センター：" + esc(r.s.center) : ""}</span>
+    </div>`).join("")}</div>`;
+  document.getElementById("songSortAgain").addEventListener("click", startBattle);
+  document.getElementById("songSortBack").addEventListener("click", renderStart);
+  document.getElementById("songSortShareGen").addEventListener("click", () => makeShareImage(rows.slice(0, 10)));
+}
+
+// ---------- シェア画像 ----------
+const FONT = `"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif`;
+function fitTitle(ctx, text, maxW, basePx){
+  let px = basePx;
+  ctx.font = `900 ${px}px ${FONT}`;
+  while(px > 24 && ctx.measureText(text).width > maxW){
+    px -= 2;
+    ctx.font = `900 ${px}px ${FONT}`;
+  }
+  if(ctx.measureText(text).width > maxW){
+    let t = text;
+    while(t.length > 1 && ctx.measureText(t + "…").width > maxW) t = t.slice(0, -1);
+    return t + "…";
+  }
+  return text;
+}
+async function makeShareImage(top){
+  const box = document.getElementById("songSortShareBox");
+  box.innerHTML = `<p style="color:var(--muted)">画像を作成中…</p>`;
+  const W = 960, H = 1280, cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+  const cols = ["#7e57c2", "#e77a9b", "#5aa9d6"];
+  cols.forEach((c, i) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(84 + i * 50, 84, 16, 0, Math.PI * 2); ctx.fill(); });
+  ctx.fillStyle = "#2b2430";
+  ctx.font = `900 54px ${FONT}`;
+  ctx.fillText("楽曲ソート", 226, 103);
+  ctx.fillStyle = "#7a7080";
+  ctx.font = `400 28px ${FONT}`;
+  ctx.fillText(scopeLabel(), 58, 168);
+  ctx.strokeStyle = "#eadff0"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(58, 196); ctx.lineTo(W - 58, 196); ctx.stroke();
+  const rowH = 96, y0 = 216;
+  top.forEach((r, i) => {
+    const y = y0 + i * rowH;
+    // グループカラーの帯
+    ctx.fillStyle = GCOL[r.s.group] || "#2b2430";
+    ctx.fillRect(58, y + 10, 8, 68);
+    ctx.fillStyle = i < 3 ? cols[i] : "#2b2430";
+    ctx.font = `900 42px ${FONT}`;
+    ctx.textAlign = "center";
+    ctx.fillText(String(r.rank), 118, y + 60);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#2b2430";
+    const title = fitTitle(ctx, r.s.title, W - 190 - 58, 38);
+    ctx.fillText(title, 190, y + 46);
+    ctx.fillStyle = "#7a7080";
+    ctx.font = `400 25px ${FONT}`;
+    ctx.fillText(`${r.s.group} ・ ${r.s.type || ""}${r.s.center ? " ・ センター：" + r.s.center : ""}`, 190, y + 82);
+  });
+  ctx.fillStyle = "#7a7080";
+  ctx.font = `400 24px ${FONT}`;
+  ctx.fillText("サカミチア ｜ https://sakamichia.pages.dev/games/song-sorter/", 58, 1236);
+  shareBlob = await new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error("画像を生成できませんでした。")), "image/png"));
+  const url = URL.createObjectURL(shareBlob);
+  box.innerHTML = `
+    <img class="sort-share-img" src="${url}" alt="楽曲ソート上位10曲の画像">
+    <p style="text-align:center;margin:8px 0 0"><button type="button" id="songSortShareBtn">共有／保存する</button></p>`;
+  document.getElementById("songSortShareBtn").addEventListener("click", shareImage);
+}
+async function shareImage(){
+  if(!shareBlob) return;
+  try{
+    const file = new File([shareBlob], "sakamichia-song-sort.png", {type: "image/png"});
+    if(navigator.share && navigator.canShare && navigator.canShare({files: [file]})){
+      await navigator.share({files: [file], text: "サカミチアの楽曲ソート結果\nhttps://sakamichia.pages.dev/games/song-sorter/"});
+      return;
+    }
+    const url = URL.createObjectURL(shareBlob), a = document.createElement("a");
+    a.href = url; a.download = "sakamichia-song-sort.png"; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }catch(e){ /* 共有キャンセル時は何もしない */ }
+}
+
+init();
