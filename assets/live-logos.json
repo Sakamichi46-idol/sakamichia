@@ -22,5 +22,18 @@
    "source": ""
   }
  },
- "tours": []
+ "tours": [
+  {
+   "match": "真夏の全国ツアー2026",
+   "group": "nogi",
+   "url": "/assets/live-logos/tour-nogi-summer-2026.png",
+   "source": "https://www.nogizaka46.com/s/n46/page/summer_tour2026"
+  },
+  {
+   "match": "14th YEAR BIRTHDAY LIVE",
+   "group": "nogi",
+   "url": "/assets/live-logos/tour-nogi-14th-birthday.png",
+   "source": "https://www.nogizaka46.com/s/n46/page/14th_birthday_live"
+  }
+ ]
 }
