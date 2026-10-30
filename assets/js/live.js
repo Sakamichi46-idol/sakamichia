@@ -48,6 +48,50 @@ const KINDS=[
 ];
 const KSEL=new Set();
 const GSEL=new Set();
+// マイ参戦記録：参戦した公演の id を端末内に保存する
+const ATTEND_KEY="sakamichia-attended";
+const ATTENDED=new Set();
+let attendOnly=false;
+function loadAttended(){
+  ATTENDED.clear();
+  try{
+    const v=JSON.parse(localStorage.getItem(ATTEND_KEY)||"[]");
+    if(Array.isArray(v)) v.forEach(x=>{ if(typeof x==="string") ATTENDED.add(x); });
+  }catch(e){}
+}
+function saveAttended(){
+  try{ localStorage.setItem(ATTEND_KEY, JSON.stringify([...ATTENDED])); }catch(e){}
+}
+function attendedShows(){ return DATA.filter(l=>ATTENDED.has(l.id)); }
+function renderAttend(){
+  const sum=document.getElementById("attendSum"), share=document.getElementById("attendShare");
+  if(!sum) return;
+  const shows=attendedShows();
+  if(share) share.hidden=!shows.length;
+  if(!shows.length){
+    sum.textContent="まだ記録がありません。各公演の詳細から「参戦した」を押すと記録できます。";
+    return;
+  }
+  const byG={}, byY={};
+  shows.forEach(l=>{ byG[l.group]=(byG[l.group]||0)+1; const y=l.date.slice(0,4); byY[y]=(byY[y]||0)+1; });
+  const gtxt=GROUP_LIST.filter(g=>byG[g]).map(g=>`${g} ${byG[g]}件`).join(" ・ ");
+  const ytxt=Object.keys(byY).sort().reverse().map(y=>`${y}年 ${byY[y]}件`).join(" ・ ");
+  sum.innerHTML=`これまで <strong>${shows.length}公演</strong> に参戦<br>${esc(gtxt)}<br>${esc(ytxt)}`;
+}
+function syncAttendBtn(id){
+  const b=document.getElementById("attendBtn"); if(!b) return;
+  const on=ATTENDED.has(id);
+  b.textContent=on?"参戦済み ✓":"参戦した";
+  b.classList.toggle("on", on);
+  b.setAttribute("aria-pressed", String(on));
+}
+function toggleAttended(id){
+  if(ATTENDED.has(id)) ATTENDED.delete(id); else ATTENDED.add(id);
+  saveAttended();
+  syncAttendBtn(id);
+  renderAttend();
+  render();
+}
 const GROUP_LIST=["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"];
 let JOINT_IDS=new Set();
 // 同じ日・同じ公演名で複数グループの記録がある公演は「合同」とみなす
@@ -81,6 +125,16 @@ function kindMatch(l, kind){
   return ts.includes(kind.tag) || ts.some(t=>String(t).split("/").includes(kind.tag));
 }
 async function init(){
+  loadAttended();
+  const ao=document.getElementById("attendOnly");
+  if(ao) ao.addEventListener("click",()=>{
+    attendOnly=!attendOnly;
+    ao.classList.toggle("on", attendOnly);
+    ao.setAttribute("aria-pressed", String(attendOnly));
+    render();
+  });
+  const ash=document.getElementById("attendShare");
+  if(ash) ash.addEventListener("click", shareAttendImage);
   DATA = await loadJSON("lives.json");
   JOINT_IDS = computeJointIds();
   const years=[...new Set(DATA.map(l=>l.date.slice(0,4)))].sort().reverse();
@@ -133,6 +187,8 @@ async function init(){
   document.getElementById("advClear").addEventListener("click",()=>{
     KSEL.clear();
     kt.querySelectorAll(".ychip.on").forEach(b=>b.classList.remove("on"));
+    attendOnly=false;
+    if(ao){ ao.classList.remove("on"); ao.setAttribute("aria-pressed","false"); }
     document.getElementById("sort").value="auto";
     regionSel.value="";
     document.getElementById("member").value="";
@@ -141,6 +197,7 @@ async function init(){
     document.getElementById("to").value="";
     render();
   });
+  renderAttend();
   ["q","year","sort","region","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
     const el=document.getElementById(id), iso=parseDateText(el.value);
@@ -179,6 +236,7 @@ function render(){
   const advActive=!!(KSEL.size || region || from || to || srt!=="auto" || member);
   advToggle.textContent=`詳細設定 ${advPanel.hidden?"▼":"▲"}${advActive?"（設定中）":""}`;
   const rows=DATA.filter(l=>(!GSEL.size||GSEL.has(l.group))&&(!y||l.date.startsWith(y))
+    &&(!attendOnly||ATTENDED.has(l.id))
     &&(!region||l.region===region)&&(!from||l.date>=from)&&(!to||l.date<=to)
     &&(!member || memberMatch(l, member, role))
     &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
@@ -191,7 +249,7 @@ function render(){
       return 0;
     });
   document.getElementById("count").textContent=`${rows.length}件の公演`;
-  document.getElementById("list").innerHTML= rows.map(l=>`<div class="card">${groupChip(l.group)}<h3>${esc(l.title)}</h3>
+  document.getElementById("list").innerHTML= rows.map(l=>`<div class="card">${groupChip(l.group)}<h3>${esc(l.title)}${ATTENDED.has(l.id)?`<span class="badge attend-badge">参戦済み</span>`:""}</h3>
     <p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""}<br>${esc(l.venue)}${l.region?`（${esc(l.region)}）`:""}</p>${tags(l.tags)}
     <p><button data-open="${esc(l.id)}">セットリストを見る（${esc(l.songCount)}曲）</button></p></div>`).join("")
     || `<div class="empty">条件に合う公演がありません。</div>`;
@@ -208,6 +266,8 @@ async function openLive(id){
   const body=document.getElementById("dlgBody");
   body.innerHTML=`${groupChip(l.group)}<h3>${esc(l.title)}</h3><p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""} ・ ${esc(l.venue)}</p><p>セットリストを読み込んでいます…</p>`;
   const eb0=document.getElementById("editInSetlist"); if(eb0) eb0.hidden=true;
+  const ab0=document.getElementById("attendBtn");
+  if(ab0){ ab0.hidden=false; ab0.onclick=()=>toggleAttended(id); syncAttendBtn(id); }
   document.getElementById("dlg").showModal();
   if(!DETAILS[id]){
     try{ const r=await fetch(BASE+"data/shows/"+id+".json"); DETAILS[id]= r.ok ? await r.json() : {setlist:[]}; }
@@ -314,5 +374,84 @@ async function openLive(id){
       });
     }
   }
+}
+// 参戦記録のサマリー画像（960×1280、白地・インク色。サイトのデザインに合わせる）
+const ATTEND_GCOLOR={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639"};
+async function attendedImageBlob(){
+  const shows=attendedShows().slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.time||"").localeCompare(String(a.time||""))||b.id.localeCompare(a.id));
+  const W=960,H=1280,M=64,BOTTOM=H-56;
+  const cv=document.createElement("canvas"); cv.width=W; cv.height=H;
+  const ctx=cv.getContext("2d"); if(!ctx) throw new Error("Canvasを使用できません。");
+  const FONT='"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif';
+  const INK="#2b2430", MUTED="#7a7080", LINE="#eadff0";
+  ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,W,H);
+  ctx.textBaseline="top";
+  // ロゴの三色ドット
+  ["#7e57c2","#e77a9b","#5aa9d6"].forEach((c,i)=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.arc(M+13+i*42, M+13, 12, 0, Math.PI*2); ctx.fill(); });
+  ctx.fillStyle=INK; ctx.font=`700 54px ${FONT}`;
+  ctx.fillText("マイ参戦記録", M, M+44);
+  ctx.fillStyle=MUTED; ctx.font=`400 23px ${FONT}`;
+  ctx.fillText("サカミチア | 歴代ライブ", M, M+116);
+  ctx.strokeStyle=LINE; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(M, M+158); ctx.lineTo(W-M, M+158); ctx.stroke();
+  let y=M+182;
+  ctx.fillStyle=INK; ctx.font=`700 42px ${FONT}`;
+  ctx.fillText(`参戦した公演：全 ${shows.length} 公演`, M, y); y+=78;
+  const fit=(text,maxW)=>{ if(ctx.measureText(text).width<=maxW) return text; const e="…"; let t=text; while(t.length&&ctx.measureText(t+e).width>maxW) t=t.slice(0,-1); return t+e; };
+  const wrap=(tokens,maxW)=>{
+    const lines=[]; let cur="";
+    for(const t of tokens){
+      const cand=cur?cur+" ・ "+t:t;
+      if(ctx.measureText(cand).width<=maxW||!cur) cur=cand;
+      else{ lines.push(cur); cur=t; }
+    }
+    if(cur) lines.push(cur);
+    return lines;
+  };
+  const byG={}, byY={};
+  shows.forEach(l=>{ byG[l.group]=(byG[l.group]||0)+1; const yy=l.date.slice(0,4); byY[yy]=(byY[yy]||0)+1; });
+  ctx.font=`700 27px ${FONT}`; ctx.fillStyle=INK;
+  ctx.fillText("グループ別", M, y); y+=44;
+  ctx.font=`400 26px ${FONT}`;
+  for(const g of GROUP_LIST){
+    if(!byG[g]) continue;
+    ctx.fillStyle=ATTEND_GCOLOR[g]||INK; ctx.beginPath(); ctx.arc(M+11, y+15, 9, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle=INK; ctx.fillText(`${g}　${byG[g]}件`, M+34, y); y+=40;
+  }
+  y+=14;
+  ctx.font=`700 27px ${FONT}`; ctx.fillText("年別", M, y); y+=44;
+  ctx.font=`400 26px ${FONT}`; ctx.fillStyle=INK;
+  wrap(Object.keys(byY).sort().reverse().map(yy=>`${yy}年 ${byY[yy]}件`), W-2*M).forEach(line=>{ ctx.fillText(line, M, y); y+=40; });
+  y+=14;
+  ctx.font=`700 27px ${FONT}`; ctx.fillText("最近の参戦", M, y); y+=46;
+  ctx.font=`400 24px ${FONT}`;
+  const recent=shows.slice(0,15);
+  let drawn=0;
+  for(const l of recent){
+    if(y+34>BOTTOM-30) break;
+    ctx.fillStyle=MUTED; ctx.fillText(l.date.replace(/-/g,"/"), M, y);
+    ctx.fillStyle=INK; ctx.fillText(fit(l.title, W-2*M-190), M+190, y);
+    y+=38; drawn++;
+  }
+  if(shows.length>drawn && y+34<=BOTTOM-30){
+    ctx.fillStyle=MUTED; ctx.fillText(`…ほか ${shows.length-drawn} 件`, M, y);
+  }
+  ctx.fillStyle=MUTED; ctx.font=`400 21px ${FONT}`;
+  ctx.fillText("https://sakamichia.pages.dev/live/", M, H-44);
+  return new Promise((resolve,reject)=>cv.toBlob(b=>b?resolve(b):reject(new Error("画像を生成できませんでした。")),"image/png"));
+}
+async function shareAttendImage(){
+  if(!attendedShows().length) return;
+  try{
+    const blob=await attendedImageBlob();
+    const file=new File([blob], "sakamichia-attended.png", {type:"image/png"});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], text:"サカミチアのマイ参戦記録\nhttps://sakamichia.pages.dev/live/"});
+      return;
+    }
+    const url=URL.createObjectURL(blob), a=document.createElement("a");
+    a.href=url; a.download="sakamichia-attended.png"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 3000);
+  }catch(e){ /* 共有キャンセル時は何もしない */ }
 }
 init();

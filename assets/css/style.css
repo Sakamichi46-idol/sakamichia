@@ -377,3 +377,12 @@ dialog{max-height:92dvh}
   .fm-cands,.mb-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
   .fm-tile .fm-name{font-size:10.5px}
 }
+/* マイ参戦記録（歴代ライブ） */
+.attend-box{border:1px solid var(--line);border-radius:14px;background:#fff;padding:10px 14px;margin:0 0 14px}
+.attend-head{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.attend-title{font-weight:700;font-size:15px}
+.attend-share{margin-left:auto;padding:7px 13px;font-size:13px}
+.attend-sum{margin:6px 0 2px;font-size:13.5px;color:var(--muted);line-height:1.8}
+.attend-sum strong{color:var(--ink);font-size:16px}
+.attend-badge{background:#f2e9fb;color:var(--n);font-weight:700}
+#attendBtn.on{background:var(--n);border-color:var(--n);color:#fff}
