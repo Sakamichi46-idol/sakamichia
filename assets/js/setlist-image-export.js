@@ -137,13 +137,19 @@
   const logo=options.logoImage||null;
   if(options.hideTitle){ /* Title deliberately hidden by the user. */ }
   else if(logo&&options.logoMode==='bg'){
-   // 背景モード:ロゴをヘッダーではなく、セトリ全体の背景に大きく薄く敷く
-   // ウォーターマーク表現(ユーザーが参考として示したファンメイド画像の方式)。
-   // ヘッダーはロゴ無しの場合と同じくタイトル文字で作る。
-   const wmW=W-2*MARGIN,wmH=Math.round(wmW*(logo.height/logo.width));
-   const wx=MARGIN,wy=data.top+6;
-   ctx.save();ctx.globalAlpha=0.16;ctx.drawImage(logo,wx,wy,wmW,wmH);ctx.restore();
-   ctx.save();ctx.globalAlpha=0.20;ctx.fillStyle=COLORS.paper;ctx.fillRect(wx,wy,wmW,wmH);ctx.restore();
+   // 背景モード:ロゴ(またはKV全体)をヘッダーではなく、セトリ全体の背景に
+   // 薄く敷くウォーターマーク表現(ユーザーが参考として示したファンメイド
+   // 画像の方式)。素材はリスト領域全体を覆うよう cover で敷き、はみ出しは
+   // クリップする。ヘッダーはロゴ無しの場合と同じくタイトル文字で作る。
+   const areaW=W-2*MARGIN,areaH=Math.max(120,data.H-data.top-30);
+   const wScale=Math.max(areaW/logo.width,areaH/logo.height);
+   const dw=Math.round(logo.width*wScale),dh=Math.round(logo.height*wScale);
+   const dx=Math.round(MARGIN+(areaW-dw)/2),dy=Math.round(data.top+(areaH-dh)/2);
+   ctx.save();
+   ctx.beginPath();ctx.rect(MARGIN,data.top,areaW,areaH);ctx.clip();
+   ctx.globalAlpha=0.13;ctx.drawImage(logo,dx,dy,dw,dh);
+   ctx.globalAlpha=0.22;ctx.fillStyle=COLORS.paper;ctx.fillRect(MARGIN,data.top,areaW,areaH);
+   ctx.restore();
    const title=tidy(header.title)||'マイセットリスト';
    const titleLines=squeeze(ctx,title,W-140,`bold 30px ${JP}`).slice(0,3);
    const titleY=Math.max(35,85-titleLines.length*16);
