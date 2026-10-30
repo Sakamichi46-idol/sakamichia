@@ -3,6 +3,8 @@ name: body-backfill
 # 6時間おきに、本文がまだ無い既存記事を公式ページから少しずつ（300件ずつ）
 # 取り込み、自動デプロイする。本文が揃うまで自動で進み、揃った後は
 # 対象0件ですぐ終わる。取り込み状況は tools/body-backfill-state.json に残る。
+# あわせて、改行・空白を保持する新ロジックで取り込み済み本文の取り直しも
+# 300件ずつ進める（tools/reextract_bodies.py、進捗は body-reextract-state.json）。
 on:
   schedule:
     - cron: '41 */6 * * *'
@@ -30,6 +32,9 @@ jobs:
         env:
           SAKAMICHIA_NO_ZIP: '1'
         run: python3 tools/backfill_bodies.py --limit 300
+
+      - name: Re-extract existing bodies with whitespace-preserving logic (300 per run)
+        run: python3 tools/reextract_bodies.py --limit 300
 
       - name: Pack blog bodies into shards
         run: python3 tools/pack_bodies.py
