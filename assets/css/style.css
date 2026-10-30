@@ -71,6 +71,10 @@ body.drawer-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.scrim,.drawer{transition:none}}
 @media(max-width:640px){.hero{padding:30px 0 14px}h2.title{font-size:24px}}
 @media(max-width:640px){body.quiz-page section.page{padding-top:12px}body.quiz-page .card{padding:12px 14px}body.quiz-page .card h3{margin:2px 0 6px}body.quiz-page .quiz-opt{padding:9px 12px;margin:6px 0}}
+/* ブログのタイトル・本文は各グループ公式ブログのフォントに合わせる */
+.bf-nogi{font-family:"Yu Gothic Medium","游ゴシック Medium",YuGothic,"游ゴシック体","Hiragino Sans","ヒラギノ角ゴ ProN W3","Hiragino Kaku Gothic ProN",Meiryo,"メイリオ",sans-serif}
+.bf-sakura{font-family:"Noto Sans JP","游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN","Hiragino Kaku Gothic Pro","メイリオ",Meiryo,sans-serif}
+.bf-hinata{font-family:"Overpass","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","ヒラギノ角ゴ ProN W3",Meiryo,sans-serif}
 
 .grad{color:var(--n);animation:groupcycle 9s ease-in-out infinite}
 
