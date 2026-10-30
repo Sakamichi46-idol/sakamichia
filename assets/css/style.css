@@ -117,6 +117,8 @@ body[data-group="坂道選抜"]{--page:#2f9e8f}
 .thumb-fallback small{font-weight:400;font-size:11px;opacity:.85;letter-spacing:.14em}
 .tf-乃木坂46{background:#7e57c2}.tf-櫻坂46{background:#e77a9b}.tf-日向坂46{background:#5aa9d6}.tf-欅坂46{background:#5eba53}.tf-けやき坂46{background:#a4c639}
 .blog-card h3{cursor:pointer}
+.blog-card .snippet{font-size:13px;color:var(--muted);line-height:1.7;margin:6px 0 0}
+.blog-card .snippet mark{background:#ffe98a;color:inherit;padding:0 1px;border-radius:2px}
 .badge{display:inline-block;background:#f1ecf7;border-radius:999px;padding:1px 8px;font-size:11px;color:var(--ink);margin-left:6px;vertical-align:2px}
 .blog-body p{line-height:1.9;margin:0}
 .blog-body img.bimg{width:100%;border-radius:12px;margin:10px 0;cursor:zoom-in;display:block}

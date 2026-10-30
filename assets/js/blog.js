@@ -33,6 +33,7 @@ function saveState(){
   try{ localStorage.setItem(SKEY, JSON.stringify({
     year:yearSel,
     q:document.getElementById("q").value,
+    bq:document.getElementById("bq").value,
     groups:[...GSEL],
     member:document.getElementById("member").value,
     from:dateVal("from"),
@@ -105,6 +106,7 @@ async function init(){
     if(GSEL.size){ syncGroupChips(); buildMemberOptions(); }
     if(saved.member) document.getElementById("member").value=saved.member;
     if(saved.q) document.getElementById("q").value=saved.q;
+    if(saved.bq) document.getElementById("bq").value=saved.bq;
     if(saved.from) document.getElementById("from").value=fmtDateText(saved.from);
     if(saved.to) document.getElementById("to").value=fmtDateText(saved.to);
     if(saved.sort) document.getElementById("sort").value=saved.sort;
@@ -124,7 +126,7 @@ async function init(){
     if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
   }
   renderYearChips();
-  ["q","member","from","to","sort","gen"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
+  ["q","member","from","to","sort","gen","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.getElementById("member").addEventListener("input",()=>renderYearChips());
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
     const el=document.getElementById(id), iso=parseDateText(el.value);
@@ -153,7 +155,8 @@ function advActive(){
   const f=dateVal("from"), t=dateVal("to");
   return !!(f||t) || yearSel!==null || !!MEDIA
     || document.getElementById("sort").value!=="new"
-    || !!document.getElementById("gen").value;
+    || !!document.getElementById("gen").value
+    || !!document.getElementById("bq").value;
 }
 function syncMediaChips(){
   document.querySelectorAll(".mchip").forEach(ch=>ch.classList.toggle("on", ch.dataset.media===MEDIA));
@@ -232,6 +235,130 @@ function setView(v){
 }
 function poolYears(){ return yearSel?[yearSel]:Object.keys(INDEX.years).sort().reverse(); }
 function pool(){ return poolYears().flatMap(y=>YEARS[y]||[]); }
+/* ===== 本文キーワード検索（索引方式） =====
+   索引は tools/build_body_index.py が生成する data/body-index/ 一式を使う。
+   形式: meta.json（版・年別件数）/ ids.json（通し番号順の記事ID）/
+   shard-<n>.bin（バイグラム→記事番号リストの二進ポスティング。差分varint符号化）。
+   バイグラムは本文テキスト（空白除去後）の UTF-16 コードユニット2つ組で、
+   FNV-1a ハッシュで64シャードに振り分ける（ビルダー側と一致させること）。
+   意味づけ: 2文字クエリはバイグラムそのものなので完全一致になる。
+   3文字以上はバイグラムの AND で、本文中に語を含む記事のスーパーセット
+   （近似）になる。本文を再取得しての検証はしない（シャードが大きく現実的でないため）。 */
+let BODYSET=null;      // Set<id> | null（null=本文条件なし、または未解決）
+let bodyPending=false; // 索引を解決中かどうか
+let bodyQuery="";      // 解決対象の正規化済みクエリ
+let bidxMeta=null, bidxIds=null; const bidxShards={};
+const BWS=/[ \t\n\r　]/g;
+function normBodyQ(v){ return String(v||"").replace(BWS,""); }
+function bqValue(){ const el=document.getElementById("bq"); return el?normBodyQ(el.value):""; }
+function bodyBigramShard(u1,u2){
+  let h=0x811c9dc5;
+  h^=u1; h=Math.imul(h,0x01000193);
+  h^=u2; h=Math.imul(h,0x01000193);
+  return (h>>>0)%64;
+}
+async function loadBodyIndexMeta(){
+  if(bidxMeta) return bidxMeta;
+  const r=await fetch(BASE+"data/body-index/meta.json");
+  if(!r.ok) throw new Error("body-index meta");
+  bidxMeta=await r.json();
+  const ri=await fetch(BASE+`data/body-index/ids.json?v=${encodeURIComponent(bidxMeta.builtAt)}`);
+  if(!ri.ok) throw new Error("body-index ids");
+  bidxIds=await ri.json();
+  return bidxMeta;
+}
+function decodeBodyShard(buf){
+  const dv=new DataView(buf); let off=0;
+  const K=dv.getUint32(off,true); off+=4;
+  const map=new Map();
+  const readVarint=()=>{ let v=0,s=0; for(;;){ const b=dv.getUint8(off++); v|=(b&0x7f)<<s; if(!(b&0x80)) break; s+=7; } return v; };
+  for(let i=0;i<K;i++){
+    const u1=dv.getUint16(off,true), u2=dv.getUint16(off+2,true); off+=4;
+    const M=dv.getUint32(off,true); off+=4;
+    const arr=new Uint32Array(M); let cur=0;
+    for(let j=0;j<M;j++){ cur+=readVarint(); arr[j]=cur; }
+    map.set((u1<<16)|u2, arr);
+  }
+  return map;
+}
+function loadBodyShard(n){
+  if(!(n in bidxShards)){
+    bidxShards[n]=loadBodyIndexMeta()
+      .then(()=>fetch(BASE+`data/body-index/shard-${n}.bin?v=${encodeURIComponent(bidxMeta.builtAt)}`))
+      .then(r=>{ if(!r.ok) throw new Error("body-index shard"); return r.arrayBuffer(); })
+      .then(decodeBodyShard);
+  }
+  return bidxShards[n];
+}
+async function resolveBodySet(q){
+  const grams=[], need=new Set();
+  for(let i=0;i<q.length-1;i++){
+    grams.push((q.charCodeAt(i)<<16)|q.charCodeAt(i+1));
+    need.add(bodyBigramShard(q.charCodeAt(i), q.charCodeAt(i+1)));
+  }
+  const shardNums=[...need];
+  const maps=await Promise.all(shardNums.map(loadBodyShard));
+  const byShard={}; shardNums.forEach((n,i)=>byShard[n]=maps[i]);
+  let cur=null;
+  for(const key of grams){
+    const post=byShard[bodyBigramShard((key>>16)&0xffff, key&0xffff)].get(key);
+    if(!post){ cur=[]; break; }
+    if(cur===null){ cur=Array.from(post); continue; }
+    const set=new Set(post);
+    cur=cur.filter(n=>set.has(n));
+    if(!cur.length) break;
+  }
+  const ids=new Set();
+  for(const n of (cur||[])) ids.add(bidxIds[n]);
+  return ids;
+}
+function kickBodySearch(){
+  const q=bqValue();
+  const note=document.getElementById("bqNote");
+  if(q.length<2){
+    BODYSET=null; bodyPending=false; bodyQuery=q;
+    if(note) note.textContent= q.length===1
+      ? "本文キーワードは2文字以上で入力してください。"
+      : "本文のある記事のみ対象です。タイトル検索とは別に、本文の中身で絞り込めます（2文字以上）。";
+    return;
+  }
+  if(q===bodyQuery&&(BODYSET||bodyPending)) return;
+  bodyQuery=q; BODYSET=null; bodyPending=true;
+  if(note) note.textContent="本文のある記事のみ対象です。タイトル検索とは別に、本文の中身で絞り込めます（2文字以上）。";
+  resolveBodySet(q).then(set=>{
+    if(bodyQuery!==q) return; // 解決中にクエリが変わっていたら結果を捨てる
+    BODYSET=set; bodyPending=false; render();
+  }).catch(()=>{
+    if(bodyQuery!==q) return;
+    BODYSET=new Set(); bodyPending=false;
+    if(note) note.textContent="本文の索引を読み込めませんでした。";
+    render();
+  });
+}
+/* 本文キーワードでヒットした記事に、該当箇所の抜粋を後から差し込む（描画はブロックしない） */
+let snippetSeq=0;
+async function attachSnippets(){
+  const q=bqValue();
+  if(q.length<2||!BODYSET) return;
+  const seq=++snippetSeq;
+  const slice=ROWS.slice((apage-1)*PAGE, apage*PAGE);
+  const cards=document.querySelectorAll("#list .blog-card");
+  for(let i=0;i<slice.length;i++){
+    const b=slice[i], card=cards[i];
+    if(!b.body||!card) continue;
+    const d=await loadBody(b.id).catch(()=>null);
+    if(seq!==snippetSeq||!card.isConnected) return;
+    if(!d) continue;
+    const text=(d.blocks||[]).filter(x=>x.type==="paragraph").map(x=>x.text||"").join("").replace(BWS,"");
+    const at=text.indexOf(q);
+    if(at<0) continue;
+    const from=Math.max(0,at-40), to=Math.min(text.length,at+q.length+40);
+    const p=document.createElement("p");
+    p.className="snippet";
+    p.innerHTML=`${from>0?"…":""}${esc(text.slice(from,at))}<mark>${esc(text.slice(at,at+q.length))}</mark>${esc(text.slice(at+q.length,to))}${to<text.length?"…":""}`;
+    card.appendChild(p);
+  }
+}
 function filtered(){
   const q=document.getElementById("q").value;
   const mv=document.getElementById("member").value;
@@ -244,6 +371,7 @@ function filtered(){
       if(gv){ const [gg,gn]=gv.split("|"); if(b.group!==gg||GENMAP[b.group+"|"+b.member]!==+gn) return false; }
       if(MEDIA==="photo"&&photoN(b)<=0) return false;
       if(MEDIA==="body"&&!b.body) return false;
+      if(BODYSET&&!BODYSET.has(b.id)) return false;
       return (!from||b.date>=from)&&(!to||b.date<=to)&&includesAll(itemText([b.title,b.group,b.member,b.date,b.series||""]),q);
     });
   if(sv==="old") arr.sort((a,b)=>dtVal(a).localeCompare(dtVal(b)));
@@ -308,6 +436,12 @@ function scrollToList(){
   if(el&&typeof el.scrollIntoView==="function") el.scrollIntoView({block:"start"});
 }
 function renderArticles(){
+  kickBodySearch();
+  if(bodyPending){
+    document.getElementById("count").textContent="本文を検索しています…";
+    document.getElementById("list").innerHTML=`<div class="empty">本文を検索しています…</div>`;
+    return;
+  }
   ROWS=filtered();
   document.getElementById("count").textContent=`${ROWS.length}件の記事情報`;
   const pages=Math.max(1, Math.ceil(ROWS.length/PAGE));
@@ -317,6 +451,7 @@ function renderArticles(){
     : `<div class="empty">条件に合う記事がありません。</div>`;
   bindOpen(list);
   bindPager(list, apage, pages, p=>{ apage=p; renderArticles(); scrollToList(); saveState(); });
+  attachSnippets();
 }
 function pcellHTML(p,i){
   return `<figure class="pcell" data-wi="${i}"><img loading="lazy" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(p.cap||p.label)}</figcaption></figure>`;
@@ -356,6 +491,13 @@ function drawWall(){
 // 重かった。年別ファイルを並行取得し、現在のページが埋まった時点で先に
 // 描く（残りは裏で読み込み、そろったら最終描画する）。
 async function renderPhotos(){
+  kickBodySearch();
+  if(bodyPending){
+    wallToken++; // 進行中の古い描画を無効化する
+    document.getElementById("count").textContent="本文を検索しています…";
+    document.getElementById("list").innerHTML=`<div class="empty">本文を検索しています…</div>`;
+    return;
+  }
   const token=++wallToken;
   ROWS=filtered();
   const years=poolYears();

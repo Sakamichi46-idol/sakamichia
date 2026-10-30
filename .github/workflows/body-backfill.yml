@@ -42,6 +42,9 @@ jobs:
       - name: Sync body flags with packed bodies
         run: python3 tools/sync_body_flags.py
 
+      - name: Build body keyword search index
+        run: python3 tools/build_body_index.py
+
       - name: Commit data updates
         id: commit
         run: |
