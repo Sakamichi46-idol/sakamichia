@@ -127,6 +127,22 @@ async function init(){
     const msel=document.getElementById("member");
     if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
   }
+  // ディープリンク（?open=<記事id>）：トップの「◯年前の今日」などから記事を直接開く。
+  // 全年ロードの完了を待ち、保存済みの年絞り込みと合わない記事はその年に切り替えてから開く
+  const qOpen=new URLSearchParams(location.search).get("open");
+  if(qOpen){
+    const tryOpen=()=>{
+      const found=Object.values(YEARS).flat().find(x=>x.id===qOpen);
+      if(!found) return false;
+      const y=String(found.date||"").slice(0,4);
+      if(yearSel&&y&&y!==String(yearSel)){ yearSel=y; syncChips(); render(); }
+      openBlog(qOpen);
+      return true;
+    };
+    if(!tryOpen()){
+      const iv=setInterval(()=>{ if(tryOpen()||!loadingYears) clearInterval(iv); },400);
+    }
+  }
   renderYearChips();
   ["q","member","from","to","sort","gen","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.getElementById("member").addEventListener("input",()=>renderYearChips());

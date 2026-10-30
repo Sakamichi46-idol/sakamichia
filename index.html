@@ -1,12 +1,12 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="google-site-verification" content="2GkWrRyH00XfUwiNhExFax3VdRItGX5SRUQjeHQvIP4"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索"><meta property="og:description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。"><meta property="og:url" content="https://sakamichia.pages.dev/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><meta name="description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。">
-<link rel="stylesheet" href="assets/css/style.css?v=39"></head>
+<link rel="stylesheet" href="assets/css/style.css?v=40"></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
 <main class="wrap">
 <div class="hero"><h1>あの日の<span class="grad">坂道</span>を、<br>もう一度探そう。</h1>
 <p>歴代ライブ・ブログ・楽曲・ミニゲームを、メンバー名や曲名から一度に検索できる非公式ファンサイトです。</p>
-<form class="searchbox" id="searchForm"><input id="q" type="search" placeholder="メンバー・曲名・会場・番組名で検索（例：小坂菜緒、横浜スタジアム）" autocomplete="off"><button type="submit">検索</button></form>
+<form class="searchbox" id="searchForm"><input id="q" type="search" placeholder="メンバー・曲名・会場・番組名で検索（例：小坂菜緒、横浜スタジアム）" autocomplete="off"><button type="submit">検索</button><div class="suggest" id="suggest" hidden></div></form>
 <p class="count" id="counts"></p></div>
 <div id="results"></div>
 <h2 class="title" style="margin-top:26px">入口を選ぶ</h2>
@@ -27,6 +27,7 @@
 <h2 class="title" style="margin-top:26px">最新のお知らせ</h2>
 <div class="nw-list" id="homeNews"></div>
 <p style="margin-top:10px"><a href="news/">お知らせをもっと見る →</a></p>
+<div id="todaySection"></div>
 </main>
 <footer><div class="wrap">サカミチアは個人運営の非公式ファンサイトです。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
 <script src="assets/js/common.js"></script><script src="assets/js/home.js"></script>

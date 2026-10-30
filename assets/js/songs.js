@@ -68,6 +68,9 @@ async function init(){
     render();
   });
   ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  // ディープリンク（?q=<検索語>）：トップのサジェストなどから曲名で絞り込んで開く
+  const qParam=new URLSearchParams(location.search).get("q");
+  if(qParam) document.getElementById("q").value=qParam;
   syncTabs();
   render();
 }

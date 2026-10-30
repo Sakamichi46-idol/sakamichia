@@ -43,6 +43,9 @@ jobs:
       - name: Build body keyword search index
         run: python3 tools/build_body_index.py
 
+      - name: Build on-this-day blog data
+        run: python3 tools/build_on_this_day.py
+
       - name: Commit data updates
         id: commit
         run: |

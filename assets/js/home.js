@@ -11,13 +11,15 @@ function blogFontCls(b){
   return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata";
 }
 async function init(){
-  const [lives, bidx, songs, members, newsData] = await Promise.all([
+  const [lives, bidx, songs, members, newsData, meta, photos, otd] = await Promise.all([
     loadJSON("lives.json"), loadJSON("blogs/index.json"),
-    loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news.json")]);
+    loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news.json"),
+    loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON("on-this-day.json")]);
   const latestYear = Math.max(...Object.keys(bidx.years).map(Number));
   const blogs = await loadJSON(`blogs/y${latestYear}.json`);
   const news = (newsData && newsData.items) || [];
   DB = {lives, blogs, songs, members, news};
+  renderToday(meta, photos, otd);
   const WD = ["日", "月", "火", "水", "木", "金", "土"];
   document.getElementById("homeNews").innerHTML = news.slice(0, 5).map(n => {
     const dt = new Date(n.d + "T00:00:00+09:00");
@@ -31,6 +33,39 @@ async function init(){
     `登録データ：ライブ ${lives.length}件 / ブログ ${bidx.total}件 / 楽曲 ${songs.length}曲 / メンバー ${members.length}人`;
   const q = new URLSearchParams(location.search).get("q");
   if(q){ document.getElementById("q").value = q; search(q); }
+}
+const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639"};
+// 「今日の坂道」：今日が誕生日のメンバー＋◯年前の今日のブログ。両方なければセクション自体を出さない
+function renderToday(meta, photos, otd){
+  const box=document.getElementById("todaySection");
+  if(!box) return;
+  const now=new Date(), mo=now.getMonth()+1, da=now.getDate();
+  const md=`${String(mo).padStart(2,"0")}-${String(da).padStart(2,"0")}`;
+  const bdays=(DB.members||[]).filter(m=>{
+    const b=meta && meta[m.name] && meta[m.name].b;
+    return Array.isArray(b) && b[1]===mo && b[2]===da;
+  });
+  const past=(otd && otd[md]) || [];
+  if(!bdays.length && !past.length){ box.innerHTML=""; return; }
+  let html=`<h2 class="title" style="margin-top:26px">今日の坂道</h2>`;
+  if(bdays.length){
+    html+=`<h3 class="home-ghead">🎂 今日が誕生日のメンバー</h3><div class="bday-row">`+bdays.map(m=>{
+      const f=photos && photos[m.name];
+      return `<a class="bday-chip" href="members/?member=${encodeURIComponent(m.name)}" style="border-left-color:${GCOL[m.group]||"#2b2430"}">`
+        +(f?`<img src="${BASE}assets/member-photos/${esc(f)}" alt="" loading="lazy">`:"")
+        +`<span class="bday-name">${esc(m.name)}</span>${groupChip(m.group)}</a>`;
+    }).join("")+`</div>`;
+  }
+  if(past.length){
+    html+=`<h3 class="home-ghead">◯年前の今日のブログ</h3><div class="grid">`+past.map(b=>{
+      const yrs=now.getFullYear()-(+String(b.date).slice(0,4));
+      return `<a class="card" href="blog/?open=${encodeURIComponent(b.id)}">`
+        +(b.thumb?`<div class="bthumb"><img loading="lazy" src="${esc(b.thumb)}" alt="" onerror="this.parentNode.style.display='none'"></div>`:"")
+        +`${groupChip(b.group)}<span class="otd-years">${yrs}年前の今日</span>`
+        +`<h3 class="${blogFontCls(b)}">${esc(b.title)}</h3><p>${esc(b.date)} ・ ${esc(b.member)}</p></a>`;
+    }).join("")+`</div>`;
+  }
+  box.innerHTML=html;
 }
 function search(q){
   q = (q||"").trim(); const box = document.getElementById("results");
@@ -50,7 +85,41 @@ function search(q){
   const html = sec("歴代ライブ",liveCards)+sec("お知らせ",newsCards)+sec("楽曲",songCards)+sec("メンバー",memberCards)+sec("ブログ",blogCards);
   box.innerHTML = html || `<div class="empty">「${esc(q)}」は見つかりませんでした。<br>メンバー名・曲名・会場名で試してみてください。</div>`;
 }
-document.getElementById("searchForm").addEventListener("submit", e=>{ e.preventDefault(); search(document.getElementById("q").value); });
+document.getElementById("searchForm").addEventListener("submit", e=>{ e.preventDefault(); hideSuggest(); search(document.getElementById("q").value); });
+// 横断検索のサジェスト：入力中にメンバー・楽曲・ライブの候補を出す
+const SG_MAX=8;
+function suggestItems(q){
+  const hits=(text)=>String(text||"").toLowerCase().includes(q.toLowerCase());
+  const items=[];
+  (DB.members||[]).filter(m=>hits(m.name)||hits(m.reading)).slice(0,4).forEach(m=>items.push(
+    {kind:"メンバー", cls:"member", label:m.name, sub:m.group||"", href:`members/?member=${encodeURIComponent(m.name)}`}));
+  (DB.songs||[]).filter(s=>hits(s.title)||hits(s.yomi)).slice(0,4).forEach(s=>items.push(
+    {kind:"楽曲", cls:"song", label:s.title, sub:[s.group, s.year?`${s.year}年`:""].filter(Boolean).join(" ・ "), href:`songs/?q=${encodeURIComponent(s.title)}`}));
+  (DB.lives||[]).filter(l=>hits(l.title)).slice(0,4).forEach(l=>items.push(
+    {kind:"ライブ", cls:"live", label:l.title, sub:[l.group, l.date].filter(Boolean).join(" ・ "), href:"live/"}));
+  return items.slice(0, SG_MAX);
+}
+function renderSuggest(){
+  const input=document.getElementById("q"), box=document.getElementById("suggest");
+  const q=input.value.trim();
+  if(!q || !DB.members){ box.hidden=true; box.innerHTML=""; return; }
+  const items=suggestItems(q);
+  if(!items.length){ box.hidden=true; box.innerHTML=""; return; }
+  box.innerHTML=items.map(it=>`<a class="sg-row" href="${esc(it.href)}"><span class="sg-kind sg-${it.cls}">${it.kind}</span><span class="sg-label">${esc(it.label)}</span>${it.sub?`<span class="sg-sub">${esc(it.sub)}</span>`:""}</a>`).join("");
+  box.hidden=false;
+}
+function hideSuggest(){ const box=document.getElementById("suggest"); if(box){ box.hidden=true; } }
+(function(){
+  const input=document.getElementById("q"), box=document.getElementById("suggest"), form=document.getElementById("searchForm");
+  if(!input||!box||!form) return;
+  input.addEventListener("input", renderSuggest);
+  input.addEventListener("focus", renderSuggest);
+  input.addEventListener("keydown", e=>{ if(e.key==="Escape") hideSuggest(); });
+  // 候補のタップ／クリックが blur で消えないようにする
+  box.addEventListener("mousedown", e=>e.preventDefault());
+  input.addEventListener("blur", ()=>setTimeout(hideSuggest, 120));
+  document.addEventListener("click", e=>{ if(!form.contains(e.target)) hideSuggest(); });
+})();
 // ブラウザのタブ復元（スナップショット表示）では古い件数が残るため、復元時は最新データで描き直す
 window.addEventListener("pageshow", e=>{ if(e.persisted) init(); });
 init();
