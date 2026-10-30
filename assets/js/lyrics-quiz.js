@@ -49,7 +49,6 @@ function kqRender() {
     KQ.done = true;
     KQ.gained = KQ.picked === q.title ? kqPoints(KQ.revealed) : 0;
     KQ.score += KQ.gained;
-    KQ.revealed = total;
     kqRender();
     area.querySelectorAll(".quiz-opt").forEach(x => {
       if (x.dataset.t === q.title) x.classList.add("correct");
