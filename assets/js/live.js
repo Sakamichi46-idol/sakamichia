@@ -270,12 +270,12 @@ async function openLive(id){
         }
       }
       const header={title:l.title, date:`${l.date}${l.time?` ${l.time}開演`:""}`, venue:l.venue};
-      // 公演ロゴが登録されている公演では、画像のヘッダーをタイトル文字ではなく
-      // 実物のロゴで作る（assets/live-logos.json、旧サイトの登録分を同期）。
-      // ロゴが無い・読めない場合は従来どおりタイトル文字になる。
+      // 公演ロゴが登録されている公演では、画像のヘッダーに実物のロゴを使う
+      // （assets/live-logos.json）。登録側の mode が 'bg' のものはタイトル代わり
+      // ではなく背景に薄く敷く。ロゴが無い・読めない場合はタイトル文字になる。
       const logoShow={id:l.id, group:l.id.split("-")[0], title:l.title};
       blobPromise=window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", logoShow)
-        .then(logoImage=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage}))
+        .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
         .then(r=>r.blob).catch(()=>null);
     }
     saveBtn.onclick=async ()=>{

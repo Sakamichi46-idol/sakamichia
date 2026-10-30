@@ -33,16 +33,18 @@
   }
   return out;
  }
- function resolveLogo(manifest,show){
-  if(!manifest||!show)return '';
+ function resolveLogoEntry(manifest,show){
+  if(!manifest||!show)return null;
   const direct=manifest.shows?.[String(show.id||'')];
-  if(typeof direct==='string')return direct;
-  if(direct&&typeof direct.url==='string'&&(!direct.group||direct.group===show.group))return direct.url;
+  if(typeof direct==='string')return {url:direct,mode:'title'};
+  if(direct&&typeof direct.url==='string'&&(!direct.group||direct.group===show.group))return {url:direct.url,mode:direct.mode==='bg'?'bg':'title'};
   // Longer, more specific title match wins. No guesses from unrelated groups.
   const name=clean(show.title),arr=(manifest.tours||[]).filter(e=>e&&typeof e.match==='string'&&typeof e.url==='string'&&e.group===show.group&&clean(e.match)&&name.includes(clean(e.match)));
   arr.sort((a,b)=>clean(b.match).length-clean(a.match).length);
-  return arr[0]?.url||'';
+  const hit=arr[0];
+  return hit?{url:hit.url,mode:hit.mode==='bg'?'bg':'title'}:null;
  }
+ function resolveLogo(manifest,show){return resolveLogoEntry(manifest,show)?.url||'';}
  function measure(ctx,row,width,fontSize,useRightCredits=false){
   const titleSize=fontSize,metaSize=Math.max(10,Math.round(fontSize*.66)),line=titleSize*1.32,metaLine=metaSize*1.43;
   if(row.type==='event'){
@@ -134,6 +136,21 @@
   ctx.fillStyle='#f7f8fc';ctx.fillRect(0,0,W,13);
   const logo=options.logoImage||null;
   if(options.hideTitle){ /* Title deliberately hidden by the user. */ }
+  else if(logo&&options.logoMode==='bg'){
+   // 背景モード:ロゴをタイトル代わりにせず、ヘッダー右側に薄く敷いて
+   // タイトル文字は通常どおり左に表示する(KVからの切り抜き等の素材向け)。
+   const bh=data.headerH-30,bw=Math.round(bh*(logo.width/logo.height));
+   const bx=W-MARGIN-bw,by=15;
+   ctx.save();ctx.globalAlpha=0.30;ctx.drawImage(logo,bx,by,bw,bh);ctx.restore();
+   ctx.save();ctx.globalAlpha=0.30;ctx.fillStyle=COLORS.paper;ctx.fillRect(bx,by,bw,bh);ctx.restore();
+   const title=tidy(header.title)||'マイセットリスト';
+   const titleLines=squeeze(ctx,title,Math.max(200,bx-MARGIN-24),`bold 30px ${JP}`).slice(0,3);
+   const titleY=Math.max(35,85-titleLines.length*16);
+   ctx.fillStyle=COLORS.ink;ctx.font=`700 30px ${JP}`;
+   titleLines.forEach((s,i)=>ctx.fillText(s,MARGIN,titleY+i*39));
+   ctx.fillStyle=COLORS.secondary;ctx.font=`500 18px ${JP}`;
+   ctx.fillText([header.date,header.venue].filter(Boolean).join('　 /　 '),MARGIN,titleY+titleLines.length*39+12);
+  }
   else if(logo){
    const maxW=770,maxH=138,scale=Math.min(maxW/logo.width,maxH/logo.height,1.5);
    const w=logo.width*scale,h=logo.height*scale;
@@ -197,9 +214,9 @@
   for(const path of [...new Set(paths)]){
    try{
     const response=await fetch(path);if(!response.ok)continue;
-    const manifest=await response.json(),url=resolveLogo(manifest,show);
-    if(!url)continue;
-    const img=await loadImage(url);if(img)return img;
+    const manifest=await response.json(),entry=resolveLogoEntry(manifest,show);
+    if(!entry)continue;
+    const img=await loadImage(entry.url);if(img)return {image:img,mode:entry.mode};
    }catch(_){} // Missing logo never blocks the setlist export.
   }
   return null;
@@ -214,5 +231,5 @@
   const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('画像を生成できませんでした。')),'image/png'));
   return {blob,layout};
  }
- return Object.freeze({version:'2.0.6c',W,H,normalizeRows,resolveLogo,plan,render,getLogo,create,download});
+ return Object.freeze({version:'2.1.0',W,H,normalizeRows,resolveLogo,resolveLogoEntry,plan,render,getLogo,create,download});
 });
