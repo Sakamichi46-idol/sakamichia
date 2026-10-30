@@ -34,10 +34,6 @@ jobs:
         continue-on-error: true
         run: python3 tools/fetch_member_galleries.py
 
-      - name: Sync live logos from old site registry
-        continue-on-error: true
-        run: python3 tools/fetch_live_logos.py
-
       - name: Pack blog bodies into shards
         run: python3 tools/pack_bodies.py
 

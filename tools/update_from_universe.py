@@ -402,9 +402,7 @@ def update_songs_and_formations(summary):
     return bool(added) or filled > 0 or changed > 0
 
 
-OLD_SITE = 'https://sakamichi-biyori.pages.dev'
 MOBLOG = re.compile(r'https://[^"\'\s<>]+moblog[^"\'\s<>]+\.(?:jpg|jpeg|png)', re.I)
-GROUP_JP = {'nogi': '乃木坂46', 'sakura': '櫻坂46', 'hinata': '日向坂46', 'keyaki': '欅坂46', 'hiragana': 'けやき坂46'}
 
 def fetch_json(url):
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -470,81 +468,13 @@ def update_blogs(summary):
     for lst in years.values():
         for b in lst:
             by_id[b['id']] = b
-    try:
-        remote = fetch_json(OLD_SITE + '/blog/data/articles.json')
-        approved = fetch_json(OLD_SITE + '/blog/data/public-approved.json').get('articles', {})
-    except Exception as e:
-        summary['blogs_error'] = str(e)
-        return False
-    recs = remote.get('articles', remote if isinstance(remote, list) else [])
+    # 旧サイト『坂道日和』からの収集は終了した（2026-10-30 ユーザー判断：
+    # 旧サイトは自動更新を停止済みで今後削除予定のため、取りに行かない。
+    # 取り込み済みの記事・本文はサカミチア側のデータとして保持されている）。
+    # 以後のブログ更新は、公式サイトからの新着チェックと過去分取り込みのみ。
     changed = False
     added = []
     dirty = set()
-    for r in recs:
-        if not r.get('metadata_approved_for_public_display'):
-            continue
-        aid = r['id']
-        info = approved.get(aid, {})
-        if aid not in by_id:
-            b = {'id': aid, 'group': GROUP_JP.get(r.get('group'), r.get('group') or ''),
-                 'member': (r.get('member') or '').replace(' ', '').replace('　', ''),
-                 'date': (r.get('date') or '')[:10], 'title': r.get('title') or '',
-                 'url': r.get('official') or '', 'media': 0, 'body': False, 'thumb': None, 'imgn': 0}
-            _d = r.get('date') or ''
-            if len(_d) >= 16:
-                b['time'] = _d[11:16]
-            got = extract_imgs(b['url']) if b['url'] else []
-            y = b['date'][:4]
-            if got:
-                b['thumb'] = got[0]
-                b['imgn'] = len(got)
-                imgs.setdefault(y, {})[aid] = got
-            years.setdefault(y, []).append(b)
-            if y not in idx['years']:
-                idx['years'][y] = 0
-            by_id[aid] = b
-            added.append(f"{b['date']} {b['group']} {b['member']}「{b['title']}」")
-            dirty.add(y)
-            changed = True
-        b = by_id[aid]
-        y = b['date'][:4]
-        mc = info.get('media_count', 0) if info.get('media_approved') else 0
-        if b.get('media') != mc:
-            b['media'] = mc
-            dirty.add(y)
-            changed = True
-        want_body = bool(info.get('body_approved'))
-        body_path = os.path.join(BASE, 'data/bodies', aid + '.json')
-        if want_body and not os.path.exists(body_path):
-            try:
-                d = fetch_json(OLD_SITE + '/blog/public/body/' + urllib.parse.quote(aid))
-                for blk in d.get('blocks', []):
-                    if blk.get('type') == 'image' and blk.get('src', '').startswith('/'):
-                        blk['src'] = OLD_SITE + blk['src']
-                os.makedirs(os.path.dirname(body_path), exist_ok=True)
-                json.dump({'blocks': d.get('blocks', [])}, open(body_path, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
-            except Exception:
-                want_body = False
-        if b.get('body') != want_body:
-            b['body'] = want_body
-            dirty.add(y)
-            changed = True
-        _recent = (datetime.now(ZoneInfo('Asia/Tokyo')).date() - timedelta(days=21)).isoformat()
-        if not b.get('thumb') and b.get('url') and b.get('date', '') >= _recent:
-            got = extract_imgs(b['url'])
-            if got:
-                b['thumb'] = got[0]
-                if len(got) > (b.get('imgn') or 0):
-                    b['imgn'] = len(got)
-                    imgs.setdefault(y, {})[aid] = got
-                dirty.add(y)
-                changed = True
-            elif b.get('media'):
-                media = info.get('media_urls') or []
-                if media:
-                    b['thumb'] = OLD_SITE + media[0]
-                    dirty.add(y)
-                    changed = True
     if changed:
         bf.save_store(idx, years, imgs, dirty)
     summary['blogs_added'] = added
