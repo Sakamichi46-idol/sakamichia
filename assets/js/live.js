@@ -161,6 +161,13 @@ async function init(){
     }
     render();
   }).catch(()=>{});
+  // 登録済みロゴはアイドル時間に先読みし、詳細を開いたときの画像生成を待たせない
+  if(window.SakamichiSetlistImageExport){
+    const warm=()=>window.SakamichiSetlistImageExport.preloadLogos("../assets/live-logos.json",
+      DATA.map(l=>({id:l.id, group:l.id.split("-")[0], title:l.title})));
+    if(window.requestIdleCallback) requestIdleCallback(warm, {timeout:4000});
+    else setTimeout(warm, 2500);
+  }
 }
 function render(){
   const q=document.getElementById("q").value, y=document.getElementById("year").value;
@@ -191,8 +198,13 @@ function render(){
   document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openLive(b.dataset.open)));
 }
 const SECNAME={main:"本編",encore:"アンコール",double:"ダブルアンコール"};
+const blobCache=new Map(); // 生成済みのセトリ画像は公演ごとに保持し、開き直しを即時表示にする
 async function openLive(id){
   const l=DATA.find(x=>x.id===id); if(!l) return;
+  // ロゴ画像は詳細データの取得と並行して読み始める(待ちを重ねない)
+  const logoPromise=window.SakamichiSetlistImageExport
+    ? window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", {id:l.id, group:l.id.split("-")[0], title:l.title})
+    : Promise.resolve(null);
   const body=document.getElementById("dlgBody");
   body.innerHTML=`${groupChip(l.group)}<h3>${esc(l.title)}</h3><p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""} ・ ${esc(l.venue)}</p><p>セットリストを読み込んでいます…</p>`;
   const eb0=document.getElementById("editInSetlist"); if(eb0) eb0.hidden=true;
@@ -283,10 +295,12 @@ async function openLive(id){
       // 公演ロゴが登録されている公演では、画像のヘッダーに実物のロゴを使う
       // （assets/live-logos.json）。登録側の mode が 'bg' のものはタイトル代わり
       // ではなく背景に薄く敷く。ロゴが無い・読めない場合はタイトル文字になる。
-      const logoShow={id:l.id, group:l.id.split("-")[0], title:l.title};
-      const blobPromise=window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", logoShow)
-        .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
-        .then(r=>r.blob).catch(()=>null);
+      const cachedBlob=blobCache.get(l.id);
+      const blobPromise=cachedBlob ? Promise.resolve(cachedBlob)
+        : logoPromise
+          .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
+          .then(r=>{ const b=r&&r.blob; if(b) blobCache.set(l.id, b); return b; })
+          .catch(()=>null);
       // 画像が完全に読み込めてからフェードインで出す。生成途中の状態や
       // 空の画像枠が一瞬映らないようにするため（ユーザーの指摘）。
       // 別の公演を開き直していた場合は、古い画像を出さない。

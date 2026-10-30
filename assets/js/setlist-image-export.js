@@ -243,18 +243,38 @@
   const timer=setTimeout(()=>finish(null),5500);
   img.onload=()=>finish(img);img.onerror=()=>finish(null);img.src=url;
  });}
+ // 一度読んだマニフェストとロゴ画像はキャッシュし、2回目以降の表示を待たせない
+ const manifestCache=new Map(),imageCache=new Map();
+ function fetchManifest(path){
+  if(!manifestCache.has(path))manifestCache.set(path,fetch(path).then(r=>r.ok?r.json():null).catch(()=>null));
+  return manifestCache.get(path);
+ }
+ function loadImageCached(url){
+  if(!imageCache.has(url))imageCache.set(url,loadImage(url));
+  return imageCache.get(url);
+ }
  async function getLogo(manifestUrl,show){if(!show)return null;
   // R2-backed registration first. Keep static mapping as a fallback for older deployments.
   const paths=['/api/live-logos',manifestUrl||'/assets/live-logos.json'];
   for(const path of [...new Set(paths)]){
    try{
-    const response=await fetch(path);if(!response.ok)continue;
-    const manifest=await response.json(),entry=resolveLogoEntry(manifest,show);
+    const manifest=await fetchManifest(path);if(!manifest)continue;
+    const entry=resolveLogoEntry(manifest,show);
     if(!entry)continue;
-    const img=await loadImage(entry.url);if(img)return {image:img,mode:entry.mode};
+    const img=await loadImageCached(entry.url);if(img)return {image:img,mode:entry.mode};
    }catch(_){} // Missing logo never blocks the setlist export.
   }
   return null;
+ }
+ // 一覧表示中などのアイドル時間に、登録済みロゴを先読みしておく
+ async function preloadLogos(manifestUrl,shows){
+  try{
+   const manifest=await fetchManifest(manifestUrl||'/assets/live-logos.json');if(!manifest)return 0;
+   const urls=new Set();
+   for(const show of shows||[]){const e=resolveLogoEntry(manifest,show);if(e)urls.add(e.url);}
+   await Promise.all([...urls].map(u=>loadImageCached(u)));
+   return urls.size;
+  }catch(_){return 0;}
  }
  async function create(rawRows,header={},options={}){
   if(typeof document==='undefined')throw Error('ブラウザ上でのみ画像を生成できます');
@@ -266,5 +286,5 @@
   const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('画像を生成できませんでした。')),'image/png'));
   return {blob,layout};
  }
- return Object.freeze({version:'2.1.0',W,H,normalizeRows,resolveLogo,resolveLogoEntry,plan,render,getLogo,create,download});
+ return Object.freeze({version:'2.2.0',W,H,normalizeRows,resolveLogo,resolveLogoEntry,plan,render,getLogo,preloadLogos,create,download});
 });
