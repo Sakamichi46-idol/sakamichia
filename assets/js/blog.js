@@ -878,10 +878,33 @@ async function openBlog(id){
   body.innerHTML=`<div class="${fontCls(b)}">${html}</div>`;
   // 本文中の小さな画像（スタンプ・絵文字）は写真として扱わず、文字サイズ程度に表示して拡大対象から外す
   const STAMP_MAX=128;
+  // 元の記事ではスタンプは文章の行の中にインラインで置かれているが、取り込み時に
+  // [テキスト][画像][テキスト] とブロック分割されたため単独行になってしまう。
+  // スタンプが段落の直後にある場合は、その段落の末尾へインラインで移し、直後に
+  // 段落が続く場合は同じ段落に連結して元の段落を復元する。判定は非同期に確定する
+  // ため、分類のたびに本文全体を走査し直す（復元済みのスタンプは段落内にあるので
+  // 走査対象にならない）。写真ブロックに隣接する場合や直前が段落でない場合は、
+  // 従来どおり小さいブロック表示のままにする。
+  const restoreInlineStamps=()=>{
+    const bb=body.querySelector(".blog-body"); if(!bb) return;
+    [...bb.children].forEach(st=>{
+      if(st.tagName!=="IMG"||!st.classList.contains("bstamp")) return;
+      const prev=st.previousElementSibling;
+      if(!prev||prev.tagName!=="P") return;
+      prev.appendChild(st);
+      st.classList.add("inl");
+      let nxt=prev.nextElementSibling;
+      while(nxt&&nxt.tagName==="P"){
+        while(nxt.firstChild) prev.appendChild(nxt.firstChild);
+        const rm=nxt; nxt=nxt.nextElementSibling; rm.remove();
+      }
+    });
+  };
   const classifyStamp=img=>{
     if(img.naturalWidth&&img.naturalWidth<=STAMP_MAX&&img.naturalHeight&&img.naturalHeight<=STAMP_MAX){
       img.classList.add("bstamp");
       img.removeAttribute("data-photo");
+      restoreInlineStamps();
     }
   };
   body.querySelectorAll("img.bimg").forEach(img=>{
