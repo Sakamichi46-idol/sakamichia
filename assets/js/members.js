@@ -88,6 +88,7 @@ function openMember(name) {
   const m = MEMBERS.find(x => x.name === name); if (!m) return;
   const url = mainPhotoURL(name);
   const cs = centerSongsOf(name);
+  const cst = centerSongsOf(name, true);
   const ls = liveStatsOf(name);
   const fc = formCountOf(name);
   const lg = lastGroup(m);
@@ -115,7 +116,7 @@ function openMember(name) {
         <h3 style="margin:0 0 4px">${esc(name)}</h3>
         <p style="margin:0 0 2px;color:var(--muted)">${esc(m.reading || "")}</p>
         <p>${groupChip(lg)}${isExchange(m) ? " 交換留学生（SKE48から）" : (m.gen ? ` ${m.gen}期生` : "")}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
-        <p>センター曲：<b>${cs.length}曲</b>　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
+        <p>センター曲：<b>${cs.length}曲</b>（シングル表題曲センター：<b>${cst.length}曲</b>）　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
         ${cs.length ? `<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">${cs.map(s => esc(s.title)).join("、")}</p>` : ""}
         <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a></p>
       </div>

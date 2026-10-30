@@ -173,10 +173,11 @@ def update_lives(summary):
     summary['lives_added'] = added
     summary['lives_total'] = len(lives)
 
-def song_type(genre):
+def song_type(genre, release=''):
     g = (genre or '').split(':', 1)[-1].split('：', 1)[-1]
     if '表題曲' in g:
-        return '表題曲'
+        # 表題曲は「シングルの表題曲」の意味で使う。アルバムのリード曲は別種別にする（ユーザー定義 2026-10-30）
+        return 'アルバムリード曲' if 'AL' in (release or '') else '表題曲'
     if 'アンダー' in g:
         return 'アンダー曲'
     if 'ユニット' in g:
@@ -273,7 +274,7 @@ def update_songs_and_formations(summary):
                 date = f"{parts[0]}-{int(parts[1]):02d}-{int(parts[2]):02d}"
             entry = {'id': sid, 'title': r['title'], 'group': group,
                      'year': int(date[:4]) if date[:4].isdigit() else 0, 'date': date,
-                     'type': song_type(r.get('genre')), 'center': '', 'release': r.get('release') or '',
+                     'type': song_type(r.get('genre'), r.get('release')), 'center': '', 'release': r.get('release') or '',
                      'writers': writers.get(t, []), 'arrangers': arrangers.get(t, []),
                      'ord': None, 'genre': r.get('genre') or '', 'yomi': song_yomi(r.get('reading'))}
             if special:
