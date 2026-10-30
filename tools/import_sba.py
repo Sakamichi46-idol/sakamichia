@@ -63,7 +63,9 @@ def main():
                'date': date, 'time': time, 'url': it['url'], 'urldead': True,
                'arch': 'sakamichi.co', 'media': 0, 'imgn': len(images)}
         if images:
-            rec['thumb'] = images[0]['thumbnail_url']
+            # サムネイルは thumbnail_url(160px) ではなく原寸の url を使う。
+            # 160px ではカード表示で画質が悪いため(ユーザー指摘, 2026-10-31)。
+            rec['thumb'] = images[0]['url']
             imgs.setdefault(date[:4], {})[rid] = [im['url'] for im in images]
         years.setdefault(date[:4], []).append(rec)
         have_ids.add(rid)
