@@ -36,11 +36,43 @@ function probeDims(u){
     const purl="https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&output=json";
     DIMCACHE.set(u, fetch(purl).then(r=>r.ok?r.json():null)
       .then(j=>(j&&+j.width>0&&+j.height>0)?{w:+j.width,h:+j.height}:null)
-      .catch(()=>null));
+      .catch(()=>null)
+      .then(d=>{ if(d) stampMemSet(u, isStampDims(d)); return d; }));
   }
   return DIMCACHE.get(u);
 }
 function isStampDims(d){ return !!d&&d.w<=STAMP_MAX&&d.h<=STAMP_MAX; }
+// スタンプ判定の永続キャッシュ（URL→スタンプかどうか）。写真一覧では、判定を
+// ページ分割と件数計算の前に適用して総数とページ数を正しく出す必要がある。
+// 判定結果を localStorage に残すことで、再訪時は読み込み直後から正しい
+// 件数・ページ数になる。上限を超えたら古いものから捨てる。
+const STAMP_LSK="sakamichia-stamp-cache";
+const STAMP_CACHE_MAX=6000;
+let STAMPMEM=null;
+function stampMem(){
+  if(STAMPMEM) return STAMPMEM;
+  STAMPMEM=new Map();
+  try{
+    const obj=JSON.parse(localStorage.getItem(STAMP_LSK)||"null");
+    if(obj) for(const k of Object.keys(obj)) STAMPMEM.set(k, !!obj[k]);
+  }catch(e){}
+  return STAMPMEM;
+}
+let stampSaveTimer=null;
+function stampMemSet(u, isStamp){
+  const m=stampMem();
+  if(m.get(u)===isStamp) return;
+  m.delete(u); m.set(u, isStamp); // 末尾に寄せ、最近判定したものを残す
+  clearTimeout(stampSaveTimer);
+  stampSaveTimer=setTimeout(()=>{
+    try{
+      let entries=[...stampMem().entries()];
+      if(entries.length>STAMP_CACHE_MAX) entries=entries.slice(entries.length-STAMP_CACHE_MAX);
+      const obj={}; for(const [k,v] of entries) obj[k]=v;
+      localStorage.setItem(STAMP_LSK, JSON.stringify(obj));
+    }catch(e){}
+  }, 300);
+}
 function dtVal(b){ return b.date+"T"+(b.time||"00:00"); }
 function dateTime(b){ return b.date+(b.time?" "+b.time:""); }
 function resetPages(){ apage=1; ppage=1; }
@@ -501,31 +533,66 @@ function renderArticles(){
 function pcellHTML(p,i){
   return `<figure class="pcell" data-wi="${i}"><img loading="lazy" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(p.cap||p.label)}</figcaption></figure>`;
 }
+// ウォールの実効リスト：スタンプと確定したものを除いたもの。件数表示・
+// ページ分割・タイル描画・ライトボックスはすべてこのリストを基準にする
+// （除去前の全件でページ計算すると、総数が水増しされ後ろのページが空く）。
+let WALLVIEW=[];
+let wallProbing=false;
+function wallView(){ return WALL.filter(p=>!p.stamp); }
 function wallCountText(){
-  return `${ROWS.length}件の記事情報（写真${WALL.filter(p=>!p.stamp).length}枚）`;
+  return `${ROWS.length}件の記事情報（写真${wallView().length}枚${wallProbing?"・集計中":""}）`;
 }
 function bindWall(scope){
   scope.querySelectorAll("[data-wi]").forEach(el=>{
-    const entry=WALL[+el.dataset.wi];
+    const entry=WALLVIEW[+el.dataset.wi];
     if(!entry) return;
-    if(entry.stamp){ el.remove(); return; }
     const img=el.querySelector("img");
     if(img) thumbFallback(img, entry.u);
     el.addEventListener("click",()=>{
-      const keep=WALL.filter(p=>!p.stamp);
-      const idx=keep.indexOf(entry);
+      const idx=WALLVIEW.indexOf(entry);
       if(idx<0) return;
-      openLightbox(keep.map(p=>p.u), idx, keep.map(p=>({id:p.id, label:p.label})));
-    });
-    // スタンプは写真として扱わない：原寸の寸法が確定したらタイルを取り除き
-    // （グリッドは自動で詰まる）、件数表示とライトボックスの対象からも外す
-    probeDims(entry.u).then(d=>{
-      if(!isStampDims(d)||WALL[+el.dataset.wi]!==entry) return;
-      entry.stamp=true;
-      if(el.isConnected) el.remove();
-      if(VIEW==="photos") document.getElementById("count").textContent=wallCountText();
+      openLightbox(WALLVIEW.map(p=>p.u), idx, WALLVIEW.map(p=>({id:p.id, label:p.label})));
     });
   });
+}
+// ウォール全件のスタンプ判定を裏で進める。判定が確定した分から WALL に
+// 反映して再描画し、件数・総ページ数を正しい値に収束させる（現在のページ
+// 位置は維持し、ページ数が減って範囲外になったら drawWall 側で最終ページに
+// 丸める）。判定結果は probeDims 経由で永続キャッシュにも残るため、次回は
+// 最初から正しい件数になる。判定できないURLは写真として数える。
+const wallProbeTried=new Set();
+let wallPumpRunning=false;
+let wallRedrawTimer=null;
+function scheduleWallRedraw(){
+  if(wallRedrawTimer) return;
+  wallRedrawTimer=setTimeout(()=>{ wallRedrawTimer=null; if(VIEW==="photos") drawWall(); },250);
+}
+function probeWallStamps(){
+  if(wallPumpRunning) return;
+  const urls=[...new Set(WALL.map(p=>p.u))].filter(u=>!wallProbeTried.has(u)&&!stampMem().has(u));
+  if(!urls.length){ wallProbing=false; return; }
+  wallPumpRunning=true; wallProbing=true;
+  document.getElementById("count").textContent=wallCountText();
+  let i=0, active=0;
+  const finish=()=>{
+    wallPumpRunning=false; wallProbing=false;
+    if(VIEW==="photos") drawWall();
+  };
+  const pump=()=>{
+    while(active<8&&i<urls.length){
+      const u=urls[i++]; wallProbeTried.add(u); active++;
+      probeDims(u).then(d=>{
+        active--;
+        if(isStampDims(d)){
+          let changed=false;
+          for(const p of WALL) if(p.u===u&&!p.stamp){ p.stamp=true; changed=true; }
+          if(changed&&VIEW==="photos") scheduleWallRedraw();
+        }
+        if(i>=urls.length&&active===0) finish(); else pump();
+      });
+    }
+  };
+  pump();
 }
 let wallToken=0;
 function buildWall(){
@@ -535,19 +602,21 @@ function buildWall(){
     if(!IMGS[yi]) continue; // 未取得の年は丸ごと飛ばし、そろった分だけで先に描く
     const imgs=IMGS[yi][b.id];
     const photos=(imgs&&imgs.length)?imgs:(b.thumb?[b.thumb]:[]);
-    photos.forEach(u=>WALL.push({u, id:b.id, cap:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}`, label:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`}));
+    photos.forEach(u=>WALL.push({u, id:b.id, stamp:stampMem().get(u)===true, cap:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}`, label:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`}));
   }
 }
 function drawWall(){
+  WALLVIEW=wallView();
   document.getElementById("count").textContent=wallCountText();
-  const pages=Math.max(1, Math.ceil(WALL.length/WPHOTO));
+  const pages=Math.max(1, Math.ceil(WALLVIEW.length/WPHOTO));
   if(ppage>pages) ppage=pages;
   const start=(ppage-1)*WPHOTO;
   const list=document.getElementById("list");
-  list.innerHTML= WALL.length ? `<div class="pgrid">${WALL.slice(start, start+WPHOTO).map((p,i)=>pcellHTML(p,start+i)).join("")}</div>${pagerHTML(pages, ppage)}`
+  list.innerHTML= WALLVIEW.length ? `<div class="pgrid">${WALLVIEW.slice(start, start+WPHOTO).map((p,i)=>pcellHTML(p,start+i)).join("")}</div>${pagerHTML(pages, ppage)}`
     : `<div class="empty">写真のある記事がありません。</div>`;
   bindWall(list);
   bindPager(list, ppage, pages, p=>{ ppage=p; renderPhotos(); scrollToList(); saveState(); });
+  probeWallStamps();
 }
 // 写真データは年別ファイル合計25MBあり、全年そろうまで待つと切り替えが
 // 重かった。年別ファイルを並行取得し、現在のページが埋まった時点で先に
