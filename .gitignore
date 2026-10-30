@@ -8,3 +8,4 @@ __pycache__/
 
 # ブログ本文の個別ファイルは作業用（配信用は data/bodies-pack/ のシャード）
 data/bodies/
+.wrangler/
