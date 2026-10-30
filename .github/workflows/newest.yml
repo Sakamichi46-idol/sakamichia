@@ -35,6 +35,9 @@ jobs:
       - name: Pack blog bodies into shards
         run: python3 tools/pack_bodies.py
 
+      - name: Sync body flags with packed bodies
+        run: python3 tools/sync_body_flags.py
+
       - name: Commit data updates
         id: commit
         run: |
