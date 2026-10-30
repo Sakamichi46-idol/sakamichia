@@ -13,11 +13,9 @@ function photoN(b){ return (b.media||0)||(b.imgn||0); }
 // 一覧表示のサムネイルは画像プロキシ経由で小さく軽くする(原寸約250KB→約7KB)。
 // 通信制限中でも一覧が見られるようにするため(ユーザー要望)。タップ後の
 // 拡大表示は従来どおり公式の原寸を使う。プロキシが失敗したら原寸に戻す。
-function thumbSrc(u, mode){
+function thumbSrc(u){
   if(!/^https?:\/\//.test(u||"")) return u;
-  // mode: 無指定=写真グリッド用(正方形) / 1=記事カード用(16:10) / 2=記事内の単独表示用(幅のみ)
-  const size=mode===1?"&w=720&h=450&fit=cover&q=65":mode===2?"&w=900&q=70":"&w=360&h=360&fit=cover&q=62";
-  return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+size+"&output=webp";
+  return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=360&h=360&fit=cover&q=62&output=webp";
 }
 function thumbFallback(img, original){
   img.addEventListener("error", ()=>{ if(img.src!==original) img.src=original; }, {once:true});
@@ -267,7 +265,7 @@ function fontCls(b){
   return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata";
 }
 function thumbHTML(b){
-  if(b.thumb) return `<div class="bthumb" data-open="${b.id}"><img loading="lazy" src="${esc(thumbSrc(b.thumb,1))}" data-full="${esc(b.thumb)}" alt=""></div>`;
+  if(b.thumb) return `<div class="bthumb" data-open="${b.id}"><img loading="lazy" src="${esc(b.thumb)}" alt=""></div>`;
   const logo=LOGOS[b.group]||"nogi";
   return `<div class="bthumb" data-open="${b.id}"><img class="logo-img" loading="lazy" src="${BASE}assets/blog-group-logos/${logo}.webp" alt="${esc(b.group)}"></div>`;
 }
@@ -376,7 +374,6 @@ async function renderPhotos(){
 }
 function bindOpen(scope){
   scope.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openBlog(el.dataset.open)));
-  scope.querySelectorAll("img[data-full]").forEach(img=>thumbFallback(img, img.dataset.full));
 }
 async function ensureImgs(year){
   if(IMGS[year]) return;
@@ -668,7 +665,7 @@ async function openBlog(id){
     if(photos.length){
       html+=`<div class="photo-grid">${photos.map((u,i)=>`<img loading="lazy" src="${esc(thumbSrc(u))}" alt="" data-photo="${i}">`).join("")}</div><p style="color:var(--muted);font-size:12px">公式ブログの写真を表示しています（タップで拡大）。</p>`;
     } else if(b.thumb){
-      html+=`<div class="bthumb" style="aspect-ratio:auto"><img src="${esc(thumbSrc(b.thumb,2))}" data-full="${esc(b.thumb)}" alt=""></div>`;
+      html+=`<div class="bthumb" style="aspect-ratio:auto"><img src="${esc(b.thumb)}" alt=""></div>`;
     } else {
       html+=`<p style="color:var(--muted)">この記事の写真は保存されていません。</p>`;
     }
@@ -677,6 +674,5 @@ async function openBlog(id){
   body.innerHTML=`<div class="${fontCls(b)}">${html}</div>`;
   body.querySelectorAll("[data-photo]").forEach(img=>img.addEventListener("click",()=>openLightbox(photos, +img.dataset.photo)));
   body.querySelectorAll(".photo-grid img[data-photo]").forEach(img=>thumbFallback(img, photos[+img.dataset.photo]));
-  body.querySelectorAll("img[data-full]").forEach(img=>thumbFallback(img, img.dataset.full));
 }
 init();
