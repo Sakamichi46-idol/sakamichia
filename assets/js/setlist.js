@@ -73,6 +73,72 @@ function save() {
   try { localStorage.setItem(KEY, JSON.stringify({ version: 1, items, name, settings, numberMode })); }
   catch (e) { notify('ブラウザに保存できませんでした。', true); }
 }
+
+// --- 過去ライブからの取り込み（歴代ライブの「マイセットリストで編集」） ---
+const IMPORT_KEY = 'sakamichia-setlist-import';
+let pendingImport = null;
+function convertImport(payload) {
+  const byTitle = new Map();
+  for (const s of songs) { if (!byTitle.has(s.title)) byTitle.set(s.title, s); }
+  const out = [];
+  let songsN = 0, otherN = 0, prevSec = 'main';
+  for (const r of (payload.rows || [])) {
+    const sec = r.sec || 'main';
+    if (sec !== prevSec) {
+      if (sec === 'encore') out.push({ id: identifier(), type: 'event', event: 'encore', label: '', people: '', note: '' });
+      else if (sec === 'double') out.push({ id: identifier(), type: 'event', event: 'double', label: '', people: '', note: '' });
+      prevSec = sec;
+    }
+    const song = byTitle.get(r.title);
+    if (song) {
+      out.push({ id: identifier(), type: 'song', songId: song.id,
+        center: safeText(r.center || '', 120),
+        people: safeText((Array.isArray(r.perf) ? r.perf : []).join('、'), 1500) });
+      songsN++;
+    } else {
+      // 楽曲データに無い曲（カバー曲など）は、消さずにメモとして残す
+      const notes = [];
+      if (r.center) notes.push('センター：' + r.center);
+      if (Array.isArray(r.perf) && r.perf.length) notes.push('参加：' + r.perf.join('、'));
+      if (r.remark) notes.push(r.remark);
+      out.push({ id: identifier(), type: 'event', event: 'custom', label: safeText(r.title || '', 100), people: '', note: safeText(notes.join(' / '), 400) });
+      otherN++;
+    }
+  }
+  return { items: out, songsN, otherN };
+}
+function applyImport(mode) {
+  if (!pendingImport) return;
+  const conv = convertImport(pendingImport);
+  if (mode === 'append') {
+    items = items.concat(conv.items).slice(0, 300);
+  } else {
+    items = conv.items.slice(0, 300);
+    name = safeText(pendingImport.name, 90) || name;
+  }
+  save();
+  renderSettings();
+  render();
+  notify(`「${pendingImport.name}」のセットリストを取り込みました（曲${conv.songsN}件${conv.otherN ? `／楽曲データに無い${conv.otherN}件はメモとして追加` : ''}）`);
+  pendingImport = null;
+}
+function checkImport() {
+  let payload = null;
+  try { payload = JSON.parse(localStorage.getItem(IMPORT_KEY) || 'null'); } catch (e) {}
+  if (!payload || !Array.isArray(payload.rows) || !payload.rows.length) return;
+  try { localStorage.removeItem(IMPORT_KEY); } catch (e) {}
+  pendingImport = payload;
+  if (!items.length) { applyImport('replace'); return; }
+  const dlg = $('msImportDlg');
+  if (dlg && dlg.showModal) {
+    $('msImportText').textContent = `「${payload.name}」（${payload.date || ''}）のセットリスト全${payload.rows.length}曲を取り込みます。今のマイセットリスト（${items.length}件）はどうしますか？`;
+    dlg.showModal();
+  } else if (confirm(`「${payload.name}」のセットリストを取り込みます。今の内容の末尾に追加しますか？（キャンセル＝置き換え）`)) {
+    applyImport('append');
+  } else {
+    applyImport('replace');
+  }
+}
 function notify(text, error = false) { const el = $('msMsg'); el.textContent = text; el.style.color = error ? '#c0392b' : 'var(--muted)'; }
 
 // --- 並び替え ---
@@ -113,6 +179,7 @@ async function init() {
   bind();
   renderSettings();
   render();
+  checkImport();
 }
 function getSong(entry) { return songById.get(entry.songId) || { id: entry.songId, title: entry.songId, group: '', writers: [], arrangers: [] }; }
 
@@ -357,6 +424,12 @@ async function shareImage() {
 
 // --- イベント登録 ---
 function bind() {
+  const impDlg = $('msImportDlg');
+  if (impDlg) {
+    $('msImportReplace').addEventListener('click', () => { impDlg.close(); applyImport('replace'); });
+    $('msImportAppend').addEventListener('click', () => { impDlg.close(); applyImport('append'); });
+    $('msImportCancel').addEventListener('click', () => { impDlg.close(); pendingImport = null; notify('取り込みをやめました'); });
+  }
   $('msSearch').addEventListener('input', renderCandidates);
   $('msGroup').addEventListener('change', renderCandidates);
   $('msSortMode').addEventListener('change', renderCandidates);

@@ -196,6 +196,7 @@ async function openLive(id){
   const body=document.getElementById("dlgBody");
   body.innerHTML=`${groupChip(l.group)}<h3>${esc(l.title)}</h3><p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""} ・ ${esc(l.venue)}</p><p>セットリストを読み込んでいます…</p>`;
   const sb0=document.getElementById("saveSetlistImg"); if(sb0) sb0.hidden=true;
+  const eb0=document.getElementById("editInSetlist"); if(eb0) eb0.hidden=true;
   const sm0=document.getElementById("saveImgMsg"); if(sm0) sm0.textContent="";
   document.getElementById("dlg").showModal();
   if(!DETAILS[id]){
@@ -224,6 +225,17 @@ async function openLive(id){
     const cr=row.querySelector(".scredits");
     if(cr && cr.offsetHeight>66) row.classList.add("stacked");
   });
+  const editBtn=document.getElementById("editInSetlist");
+  if(editBtn){
+    editBtn.hidden=!(segs&&segs.length);
+    editBtn.onclick=()=>{
+      // マイセットリストへは localStorage 経由で生のセトリを渡し、向こうで楽曲データと照合する
+      const payload={name:l.title, liveId:l.id, date:l.date, venue:l.venue||"", group:l.group||"",
+        rows:(d.setlist||[]).map(s=>({sec:s.sec||"main", title:s.title||"", center:s.center||"", perf:Array.isArray(s.perf)?s.perf:[], remark:s.remark||""}))};
+      try{ localStorage.setItem("sakamichia-setlist-import", JSON.stringify(payload)); }catch(e){}
+      location.href="../setlist/";
+    };
+  }
   const saveBtn=document.getElementById("saveSetlistImg");
   if(saveBtn){
     saveBtn.hidden=!(segs&&segs.length);
