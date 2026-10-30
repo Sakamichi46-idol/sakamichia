@@ -1,4 +1,4 @@
-// フォーメーション作成：メンバーを選んで自由に配置する（旧サイト『坂道日和』の「自由に作る」がモデル）
+// マイフォーメーション：メンバーを選んで自由に配置する（旧サイト『坂道日和』の「自由に作る」がモデル）
 const KEY = "sakamichia-formation-v1";
 const IMPORT_KEY = "sakamichia-formation-import";
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];

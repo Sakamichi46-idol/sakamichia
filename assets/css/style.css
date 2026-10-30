@@ -246,7 +246,7 @@ dialog{max-height:92dvh}
   .ms-eventadd .sub{align-self:flex-start}
 }
 
-/* フォーメーション作成・メンバー（v30） */
+/* マイフォーメーション・メンバー（v30） */
 .dlg-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .fm-note{color:var(--muted);font-size:12.5px}
 .fm-setrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:8px 0}
