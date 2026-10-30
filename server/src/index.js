@@ -45,7 +45,7 @@ export class DraftRoom {
     for (const ws of socks) { const pid = this.playerOf(ws); if (pid) online.add(pid); }
     return {
       code: st.code, phase: st.phase, eventSeq: st.eventSeq,
-      config: { kind: st.config.kind, rounds: st.config.rounds, maxPlayers: st.config.maxPlayers, label: st.config.label || "" },
+      config: { kind: st.config.kind, rounds: st.config.rounds, maxPlayers: st.config.maxPlayers, label: st.config.label || "", pool: st.config.pool, extra: st.config.extra || null },
       players: st.players.map(p => ({ id: p.id, name: p.name, host: p.id === st.hostId, connected: online.has(p.id) })),
       session: st.session, lastEvents: st.lastEvents || [],
       setlists: st.setlists || {}
@@ -134,9 +134,10 @@ export class DraftRoom {
         const rounds = Math.max(1, Math.min(40, +cfg.rounds || 12));
         const maxPlayers = Math.max(2, Math.min(MAX_PLAYERS, +cfg.maxPlayers || 4));
         if (pool.length < 2 * rounds) { this.err(ws, "候補プールが不足しています。設定を見直してください。"); return; }
+        const extra = (cfg.extra && typeof cfg.extra === "object" && JSON.stringify(cfg.extra).length < 4000) ? cfg.extra : null;
         this.state = {
           code: String(msg.create.code || ""), phase: "lobby", eventSeq: 0,
-          config: { kind: String(cfg.kind || "members"), rounds, maxPlayers, pool, label: String(cfg.label || "").slice(0, 120) },
+          config: { kind: String(cfg.kind || "members"), rounds, maxPlayers, pool, label: String(cfg.label || "").slice(0, 120), extra },
           hostId: "p1",
           players: [{ id: "p1", token, name }],
           session: null, lastEvents: [], setlists: {}
