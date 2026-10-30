@@ -6,6 +6,10 @@ let fGroup = "all", fGen = "all", fShowGrad = false, fQuery = "", fSort = "group
 
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
 function galURL(name, f) { const p = PHOTOS[name]; if (!p) return ""; return BASE + "assets/member-gallery/" + p.replace(/\.jpg$/, "") + "/" + f; }
+// メイン表示は常に最新の歴代アー写（ギャラリーの最後の1枚）。ギャラリーが無い人はプロフィール写真
+function latestGal(name) { const g = GAL[name] || []; return g.length ? g[g.length - 1] : null; }
+function mainPhotoURL(name) { const l = latestGal(name); return l ? galURL(name, l.f) : photoURL(name); }
+function galCap(g, isLatest) { return `${g.t ? g.t : "アー写"}${g.y ? `（${g.y}年）` : ""}${isLatest ? "・最新" : ""}`; }
 // 所属は「最後に所属していたグループ」で表す（改名・移籍の世代順で判定）
 const ERA_RANK = { "けやき坂46": 1, "欅坂46": 2, "櫻坂46": 3, "日向坂46": 3, "乃木坂46": 0 };
 function lastGroup(m) {
@@ -40,7 +44,7 @@ function liveStatsOf(name) {
   return { shows: s.shows || 0, centers: s.centers || 0 };
 }
 function cardHTML(m) {
-  const url = photoURL(m.name);
+  const url = mainPhotoURL(m.name);
   const lg = lastGroup(m);
   const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(m.name.slice(0, 1))}</span>`;
   const genTxt = isExchange(m) ? "・交換留学生" : (m.gen ? "・" + m.gen + "期" : "");
@@ -81,7 +85,7 @@ function render() {
 }
 function openMember(name) {
   const m = MEMBERS.find(x => x.name === name); if (!m) return;
-  const url = photoURL(name);
+  const url = mainPhotoURL(name);
   const cs = centerSongsOf(name);
   const ls = liveStatsOf(name);
   const fc = formCountOf(name);
@@ -90,19 +94,22 @@ function openMember(name) {
   const dlg = document.getElementById("dlg");
   dlg.style.setProperty("--page", GCOL[lg] || "#2b2430");
   const gal = GAL[name] || [];
-  const galHTML = (gal.length >= 2 || (gal.length === 1 && !gal[0].c)) ? `
+  const latest = gal.length ? gal[gal.length - 1] : null;
+  const mainCapTxt = latest ? galCap(latest, true) : "現在のアー写";
+  const galHTML = gal.length >= 2 ? `
     <div class="mb-gal">
       <h4 style="margin:14px 0 6px">歴代アー写（${gal.length}枚）</h4>
       <div class="mb-gal-strip">${gal.map((g, i) => {
-        const cap = `${g.t ? g.t : "アー写"}${g.y ? `（${g.y}年）` : ""}${g.c ? "・現在" : ""}`;
+        const isLatest = i === gal.length - 1;
+        const cap = galCap(g, isLatest);
         const lab = g.y ? String(g.y) : (g.t ? g.t.slice(0, 6) : `${i + 1}枚目`);
-        return `<button type="button" class="mb-gal-th${g.c ? " on" : ""}" data-src="${esc(galURL(name, g.f))}" data-cap="${esc(cap)}"><img loading="lazy" src="${esc(galURL(name, g.f))}" alt=""><span>${esc(lab)}</span></button>`;
+        return `<button type="button" class="mb-gal-th${isLatest ? " on" : ""}" data-src="${esc(galURL(name, g.f))}" data-cap="${esc(cap)}"><img loading="lazy" src="${esc(galURL(name, g.f))}" alt=""><span>${esc(lab)}</span></button>`;
       }).join("")}</div>
-      <p class="mb-gal-note">タップすると上の写真が切り替わります。上の写真をタップすると現在のアー写に戻ります。</p>
+      <p class="mb-gal-note">タップすると上の写真が切り替わります。上の写真をタップすると最新のアー写に戻ります。</p>
     </div>` : "";
   document.getElementById("dlgBody").innerHTML = `
     <div class="mb-detail">
-      <div class="mb-dphoto">${url ? `<img id="mbMainImg" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(name.slice(0, 1))}</span>`}<p class="mb-cap" id="mbMainCap">現在のアー写</p></div>
+      <div class="mb-dphoto">${url ? `<img id="mbMainImg" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(name.slice(0, 1))}</span>`}<p class="mb-cap" id="mbMainCap">${esc(mainCapTxt)}</p></div>
       <div class="mb-dinfo">
         <h3 style="margin:0 0 4px">${esc(name)}</h3>
         <p style="margin:0 0 2px;color:var(--muted)">${esc(m.reading || "")}</p>
@@ -121,8 +128,8 @@ function openMember(name) {
     }));
     mainImg.addEventListener("click", () => {
       mainImg.src = url;
-      if (mainCap) mainCap.textContent = "現在のアー写";
-      document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", !!gal.find((g, i) => g.c && galURL(name, g.f) === x.dataset.src)));
+      if (mainCap) mainCap.textContent = mainCapTxt;
+      document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", x.dataset.src === url));
     });
   }
   dlg.showModal();
