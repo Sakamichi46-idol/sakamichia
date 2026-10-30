@@ -41,7 +41,7 @@ function tick(){
 function quiz(kind){
   if(Q.timer) clearInterval(Q.timer);
   const pool = kind==="center" ? SONGS.filter(s=>s.center && String(s.center).trim()) : SONGS;
-  Q={kind, i:0, score:0, list:shuffle(pool).slice(0,10), t0:performance.now(), timer:null};
+  Q={kind, i:0, score:0, list:shuffle(pool).slice(0,10), t0:performance.now(), timer:null, history:[]};
   Q.timer=setInterval(tick, 10);
   showQ();
 }
@@ -51,11 +51,13 @@ function showQ(){
     const ms=performance.now()-Q.t0;
     const isBest=saveBest(Q.kind, Q.score, ms);
     const best=loadBest(Q.kind);
+    const rows=(Q.history||[]).map((h,idx)=>`<p style="margin:4px 0">${idx+1}. ${h.ok?"○":"×"} 「${esc(h.title)}」${Q.kind==="center"?`（${esc(h.group)}・${h.year}年）センター：<b>${esc(h.answer)}</b>`:`（${h.year}年）答え：<b>${esc(h.answer)}</b>`}${h.ok?"":`（あなた：${esc(h.picked)}）`}</p>`).join("");
     area.innerHTML=`<div class="card" style="margin-bottom:40px"><h3>結果</h3><p class="score">${Q.score} / ${Q.list.length} 問正解</p>
     <p>クリアタイム：<b>${fmtTime(ms)}</b>${isBest?"（ベスト更新！）":""}</p>
     ${best?`<p style="color:var(--muted)">ベスト：${best.score}問正解 ／ ${fmtTime(best.ms)}</p>`:""}
     <p>${Q.score>=9?"すごい、ほぼ完璧です！":Q.score>=6?"かなり詳しいですね。":Q.score>=3?"楽曲図鑑で復習するともっと伸びます。":"まずは楽曲図鑑からどうぞ。"}</p>
-    <p><button onclick="location.reload()">もう一度遊ぶ</button> <button type="button" class="primary" id="qShare">結果を共有</button></p></div>`;
+    <p><button onclick="location.reload()">もう一度遊ぶ</button> <button type="button" class="primary" id="qShare">結果を共有</button></p>
+    <h4 style="margin:16px 0 4px">出題された問題</h4>${rows}</div>`;
     const qsh=document.getElementById("qShare");
     if(qsh) qsh.addEventListener("click",()=>shareContent({text:`サカミチア「${Q.kind==="center"?"センター当て":"グループ当て"}クイズ」で${Q.score}／${Q.list.length}問正解！ タイムは ${fmtTime(ms)} でした。`, url:location.href}, qsh));
     return;
@@ -80,12 +82,13 @@ function showQ(){
     const ok=b.dataset.opt===answer;
     b.classList.add(ok?"correct":"wrong");
     if(ok) Q.score++;
+    Q.history.push({title:s.title, group:s.group, year:s.year, answer, picked:b.dataset.opt, ok});
     document.getElementById("fb").innerHTML= ok?"正解！" : `残念、正解は「${esc(answer)}」でした。`;
     area.querySelectorAll("[data-opt]").forEach(x=>x.disabled=true);
     // タイムアタック用に切り替えを高速化：正解0.4秒／不正解0.8秒、待たずに画面をタップしても即次へ
     let advanced=false, advTimer=null;
     const advance=()=>{ if(advanced) return; advanced=true; clearTimeout(advTimer); area.removeEventListener("pointerdown",advance); Q.i++; showQ(); };
-    advTimer=setTimeout(advance, ok?400:800);
+    advTimer=setTimeout(advance, 400);
     area.addEventListener("pointerdown",advance);
   }));
 }
