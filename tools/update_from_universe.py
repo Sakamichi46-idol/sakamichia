@@ -297,6 +297,24 @@ def update_songs_and_formations(summary):
         s = by_title.get(norm(title))
         if s:
             s['center'] = center
+    # センター表記を名簿の正式表記に統一する（川崎桜→川﨑桜などの異体字ゆれ対策）
+    _VAR = {'﨑': '崎', '神': '神', '髙': '高', '邊': '辺', '邉': '辺', '齋': '斉', '齊': '斉', '澤': '沢', '眞': '真', '櫻': '桜', '檜': '桧', '嶋': '島', '瀨': '瀬', '惠': '恵', '寬': '寛', '增': '増', '榮': '栄', '龍': '竜', '學': '学', '舘': '館', '德': '徳', '內': '内', '綠': '緑', '緖': '緒', '啟': '啓', '祿': '禄'}
+    def _nn(s):
+        return ''.join(_VAR.get(c, c) for c in s.replace(' ', '').replace('　', ''))
+    _roster = [m['name'] for m in json.load(open(os.path.join(BASE, 'data/members.json'), encoding='utf-8'))]
+    _nmap = {}
+    for _n in _roster:
+        _nmap.setdefault(_nn(_n), []).append(_n)
+    for s in songs:
+        if s.get('center'):
+            _toks = []
+            for _t in s['center'].split('・'):
+                _tt = _t.strip()
+                if _tt not in _roster and len(_nmap.get(_nn(_tt), [])) == 1:
+                    _toks.append(_nmap[_nn(_tt)][0])
+                else:
+                    _toks.append(_t)
+            s['center'] = '・'.join(_toks)
     for s in songs:
         if not s.get('yomi') and readings.get(norm(s['title'])):
             s['yomi'] = readings[norm(s['title'])]
@@ -376,7 +394,9 @@ def update_songs_and_formations(summary):
             notes.append(f"卒業状態の差分: {m['name']} (CSV卒業日: {r.get('graduatedate') or 'なし'})")
     summary['member_notes'] = notes
     for m in members:
-        m['centerSongs'] = sorted(s['title'] for s in songs if s.get('center') and m['name'] in s['center'].split('・'))
+        m['centerSongs'] = [s['title'] for s in sorted(
+            (s for s in songs if s.get('center') and m['name'] in s['center'].split('・')),
+            key=lambda s: (s.get('date') or '', s.get('ord') or 0, s['title']))]
     json.dump(members, open(mp, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return bool(added) or filled > 0 or changed > 0
 

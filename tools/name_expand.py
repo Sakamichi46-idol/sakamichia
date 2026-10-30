@@ -99,7 +99,8 @@ def _expand_role_token(token, pools, all_names):
     for i in range(1, len(token) - 1):
         e = expand_token(token[i:], pools, all_names)
         if e:
-            return token[:i], e
+            # 役割語末尾にもともと '：' がある場合、呼び出し側の付加と二重になるので落とす
+            return token[:i].rstrip('：: '), e
     for i in range(2, len(token) - 2):
         head = expand_token(token[:i], pools, all_names)
         if head:
@@ -144,7 +145,7 @@ def _expand_inplace(clause, pools, all_names, unresolved):
             return e
         unresolved[m.group(1)] += 1
         return m.group(0)
-    clause = re.sub(r'[CＣ][:：]?\s*([^\s、・／。［］（）]{1,8})', rep_c, clause)
+    clause = re.sub(r'[CＣ][:：]?\s*([^\s、・／。［］（）→]{1,8})', rep_c, clause)
     # 『・』リスト（2トークン以上、全展開できる場合のみ）
     def rep_list(m):
         got = _expand_list(m.group(0), pools, all_names, unresolved)
@@ -162,7 +163,7 @@ def _expand_inplace(clause, pools, all_names, unresolved):
     return clause
 
 
-BOUNDARY = r'(?:^|(?<=[はがをにのとへや、。・／「」『』\s]))'
+BOUNDARY = r'(?:^|(?<=[はがをにのとへや、。・／「」『』〆☆★♪\s]))'
 BOUNDARY_R = r'(?=$|[はがをにのとへや、。・／「」『』\s])'
 
 
@@ -228,13 +229,19 @@ def normalize_track(track, show_perf, group_members, all_names, unresolved, stat
             names, roles, bad = [], [], False
             for t in toks:
                 base, suffix = _split_paren_suffix(t)
+                # 「生田+3期生」のような +◯期生 サフィックスは名前部分だけ展開して付け直す
+                plus = ''
+                if '+' in base:
+                    head, rest = base.split('+', 1)
+                    if expand_token(head, pools, all_names):
+                        base, plus = head, '+' + rest
                 e = expand_token(base, pools, all_names)
                 if e:
-                    names.append(e + suffix)
+                    names.append(e + plus + suffix)
                     continue
                 r = _expand_role_token(base, pools, all_names)
                 if r:
-                    roles.append((r[1] if r[0] is None else f'{r[0]}：{r[1]}') + suffix)
+                    roles.append((r[1] if r[0] is None else f'{r[0]}：{r[1]}') + plus + suffix)
                     continue
                 bad = True
                 unresolved[t] += 1
@@ -265,9 +272,10 @@ def normalize_track(track, show_perf, group_members, all_names, unresolved, stat
                 continue
         # 役割語＋名前だけの節（例: ボーカル純奈、歌い出し久保）
         if '・' not in clause:
-            r = _expand_role_token(clause, pools, all_names)
+            base_c, paren_suf = _split_paren_suffix(clause)
+            r = _expand_role_token(base_c, pools, all_names)
             if r:
-                leftover.append(r[1] if r[0] is None else f'{r[0]}：{r[1]}')
+                leftover.append((r[1] if r[0] is None else f'{r[0]}：{r[1]}') + paren_suf)
                 stats['role_clause'] += 1
                 continue
         # それ以外の節：括弧内とC略称・リスト・助詞に囲まれた略称をその場展開
