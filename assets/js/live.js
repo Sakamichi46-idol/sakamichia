@@ -195,9 +195,7 @@ async function openLive(id){
   const l=DATA.find(x=>x.id===id); if(!l) return;
   const body=document.getElementById("dlgBody");
   body.innerHTML=`${groupChip(l.group)}<h3>${esc(l.title)}</h3><p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""} ・ ${esc(l.venue)}</p><p>セットリストを読み込んでいます…</p>`;
-  const sb0=document.getElementById("saveSetlistImg"); if(sb0) sb0.hidden=true;
   const eb0=document.getElementById("editInSetlist"); if(eb0) eb0.hidden=true;
-  const sm0=document.getElementById("saveImgMsg"); if(sm0) sm0.textContent="";
   document.getElementById("dlg").showModal();
   if(!DETAILS[id]){
     try{ const r=await fetch(BASE+"data/shows/"+id+".json"); DETAILS[id]= r.ok ? await r.json() : {setlist:[]}; }
@@ -236,22 +234,23 @@ async function openLive(id){
       location.href="../setlist/";
     };
   }
-  const saveBtn=document.getElementById("saveSetlistImg");
-  if(saveBtn){
-    saveBtn.hidden=!(segs&&segs.length);
-    // 前の公演のプレビューが残らないよう、開くたびにリセットする
-    const pvWrap=document.getElementById("imgPreviewWrap"), pvImg=document.getElementById("imgPreview");
-    if(pvWrap) pvWrap.hidden=true;
-    if(pvImg){
-      if(pvImg.dataset.url){ URL.revokeObjectURL(pvImg.dataset.url); pvImg.dataset.url=""; }
-      pvImg.removeAttribute("src");
-      pvImg.onclick=()=>{
-        const f=document.getElementById("imgFullImg"), d=document.getElementById("imgFullDlg");
-        if(f&&d&&pvImg.src){ f.src=pvImg.src; d.showModal(); }
-      };
-    }
-    // 画像はダイアログを開いた時点で先に作っておく（共有シートをすぐ開けるように）
-    let blobPromise=null;
+  // セトリ画像は表示と並行して生成し、できたらダイアログ下部にそのまま出す。
+  // 保存は画像の長押し・右クリックで行う想定のため、専用の保存ボタンや
+  // 「プレビュー」の見出しは置かない（ユーザーの指定）。
+  const pvWrap=document.getElementById("imgPreviewWrap"), pvImg=document.getElementById("imgPreview");
+  if(pvWrap) pvWrap.hidden=true;
+  if(pvImg){
+    if(pvImg.dataset.url){ URL.revokeObjectURL(pvImg.dataset.url); pvImg.dataset.url=""; }
+    pvImg.removeAttribute("src");
+    pvImg.style.opacity="0";
+    pvImg.onload=null;
+    pvImg.dataset.forId=l.id;
+    pvImg.onclick=()=>{
+      const f=document.getElementById("imgFullImg"), d=document.getElementById("imgFullDlg");
+      if(f&&d&&pvImg.src){ f.src=pvImg.src; d.showModal(); }
+    };
+  }
+  {
     if(segs&&segs.length){
       // 出力画像は旧サイト式：番号は M01/EN1/WEN1、区切りはアンコールのみ帯表示、
       // 全員で歌う曲は名前を並べず「（全員参加）」と表記する
@@ -285,43 +284,21 @@ async function openLive(id){
       // （assets/live-logos.json）。登録側の mode が 'bg' のものはタイトル代わり
       // ではなく背景に薄く敷く。ロゴが無い・読めない場合はタイトル文字になる。
       const logoShow={id:l.id, group:l.id.split("-")[0], title:l.title};
-      blobPromise=window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", logoShow)
+      const blobPromise=window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", logoShow)
         .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
         .then(r=>r.blob).catch(()=>null);
-      // 生成できたら、保存前に中身を確認できるようプレビューに出す
+      // 画像が完全に読み込めてからフェードインで出す。生成途中の状態や
+      // 空の画像枠が一瞬映らないようにするため（ユーザーの指摘）。
+      // 別の公演を開き直していた場合は、古い画像を出さない。
       blobPromise.then(blob=>{
         if(!blob||!pvWrap||!pvImg) return;
+        if(pvImg.dataset.forId!==l.id) return;
         const url=URL.createObjectURL(blob);
-        pvImg.dataset.url=url; pvImg.src=url; pvWrap.hidden=false;
+        pvImg.dataset.url=url;
+        pvImg.onload=()=>{ pvWrap.hidden=false; pvImg.style.opacity="1"; };
+        pvImg.src=url;
       });
     }
-    saveBtn.onclick=async ()=>{
-    const msg=document.getElementById("saveImgMsg");
-    saveBtn.disabled=true; if(msg) msg.textContent="画像を作っています…";
-    try{
-      const blob=await blobPromise;
-      if(!blob) throw new Error("no blob");
-      const filename=`${l.id}.png`;
-      // iPhone/iPadでは共有シートから「画像を保存」で写真に入れられる。それ以外はダウンロード。
-      let shared=false;
-      try{
-        const file=new File([blob], filename, {type:"image/png"});
-        if(navigator.canShare && navigator.canShare({files:[file]})){
-          await navigator.share({files:[file]});
-          shared=true;
-        }
-      }catch(e){
-        if(e && e.name==="AbortError"){ shared=true; } // ユーザーが共有を閉じただけ
-      }
-      if(shared){ if(msg) msg.textContent=""; }
-      else{
-        window.SakamichiSetlistImageExport.download(blob, filename);
-        if(msg) msg.textContent="画像を保存しました。";
-      }
-    }catch(e){
-      if(msg) msg.textContent="画像を作れませんでした。";
-    }finally{ saveBtn.disabled=false; }
-    };
   }
 }
 init();
