@@ -47,6 +47,64 @@
    "url": "/assets/live-logos/tour-hinata-hinatansai-7.jpg",
    "source": "https://www.hinatazaka46.com/7th-anniversary/ （公式KV全体を背景透かし用に使用）",
    "mode": "bg"
+  },
+  {
+   "match": "真夏の全国ツアー2025",
+   "group": "nogi",
+   "url": "/assets/live-logos/tour-nogi-summer-2025.webp",
+   "source": "https://www.nogizaka46.com/s/n46/page/summer_tour2025"
+  },
+  {
+   "match": "12th YEAR BIRTHDAY LIVE",
+   "group": "nogi",
+   "url": "/assets/live-logos/tour-nogi-12th-birthday.webp",
+   "source": "https://www.nogizaka46.com/s/n46/page/12th_birthday_live"
+  },
+  {
+   "match": "10th YEAR BIRTHDAY LIVE",
+   "group": "nogi",
+   "url": "/assets/live-logos/tour-nogi-10th-birthday.webp",
+   "source": "https://www.nogizaka46.com/s/n46/page/10th_birthday_live"
+  },
+  {
+   "match": "3rd TOUR 2023",
+   "group": "sakura",
+   "url": "/assets/live-logos/tour-sakura-3rd-2023.jpg",
+   "source": "https://sakurazaka46.com/s/s46/page/tour2023 （KVからロゴ部分を切り抜き）"
+  },
+  {
+   "match": "6回目のひな誕祭",
+   "group": "hinata",
+   "url": "/assets/live-logos/tour-hinata-hinatansai-6.jpg",
+   "source": "https://www.hinatazaka46.com/6th-anniversary/ （公式KV全体を背景透かし用に使用）",
+   "mode": "bg"
+  },
+  {
+   "match": "5回目のひな誕祭",
+   "group": "hinata",
+   "url": "/assets/live-logos/tour-hinata-hinatansai-5.jpg",
+   "source": "https://www.hinatazaka46.com/5th-anniversary/ （公式KV全体を背景透かし用に使用）",
+   "mode": "bg"
+  },
+  {
+   "match": "4回目のひな誕祭",
+   "group": "hinata",
+   "url": "/assets/live-logos/tour-hinata-hinatansai-4.jpg",
+   "source": "https://www.hinatazaka46.com/4th-anniversary/ （公式KV全体を背景透かし用に使用）",
+   "mode": "bg"
+  },
+  {
+   "match": "MONSTER GROOVE",
+   "group": "hinata",
+   "url": "/assets/live-logos/tour-hinata-monster-groove-2025.jpg",
+   "source": "https://www.hinatazaka46.com/tour2025/ （公式KV全体を背景透かし用に使用）",
+   "mode": "bg"
+  },
+  {
+   "match": "Happy Train Tour 2023",
+   "group": "hinata",
+   "url": "/assets/live-logos/tour-hinata-happy-train-2023.webp",
+   "source": "https://www.hinatazaka46.com/s/official/page/tour2023"
   }
  ]
 }
