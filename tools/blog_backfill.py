@@ -152,8 +152,8 @@ def hina_seed(state):
     pairs = re.findall(r'diary/member/list\?[^"]*?ct=(\d+)', h)
     members = state.setdefault('hina', {'members': {}})['members']
     for ct in sorted(set(pairs)):
-        if ct != '000':
-            members.setdefault(ct, {'name': '', 'next_page': 1, 'done': False})
+        # ct=000 はマスコットのポカ。除外するとポカの記事が一切取り込まれないため含める
+        members.setdefault(ct, {'name': '', 'next_page': 1, 'done': False})
     return len(members)
 
 def hina_page(ct, page):
@@ -168,7 +168,7 @@ def hina_page(ct, page):
         if not (tm and dtm and dm):
             continue
         imgs = []
-        for u in re.findall(r'<img\s+src="(https://[^"]+moblog[^"]+)"', b):
+        for u in re.findall(r'<img\s+src="(https://[^"]*?(?:moblog|cdn\.hinatazaka46\.com/files/)[^"]+)"', b):
             if u not in imgs:
                 imgs.append(u)
         url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'
@@ -580,7 +580,7 @@ def _feed_cards(site, page):
             if not (tm and dtm and dm):
                 continue
             imgs = []
-            for u in re.findall(r'<img\s+src="(https://[^"]+moblog[^"]+)"', b):
+            for u in re.findall(r'<img\s+src="(https://[^"]*?(?:moblog|cdn\.hinatazaka46\.com/files/)[^"]+)"', b):
                 if u not in imgs:
                     imgs.append(u)
             url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'
@@ -676,6 +676,20 @@ def feed_newest_pass(max_pages=3):
                 new_here += 1
             if new_here == 0:
                 break
+    # ポカ（ct=000）は全体フィードの一覧に載らないため、専用一覧の1ページ目も確認する
+    try:
+        poka_posts = hina_page('000', 1)
+    except Exception:
+        poka_posts = None
+    pages_used += 1
+    time.sleep(SLEEP)
+    if poka_posts:
+        for p in poka_posts:
+            if url_key(p['url']) in known:
+                continue
+            if not p['member'] or GENERIC_AUTHOR.fullmatch(p['member']):
+                continue
+            register('hina', p, p['member'], p['imgs'] or [], tm=p.get('time'), blocks=p.get('blocks'))
     relay_members = state.get('nogi', {}).get('members', {})
     for ct, ms in relay_members.items():
         if not ms.get('relay'):
