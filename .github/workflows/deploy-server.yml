@@ -39,6 +39,8 @@ jobs:
             ws.onmessage = e => { console.log("received:", e.data); clearTimeout(timer); process.exit(String(e.data).includes("pong") ? 0 : 1); };
             ws.onerror = () => { clearTimeout(timer); process.exit(3); };
           '
+      - name: Full game simulation test
+        run: WORKER_URL="$WORKER_URL" node server/test/game-test.mjs
       - name: Record worker URL in repo
         run: |
           if [ -n "$WORKER_URL" ] && [ "$(cat server/URL.txt 2>/dev/null)" != "$WORKER_URL" ]; then
