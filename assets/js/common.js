@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   const list=document.createElement("nav");list.className="drawer-links";
   // 案A（3カテゴリ型）の階層でドロワーを構成する：ホーム／調べる／遊ぶ・作る／お知らせ
   const NAV_GROUPS=[
-    {label:"調べる", keys:["songs/","live/","blog/","members/","matome/"]},
+    {label:"調べる", keys:["songs/","live/","blog/","members/"]},
     {label:"遊ぶ・作る", keys:["games/","formation/","setlist/"]},
   ];
   const items=links.map(a=>{
