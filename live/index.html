@@ -8,8 +8,8 @@
 <select id="year"><option value="">すべての年</option></select>
 <button type="button" class="sub" id="advToggle" aria-expanded="false">詳細設定 ▼</button>
 <button type="button" class="sub" id="resetAll">条件をリセット</button></div>
-<div id="attendBox" class="attend-box"><div class="attend-head"><span class="attend-title">マイ参戦記録</span><button type="button" class="ychip" id="attendOnly" aria-pressed="false">参戦した公演だけ</button><button type="button" class="sub attend-share" id="attendShare" hidden>画像で共有</button></div>
-<p class="attend-sum" id="attendSum">各公演の詳細から「参戦した」を押すと、ここに参戦記録が集計されます。</p></div>
+<div id="attendBox" class="attend-box"><div class="attend-head"><span class="attend-title">マイ参戦記録</span><button type="button" class="ychip" id="attendOnly" aria-pressed="false">参戦した公演だけ</button><button type="button" class="ychip" id="streamOnly" aria-pressed="false">配信で見た公演だけ</button><button type="button" class="sub attend-share" id="attendShare" hidden>画像で共有</button></div>
+<p class="attend-sum" id="attendSum">各公演の詳細から「参戦した」「配信で見た」を押すと、ここに参戦記録が集計されます。</p></div>
 <div id="advPanel" hidden>
 <div class="filters advrow" style="align-items:center"><span style="font-weight:700;font-size:14px">種類（複数選択可）：</span><span id="kindTabs" style="display:flex;gap:6px;flex-wrap:wrap"></span></div>
 <div class="filters advrow"><label>並び替え <select id="sort"><option value="auto">おまかせ（年を選ぶと古い順）</option><option value="new">新しい順</option><option value="old">古い順</option><option value="songs">曲数が多い順</option></select></label>
@@ -21,7 +21,7 @@
 <label>終了日 <input type="text" id="to" inputmode="numeric" autocomplete="off" placeholder="年/月/日" style="width:150px"></label></div>
 </div>
 <p class="count" id="count"></p><div class="grid" id="list"></div></section></main>
-<dialog id="dlg"><div id="dlgBody"></div><div id="imgPreviewWrap" hidden style="margin-top:12px"><img id="imgPreview" alt="セットリスト画像" style="max-width:100%;border:1px solid var(--line);border-radius:8px;opacity:0;transition:opacity .3s;cursor:pointer"></div><p><button class="sub" onclick="document.getElementById('dlg').close()">閉じる</button> <button type="button" class="sub" id="attendBtn" hidden aria-pressed="false">参戦した</button> <button type="button" id="editInSetlist" hidden>マイセットリストで編集</button></p></dialog>
+<dialog id="dlg"><div id="dlgBody"></div><div id="imgPreviewWrap" hidden style="margin-top:12px"><img id="imgPreview" alt="セットリスト画像" style="max-width:100%;border:1px solid var(--line);border-radius:8px;opacity:0;transition:opacity .3s;cursor:pointer"></div><p><button class="sub" onclick="document.getElementById('dlg').close()">閉じる</button> <span id="attendCtl" class="attend-ctl" role="group" aria-label="参戦記録" hidden><button type="button" data-attend="">未記録</button><button type="button" data-attend="venue">参戦した</button><button type="button" data-attend="stream">配信で見た</button></span> <button type="button" id="editInSetlist" hidden>マイセットリストで編集</button></p></dialog>
 <dialog id="imgFullDlg"><img id="imgFullImg" alt="セットリスト画像" style="max-width:100%"><p><button class="sub" onclick="document.getElementById('imgFullDlg').close()">閉じる</button></p></dialog>
 <footer><div class="wrap">セットリストは旧サイト『坂道日和』のアーカイブデータをもとに掲載しています。センター表記は、公演当日の記録が確認できたもののみ表示しています。（データ出典：Sakamichi Universe 公開データほか）</div></footer>
 <script src="../assets/js/common.js"></script><script src="../assets/js/setlist-image-export.js"></script><script src="../assets/js/live.js"></script>

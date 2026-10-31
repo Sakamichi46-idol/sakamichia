@@ -495,3 +495,13 @@ body.dfbar-on{padding-bottom:70px}
 .uq-member img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
 .uq-member .fq-name{display:block;padding:3px 1px;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:640px){.fq-tile .fq-name,.uq-member .fq-name{font-size:10px}.uq-member{width:68px}}
+
+/* マイ参戦記録：参戦（現地）／配信で見た の2状態対応（2026-10-31追加） */
+.attend-ctl{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;vertical-align:middle;background:#fff}
+.attend-ctl[hidden]{display:none}
+.attend-ctl button{border:0;background:#fff;padding:7px 12px;font-size:13.5px;cursor:pointer;color:var(--muted);font:inherit;font-size:13.5px}
+.attend-ctl button+button{border-left:1px solid var(--line)}
+.attend-ctl button.on[data-attend=""]{background:#efeaf2;color:var(--ink);font-weight:700}
+.attend-ctl button.on[data-attend="venue"]{background:var(--n);border-color:var(--n);color:#fff;font-weight:700}
+.attend-ctl button.on[data-attend="stream"]{background:#2f7fc4;color:#fff;font-weight:700}
+.stream-badge{background:#e1effa;color:#1f6fb2;font-weight:700}

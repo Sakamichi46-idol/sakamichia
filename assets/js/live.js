@@ -48,47 +48,73 @@ const KINDS=[
 ];
 const KSEL=new Set();
 const GSEL=new Set();
-// マイ参戦記録：参戦した公演の id を端末内に保存する
+// マイ参戦記録：公演 id → 状態（"venue"=現地で参戦 / "stream"=配信で見た）を端末内に保存する。
+// 旧形式（参戦した公演 id の配列）で保存されている場合は、全て "venue" として読み込む（移行は読み込み時に透過的に行う）。
 const ATTEND_KEY="sakamichia-attended";
-const ATTENDED=new Set();
-let attendOnly=false;
+const ATTENDED=new Map();
+const attendFilter=new Set(); // 絞り込みで選ばれている状態（"venue" / "stream"）。空なら絞り込まない
 function loadAttended(){
   ATTENDED.clear();
   try{
-    const v=JSON.parse(localStorage.getItem(ATTEND_KEY)||"[]");
-    if(Array.isArray(v)) v.forEach(x=>{ if(typeof x==="string") ATTENDED.add(x); });
+    const v=JSON.parse(localStorage.getItem(ATTEND_KEY)||"null");
+    if(Array.isArray(v)){
+      v.forEach(x=>{ if(typeof x==="string" && x) ATTENDED.set(x, "venue"); });
+    }else if(v && typeof v==="object"){
+      Object.entries(v).forEach(([id, st])=>{ if(id) ATTENDED.set(id, st==="stream" ? "stream" : "venue"); });
+    }
   }catch(e){}
 }
 function saveAttended(){
-  try{ localStorage.setItem(ATTEND_KEY, JSON.stringify([...ATTENDED])); }catch(e){}
+  try{
+    const o={};
+    ATTENDED.forEach((st, id)=>{ o[id]=st; });
+    localStorage.setItem(ATTEND_KEY, JSON.stringify(o));
+  }catch(e){}
 }
 function attendedShows(){ return DATA.filter(l=>ATTENDED.has(l.id)); }
+function attendCounts(shows){
+  let v=0, s=0;
+  shows.forEach(l=>{ if(ATTENDED.get(l.id)==="stream") s++; else v++; });
+  return {v, s};
+}
+// 内訳 {v, s} → 「参戦3・配信2」のような表記（0 の側は省略）
+function attendParts(c){
+  return [c.v?`参戦${c.v}`:"", c.s?`配信${c.s}`:""].filter(Boolean).join("・");
+}
 function renderAttend(){
   const sum=document.getElementById("attendSum"), share=document.getElementById("attendShare");
   if(!sum) return;
   const shows=attendedShows();
   if(share) share.hidden=!shows.length;
   if(!shows.length){
-    sum.textContent="まだ記録がありません。各公演の詳細から「参戦した」を押すと記録できます。";
+    sum.textContent="まだ記録がありません。各公演の詳細から「参戦した」「配信で見た」を選ぶと記録できます。";
     return;
   }
+  const {v, s}=attendCounts(shows);
   const byG={}, byY={};
-  shows.forEach(l=>{ byG[l.group]=(byG[l.group]||0)+1; const y=l.date.slice(0,4); byY[y]=(byY[y]||0)+1; });
-  const gtxt=GROUP_LIST.filter(g=>byG[g]).map(g=>`${g} ${byG[g]}件`).join(" ・ ");
-  const ytxt=Object.keys(byY).sort().reverse().map(y=>`${y}年 ${byY[y]}件`).join(" ・ ");
-  sum.innerHTML=`これまで <strong>${shows.length}公演</strong> に参戦<br>${esc(gtxt)}<br>${esc(ytxt)}`;
+  shows.forEach(l=>{
+    const k=ATTENDED.get(l.id)==="stream" ? "s" : "v";
+    (byG[l.group] ||= {v:0, s:0})[k]++;
+    const y=l.date.slice(0,4);
+    (byY[y] ||= {v:0, s:0})[k]++;
+  });
+  const gtxt=GROUP_LIST.filter(g=>byG[g]).map(g=>`${g} ${attendParts(byG[g])}件`).join(" ・ ");
+  const ytxt=Object.keys(byY).sort().reverse().map(y=>`${y}年 ${attendParts(byY[y])}件`).join(" ・ ");
+  sum.innerHTML=`これまで <strong>参戦 ${v}公演</strong> ・ <strong>配信 ${s}公演</strong> を記録<br>${esc(gtxt)}<br>${esc(ytxt)}`;
 }
-function syncAttendBtn(id){
-  const b=document.getElementById("attendBtn"); if(!b) return;
-  const on=ATTENDED.has(id);
-  b.textContent=on?"参戦済み ✓":"参戦した";
-  b.classList.toggle("on", on);
-  b.setAttribute("aria-pressed", String(on));
+function syncAttendCtl(id){
+  const ctl=document.getElementById("attendCtl"); if(!ctl) return;
+  const cur=ATTENDED.get(id)||"";
+  ctl.querySelectorAll("button").forEach(b=>{
+    const on=b.dataset.attend===cur;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", String(on));
+  });
 }
-function toggleAttended(id){
-  if(ATTENDED.has(id)) ATTENDED.delete(id); else ATTENDED.add(id);
+function setAttend(id, state){
+  if(state) ATTENDED.set(id, state); else ATTENDED.delete(id);
   saveAttended();
-  syncAttendBtn(id);
+  syncAttendCtl(id);
   renderAttend();
   render();
 }
@@ -126,13 +152,17 @@ function kindMatch(l, kind){
 }
 async function init(){
   loadAttended();
-  const ao=document.getElementById("attendOnly");
-  if(ao) ao.addEventListener("click",()=>{
-    attendOnly=!attendOnly;
-    ao.classList.toggle("on", attendOnly);
-    ao.setAttribute("aria-pressed", String(attendOnly));
-    render();
-  });
+  const bindAttendChip=(el, state)=>{
+    if(!el) return;
+    el.addEventListener("click",()=>{
+      if(attendFilter.has(state)) attendFilter.delete(state); else attendFilter.add(state);
+      el.classList.toggle("on", attendFilter.has(state));
+      el.setAttribute("aria-pressed", String(attendFilter.has(state)));
+      render();
+    });
+  };
+  bindAttendChip(document.getElementById("attendOnly"), "venue");
+  bindAttendChip(document.getElementById("streamOnly"), "stream");
   const ash=document.getElementById("attendShare");
   if(ash) ash.addEventListener("click", shareAttendImage);
   DATA = await loadJSON("lives.json");
@@ -185,14 +215,17 @@ async function init(){
     render();
   });
   // 条件をリセット：メインの絞り込み（キーワード・グループ・年）も含めてすべて初期状態に戻す
-  // （参戦記録そのものは消さない。「参戦した公演だけ」の絞り込みだけを解除する）
+  // （参戦記録そのものは消さない。「参戦した公演だけ」「配信で見た公演だけ」の絞り込みだけを解除する）
   document.getElementById("resetAll").addEventListener("click",()=>{
     KSEL.clear();
     kt.querySelectorAll(".ychip.on").forEach(b=>b.classList.remove("on"));
     GSEL.clear();
     syncGroupChips();
-    attendOnly=false;
-    if(ao){ ao.classList.remove("on"); ao.setAttribute("aria-pressed","false"); }
+    attendFilter.clear();
+    ["attendOnly","streamOnly"].forEach(cid=>{
+      const el=document.getElementById(cid);
+      if(el){ el.classList.remove("on"); el.setAttribute("aria-pressed","false"); }
+    });
     document.getElementById("q").value="";
     document.getElementById("year").value="";
     document.getElementById("sort").value="auto";
@@ -245,7 +278,7 @@ function render(){
   const advActive=!!(KSEL.size || region || from || to || srt!=="auto" || member);
   advToggle.textContent=`詳細設定 ${advPanel.hidden?"▼":"▲"}${advActive?"（設定中）":""}`;
   const rows=DATA.filter(l=>(!GSEL.size||GSEL.has(l.group))&&(!y||l.date.startsWith(y))
-    &&(!attendOnly||ATTENDED.has(l.id))
+    &&(!attendFilter.size||attendFilter.has(ATTENDED.get(l.id)))
     &&(!region||l.region===region)&&(!from||l.date>=from)&&(!to||l.date<=to)
     &&(!member || memberMatch(l, member, role))
     &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
@@ -258,7 +291,7 @@ function render(){
       return 0;
     });
   document.getElementById("count").textContent=`${rows.length}件の公演`;
-  document.getElementById("list").innerHTML= rows.map(l=>`<div class="card">${groupChip(l.group)}<h3>${esc(l.title)}${ATTENDED.has(l.id)?`<span class="badge attend-badge">参戦済み</span>`:""}</h3>
+  document.getElementById("list").innerHTML= rows.map(l=>`<div class="card">${groupChip(l.group)}<h3>${esc(l.title)}${ATTENDED.get(l.id)==="venue"?`<span class="badge attend-badge">参戦済み</span>`:ATTENDED.get(l.id)==="stream"?`<span class="badge stream-badge">配信で見た</span>`:""}</h3>
     <p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""}<br>${esc(l.venue)}${l.region?`（${esc(l.region)}）`:""}</p>${tags(l.tags)}
     <p><button data-open="${esc(l.id)}">セットリストを見る（${esc(l.songCount)}曲）</button></p></div>`).join("")
     || `<div class="empty">条件に合う公演がありません。</div>`;
@@ -275,8 +308,12 @@ async function openLive(id){
   const body=document.getElementById("dlgBody");
   body.innerHTML=`${groupChip(l.group)}<h3>${esc(l.title)}</h3><p>${esc(l.date)}${l.time?` ${esc(l.time)}開演`:""} ・ ${esc(l.venue)}</p><p>セットリストを読み込んでいます…</p>`;
   const eb0=document.getElementById("editInSetlist"); if(eb0) eb0.hidden=true;
-  const ab0=document.getElementById("attendBtn");
-  if(ab0){ ab0.hidden=false; ab0.onclick=()=>toggleAttended(id); syncAttendBtn(id); }
+  const ctl0=document.getElementById("attendCtl");
+  if(ctl0){
+    ctl0.hidden=false;
+    ctl0.querySelectorAll("button").forEach(b=>{ b.onclick=()=>setAttend(id, b.dataset.attend||null); });
+    syncAttendCtl(id);
+  }
   document.getElementById("dlg").showModal();
   if(!DETAILS[id]){
     try{ const r=await fetch(BASE+"data/shows/"+id+".json"); DETAILS[id]= r.ok ? await r.json() : {setlist:[]}; }
@@ -404,8 +441,11 @@ async function attendedImageBlob(){
   ctx.strokeStyle=LINE; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(M, M+158); ctx.lineTo(W-M, M+158); ctx.stroke();
   let y=M+182;
+  const {v:av, s:as}=attendCounts(shows);
   ctx.fillStyle=INK; ctx.font=`700 42px ${FONT}`;
-  ctx.fillText(`参戦した公演：全 ${shows.length} 公演`, M, y); y+=78;
+  ctx.fillText(`記録した公演：全 ${shows.length} 公演`, M, y); y+=56;
+  ctx.fillStyle=MUTED; ctx.font=`400 27px ${FONT}`;
+  ctx.fillText(`参戦（現地）${av} 公演 ・ 配信で見た ${as} 公演`, M, y); y+=56;
   const fit=(text,maxW)=>{ if(ctx.measureText(text).width<=maxW) return text; const e="…"; let t=text; while(t.length&&ctx.measureText(t+e).width>maxW) t=t.slice(0,-1); return t+e; };
   const wrap=(tokens,maxW)=>{
     const lines=[]; let cur="";
@@ -418,28 +458,36 @@ async function attendedImageBlob(){
     return lines;
   };
   const byG={}, byY={};
-  shows.forEach(l=>{ byG[l.group]=(byG[l.group]||0)+1; const yy=l.date.slice(0,4); byY[yy]=(byY[yy]||0)+1; });
+  shows.forEach(l=>{
+    const k=ATTENDED.get(l.id)==="stream" ? "s" : "v";
+    (byG[l.group] ||= {v:0, s:0})[k]++;
+    const yy=l.date.slice(0,4);
+    (byY[yy] ||= {v:0, s:0})[k]++;
+  });
   ctx.font=`700 27px ${FONT}`; ctx.fillStyle=INK;
   ctx.fillText("グループ別", M, y); y+=44;
   ctx.font=`400 26px ${FONT}`;
   for(const g of GROUP_LIST){
     if(!byG[g]) continue;
     ctx.fillStyle=ATTEND_GCOLOR[g]||INK; ctx.beginPath(); ctx.arc(M+11, y+15, 9, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle=INK; ctx.fillText(`${g}　${byG[g]}件`, M+34, y); y+=40;
+    ctx.fillStyle=INK; ctx.fillText(`${g}　${attendParts(byG[g])}件`, M+34, y); y+=40;
   }
   y+=14;
   ctx.font=`700 27px ${FONT}`; ctx.fillText("年別", M, y); y+=44;
   ctx.font=`400 26px ${FONT}`; ctx.fillStyle=INK;
-  wrap(Object.keys(byY).sort().reverse().map(yy=>`${yy}年 ${byY[yy]}件`), W-2*M).forEach(line=>{ ctx.fillText(line, M, y); y+=40; });
+  wrap(Object.keys(byY).sort().reverse().map(yy=>`${yy}年 ${attendParts(byY[yy])}件`), W-2*M).forEach(line=>{ ctx.fillText(line, M, y); y+=40; });
   y+=14;
-  ctx.font=`700 27px ${FONT}`; ctx.fillText("最近の参戦", M, y); y+=46;
+  ctx.font=`700 27px ${FONT}`; ctx.fillText("最近の記録", M, y); y+=46;
   ctx.font=`400 24px ${FONT}`;
   const recent=shows.slice(0,15);
   let drawn=0;
   for(const l of recent){
     if(y+34>BOTTOM-30) break;
+    const st=ATTENDED.get(l.id);
     ctx.fillStyle=MUTED; ctx.fillText(l.date.replace(/-/g,"/"), M, y);
-    ctx.fillStyle=INK; ctx.fillText(fit(l.title, W-2*M-190), M+190, y);
+    ctx.fillStyle= st==="stream" ? "#1f6fb2" : "#7e57c2";
+    ctx.fillText(st==="stream" ? "配信" : "参戦", M+168, y);
+    ctx.fillStyle=INK; ctx.fillText(fit(l.title, W-2*M-240), M+240, y);
     y+=38; drawn++;
   }
   if(shows.length>drawn && y+34<=BOTTOM-30){
