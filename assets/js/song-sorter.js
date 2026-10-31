@@ -28,11 +28,31 @@ function releaseLabel(s){
 function scopePool(){
   return SONGS.filter(s => scope.groups.has(Core.songLineage(s)) && scope.types.has(s.type || ""));
 }
+// 選択中のグループ群に実在する種別を、件数つきで返す（並びは全体の件数順 TYPES に従う）。
+// 種別チップはこの結果だけを描くので、選んだグループに無い種別は表示されない。
+function visibleTypes(){
+  const counts = {};
+  SONGS.forEach(s => {
+    if(!scope.groups.has(Core.songLineage(s))) return;
+    const t = s.type || "";
+    if(t) counts[t] = (counts[t] || 0) + 1;
+  });
+  return TYPES.filter(t => counts[t]).map(t => ({type: t, count: counts[t]}));
+}
+// グループ変更時の種別の引き継ぎ：新しいグループ群に実在する種別だけを残し、
+// 1つも残らなければ表示される種別を全選択に戻す（グループを変えただけで対象が0に落ちないように）。
+// 種別チップの手動操作では呼ばないので、手動で全て外した場合は0件のままになる。
+function reconcileTypes(){
+  const vis = new Set(visibleTypes().map(v => v.type));
+  const kept = new Set([...scope.types].filter(t => vis.has(t)));
+  scope.types = kept.size ? kept : vis;
+}
 function scopeLabel(){
   const gl = scope.groups.size === LINEAGES.length ? "全グループ"
     : (LINEAGES.filter(l => scope.groups.has(l)).join("・") || "未選択");
-  const tl = scope.types.size === TYPES.length ? "全種別"
-    : (TYPES.filter(t => scope.types.has(t)).join("・") || "未選択");
+  const vis = visibleTypes().map(v => v.type);
+  const sel = vis.filter(t => scope.types.has(t));
+  const tl = vis.length && sel.length === vis.length ? "全種別" : (sel.join("・") || "未選択");
   return `${gl}／${tl}（${pool.length}曲）`;
 }
 
@@ -68,7 +88,7 @@ function renderStart(){
     <p id="songSortInfo" style="margin:12px 0 4px"></p>
     <p id="songSortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
     <p style="margin:10px 0 0"><button type="button" id="songSortStart">スタート</button></p>
-    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46の曲、日向坂46にはけやき坂46の曲も含まれます。全曲（696曲）だと対戦数が非常に多くなるため、「表題曲のみ」やグループ別がおすすめです。</p>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46の曲、日向坂46にはけやき坂46の曲も含まれます。種別は選んだグループにあるものだけが表示されます。全曲（${SONGS.length}曲）だと対戦数が非常に多くなるため、「表題曲のみ」やグループ別がおすすめです。</p>
   </div>`;
   refreshSelection();
   document.getElementById("songSortStart").addEventListener("click", startBattle);
@@ -84,15 +104,21 @@ function refreshSelection(){
     if(b.dataset.g === "all") scope.groups = gAll ? new Set() : new Set(LINEAGES);
     else if(scope.groups.has(b.dataset.g)) scope.groups.delete(b.dataset.g);
     else scope.groups.add(b.dataset.g);
+    reconcileTypes(); // 種別チップはグループに連動して作り直す。種別の引き継ぎもここで行う
     refreshSelection();
   }));
-  const tAll = scope.types.size === TYPES.length;
+  const vis = visibleTypes();
+  const tAll = vis.length > 0 && vis.every(v => scope.types.has(v.type));
   const tEl = document.getElementById("songSortTypes");
   tEl.innerHTML =
     `<button type="button" data-t="all" class="${tAll ? "on" : ""}">すべて</button>` +
-    TYPES.map(t => `<button type="button" data-t="${esc(t)}" class="${scope.types.has(t) ? "on" : ""}">${esc(t)}</button>`).join("");
+    vis.map(v => `<button type="button" data-t="${esc(v.type)}" class="${scope.types.has(v.type) ? "on" : ""}">${esc(v.type)}（${v.count}）</button>`).join("");
   tEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
-    if(b.dataset.t === "all") scope.types = tAll ? new Set() : new Set(TYPES);
+    if(b.dataset.t === "all"){
+      // 「すべて」は表示中の種別だけを全選択／全解除する
+      if(tAll) vis.forEach(v => scope.types.delete(v.type));
+      else vis.forEach(v => scope.types.add(v.type));
+    }
     else if(scope.types.has(b.dataset.t)) scope.types.delete(b.dataset.t);
     else scope.types.add(b.dataset.t);
     refreshSelection();
