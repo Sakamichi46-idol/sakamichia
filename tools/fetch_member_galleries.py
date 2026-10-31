@@ -6,6 +6,10 @@
 - 保存先: assets/member-gallery/<ローマ字stem>/sNNN.jpg など
 - 索引: data/member-galleries.json {名前: [{f, t, y, c?}]}（c は現在のプロフィール写真と同一のもの）
 - 再実行安全（既存ファイルはスキップ）。ポカは対象外。
+- data/member-gallery-extra.json に載せた手動追加分は、n46db のギャラリー
+  ページに未掲載でも再構築で消えないよう、各メンバーの末尾にマージする
+  （現在のプロフィール写真が新アー写に変わったがギャラリー未掲載のケース用。
+  同じ f が既にあれば二重に追加しない）
 """
 import hashlib
 import json
@@ -26,6 +30,7 @@ LIST_PAGES = [
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(BASE, 'assets', 'member-gallery')
 INDEX_PATH = os.path.join(BASE, 'data', 'member-galleries.json')
+EXTRA_PATH = os.path.join(BASE, 'data', 'member-gallery-extra.json')
 PHOTOS_PATH = os.path.join(BASE, 'data', 'member-photos.json')
 
 
@@ -82,11 +87,35 @@ def md5(b):
     return hashlib.md5(b).hexdigest()
 
 
+def load_extras():
+    try:
+        with open(EXTRA_PATH, encoding='utf-8') as fh:
+            d = json.load(fh)
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def apply_extras(extra_items, items, mdir):
+    """手動追加分を末尾にマージする（同じ f は追加せず、実ファイルがある分だけ）。"""
+    have = {it['f'] for it in items}
+    for ex in extra_items:
+        fn = ex.get('f')
+        if not fn or fn in have:
+            continue
+        if not os.path.exists(os.path.join(mdir, fn)):
+            continue
+        items.append(dict(ex))
+        have.add(fn)
+    return items
+
+
 def main():
     members = json.load(open(os.path.join(BASE, 'data', 'members.json'), encoding='utf-8'))
     photos = json.load(open(PHOTOS_PATH, encoding='utf-8'))
     profiles = build_profiles()
     print('profile urls found:', len(profiles), flush=True)
+    extras_all = load_extras()
     os.makedirs(OUT_DIR, exist_ok=True)
     index = {}
     total_files = 0
@@ -149,6 +178,8 @@ def main():
             if cur_hash and md5(open(lp, 'rb').read()) == cur_hash:
                 item['c'] = True
             items.append(item)
+        if name in extras_all:
+            items = apply_extras(extras_all[name], items, mdir)
         if items:
             index[name] = items
         # 索引は逐次保存する（途中で止まっても、済んだ分は使えるように）
