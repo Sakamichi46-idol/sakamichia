@@ -115,39 +115,45 @@
    },
    "55390": {
     "name": "一ノ瀬美空",
-    "next_page": 7,
-    "done": false,
-    "empty_count": 0
+    "next_page": 13,
+    "done": true,
+    "empty_count": 2
    },
    "55391": {
     "name": "菅原咲月",
-    "next_page": 1,
-    "done": false
+    "next_page": 16,
+    "done": true,
+    "empty_count": 2
    },
    "55392": {
     "name": "小川彩",
-    "next_page": 1,
-    "done": false
+    "next_page": 15,
+    "done": true,
+    "empty_count": 2
    },
    "55393": {
     "name": "冨里奈央",
-    "next_page": 1,
-    "done": false
+    "next_page": 11,
+    "done": true,
+    "empty_count": 2
    },
    "55394": {
     "name": "奥田いろは",
-    "next_page": 1,
-    "done": false
+    "next_page": 13,
+    "done": true,
+    "empty_count": 2
    },
    "55395": {
     "name": "中西アルノ",
-    "next_page": 1,
-    "done": false
+    "next_page": 10,
+    "done": true,
+    "empty_count": 2
    },
    "55396": {
     "name": "五百城茉央",
-    "next_page": 1,
-    "done": false
+    "next_page": 3,
+    "done": false,
+    "empty_count": 0
    },
    "55397": {
     "name": "池田瑛紗",
