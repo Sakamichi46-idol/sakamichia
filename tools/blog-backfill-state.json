@@ -157,19 +157,21 @@
    },
    "55397": {
     "name": "池田瑛紗",
-    "next_page": 28,
-    "done": false,
-    "empty_count": 0
+    "next_page": 40,
+    "done": true,
+    "empty_count": 2
    },
    "55400": {
     "name": "川﨑桜",
-    "next_page": 1,
-    "done": false
+    "next_page": 11,
+    "done": true,
+    "empty_count": 2
    },
    "55401": {
     "name": "岡本姫奈",
-    "next_page": 1,
-    "done": false
+    "next_page": 15,
+    "done": false,
+    "empty_count": 0
    },
    "63101": {
     "name": "愛宕心響",
