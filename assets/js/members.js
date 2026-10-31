@@ -14,6 +14,23 @@ function loadFavs() {
 let FAVS = loadFavs();
 function saveFavs() { try { localStorage.setItem(FAV_KEY, JSON.stringify([...FAVS])); } catch (e) {} }
 function favBtnLabel(name) { return FAVS.has(name) ? "★ 推し登録済み（タップで解除）" : "☆ 推しに登録"; }
+// 推し写真：歴代アー写から選んだ1枚を localStorage の "sakamichia-fav-photos"（{名前: ギャラリーのファイル名}）に保存し、
+// 推しフローティングボタン（common.js）などの個人用表示にだけ使う。
+// メンバーページのメイン写真はサイト共通ルールどおり常に最新の歴代アー写のままで、ここでは変更しない。
+const FAVPHOTO_KEY = "sakamichia-fav-photos";
+function loadFavPhotos() {
+  try {
+    const v = JSON.parse(localStorage.getItem(FAVPHOTO_KEY) || "{}");
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      const o = {};
+      for (const [k, val] of Object.entries(v)) if (typeof val === "string" && val) o[k] = val;
+      return o;
+    }
+  } catch (e) {}
+  return {};
+}
+let FAVPHOTOS = loadFavPhotos();
+function saveFavPhotos() { try { localStorage.setItem(FAVPHOTO_KEY, JSON.stringify(FAVPHOTOS)); } catch (e) {} }
 
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
 function galURL(name, f) { const p = PHOTOS[name]; if (!p) return ""; return BASE + "assets/member-gallery/" + p.replace(/\.jpg$/, "") + "/" + f; }
@@ -118,7 +135,7 @@ function openMember(name) {
         const isLatest = i === gal.length - 1;
         const cap = galCap(g, isLatest);
         const lab = g.y ? String(g.y) : (g.t ? g.t.slice(0, 6) : `${i + 1}枚目`);
-        return `<button type="button" class="mb-gal-th${isLatest ? " on" : ""}" data-src="${esc(galURL(name, g.f))}" data-cap="${esc(cap)}"><img loading="lazy" src="${esc(galURL(name, g.f))}" alt=""><span>${esc(lab)}</span></button>`;
+        return `<button type="button" class="mb-gal-th${isLatest ? " on" : ""}" data-src="${esc(galURL(name, g.f))}" data-cap="${esc(cap)}" data-f="${esc(g.f)}"><img loading="lazy" src="${esc(galURL(name, g.f))}" alt=""><span>${esc(lab)}</span></button>`;
       }).join("")}</div>
       <p class="mb-gal-note">タップすると上の写真が切り替わります。上の写真をタップすると最新のアー写に戻ります。</p>
     </div>` : "";
@@ -134,26 +151,60 @@ function openMember(name) {
         <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a> <button type="button" class="btn" id="favBtn" aria-pressed="${FAVS.has(name)}">${favBtnLabel(name)}</button></p>
         <p style="color:var(--muted);font-size:12px;margin:2px 0 0">推しに登録すると、トップページに「推しの新着」（最新のブログ）が出ます。</p>
       </div>
-    </div>${galHTML}`;
+    </div>${galHTML}<div id="favPhotoRow"></div>`;
+  // 推し写真コントロール：いま大きく表示している歴代アー写（curF）を推し写真として設定／変更／解除する。
+  // 推し登録済みで、ギャラリーがあり写真ファイル名が解決できるメンバーだけに出す。
+  let curF = latest ? latest.f : null;
+  const favPhotoRow = document.getElementById("favPhotoRow");
+  const capOfF = f => { const g = gal.find(x => x.f === f); return g ? galCap(g, g === latest) : f; };
+  function renderFavPhotoCtl() {
+    if (!favPhotoRow) return;
+    if (!FAVS.has(name) || !gal.length || !PHOTOS[name]) { favPhotoRow.innerHTML = ""; return; }
+    const setF = FAVPHOTOS[name] || null;
+    let inner;
+    if (setF && setF === curF) {
+      inner = `<span>推し写真：<b>この写真</b>に設定済みです。</span> <button type="button" class="btn" id="favPhotoClear">推し写真を最新に戻す</button>`;
+    } else if (setF) {
+      inner = `<span>推し写真：<b>${esc(capOfF(setF))}</b>に設定済みです。</span> <button type="button" class="btn" id="favPhotoSet">表示中の写真に変更する</button> <button type="button" class="btn" id="favPhotoClear">推し写真を最新に戻す</button>`;
+    } else {
+      inner = `<span>推し写真は未設定です（推しボタンなどでは最新の写真が出ます）。</span> <button type="button" class="btn" id="favPhotoSet">この写真を推し写真にする</button>`;
+    }
+    favPhotoRow.innerHTML = `<p style="margin:10px 0 0">${inner}</p>`;
+    const setBtn = document.getElementById("favPhotoSet");
+    if (setBtn) setBtn.addEventListener("click", () => {
+      if (!curF) return;
+      FAVPHOTOS[name] = curF; saveFavPhotos(); renderFavPhotoCtl();
+    });
+    const clrBtn = document.getElementById("favPhotoClear");
+    if (clrBtn) clrBtn.addEventListener("click", () => {
+      delete FAVPHOTOS[name]; saveFavPhotos(); renderFavPhotoCtl();
+    });
+  }
+  renderFavPhotoCtl();
   const favBtn = document.getElementById("favBtn");
   if (favBtn) favBtn.addEventListener("click", () => {
     if (FAVS.has(name)) FAVS.delete(name); else FAVS.add(name);
     saveFavs();
     favBtn.textContent = favBtnLabel(name);
     favBtn.setAttribute("aria-pressed", String(FAVS.has(name)));
+    renderFavPhotoCtl();   // 推し写真コントロールの出し分けも追随させる
     render();   // カード側の ★ バッジも追随させる
   });
   const mainImg = document.getElementById("mbMainImg"), mainCap = document.getElementById("mbMainCap");
   if (mainImg) {
     document.querySelectorAll(".mb-gal-th").forEach(th => th.addEventListener("click", () => {
       mainImg.src = th.dataset.src;
+      curF = th.dataset.f || null;
       if (mainCap) mainCap.textContent = th.dataset.cap;
       document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", x === th));
+      renderFavPhotoCtl();
     }));
     mainImg.addEventListener("click", () => {
       mainImg.src = url;
+      curF = latest ? latest.f : null;
       if (mainCap) mainCap.textContent = mainCapTxt;
       document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", x.dataset.src === url));
+      renderFavPhotoCtl();
     });
   }
   dlg.showModal();

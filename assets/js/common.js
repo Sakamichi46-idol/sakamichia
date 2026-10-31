@@ -97,31 +97,90 @@ document.addEventListener("DOMContentLoaded",()=>{
   const DISMISS_KEY="sakamichia-favfloat-dismissed";
   try{ if(sessionStorage.getItem(DISMISS_KEY)) return; }catch(e){}
   Promise.all([loadJSON("member-photos.json"),loadJSON("member-latest.json")]).then(([photos,latest])=>{
-    const photoOf=name=>{
-      const f=(photos&&!Array.isArray(photos))?photos[name]:null;
+    // 推し写真：歴代アー写から選んだ1枚（localStorage "sakamichia-fav-photos"：{名前: ギャラリーのファイル名}）。
+    // 設定があるメンバーは、プロフィール写真ではなくギャラリーのその写真を出す（members.js の galURL と同じ組み立て）。
+    let favPhotos={};
+    try{
+      const v=JSON.parse(localStorage.getItem("sakamichia-fav-photos")||"{}");
+      if(v&&typeof v==="object"&&!Array.isArray(v))
+        for(const k of Object.keys(v)) if(typeof v[k]==="string"&&v[k]) favPhotos[k]=v[k];
+    }catch(e){}
+    const photosMap=(photos&&!Array.isArray(photos))?photos:{};
+    const profileOf=name=>{
+      const f=photosMap[name];
       return f?BASE+"assets/member-photos/"+f:"";
     };
     const latestOf=name=>{
       const arr=(latest&&!Array.isArray(latest))?latest[name]:null;
       return (Array.isArray(arr)&&arr.length)?arr[0]:null;
     };
-    // 写真のある推しの中で、最新記事が最も新しい人を選ぶ（同点・記事なしは登録順を優先）
-    let pick=null;
+    // 写真のある推しを登録順に候補化する（推し写真が設定されていればギャラリー写真を優先）
+    const cands=[];
     for(const name of favs){
-      if(!photoOf(name)) continue;
-      const art=latestOf(name);
-      if(!pick||(art&&(!pick.article||String(art.date)>String(pick.article.date)))) pick={name,article:art};
+      const prof=profileOf(name);
+      if(!prof) continue;
+      const setF=favPhotos[name];
+      const galSrc=setF?BASE+"assets/member-gallery/"+photosMap[name].replace(/\.jpg$/,"")+"/"+setF:"";
+      cands.push({name, prof, galSrc, article:latestOf(name)});
     }
-    if(!pick) return;  // 写真のある推しがいない場合は出さない
-    const href=pick.article
-      ? BASE+"blog/?open="+encodeURIComponent(pick.article.id)
-      : BASE+"blog/?member="+encodeURIComponent(pick.name);
+    if(!cands.length) return;  // 写真のある推しがいない場合は出さない
+    const srcOf=c=>c.galSrc||c.prof;
+    const hrefOf=c=>c.article
+      ? BASE+"blog/?open="+encodeURIComponent(c.article.id)
+      : BASE+"blog/?member="+encodeURIComponent(c.name);
+    // 初期表示は現行ルール：最新記事が最も新しい推し（同点・記事なしは登録順を優先）
+    let cur=cands[0];
+    for(const c of cands){
+      if(c.article&&(!cur.article||String(c.article.date)>String(cur.article.date))) cur=c;
+    }
     const wrap=document.createElement("div");
     wrap.className="favfloat";
+    wrap.style.transition="opacity .45s ease";
     wrap.innerHTML=
-      `<a class="favfloat-main" href="${href}" aria-label="${esc(pick.name)}の最新ブログを開く"><img src="${esc(photoOf(pick.name))}" alt=""></a>`
+      `<a class="favfloat-main" href="" aria-label=""><img src="" alt=""></a>`
       +`<button type="button" class="favfloat-close" aria-label="推しボタンを閉じる">×</button>`;
+    const link=wrap.querySelector(".favfloat-main");
+    const img=wrap.querySelector("img");
+    const show=c=>{
+      cur=c;
+      link.href=hrefOf(c);
+      link.setAttribute("aria-label",c.name+"の最新ブログを開く");
+      // 推し写真のファイルが見つからない場合はプロフィール写真にフォールバックする
+      img.onerror=()=>{ if(c.galSrc){ c.galSrc=""; img.src=c.prof; } };
+      img.src=srcOf(c);
+    };
+    show(cur);
+    // 交代に備えて全候補の写真を先読みしておく
+    for(const c of cands){ const pre=new Image(); pre.src=srcOf(c); }
+    // ローテーション：推しが2人以上いれば45秒ごとにフェードで交代する。
+    // 全員を一巡してからシャッフルし直し、同じ人が連続しないようにする。
+    let closed=false, timer=null, fadeTimer=null, cycle=[], idx=0;
+    const shuffled=a=>{ const r=a.slice(); for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; };
+    cycle=[cur].concat(shuffled(cands.filter(c=>c!==cur)));  // 最初の巡回は初期表示の人から始める
+    idx=1;
+    const advance=()=>{
+      if(closed) return;
+      if(idx>=cycle.length){
+        cycle=shuffled(cands);
+        if(cycle.length>1&&cycle[0]===cur){ const t=cycle[0]; cycle[0]=cycle[1]; cycle[1]=t; }
+        idx=0;
+      }
+      const nxt=cycle[idx++];
+      if(!nxt||nxt===cur) return;
+      wrap.style.opacity="0";
+      fadeTimer=setTimeout(()=>{ if(!closed){ show(nxt); wrap.style.opacity="1"; } },460);
+    };
+    const startTimer=()=>{ if(!closed&&cands.length>=2&&!timer) timer=setInterval(advance,45000); };
+    const stopTimer=()=>{ if(timer){ clearInterval(timer); timer=null; } };
+    startTimer();
+    // タブが非表示の間はタイマーを止め、戻ってきたら再開する
+    document.addEventListener("visibilitychange",()=>{
+      if(document.hidden) stopTimer(); else startTimer();
+    });
     wrap.querySelector(".favfloat-close").addEventListener("click",()=>{
+      closed=true;
+      stopTimer();
+      if(fadeTimer){ clearTimeout(fadeTimer); fadeTimer=null; }
       wrap.remove();
       try{ sessionStorage.setItem(DISMISS_KEY,"1"); }catch(e){}
     });
