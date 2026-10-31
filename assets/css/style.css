@@ -557,3 +557,8 @@ body.dfbar-on{padding-bottom:70px}
   .msel-btn{min-height:42px}
   .msel-opt{padding:11px 8px;font-size:15px}
 }
+/* セトリ画像の生成中プレースホルダ（live：画像と同寸 3:4 で高さを先に確保し、
+   生成前の状態やレイアウトのジャンプを見せない） */
+.setlist-img-ph{width:100%;aspect-ratio:3/4;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;background:#fdfcfe;animation:setlistPhPulse 1.4s ease-in-out infinite}
+.setlist-img-ph[hidden]{display:none}
+@keyframes setlistPhPulse{0%,100%{opacity:.5}50%{opacity:1}}

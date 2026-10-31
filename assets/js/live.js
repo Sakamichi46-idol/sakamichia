@@ -304,6 +304,27 @@ const SECNAME={main:"本編",encore:"アンコール",double:"ダブルアンコ
 const blobCache=new Map(); // 生成済みのセトリ画像は公演ごとに保持し、開き直しを即時表示にする
 async function openLive(id){
   const l=DATA.find(x=>x.id===id); if(!l) return;
+  // セトリ画像のプレビューは、ダイアログを開く前に必ず初期状態へ戻す。
+  // 以前開いた公演の画像が、詳細の読み込み中や次の画像の生成中に
+  // 見えてしまうことがあったため（ユーザーの指摘）。
+  const pvWrap=document.getElementById("imgPreviewWrap"), pvImg=document.getElementById("imgPreview"), pvPh=document.getElementById("imgPreviewPh");
+  if(pvWrap) pvWrap.hidden=true;
+  if(pvPh) pvPh.hidden=true;
+  if(pvImg){
+    if(pvImg.dataset.url){ URL.revokeObjectURL(pvImg.dataset.url); pvImg.dataset.url=""; }
+    pvImg.removeAttribute("src");
+    pvImg.style.opacity="0";
+    pvImg.hidden=true;
+    pvImg.onload=null;
+    pvImg.dataset.forId=l.id;
+    pvImg.onclick=async ()=>{
+      const f=document.getElementById("imgFullImg"), d=document.getElementById("imgFullDlg");
+      if(!f||!d||!pvImg.src) return;
+      // 全画面でも、デコードが済んでから開く（開いた直後の空白や途中描画を防ぐ）
+      if(f.dataset.src!==pvImg.src){ f.src=pvImg.src; f.dataset.src=pvImg.src; try{ await f.decode(); }catch(e){} }
+      d.showModal();
+    };
+  }
   // ロゴ画像は詳細データの取得と並行して読み始める(待ちを重ねない)
   const logoPromise=window.SakamichiSetlistImageExport
     ? window.SakamichiSetlistImageExport.getLogo("../assets/live-logos.json", {id:l.id, group:l.id.split("-")[0], title:l.title})
@@ -358,21 +379,11 @@ async function openLive(id){
   // セトリ画像は表示と並行して生成し、できたらダイアログ下部にそのまま出す。
   // 保存は画像の長押し・右クリックで行う想定のため、専用の保存ボタンや
   // 「プレビュー」の見出しは置かない（ユーザーの指定）。
-  const pvWrap=document.getElementById("imgPreviewWrap"), pvImg=document.getElementById("imgPreview");
-  if(pvWrap) pvWrap.hidden=true;
-  if(pvImg){
-    if(pvImg.dataset.url){ URL.revokeObjectURL(pvImg.dataset.url); pvImg.dataset.url=""; }
-    pvImg.removeAttribute("src");
-    pvImg.style.opacity="0";
-    pvImg.onload=null;
-    pvImg.dataset.forId=l.id;
-    pvImg.onclick=()=>{
-      const f=document.getElementById("imgFullImg"), d=document.getElementById("imgFullDlg");
-      if(f&&d&&pvImg.src){ f.src=pvImg.src; d.showModal(); }
-    };
-  }
+  // プレビューの初期化は openLive の冒頭で済ませてある。生成が終わるまでは
+  // 画像と同寸（3:4）のプレースホルダを出し、生の状態や高さの変化を見せない。
   {
     if(segs&&segs.length){
+      if(pvWrap&&pvPh){ pvWrap.hidden=false; pvPh.hidden=false; }
       // 出力画像は旧サイト式：番号は M01/EN1/WEN1、区切りはアンコールのみ帯表示、
       // 全員で歌う曲は名前を並べず「（全員参加）」と表記する
       const rows=[];
@@ -410,16 +421,28 @@ async function openLive(id){
           .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
           .then(r=>{ const b=r&&r.blob; if(b) blobCache.set(l.id, b); return b; })
           .catch(()=>null);
-      // 画像が完全に読み込めてからフェードインで出す。生成途中の状態や
-      // 空の画像枠が一瞬映らないようにするため（ユーザーの指摘）。
+      // 画像が完全に読み込めて、さらにデコードまで済んでからフェードインで
+      // 出す。大きなPNGは load 完了直後だと途中描画や空の枠が見えることが
+      // あるため（ユーザーの指摘）。生成中はプレースホルダが同じ高さを保つ。
       // 別の公演を開き直していた場合は、古い画像を出さない。
-      blobPromise.then(blob=>{
-        if(!blob||!pvWrap||!pvImg) return;
-        if(pvImg.dataset.forId!==l.id) return;
+      blobPromise.then(async blob=>{
+        if(pvImg && pvImg.dataset.forId!==l.id) return;
+        if(!blob){ // 生成できなかった場合はプレースホルダを残さない
+          if(pvWrap) pvWrap.hidden=true;
+          if(pvPh) pvPh.hidden=true;
+          return;
+        }
+        if(!pvWrap||!pvImg) return;
         const url=URL.createObjectURL(blob);
         pvImg.dataset.url=url;
-        pvImg.onload=()=>{ pvWrap.hidden=false; pvImg.style.opacity="1"; };
         pvImg.src=url;
+        try{ await pvImg.decode(); }catch(e){ /* デコード確認ができない環境ではそのまま出す */ }
+        if(pvImg.dataset.forId!==l.id) return;
+        if(pvPh) pvPh.hidden=true;
+        pvImg.hidden=false;
+        pvWrap.hidden=false;
+        // hidden 解除直後に opacity を変えると遷移が効かないことがあるため1フレーム待つ
+        requestAnimationFrame(()=>{ if(pvImg.dataset.forId===l.id) pvImg.style.opacity="1"; });
       });
     }
   }
