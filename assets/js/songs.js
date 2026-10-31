@@ -1,4 +1,4 @@
-let DATA=[]; let FORMS={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set();
+let DATA=[]; let FORMS={}; let MEMB={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set();
 // グループ・年・曲種チップの選択状態表示と「選択をクリア」ボタンの表示をまとめて同期する
 function syncTabs(){
   document.querySelectorAll("#groupTabs button").forEach(x=>{
@@ -21,7 +21,9 @@ function syncTabs(){
 }
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
 async function init(){
-  [DATA, FORMS]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json")]);
+  let members=[];
+  [DATA, FORMS, members]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json"), loadJSON("members.json")]);
+  MEMB={}; (members||[]).forEach(m=>{ MEMB[m.name]=m; });
   document.querySelectorAll("#groupTabs button").forEach(b=>b.addEventListener("click",()=>{
     const key=b.dataset.g;
     if(key==="") SEL.clear();
@@ -115,6 +117,28 @@ function render(){
     || `<div class="empty">条件に合う楽曲がありません。</div>`;
   document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openSong(+b.dataset.open)));
 }
+// 参加メンバーの並びはメンバーページ（members.js）と統一する：系統→期→五十音（reading）。
+// 系統は改名をまたぐ「最後の所属」から判定し（欅坂46・櫻坂46は同一系統、日向坂46・けやき坂46も同一系統）、
+// 期なし（ポカ・交換留学生）は系統内の最後尾（99）。フォーメーション図の配置には使わず、一覧表示だけに適用する。
+const MEMB_FAM_ORDER=["乃木坂46","櫻坂46","日向坂46"];
+const MEMB_ERA_RANK={"けやき坂46":1,"欅坂46":2,"櫻坂46":3,"日向坂46":3,"乃木坂46":0};
+const MEMB_FAMILY={"乃木坂46":"乃木坂46","櫻坂46":"櫻坂46","欅坂46":"櫻坂46","日向坂46":"日向坂46","けやき坂46":"日向坂46"};
+function membFamily(m){
+  const gs=(m.groups&&m.groups.length)?m.groups:[m.group];
+  let lg=m.group, br=-1;
+  for(const g of gs){ const r=(g in MEMB_ERA_RANK)?MEMB_ERA_RANK[g]:0; if(r>br){ br=r; lg=g; } }
+  return MEMB_FAMILY[lg]||lg;
+}
+function cmpMembName(a,b){
+  const ma=MEMB[a], mb=MEMB[b];
+  if(ma&&mb) return MEMB_FAM_ORDER.indexOf(membFamily(ma))-MEMB_FAM_ORDER.indexOf(membFamily(mb))
+    || (ma.gen>0?ma.gen:99)-(mb.gen>0?mb.gen:99)
+    || (ma.reading||ma.name).localeCompare(mb.reading||mb.name,"ja");
+  if(ma) return -1;   // 名簿に無い参加者（坂道AKBのAKB側メンバー等）は坂道メンバーの後ろに名前順で並べる
+  if(mb) return 1;
+  return String(a).localeCompare(String(b),"ja");
+}
+function sortedParticipants(names){ return [...names].sort(cmpMembName); }
 function openSong(i){
   const s=DATA[i]; if(!s) return;
   const f=FORMS[`${s.group}|${s.title}`];
@@ -133,7 +157,7 @@ function openSong(i){
       const ctr = ri===last ? (n%2===1 ? [Math.floor(n/2)] : [n/2-1, n/2]) : [];
       return `<div class="frow">${row.map((name,ci)=>`<span class="fm${ctr.includes(ci)?" ctr":""}">${esc(name)}</span>`).join("")}</div>`;
     }).join("")}</div>`;
-    const all=f.rows.flat();
+    const all=sortedParticipants(f.rows.flat());
     html+=`<h4 style="margin:16px 0 4px">参加メンバー（${all.length}名）</h4><p style="line-height:2">${all.map(esc).join("、")}</p>`;
     html+=`<p style="margin-top:14px"><button type="button" id="dlgEditFormation">このフォーメーションを編集する</button></p>`;
   } else if(f && f.vocal && f.vocal.length){
