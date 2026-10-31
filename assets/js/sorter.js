@@ -9,6 +9,11 @@ let scope = {groups: new Set(LINEAGES), grad: false,
   gens: {"乃木坂46": new Set(), "櫻坂46": new Set(), "日向坂46": new Set()}};
 let pool = [], sorter = null, inBattle = false;
 let shareBlob = null;
+// カスタム選択（メンバー個別選択）：customSel は選択中メンバー名の Set で、条件チップとは独立に保持する。
+// 条件を変更すると破棄される（変更前に確認する）。選択は localStorage に保存し、再訪時に復元する。
+const CUSTOM_KEY = "sakamichia-sorter-custom";
+let customMode = false, customSel = null, customOpen = false, customRestored = false;
+let customView = {lin: "all", q: ""};
 
 function shuffle(a){ a = [...a]; for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function photoURL(m){ const f = PHOTOS[m.name]; return f ? BASE + "assets/member-photos/" + f : null; }
@@ -32,6 +37,161 @@ function scopePool(){
     return true;
   });
 }
+// 実際に対象になるメンバー一覧：カスタム選択中はそちらを優先する
+function currentPool(){
+  if(customMode && customSel) return MEMBERS.filter(m => customSel.has(m.name));
+  return scopePool();
+}
+function saveCustom(){
+  try{
+    if(customMode && customSel && customSel.size) localStorage.setItem(CUSTOM_KEY, JSON.stringify([...customSel]));
+    else localStorage.removeItem(CUSTOM_KEY);
+  }catch(e){ /* 保存できなくても動作は続ける */ }
+}
+function restoreCustom(){
+  try{
+    const raw = localStorage.getItem(CUSTOM_KEY);
+    if(!raw) return;
+    const names = JSON.parse(raw);
+    if(!Array.isArray(names)) return;
+    const valid = new Set(MEMBERS.map(m => m.name));
+    const sel = new Set(names.filter(n => typeof n === "string" && valid.has(n)));
+    if(sel.size){ customMode = true; customSel = sel; customRestored = true; }
+  }catch(e){ /* 壊れた保存データは無視する */ }
+}
+function enterCustom(){
+  // 開いた時点の条件で絞り込まれた全員を選択済みにして開始する
+  customSel = new Set(scopePool().map(m => m.name));
+  customMode = true; customOpen = true; customRestored = false;
+  saveCustom();
+  renderCustomArea();
+  updateInfo();
+}
+function exitCustom(){
+  customMode = false; customSel = null; customOpen = false; customRestored = false;
+  saveCustom();
+  renderCustomArea();
+  updateInfo();
+}
+// カスタム選択中に条件チップを変更しようとしたら確認する。true のときだけ変更を続行する（カスタムは破棄）。
+function confirmConditionChange(){
+  if(!customMode) return true;
+  if(window.confirm("条件を変更すると、個別に選んだカスタム選択が破棄されます。よろしいですか？")){
+    customMode = false; customSel = null; customOpen = false; customRestored = false;
+    saveCustom();
+    return true;
+  }
+  return false;
+}
+function kataToHira(s){ return String(s || "").replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)); }
+function memberMatches(m, q){
+  if(!q) return true;
+  if(m.name.includes(q)) return true;
+  const r = m.reading || "";
+  return r.includes(q) || kataToHira(r).includes(kataToHira(q));
+}
+// グリッド表示順：系統→期→五十音（サイト共通の並び）。期なし（ポカ・松井玲奈）は系統内の最後。
+function customSortedMembers(){
+  const ord = {"乃木坂46": 0, "櫻坂46": 1, "日向坂46": 2};
+  return [...MEMBERS].sort((a, b) => {
+    const la = ord[Core.memberLineage(a)] ?? 9, lb = ord[Core.memberLineage(b)] ?? 9;
+    if(la !== lb) return la - lb;
+    const ga = a.gen == null ? 99 : a.gen, gb = b.gen == null ? 99 : b.gen;
+    if(ga !== gb) return ga - gb;
+    return String(a.reading || a.name).localeCompare(String(b.reading || b.name), "ja");
+  });
+}
+// 表示だけの絞り込み（系統・検索）。選択そのものは変えない。
+function visibleCustomMembers(){
+  return customSortedMembers().filter(m => {
+    if(customView.lin !== "all" && Core.memberLineage(m) !== customView.lin) return false;
+    return memberMatches(m, customView.q.trim());
+  });
+}
+function renderCustomArea(){
+  const box = document.getElementById("sortCustomBox");
+  if(!box) return;
+  if(!customMode){
+    box.innerHTML = `<p style="margin:12px 0 0"><button type="button" class="sub" id="sortCustomEnter">メンバーを個別に選ぶ（カスタム）</button></p>`;
+    document.getElementById("sortCustomEnter").addEventListener("click", enterCustom);
+    return;
+  }
+  box.innerHTML = `
+    <p style="margin:12px 0 0"><button type="button" id="sortCustomToggle">カスタム選択中：${customSel ? customSel.size : 0}人${customRestored ? "（前回の選択を復元）" : ""}（${customOpen ? "閉じる" : "開く"}）</button></p>
+    ${customOpen ? `
+    <div class="sort-custom-panel">
+      <p style="margin:0 0 8px;color:var(--muted);font-size:12.5px">写真をタップして選択／解除できます。上の条件（グループ・期・対象）を変更すると、カスタム選択は破棄されます（変更前に確認が出ます）。</p>
+      <div class="sort-custom-tools">
+        <input type="search" id="sortCustomSearch" placeholder="名前・よみで検索" value="${esc(customView.q)}">
+      </div>
+      <div class="tabs sort-tabs" id="sortCustomLins">
+        ${[["all", "すべて"], ...LINEAGES.map(l => [l, l])].map(([v, l]) =>
+          `<button type="button" data-lin="${esc(v)}" class="${customView.lin === v ? "on" : ""}">${esc(l)}</button>`).join("")}
+        <span style="align-self:center;color:var(--muted);font-size:12px">↑表示の絞り込み（選択は保持されます）</span>
+      </div>
+      <p style="margin:6px 0">
+        <button type="button" class="sub" id="sortCustomAll">表示中を全選択</button>
+        <button type="button" class="sub" id="sortCustomNone">表示中を全解除</button>
+        <span id="sortCustomCount" style="margin-left:8px;color:var(--muted);font-size:13px"></span>
+      </p>
+      <div class="sort-custom-grid" id="sortCustomGrid"></div>
+      <p style="margin:10px 0 0"><button type="button" class="sub" id="sortCustomExit">カスタムをやめて条件に戻す</button></p>
+    </div>` : ""}`;
+  document.getElementById("sortCustomToggle").addEventListener("click", () => { customOpen = !customOpen; renderCustomArea(); });
+  if(!customOpen) return;
+  document.getElementById("sortCustomSearch").addEventListener("input", e => { customView.q = e.target.value; renderCustomGrid(); });
+  document.getElementById("sortCustomLins").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    customView.lin = b.dataset.lin;
+    document.getElementById("sortCustomLins").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    renderCustomGrid();
+  }));
+  document.getElementById("sortCustomAll").addEventListener("click", () => bulkCustom(true));
+  document.getElementById("sortCustomNone").addEventListener("click", () => bulkCustom(false));
+  document.getElementById("sortCustomExit").addEventListener("click", exitCustom);
+  renderCustomGrid();
+}
+function renderCustomGrid(){
+  const grid = document.getElementById("sortCustomGrid");
+  if(!grid || !customSel) return;
+  const vis = visibleCustomMembers();
+  grid.innerHTML = vis.map(m => {
+    const url = photoURL(m);
+    const on = customSel.has(m.name);
+    const gen = genLabel(m);
+    return `<button type="button" class="sort-pick ${on ? "on" : "off"}" data-name="${esc(m.name)}" aria-pressed="${on}">
+      ${url ? `<img src="${esc(url)}" alt="" loading="lazy" onerror="this.remove()">` : `<span class="sort-pick-no">${esc(m.name.slice(0, 1))}</span>`}
+      <span class="nm">${esc(m.name)}</span>
+      <span class="meta">${esc(m.group)}${gen ? "・" + esc(gen) : ""}${m.graduated ? "・卒業" : ""}</span>
+    </button>`;
+  }).join("") || `<p style="color:var(--muted);font-size:13px;margin:6px 0">表示できるメンバーがいません。</p>`;
+  grid.querySelectorAll(".sort-pick").forEach(b => b.addEventListener("click", () => togglePick(b)));
+  updateCustomCount(vis.length);
+}
+function updateCustomCount(visN){
+  const el = document.getElementById("sortCustomCount");
+  if(el) el.textContent = `選択中 ${customSel ? customSel.size : 0}人 ／ 表示中 ${visN}人`;
+  const t = document.getElementById("sortCustomToggle");
+  if(t && customMode) t.textContent = `カスタム選択中：${customSel ? customSel.size : 0}人${customRestored ? "（前回の選択を復元）" : ""}（${customOpen ? "閉じる" : "開く"}）`;
+}
+function togglePick(btn){
+  const name = btn.dataset.name;
+  if(customSel.has(name)) customSel.delete(name); else customSel.add(name);
+  const on = customSel.has(name);
+  btn.classList.toggle("on", on);
+  btn.classList.toggle("off", !on);
+  btn.setAttribute("aria-pressed", String(on));
+  customRestored = false;
+  saveCustom();
+  updateCustomCount(visibleCustomMembers().length);
+  updateInfo();
+}
+function bulkCustom(onOff){
+  visibleCustomMembers().forEach(m => { if(onOff) customSel.add(m.name); else customSel.delete(m.name); });
+  customRestored = false;
+  saveCustom();
+  renderCustomGrid();
+  updateInfo();
+}
 function lineageLabel(lin){
   const gs = scope.gens[lin];
   if(!gs || !gs.size) return lin;
@@ -40,6 +200,7 @@ function lineageLabel(lin){
   return `${lin}（${labels.join("・")}）`;
 }
 function scopeLabel(){
+  if(customMode) return `カスタム選択（${pool.length}人）`;
   const sel = LINEAGES.filter(l => scope.groups.has(l));
   const allPlain = sel.length === LINEAGES.length && LINEAGES.every(l => !scope.gens[l].size);
   const gl = allPlain ? "全グループ" : (sel.map(lineageLabel).join("・") || "未選択");
@@ -49,6 +210,7 @@ function scopeLabel(){
 async function init(){
   [MEMBERS, PHOTOS] = await Promise.all([loadJSON("members.json"), loadJSON("member-photos.json")]);
   if(!MEMBERS.length){ area.innerHTML = `<p style="color:var(--muted)">メンバーデータを読み込めませんでした。</p>`; return; }
+  restoreCustom();
   renderStart();
 }
 
@@ -72,6 +234,7 @@ function renderStart(){
     <div id="sortGens"></div>
     <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">対象</p>
     <div class="tabs sort-tabs" id="sortGrad"></div>
+    <div id="sortCustomBox"></div>
     <p id="sortInfo" style="margin:12px 0 4px"></p>
     <p id="sortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
     <p style="margin:10px 0 0"><button type="button" id="sortStart">スタート</button></p>
@@ -88,6 +251,7 @@ function refreshSelection(){
     `<button type="button" data-g="all" class="${allOn ? "on" : ""}">すべて</button>` +
     LINEAGES.map(l => `<button type="button" data-g="${esc(l)}" class="${scope.groups.has(l) ? "on" : ""}">${esc(l)}</button>`).join("");
   gEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if(!confirmConditionChange()){ refreshSelection(); return; }
     if(b.dataset.g === "all") scope.groups = allOn ? new Set() : new Set(LINEAGES);
     else if(scope.groups.has(b.dataset.g)) scope.groups.delete(b.dataset.g);
     else scope.groups.add(b.dataset.g);
@@ -99,6 +263,7 @@ function refreshSelection(){
     <div class="tabs sort-tabs">${gensOf(lin).map(g =>
       `<button type="button" data-lin="${esc(lin)}" data-gen="${g}" class="${scope.gens[lin].has(g) ? "on" : ""}">${esc(genChipLabel(lin, g))}</button>`).join("")}</div>`).join("");
   genEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if(!confirmConditionChange()){ refreshSelection(); return; }
     const set = scope.gens[b.dataset.lin], g = Number(b.dataset.gen);
     if(set.has(g)) set.delete(g); else set.add(g);
     refreshSelection();
@@ -106,22 +271,26 @@ function refreshSelection(){
   const tEl = document.getElementById("sortGrad");
   tEl.innerHTML = [["0", "現役のみ"], ["1", "卒業生も含む"]]
     .map(([v, l]) => `<button type="button" data-t="${v}" class="${(scope.grad ? "1" : "0") === v ? "on" : ""}">${l}</button>`).join("");
-  tEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { scope.grad = b.dataset.t === "1"; refreshSelection(); }));
+  tEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    if(!confirmConditionChange()){ refreshSelection(); return; }
+    scope.grad = b.dataset.t === "1"; refreshSelection();
+  }));
   updateInfo();
+  renderCustomArea();
 }
 function updateInfo(){
-  const list = scopePool();
+  const list = currentPool();
   const est = Core.estimate(list.length);
   document.getElementById("sortInfo").innerHTML =
-    `対象：<b>${list.length}人</b> ／ 目安：約<b>${est}対戦</b>`;
+    `対象：<b>${list.length}人</b> ／ 目安：約<b>${est}対戦</b>${customMode ? "（カスタム選択）" : ""}`;
   document.getElementById("sortWarn").textContent =
-    est > 400 ? "対戦数がとても多い範囲です。グループ別や「現役のみ」だと進めやすくなります。" : "";
+    est > 400 ? (customMode ? "対戦数がとても多い範囲です。個別選択で人数を絞ると進めやすくなります。" : "対戦数がとても多い範囲です。グループ別や「現役のみ」だと進めやすくなります。") : "";
   document.getElementById("sortStart").disabled = list.length < 2;
 }
 
 // ---------- 対戦画面 ----------
 function startBattle(){
-  pool = shuffle(scopePool());
+  pool = shuffle(currentPool());
   if(pool.length < 2) return;
   sorter = Core.createSorter(pool.length);
   inBattle = true;
