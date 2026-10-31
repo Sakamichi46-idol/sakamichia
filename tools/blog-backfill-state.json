@@ -97,24 +97,27 @@
    },
    "55385": {
     "name": "林瑠奈",
-    "next_page": 6,
-    "done": false,
-    "empty_count": 0
+    "next_page": 19,
+    "done": true,
+    "empty_count": 2
    },
    "55387": {
     "name": "弓木奈於",
-    "next_page": 1,
-    "done": false
+    "next_page": 7,
+    "done": true,
+    "empty_count": 2
    },
    "55389": {
     "name": "井上和",
-    "next_page": 1,
-    "done": false
+    "next_page": 10,
+    "done": true,
+    "empty_count": 2
    },
    "55390": {
     "name": "一ノ瀬美空",
-    "next_page": 1,
-    "done": false
+    "next_page": 7,
+    "done": false,
+    "empty_count": 0
    },
    "55391": {
     "name": "菅原咲月",
@@ -230,19 +233,19 @@
    },
    "46": {
     "name": "",
-    "next_page": 39,
-    "done": false,
-    "empty_count": 0
+    "next_page": 45,
+    "done": true,
+    "empty_count": 2
    },
    "47": {
     "name": "",
-    "next_page": 1,
-    "done": false,
-    "empty_count": 0
+    "next_page": 10,
+    "done": true,
+    "empty_count": 2
    },
    "48": {
     "name": "",
-    "next_page": 1,
+    "next_page": 22,
     "done": false,
     "empty_count": 0
    },
@@ -425,13 +428,13 @@
    },
    "14": {
     "name": "",
-    "next_page": 6,
-    "done": false,
-    "empty_count": 0
+    "next_page": 12,
+    "done": true,
+    "empty_count": 2
    },
    "21": {
     "name": "",
-    "next_page": 1,
+    "next_page": 33,
     "done": false,
     "empty_count": 0
    },
