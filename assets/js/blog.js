@@ -9,6 +9,8 @@ function syncGroupChips(){
   });
 }
 let MEDIA=""; const GENMAP={};
+// 期生の複数選択プルダウン（値は「グループ|期」文字列の Set、選択同士は OR）
+const GEN_SEL=new Set(); let genMS=null;
 function photoN(b){ return (b.media||0)||(b.imgn||0); }
 // 一覧表示のサムネイルは画像プロキシ経由で小さく軽くする(原寸約250KB→約7KB)。
 // 通信制限中でも一覧が見られるようにするため(ユーザー要望)。タップ後の
@@ -92,7 +94,7 @@ function saveState(){
     from:dateVal("from"),
     to:dateVal("to"),
     sort:document.getElementById("sort").value,
-    gen:document.getElementById("gen").value,
+    gen:[...GEN_SEL],
     media:MEDIA,
     view:VIEW, aPage:apage, pPage:ppage })); }catch(e){}
 }
@@ -125,6 +127,10 @@ async function init(){
   renderYearChips();
   MEMBERS=await loadJSON("members.json");
   buildMemberOptions();
+  genMS=createMultiSelect(document.getElementById("genMS"),{
+    allLabel:"すべての期生", selected:GEN_SEL, ariaLabel:"期生", options:[],
+    onChange:()=>{ resetPages(); render(); syncAdvBtn(); saveState(); }
+  });
   buildGenOptions();
   syncGroupChips();
   document.querySelectorAll(".gchip").forEach(ch=>ch.addEventListener("click",()=>{
@@ -165,7 +171,12 @@ async function init(){
     if(saved.from) document.getElementById("from").value=fmtDateText(saved.from);
     if(saved.to) document.getElementById("to").value=fmtDateText(saved.to);
     if(saved.sort) document.getElementById("sort").value=saved.sort;
-    if(saved.gen) document.getElementById("gen").value=saved.gen;
+    // 期生の保存形式は新形式（配列）と旧形式（"グループ|期" の単一文字列）の両方を受ける
+    if(saved.gen){
+      const vals=Array.isArray(saved.gen)?saved.gen:(typeof saved.gen==="string"&&saved.gen?[saved.gen]:[]);
+      vals.forEach(v=>{ if(typeof v==="string"&&v) GEN_SEL.add(v); });
+      if(genMS) genMS.refresh();
+    }
     if(saved.media){ MEDIA=saved.media; }
     if(saved.view==="photos"){
       VIEW="photos";
@@ -205,7 +216,7 @@ async function init(){
     }
   }
   renderYearChips();
-  ["q","member","from","to","sort","gen","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
+  ["q","member","from","to","sort","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.getElementById("member").addEventListener("input",()=>renderYearChips());
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
     const el=document.getElementById(id), iso=parseDateText(el.value);
@@ -222,7 +233,7 @@ async function init(){
     document.getElementById("from").value="";
     document.getElementById("to").value="";
     document.getElementById("sort").value="new";
-    document.getElementById("gen").value="";
+    GEN_SEL.clear(); if(genMS) genMS.refresh();
     MEDIA=""; syncMediaChips();
     yearSel=null; renderYearChips();
     kickBodySearch();
@@ -253,7 +264,7 @@ function advCount(){
   if(yearSel!==null) n++;
   if(MEDIA) n++;
   if(document.getElementById("sort").value!=="new") n++;
-  if(document.getElementById("gen").value) n++;
+  if(GEN_SEL.size) n++;
   if(document.getElementById("bq").value) n++;
   return n;
 }
@@ -265,10 +276,10 @@ function buildGenOptions(){
   const pairs=[...new Set(MEMBERS.flatMap(m=>(m.groups||[m.group]).map(gr=>gr+"|"+m.gen)))];
   pairs.sort((a,b)=>{ const [ga,na]=a.split("|"), [gb,nb]=b.split("|");
     return (GORDER.indexOf(ga)-GORDER.indexOf(gb)) || ((+na===0?99:+na)-(+nb===0?99:+nb)); });
-  document.getElementById("gen").innerHTML=`<option value="">すべての期生</option>`+pairs.map(p=>{
+  if(genMS) genMS.setOptions(pairs.map(p=>{
     const [gr,gn]=p.split("|");
-    return `<option value="${p}">${gr}・${+gn>=1?gn+"期生":"その他"}</option>`;
-  }).join("");
+    return {value:p, label:`${gr}・${+gn>=1?gn+"期生":"その他"}`};
+  }));
 }
 function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 // 日付欄はテキスト入力（枠の中に「年/月/日」と表示）。読み取り時は ISO 形式に直す。
@@ -463,12 +474,17 @@ function filtered(){
   const q=document.getElementById("q").value;
   const mv=document.getElementById("member").value;
   const from=dateVal("from"), to=dateVal("to");
-  const gv=document.getElementById("gen").value, sv=document.getElementById("sort").value;
+  const sv=document.getElementById("sort").value;
   const arr=pool().filter(b=>{
       const mHit=mv&&(b.member===mv||b.series===mv);
       if(mv&&!mHit) return false;
       if(GSEL.size&&!GSEL.has(b.group)&&!mHit) return false;
-      if(gv){ const [gg,gn]=gv.split("|"); if(b.group!==gg||GENMAP[b.group+"|"+b.member]!==+gn) return false; }
+      // 期生は複数選択可（選んだ「グループ・期」のいずれかに合えば通す＝OR）
+      if(GEN_SEL.size){
+        let gHit=false;
+        for(const gv of GEN_SEL){ const [gg,gn]=gv.split("|"); if(b.group===gg&&GENMAP[b.group+"|"+b.member]===+gn){ gHit=true; break; } }
+        if(!gHit) return false;
+      }
       if(MEDIA==="photo"&&photoN(b)<=0) return false;
       if(MEDIA==="body"&&!b.body) return false;
       if(BODYSET&&!BODYSET.has(b.id)) return false;
