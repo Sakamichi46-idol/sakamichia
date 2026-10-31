@@ -37,6 +37,53 @@ document.addEventListener("DOMContentLoaded",()=>{
   apply();
 });
 
+// PWA：マニフェストを差し込み、サービスワーカーを登録する（全ページ共通）
+(function(){
+  if(!document.querySelector('link[rel="manifest"]')){
+    const l=document.createElement("link");
+    l.rel="manifest";l.href=BASE+"manifest.webmanifest";
+    document.head.appendChild(l);
+  }
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",()=>{
+      navigator.serviceWorker.register(BASE+"sw.js").catch(()=>{});
+    });
+  }
+})();
+
+// スマホ用ボトムナビ（画面下の固定タブバー。表示はCSS側でモバイル幅のみ）
+document.addEventListener("DOMContentLoaded",()=>{
+  if(document.querySelector(".bottomnav")) return;
+  const seg=(location.pathname.split("/").filter(Boolean)[0]||"");
+  const activeKey = seg==="" ? "home"
+    : seg==="blog" ? "blog"
+    : seg==="members" ? "members"
+    : seg==="live" ? "live"
+    : (seg==="games"||seg==="formation"||seg==="setlist") ? "games"
+    : "";
+  const ICONS={
+    home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M9.5 19.5v-5h5v5"/></svg>',
+    blog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 1 6.5 18H19v3H6.5"/><path d="M9 7.5h6.5M9 11h6.5"/></svg>',
+    members:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.4 3.6-5 7-5s6.2 1.6 7 5"/></svg>',
+    live:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h13A1.5 1.5 0 0 1 20 8.5v2a2.5 2.5 0 0 0 0 5v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-2a2.5 2.5 0 0 0 0-5z"/><path d="M13.5 7v2M13.5 11v2M13.5 15v2" stroke-dasharray="0.5 2.6"/></svg>',
+    games:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="0.6" fill="currentColor"/><circle cx="15" cy="9" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="9" cy="15" r="0.6" fill="currentColor"/><circle cx="15" cy="15" r="0.6" fill="currentColor"/></svg>'
+  };
+  const ITEMS=[
+    {key:"home", label:"ホーム", href:BASE},
+    {key:"blog", label:"ブログ", href:BASE+"blog/"},
+    {key:"members", label:"メンバー", href:BASE+"members/"},
+    {key:"live", label:"ライブ", href:BASE+"live/"},
+    {key:"games", label:"遊ぶ・作る", href:BASE+"games/"}
+  ];
+  const nav=document.createElement("nav");
+  nav.className="bottomnav";nav.setAttribute("aria-label","メインナビゲーション");
+  nav.innerHTML=ITEMS.map(it=>
+    `<a href="${it.href}"${it.key===activeKey?' class="on" aria-current="page"':""}>${ICONS[it.key]}<span>${it.label}</span></a>`
+  ).join("");
+  document.body.appendChild(nav);
+  document.body.classList.add("has-bnav");
+});
+
 // ヘッダーのメニューを「≡ボタン＋右サイドドロワー」に置き換える（旧サイト『坂道日和』方式）
 document.addEventListener("DOMContentLoaded",()=>{
   const bar=document.querySelector("header.site .nav");

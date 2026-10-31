@@ -453,3 +453,13 @@ dialog{max-height:92dvh}
 .sort-pick.on::after{content:"✓";position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
 .sort-pick.off{opacity:.48}
 .sort-pick.off img{filter:grayscale(.8)}
+
+/* ===== スマホ用ボトムナビ（common.js が全ページに差し込む。モバイル幅のみ表示） ===== */
+.bottomnav{display:none}
+@media(max-width:768px){
+  body.has-bnav{padding-bottom:calc(58px + env(safe-area-inset-bottom))}
+  .bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .bottomnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 0 6px;font-size:10.5px;font-weight:700;line-height:1.25;color:var(--muted)}
+  .bottomnav a svg{width:23px;height:23px}
+  .bottomnav a.on{color:var(--accent)}
+}
