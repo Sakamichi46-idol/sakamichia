@@ -211,29 +211,33 @@
    },
    "63107": {
     "name": "瀬戸口心月",
-    "next_page": 2,
-    "done": false,
-    "empty_count": 0
+    "next_page": 6,
+    "done": true,
+    "empty_count": 2
    },
    "63108": {
     "name": "長嶋凛桜",
-    "next_page": 1,
-    "done": false
+    "next_page": 8,
+    "done": true,
+    "empty_count": 2
    },
    "63109": {
     "name": "増田三莉音",
-    "next_page": 1,
-    "done": false
+    "next_page": 4,
+    "done": true,
+    "empty_count": 2
    },
    "63110": {
     "name": "森平麗心",
-    "next_page": 1,
-    "done": false
+    "next_page": 6,
+    "done": true,
+    "empty_count": 2
    },
    "63111": {
     "name": "矢田萌華",
-    "next_page": 1,
-    "done": false
+    "next_page": 7,
+    "done": true,
+    "empty_count": 2
    }
   },
   "seeded": true,
