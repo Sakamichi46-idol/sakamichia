@@ -130,7 +130,7 @@ function openMember(name) {
   const mainCapTxt = latest ? galCap(latest, true) : "現在のアー写";
   const galHTML = gal.length >= 2 ? `
     <div class="mb-gal">
-      <h4 style="margin:14px 0 6px">歴代アー写（${gal.length}枚）</h4>
+      <h4 style="margin:14px 0 6px">歴代アー写など（${gal.length}枚）</h4>
       <div class="mb-gal-strip">${gal.map((g, i) => {
         const isLatest = i === gal.length - 1;
         const cap = galCap(g, isLatest);
