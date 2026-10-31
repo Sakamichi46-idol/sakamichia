@@ -27,6 +27,89 @@ async function shareContent(data, btn){
   }catch(e){ if(btn){ const t=btn.textContent; btn.textContent="コピーできませんでした"; setTimeout(()=>{btn.textContent=t;},1800); } }
 }
 
+// 複数選択プルダウン（フィルター用共通部品）：ボタン風トリガーを押すとチェックボックス一覧が開く。
+// 閉じた状態では「すべて（allLabel）」「（1件だけならその名前）」「◯件選択中」の要約を出す。
+// 選択は selected（Set、値は文字列）で保持し、空＝すべて扱い。項目同士は OR 条件で使う想定。
+// チェック操作と「選択をクリア」は onChange を発火するが、setOptions / clear / setValues は
+// 発火しない（選択の復元やリセットはページ側の描画フローに委ねるため）。
+let MSEL_OPEN = null;
+function createMultiSelect(mount, cfg){
+  if(!mount) return null;
+  cfg = cfg || {};
+  const allLabel = cfg.allLabel || "すべて";
+  const selected = cfg.selected || new Set();
+  let options = [];
+  mount.classList.add("msel");
+  mount.innerHTML =
+    `<button type="button" class="msel-btn" aria-haspopup="true" aria-expanded="false"><span class="msel-sum"></span><span class="msel-caret">▼</span></button>`
+    + `<div class="msel-pop" hidden><div class="msel-pop-head"><span class="msel-state"></span><button type="button" class="msel-clear">選択をクリア</button></div><div class="msel-list"></div></div>`;
+  const btn = mount.querySelector(".msel-btn"), pop = mount.querySelector(".msel-pop"),
+        list = mount.querySelector(".msel-list"), sum = mount.querySelector(".msel-sum"),
+        state = mount.querySelector(".msel-state");
+  if(cfg.ariaLabel) btn.setAttribute("aria-label", cfg.ariaLabel);
+  function refresh(){
+    if(!selected.size) sum.textContent = allLabel;
+    else if(selected.size === 1){
+      const v = [...selected][0], o = options.find(x => String(x.value) === v);
+      sum.textContent = o ? o.label : v;
+    } else sum.textContent = `${selected.size}件選択中`;
+    btn.classList.toggle("has", selected.size > 0);
+    state.textContent = selected.size ? `${selected.size}件選択中` : "すべて（未選択）";
+    list.querySelectorAll(".msel-opt").forEach(lab => {
+      const on = selected.has(lab.dataset.v);
+      lab.classList.toggle("on", on);
+      const cb = lab.querySelector("input"); if(cb) cb.checked = on;
+    });
+  }
+  function buildList(){
+    list.innerHTML = options.map(o =>
+      `<label class="msel-opt" data-v="${esc(String(o.value))}"><input type="checkbox" value="${esc(String(o.value))}"><span>${esc(o.label)}</span></label>`).join("");
+    list.querySelectorAll("input").forEach(cb => cb.addEventListener("change", () => {
+      if(cb.checked) selected.add(cb.value); else selected.delete(cb.value);
+      refresh();
+      if(cfg.onChange) cfg.onChange();
+    }));
+    refresh();
+  }
+  function close(){
+    if(pop.hidden) return;
+    pop.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    if(MSEL_OPEN === api) MSEL_OPEN = null;
+  }
+  function open(){
+    if(MSEL_OPEN && MSEL_OPEN !== api) MSEL_OPEN.close();
+    pop.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+    MSEL_OPEN = api;
+    // 画面右端ではみ出す場合はポップオーバーを右寄せに切り替える
+    pop.classList.remove("right");
+    const r = pop.getBoundingClientRect();
+    if(r.right > window.innerWidth - 8) pop.classList.add("right");
+  }
+  btn.addEventListener("click", e => { e.stopPropagation(); if(pop.hidden) open(); else close(); });
+  pop.addEventListener("click", e => e.stopPropagation());
+  mount.querySelector(".msel-clear").addEventListener("click", () => {
+    if(!selected.size) return;
+    selected.clear(); refresh();
+    if(cfg.onChange) cfg.onChange();
+  });
+  document.addEventListener("click", close);
+  document.addEventListener("keydown", e => { if(e.key === "Escape") close(); });
+  const api = { el: mount, selected, refresh, close,
+    setOptions(opts){
+      options = opts || [];
+      const ok = new Set(options.map(o => String(o.value)));
+      [...selected].forEach(v => { if(!ok.has(v)) selected.delete(v); });
+      buildList();
+    },
+    clear(){ selected.clear(); refresh(); },
+    setValues(vals){ selected.clear(); (vals || []).forEach(v => selected.add(String(v))); refresh(); }
+  };
+  api.setOptions(cfg.options || []);
+  return api;
+}
+
 // グループ絞り込みに連動して、ページの差し色をそのグループの色に切り替える
 document.addEventListener("DOMContentLoaded",()=>{
   const sel=document.getElementById("group");

@@ -535,3 +535,25 @@ body.dfbar-on{padding-bottom:70px}
 @media(prefers-reduced-motion:reduce){
   .favfloat,.favfloat-menu,.favfloat-item{transition:none}
 }
+
+/* 複数選択プルダウン（common.js createMultiSelect）：単色・角丸は既存の select に合わせる */
+.msel{position:relative;display:inline-block;max-width:100%;vertical-align:middle}
+.msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:#fff;color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;font-weight:400;cursor:pointer;white-space:nowrap;text-align:left}
+.msel-sum{overflow:hidden;text-overflow:ellipsis}
+.msel-caret{margin-left:auto;color:var(--muted);font-size:11px;flex:none}
+.msel-btn.has{border-color:var(--page);color:var(--page);font-weight:700}
+.msel-btn.has .msel-caret{color:var(--page)}
+.msel-pop{position:absolute;top:calc(100% + 6px);left:0;z-index:60;width:max-content;min-width:100%;max-width:min(320px,86vw);background:#fff;border:2px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(43,36,48,.16);padding:8px;box-sizing:border-box}
+.msel-pop.right{left:auto;right:0}
+.msel-pop-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px 8px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.msel-state{font-size:12px;color:var(--muted);white-space:nowrap}
+.msel-clear{background:none;border:0;color:var(--page);font-size:12px;font-weight:700;padding:4px 6px;cursor:pointer;white-space:nowrap}
+.msel-list{max-height:264px;overflow-y:auto;display:flex;flex-direction:column}
+.msel-opt{display:flex;align-items:center;gap:9px;padding:9px 8px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--ink)}
+.msel-opt:hover{background:#f7f2fb}
+.msel-opt input{width:17px;height:17px;accent-color:var(--page);flex:none;margin:0}
+.msel-opt.on{font-weight:700}
+@media(max-width:768px){
+  .msel-btn{min-height:42px}
+  .msel-opt{padding:11px 8px;font-size:15px}
+}
