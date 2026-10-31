@@ -2,7 +2,9 @@
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
 let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, MEMBERLIVE = {}, GAL = {};
-let fGroup = "all", fGen = "all", fShowGrad = false, fQuery = "", fSort = "group";
+let fGroup = "all", fShowGrad = false, fQuery = "", fSort = "group";
+// 期の複数選択プルダウン（値は期番号の文字列の Set、選択同士は OR、空＝すべての期）
+const fGenSet = new Set(); let genMS = null;
 // 推し登録：localStorage の "sakamichia-favs"（メンバー名の配列）でトップページと共有する
 const FAV_KEY = "sakamichia-favs";
 function loadFavs() {
@@ -81,7 +83,7 @@ function cardHTML(m) {
 function render() {
   let list = MEMBERS.filter(m =>
     (fGroup === "all" || (m.groups || [m.group]).includes(fGroup))
-    && (fGen === "all" || m.gen === +fGen)
+    && (!fGenSet.size || fGenSet.has(String(m.gen)))
     && (fShowGrad || !m.graduated)
     && (!fQuery || m.name.includes(fQuery) || (m.reading || "").includes(fQuery)));
   const order = g => GROUPS.indexOf(g);
@@ -210,11 +212,9 @@ function openMember(name) {
   dlg.showModal();
 }
 function syncGenOptions() {
+  // 選択肢は表示中グループに実在する期だけにし、無くなった期の選択は自動で外す（MS 側で剪定される）
   const gens = [...new Set(MEMBERS.filter(m => fGroup === "all" || (m.groups || [m.group]).includes(fGroup)).map(m => m.gen).filter(g => g > 0))].sort((a, b) => a - b);
-  const sel = document.getElementById("mbGen");
-  sel.innerHTML = `<option value="all">すべての期</option>` + gens.map(g => `<option value="${g}">${g}期生</option>`).join("");
-  sel.value = gens.includes(+fGen) ? fGen : "all";
-  fGen = sel.value;
+  if (genMS) genMS.setOptions(gens.map(g => ({ value: String(g), label: g + "期生" })));
 }
 async function init() {
   document.getElementById("mbCount").textContent = "読み込み中…";
@@ -240,18 +240,21 @@ async function init() {
   chips.innerHTML = ["all", ...GROUPS].map(g =>
     `<button type="button" class="ychip${fGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "すべてのグループ" : g}</button>`).join("");
   chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
-    fGroup = b.dataset.g; fGen = "all"; syncGenOptions();
+    fGroup = b.dataset.g; fGenSet.clear(); syncGenOptions();
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
     render();
   }));
+  genMS = createMultiSelect(document.getElementById("mbGenMS"), {
+    allLabel: "すべての期", selected: fGenSet, ariaLabel: "期生",
+    options: [], onChange: render
+  });
   syncGenOptions();
   document.getElementById("mbQuery").addEventListener("input", e => { fQuery = e.target.value.trim(); render(); });
   document.getElementById("mbShowGrad").addEventListener("change", e => { fShowGrad = e.target.checked; render(); });
-  document.getElementById("mbGen").addEventListener("input", e => { fGen = e.target.value; render(); });
   document.getElementById("mbSort").addEventListener("input", e => { fSort = e.target.value; render(); });
   // 条件をリセット：グループ・期・卒業生表示・検索・並び替えをすべて初期状態に戻す
   document.getElementById("mbReset").addEventListener("click", () => {
-    fGroup = "all"; fGen = "all"; fShowGrad = false; fQuery = ""; fSort = "group";
+    fGroup = "all"; fGenSet.clear(); fShowGrad = false; fQuery = ""; fSort = "group";
     document.getElementById("mbQuery").value = "";
     document.getElementById("mbShowGrad").checked = false;
     document.getElementById("mbSort").value = "group";
