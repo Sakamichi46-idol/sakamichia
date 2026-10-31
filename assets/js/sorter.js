@@ -19,7 +19,9 @@ function gensOf(lin){
   MEMBERS.forEach(m => { if(Core.memberLineage(m) === lin) set.add(m.gen || 0); });
   return [...set].sort((a, b) => (a === 0 ? 99 : a) - (b === 0 ? 99 : b));
 }
-function genChipLabel(g){ return g === 0 ? "期なし" : g + "期生"; }
+// 期なし（gen=0）の呼び名は系統で異なる：乃木坂46＝交換留学生（松井玲奈）、日向坂46＝ポカ
+function genZeroLabel(lin){ return lin === "乃木坂46" ? "交換留学生" : lin === "日向坂46" ? "ポカ" : "期なし"; }
+function genChipLabel(lin, g){ return g === 0 ? genZeroLabel(lin) : g + "期生"; }
 function scopePool(){
   return MEMBERS.filter(m => {
     const lin = Core.memberLineage(m);
@@ -34,7 +36,7 @@ function lineageLabel(lin){
   const gs = scope.gens[lin];
   if(!gs || !gs.size) return lin;
   const labels = [...gs].sort((a, b) => (a === 0 ? 99 : a) - (b === 0 ? 99 : b))
-    .map(g => g === 0 ? "期なし" : g + "期");
+    .map(g => g === 0 ? genZeroLabel(lin) : g + "期");
   return `${lin}（${labels.join("・")}）`;
 }
 function scopeLabel(){
@@ -73,7 +75,7 @@ function renderStart(){
     <p id="sortInfo" style="margin:12px 0 4px"></p>
     <p id="sortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
     <p style="margin:10px 0 0"><button type="button" id="sortStart">スタート</button></p>
-    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46時代のメンバー、日向坂46にはけやき坂46時代のメンバーも含まれます。期を選ばないグループは全期が対象です。「期なし」は期を持たないメンバー（日向坂46のポカ、交換留学生の松井玲奈）です。対戦数が多い範囲は時間がかかります。</p>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46時代のメンバー、日向坂46にはけやき坂46時代のメンバーも含まれます。期を選ばないグループは全期が対象です。乃木坂46の「交換留学生」は松井玲奈、日向坂46の「ポカ」は公式マスコットのポカです。対戦数が多い範囲は時間がかかります。</p>
   </div>`;
   refreshSelection();
   document.getElementById("sortStart").addEventListener("click", startBattle);
@@ -95,7 +97,7 @@ function refreshSelection(){
   genEl.innerHTML = LINEAGES.filter(l => scope.groups.has(l)).map(lin => `
     <p style="margin:8px 0 2px;color:var(--muted);font-size:13px">${esc(lin)}の期（複数選択可・選ばなければ全期）</p>
     <div class="tabs sort-tabs">${gensOf(lin).map(g =>
-      `<button type="button" data-lin="${esc(lin)}" data-gen="${g}" class="${scope.gens[lin].has(g) ? "on" : ""}">${esc(genChipLabel(g))}</button>`).join("")}</div>`).join("");
+      `<button type="button" data-lin="${esc(lin)}" data-gen="${g}" class="${scope.gens[lin].has(g) ? "on" : ""}">${esc(genChipLabel(lin, g))}</button>`).join("")}</div>`).join("");
   genEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     const set = scope.gens[b.dataset.lin], g = Number(b.dataset.gen);
     if(set.has(g)) set.delete(g); else set.add(g);
