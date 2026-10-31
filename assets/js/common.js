@@ -85,8 +85,11 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 
 // 推しフローティングボタン：推し登録（localStorage "sakamichia-favs"）があるときだけ、
-// スマホ右下に「最新記事が一番新しい推し」の丸い写真を出し、タップでその最新ブログへ飛ぶ。
-// 表示範囲（768px以下だけ）・ボトムナビとの重なり・ドラフト指名バー表示中の退避は style.css 側で制御する。
+// スマホ右下に推しの丸い写真を出す（日向坂公式のポカアイコン寄り：大きめ・枠なし・影なし）。
+// ページ表示の約1秒後に下からぴょこっと弾んで現れ、写真タップでメニュー
+// （最新ブログ／メンバー詳細／次の推しへ）を開く。45秒ローテーション・×でセッション内
+// 非表示は従来どおり。表示範囲（768px以下だけ）・登場アニメ・ボトムナビとの重なり・
+// ドラフト指名バー表示中の退避は style.css 側で制御する。
 document.addEventListener("DOMContentLoaded",()=>{
   let favs=[];
   try{
@@ -128,6 +131,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     const hrefOf=c=>c.article
       ? BASE+"blog/?open="+encodeURIComponent(c.article.id)
       : BASE+"blog/?member="+encodeURIComponent(c.name);
+    const memberHrefOf=c=>BASE+"members/?member="+encodeURIComponent(c.name);
     // 初期表示は現行ルール：最新記事が最も新しい推し（同点・記事なしは登録順を優先）
     let cur=cands[0];
     for(const c of cands){
@@ -135,16 +139,24 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
     const wrap=document.createElement("div");
     wrap.className="favfloat";
-    wrap.style.transition="opacity .45s ease";
     wrap.innerHTML=
-      `<a class="favfloat-main" href="" aria-label=""><img src="" alt=""></a>`
+      `<div class="favfloat-menu">`
+      +`<a class="favfloat-item" data-act="blog" href="">最新ブログ</a>`
+      +`<a class="favfloat-item" data-act="member" href="">メンバー詳細</a>`
+      +(cands.length>=2?`<button type="button" class="favfloat-item" data-act="next">次の推しへ</button>`:"")
+      +`</div>`
+      +`<button type="button" class="favfloat-main" aria-label="" aria-haspopup="true" aria-expanded="false"><img src="" alt=""></button>`
       +`<button type="button" class="favfloat-close" aria-label="推しボタンを閉じる">×</button>`;
-    const link=wrap.querySelector(".favfloat-main");
+    const mainBtn=wrap.querySelector(".favfloat-main");
     const img=wrap.querySelector("img");
+    const blogItem=wrap.querySelector('[data-act="blog"]');
+    const memberItem=wrap.querySelector('[data-act="member"]');
+    const nextItem=wrap.querySelector('[data-act="next"]');
     const show=c=>{
       cur=c;
-      link.href=hrefOf(c);
-      link.setAttribute("aria-label",c.name+"の最新ブログを開く");
+      blogItem.href=hrefOf(c);
+      memberItem.href=memberHrefOf(c);
+      mainBtn.setAttribute("aria-label",c.name+"のメニューを開く");
       // 推し写真のファイルが見つからない場合はプロフィール写真にフォールバックする
       img.onerror=()=>{ if(c.galSrc){ c.galSrc=""; img.src=c.prof; } };
       img.src=srcOf(c);
@@ -154,24 +166,49 @@ document.addEventListener("DOMContentLoaded",()=>{
     for(const c of cands){ const pre=new Image(); pre.src=srcOf(c); }
     // ローテーション：推しが2人以上いれば45秒ごとにフェードで交代する。
     // 全員を一巡してからシャッフルし直し、同じ人が連続しないようにする。
-    let closed=false, timer=null, fadeTimer=null, cycle=[], idx=0;
+    let closed=false, menuOpen=false, timer=null, fadeTimer=null, enterTimer=null, cycle=[], idx=0;
     const shuffled=a=>{ const r=a.slice(); for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; };
     cycle=[cur].concat(shuffled(cands.filter(c=>c!==cur)));  // 最初の巡回は初期表示の人から始める
     idx=1;
-    const advance=()=>{
-      if(closed) return;
+    const pickNext=()=>{
       if(idx>=cycle.length){
         cycle=shuffled(cands);
         if(cycle.length>1&&cycle[0]===cur){ const t=cycle[0]; cycle[0]=cycle[1]; cycle[1]=t; }
         idx=0;
       }
-      const nxt=cycle[idx++];
+      return cycle[idx++];
+    };
+    const swapTo=nxt=>{
       if(!nxt||nxt===cur) return;
       wrap.style.opacity="0";
+      if(fadeTimer) clearTimeout(fadeTimer);
       fadeTimer=setTimeout(()=>{ if(!closed){ show(nxt); wrap.style.opacity="1"; } },460);
     };
-    const startTimer=()=>{ if(!closed&&cands.length>=2&&!timer) timer=setInterval(advance,45000); };
+    const advance=()=>{
+      if(closed||menuOpen) return;
+      swapTo(pickNext());
+    };
+    const startTimer=()=>{ if(!closed&&!menuOpen&&!document.hidden&&cands.length>=2&&!timer) timer=setInterval(advance,45000); };
     const stopTimer=()=>{ if(timer){ clearInterval(timer); timer=null; } };
+    // メニューの開閉：開いている間はローテーションを一時停止する
+    const setMenu=open=>{
+      if(closed) return;
+      menuOpen=open;
+      wrap.classList.toggle("open",open);
+      mainBtn.setAttribute("aria-expanded",String(open));
+      if(open) stopTimer(); else startTimer();
+    };
+    mainBtn.addEventListener("click",()=>setMenu(!menuOpen));
+    // メニュー外をタップしたら閉じる
+    document.addEventListener("click",e=>{
+      if(menuOpen&&e.target&&!wrap.contains(e.target)) setMenu(false);
+    });
+    // 「次の推しへ」：その場で次の推しに切り替えてメニューを閉じ、ローテーションのタイマーをリセットする
+    if(nextItem) nextItem.addEventListener("click",()=>{
+      setMenu(false);
+      swapTo(pickNext());
+      stopTimer(); startTimer();
+    });
     startTimer();
     // タブが非表示の間はタイマーを止め、戻ってきたら再開する
     document.addEventListener("visibilitychange",()=>{
@@ -181,10 +218,13 @@ document.addEventListener("DOMContentLoaded",()=>{
       closed=true;
       stopTimer();
       if(fadeTimer){ clearTimeout(fadeTimer); fadeTimer=null; }
+      if(enterTimer){ clearTimeout(enterTimer); enterTimer=null; }
       wrap.remove();
       try{ sessionStorage.setItem(DISMISS_KEY,"1"); }catch(e){}
     });
     document.body.appendChild(wrap);
+    // 登場アニメーション：約1秒後に表示クラスを付けて下からぴょこっと弾ませる（アニメ自体はCSS側）
+    enterTimer=setTimeout(()=>{ if(!closed) wrap.classList.add("favfloat-in"); },1000);
   }).catch(()=>{});
 });
 
