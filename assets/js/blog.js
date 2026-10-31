@@ -1,4 +1,5 @@
 let INDEX=null; const YEARS={}; const IMGS={};
+const YEAR_PROM={}; const IMG_PROM={};
 let MEMBERS=[]; let VIEW="articles"; let WALL=[]; const WPHOTO=96;
 let yearSel=null; let loadingYears=false; let apage=1, ppage=1; let ROWS=[];
 const GSEL=new Set();
@@ -81,7 +82,9 @@ function resetPages(){ apage=1; ppage=1; }
 const PAGE=48;
 async function loadYear(y){
   if(YEARS[y]) return;
-  YEARS[y]=await loadJSON(`blogs/y${y}.json`);
+  // 取得中のリクエストを共有し、同じ年ファイルを二重に取りに行かない
+  if(!YEAR_PROM[y]) YEAR_PROM[y]=loadJSON(`blogs/y${y}.json`).then(d=>{ YEARS[y]=d; });
+  await YEAR_PROM[y];
 }
 const SKEY="sakamichia-blog-state-v1";
 function saveState(){
@@ -142,7 +145,7 @@ async function init(){
   }));
   document.getElementById("viewArticles").addEventListener("click",()=>setView("articles"));
   // 「写真」ボタンに触れた時点で写真データを先読みし、切り替えを速くする
-  const prefetchImgs=()=>{ if(INDEX&&INDEX.years) Object.keys(INDEX.years).forEach(y=>ensureImgs(y)); };
+  const prefetchImgs=()=>{ prefetchToken++; if(INDEX&&INDEX.years) loadYearsOrdered(yearPriorityOrder(poolYears()), null); };
   document.getElementById("viewPhotos").addEventListener("pointerenter",prefetchImgs);
   document.getElementById("viewPhotos").addEventListener("focus",prefetchImgs);
   document.getElementById("viewPhotos").addEventListener("click",()=>setView("photos"));
@@ -338,7 +341,45 @@ function buildMemberOptions(){
   sel.innerHTML=html;
   sel.value=[...sel.options].some(o=>o.value===prev)?prev:"";
 }
+/* ===== ビュー切り替え時のDOM保持 =====
+   記事一覧⇔写真一覧の切り替えでは、作ったDOMをフラグメントへ退避し、
+   スクロール位置と一緒に復元する。条件（stateKey）が同じ間は再構築も
+   再fetchもしない。写真側は全データがそろった完成状態のときだけ復元する。 */
+let listOwner=null;
+const viewLiveKey={articles:"",photos:""};
+const viewStash={articles:null,photos:null};
+let wallCompleteKey="";
+function stashCurrentView(){
+  if(!listOwner) return;
+  const list=document.getElementById("list");
+  const frag=document.createDocumentFragment();
+  while(list.firstChild) frag.appendChild(list.firstChild);
+  viewStash[listOwner]={key:stateKey(), frag, scrollY:window.scrollY||0,
+    complete: listOwner==="photos" ? (wallCompleteKey===wallKey()) : true};
+  listOwner=null;
+}
+function tryRestoreView(view){
+  const st=viewStash[view];
+  if(!st) return false;
+  viewStash[view]=null;
+  if(st.key!==stateKey()||!st.complete) return false;
+  const list=document.getElementById("list");
+  list.innerHTML="";
+  list.appendChild(st.frag);
+  listOwner=view; viewLiveKey[view]=st.key;
+  if(view==="photos"){
+    WALLVIEW=wallView(); wallDirty=false;
+    document.getElementById("count").textContent=wallCountText();
+    probeWallStamps();
+  } else {
+    document.getElementById("count").textContent=`${ROWS.length}件の記事情報`;
+  }
+  const y=st.scrollY;
+  requestAnimationFrame(()=>window.scrollTo(0,y));
+  return true;
+}
 function setView(v){
+  if(v!==VIEW) stashCurrentView();
   VIEW=v; saveState();
   document.getElementById("viewArticles").classList.toggle("on", v==="articles");
   document.getElementById("viewPhotos").classList.toggle("on", v==="photos");
@@ -427,6 +468,7 @@ function kickBodySearch(){
   const q=bqValue();
   const note=document.getElementById("bqNote");
   if(q.length<2){
+    if(BODYSET||bodyPending) bodyVersion++;
     BODYSET=null; bodyPending=false; bodyQuery=q;
     if(note) note.textContent= q.length===1
       ? "本文キーワードは2文字以上で入力してください。"
@@ -438,10 +480,10 @@ function kickBodySearch(){
   if(note) note.textContent="本文のある記事のみ対象です。タイトル検索とは別に、本文の中身で絞り込めます（2文字以上）。";
   resolveBodySet(q).then(set=>{
     if(bodyQuery!==q) return; // 解決中にクエリが変わっていたら結果を捨てる
-    BODYSET=set; bodyPending=false; render();
+    BODYSET=set; bodyPending=false; bodyVersion++; render();
   }).catch(()=>{
     if(bodyQuery!==q) return;
-    BODYSET=new Set(); bodyPending=false;
+    BODYSET=new Set(); bodyPending=false; bodyVersion++;
     if(note) note.textContent="本文の索引を読み込めませんでした。";
     render();
   });
@@ -494,6 +536,31 @@ function filtered(){
   else if(sv==="photos") arr.sort((a,b)=>photoN(b)-photoN(a)||dtVal(b).localeCompare(dtVal(a)));
   else arr.sort((a,b)=>dtVal(b).localeCompare(dtVal(a)));
   return arr;
+}
+/* ===== 絞り込み状態のキーと結果キャッシュ =====
+   render のたびに全記事の絞り込みや全写真の配列構築をやり直すと、ビュー
+   切り替えのような無変更の再描画でも重い処理が走る。入力条件と読み込み
+   済みデータ（年別ファイルの有無）の組をキーにして結果を再利用し、キー
+   が変わったときだけ再計算する。 */
+let BYID=new Map();
+let bodyVersion=0;
+function inputSig(){
+  return [document.getElementById("q").value,
+    document.getElementById("member").value,
+    [...GSEL].sort().join(","), [...GEN_SEL].sort().join(","),
+    MEDIA, yearSel||"", document.getElementById("sort").value,
+    dateVal("from"), dateVal("to"), bodyQuery, bodyVersion, bodyPending?"P":"", apage, ppage].join("|");
+}
+function stateKey(){ return inputSig()+"#Y"+poolYears().map(y=>YEARS[y]?"1":"0").join(""); }
+function wallKey(){ return stateKey()+"#I"+poolYears().map(y=>IMGS[y]?"1":"0").join(""); }
+const rowsCache={key:"",rows:null};
+function currentRows(){
+  const key=stateKey();
+  if(rowsCache.key===key&&rowsCache.rows) return rowsCache.rows;
+  const rows=filtered();
+  rowsCache.key=key; rowsCache.rows=rows;
+  BYID=new Map(rows.map(b=>[b.id,b]));
+  return rows;
 }
 const LOGOS={"乃木坂46":"nogi","櫻坂46":"sakura","欅坂46":"keyaki","日向坂46":"hinata","けやき坂46":"hiragana"};
 // タイトル・本文のフォントを各グループ公式ブログに合わせるためのクラス。
@@ -554,11 +621,15 @@ function scrollToList(){
 function renderArticles(){
   kickBodySearch();
   if(bodyPending){
+    listOwner=null;
     document.getElementById("count").textContent="本文を検索しています…";
     document.getElementById("list").innerHTML=`<div class="empty">本文を検索しています…</div>`;
     return;
   }
-  ROWS=filtered();
+  ROWS=currentRows();
+  // 同じ条件で表示中のDOM・退避済みDOMがあれば作り直さない（ビュー切り替え対策）
+  if(listOwner==="articles"&&viewLiveKey.articles===stateKey()){ scheduleImgPrefetch(); return; }
+  if(tryRestoreView("articles")){ scheduleImgPrefetch(); return; }
   document.getElementById("count").textContent=`${ROWS.length}件の記事情報`;
   const pages=Math.max(1, Math.ceil(ROWS.length/PAGE));
   if(apage>pages) apage=pages;
@@ -567,19 +638,49 @@ function renderArticles(){
     : `<div class="empty">条件に合う記事がありません。</div>`;
   bindOpen(list);
   bindPager(list, apage, pages, p=>{ apage=p; renderArticles(); scrollToList(); saveState(); });
+  listOwner="articles"; viewLiveKey.articles=stateKey();
   attachSnippets();
+  scheduleImgPrefetch();
+}
+// キャプション・ラベルは記事データから都度引く（ウォール項目自体は
+// URL・記事id・スタンプ判定だけの軽量な形にして、全件分の文字列を持たない）
+function wallCap(p){
+  const b=BYID.get(p.id); if(!b) return "";
+  return `${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}`;
+}
+function wallLabel(p){
+  const b=BYID.get(p.id); if(!b) return "";
+  return `${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`;
 }
 function pcellHTML(p,i){
-  return `<figure class="pcell" data-wi="${i}"><img loading="lazy" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(p.cap||p.label)}</figcaption></figure>`;
+  return `<figure class="pcell" data-wi="${i}"><img loading="lazy" decoding="async" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(wallCap(p))}</figcaption></figure>`;
 }
 // ウォールの実効リスト：スタンプと確定したものを除いたもの。件数表示・
 // ページ分割・タイル描画・ライトボックスはすべてこのリストを基準にする
 // （除去前の全件でページ計算すると、総数が水増しされ後ろのページが空く）。
 let WALLVIEW=[];
 let wallProbing=false;
+let wallDirty=true;
+let wallLoadingUI=false;
+const wallCache={key:""};
 function wallView(){ return WALL.filter(p=>!p.stamp); }
 function wallCountText(){
-  return `${ROWS.length}件の記事情報（写真${wallView().length}枚${wallProbing?"・集計中":""}）`;
+  // 読み込み中は途中経過の写真件数を出さない（件数のチラつき防止）
+  if(wallLoadingUI) return `${ROWS.length}件の記事情報（写真を読み込んでいます…）`;
+  return `${ROWS.length}件の記事情報（写真${WALLVIEW.length}枚${wallProbing?"・集計中":""}）`;
+}
+// ライトボックス用の全件配列はクリックのたびに作らず、ウォールの版が
+// 変わるまで使い回す
+let stampVersion=0;
+const wallLbCache={key:"",urls:null,metas:null};
+function wallLbArrays(){
+  const key=wallCache.key+"|"+stampVersion+"|"+WALLVIEW.length;
+  if(wallLbCache.key!==key){
+    wallLbCache.key=key;
+    wallLbCache.urls=WALLVIEW.map(p=>p.u);
+    wallLbCache.metas=WALLVIEW.map(p=>({id:p.id, label:wallLabel(p)}));
+  }
+  return wallLbCache;
 }
 function bindWall(scope){
   scope.querySelectorAll("[data-wi]").forEach(el=>{
@@ -590,7 +691,8 @@ function bindWall(scope){
     el.addEventListener("click",()=>{
       const idx=WALLVIEW.indexOf(entry);
       if(idx<0) return;
-      openLightbox(WALLVIEW.map(p=>p.u), idx, WALLVIEW.map(p=>({id:p.id, label:p.label})));
+      const lb=wallLbArrays();
+      openLightbox(lb.urls, idx, lb.metas);
     });
   });
 }
@@ -611,7 +713,7 @@ function probeWallStamps(){
   const urls=[...new Set(WALL.map(p=>p.u))].filter(u=>!wallProbeTried.has(u)&&!stampMem().has(u));
   if(!urls.length){ wallProbing=false; return; }
   wallPumpRunning=true; wallProbing=true;
-  document.getElementById("count").textContent=wallCountText();
+  if(VIEW==="photos") scheduleWallRedraw();
   let i=0, active=0;
   const finish=()=>{
     wallPumpRunning=false; wallProbing=false;
@@ -625,7 +727,7 @@ function probeWallStamps(){
         if(isStampDims(d)){
           let changed=false;
           for(const p of WALL) if(p.u===u&&!p.stamp){ p.stamp=true; changed=true; }
-          if(changed&&VIEW==="photos") scheduleWallRedraw();
+          if(changed){ wallDirty=true; stampVersion++; if(VIEW==="photos") scheduleWallRedraw(); }
         }
         if(i>=urls.length&&active===0) finish(); else pump();
       });
@@ -641,56 +743,143 @@ function buildWall(){
     if(!IMGS[yi]) continue; // 未取得の年は丸ごと飛ばし、そろった分だけで先に描く
     const imgs=IMGS[yi][b.id];
     const photos=(imgs&&imgs.length)?imgs:(b.thumb?[b.thumb]:[]);
-    photos.forEach(u=>WALL.push({u, id:b.id, stamp:stampMem().get(u)===true, cap:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${b.date.slice(5).replace("-","/")}`, label:`${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`}));
+    photos.forEach(u=>WALL.push({u, id:b.id, stamp:stampMem().get(u)===true}));
   }
+  wallDirty=true;
 }
+function wallPagerGo(p){ ppage=p; renderPhotos(); scrollToList(); saveState(); }
 function drawWall(){
-  WALLVIEW=wallView();
+  const key=wallKey();
+  if(wallCache.key!==key){ buildWall(); wallCache.key=key; }
+  if(wallDirty){ WALLVIEW=wallView(); wallDirty=false; }
   document.getElementById("count").textContent=wallCountText();
   const pages=Math.max(1, Math.ceil(WALLVIEW.length/WPHOTO));
   if(ppage>pages) ppage=pages;
   const start=(ppage-1)*WPHOTO;
   const list=document.getElementById("list");
-  list.innerHTML= WALLVIEW.length ? `<div class="pgrid">${WALLVIEW.slice(start, start+WPHOTO).map((p,i)=>pcellHTML(p,start+i)).join("")}</div>${pagerHTML(pages, ppage)}`
+  const slice=WALLVIEW.slice(start, start+WPHOTO);
+  const sk=key+"|"+ppage+"|"+slice.length+"|"+(slice.length?slice[0].u+"|"+slice[slice.length-1].u:"");
+  const grid=list.querySelector(".pgrid");
+  if(grid&&grid.dataset.sk===sk&&listOwner==="photos"){
+    // 表示中ページの顔ぶれが同じなら、グリッドは作り直さず件数とページャーだけ合わせる
+    const tmp=document.createElement("div"); tmp.innerHTML=pagerHTML(pages, ppage);
+    const newPg=tmp.firstElementChild, oldPg=list.querySelector(".pager");
+    if(oldPg&&newPg) oldPg.replaceWith(newPg);
+    else if(!oldPg&&newPg) list.appendChild(newPg);
+    else if(oldPg&&!newPg) oldPg.remove();
+    if(newPg) bindPager(list, ppage, pages, wallPagerGo);
+    if(!wallLoadingUI) probeWallStamps();
+    return;
+  }
+  list.innerHTML= WALLVIEW.length ? `<div class="pgrid" data-sk="${esc(sk)}">${slice.map((p,i)=>pcellHTML(p,start+i)).join("")}</div>${pagerHTML(pages, ppage)}`
     : `<div class="empty">写真のある記事がありません。</div>`;
   bindWall(list);
-  bindPager(list, ppage, pages, p=>{ ppage=p; renderPhotos(); scrollToList(); saveState(); });
-  probeWallStamps();
+  bindPager(list, ppage, pages, wallPagerGo);
+  if(!wallLoadingUI) probeWallStamps();
 }
-// 写真データは年別ファイル合計25MBあり、全年そろうまで待つと切り替えが
-// 重かった。年別ファイルを並行取得し、現在のページが埋まった時点で先に
-// 描く（残りは裏で読み込み、そろったら最終描画する）。
+// 写真データは年別ファイル合計25MB超あり、全年そろうまで待つと切り替えが
+// 重かった。現在のページを埋めるのに必要な年から優先して読み込み、ページ
+// の顔ぶれが確定した時点で先に描く（残りは裏で読み込み、そろったら最終
+// 描画する）。途中経過の写真件数は出さず、件数のチラつきを避ける。
+function yearPriorityOrder(years){
+  const inPool=new Set(years), seen=[];
+  for(const b of (rowsCache.rows||[])){
+    const y=b.date.slice(0,4);
+    if(inPool.has(y)&&!seen.includes(y)) seen.push(y);
+  }
+  for(const y of years) if(!seen.includes(y)) seen.push(y);
+  return seen;
+}
+function loadYearsOrdered(years, onYear){
+  const queue=years.filter(y=>!IMGS[y]);
+  if(!queue.length) return Promise.resolve();
+  return new Promise(resolve=>{
+    let active=0;
+    const pump=()=>{
+      while(active<4&&queue.length){
+        const y=queue.shift(); active++;
+        ensureImgs(y).then(()=>{ active--; if(onYear) onYear(y); if(!queue.length&&active===0) resolve(); else pump(); });
+      }
+    };
+    pump();
+  });
+}
+// 現在のページの範囲に入る記事の年がすべて読み込み済みか（未読込の年は
+// 写真数の上限で見積もる）。ページの顔ぶれが確定したかの判定
+function wallPageReady(){
+  const need=ppage*WPHOTO;
+  let acc=0;
+  for(const b of ROWS){
+    const yi=b.date.slice(0,4);
+    if(IMGS[yi]){
+      const im=IMGS[yi][b.id];
+      acc+=(im&&im.length)?im.length:(b.thumb?1:0);
+    } else {
+      acc+=photoN(b)||(b.thumb?1:0);
+      if(acc>=need) return false; // ページ範囲内に未読込の年がある
+    }
+    if(acc>=need) return true;
+  }
+  return poolYears().every(y=>IMGS[y]);
+}
+/* 写真データの先読み：記事一覧を見ている間に、現在の絞り込みで必要になる
+   年から順にアイドル時間で読み込んでおき、写真一覧への切り替えを即時にする */
+let prefetchToken=0;
+function scheduleImgPrefetch(){
+  if(!INDEX||!INDEX.years) return;
+  if(poolYears().every(y=>IMGS[y])) return;
+  const token=++prefetchToken;
+  const run=()=>{ if(token===prefetchToken) loadYearsOrdered(yearPriorityOrder(poolYears()), null); };
+  if(window.requestIdleCallback) requestIdleCallback(run,{timeout:2500});
+  else setTimeout(run,1200);
+}
+let wallLoadingSig="";
 async function renderPhotos(){
   kickBodySearch();
   if(bodyPending){
-    wallToken++; // 進行中の古い描画を無効化する
+    wallToken++; wallLoadingSig=""; listOwner=null; // 進行中の古い描画を無効化する
     document.getElementById("count").textContent="本文を検索しています…";
     document.getElementById("list").innerHTML=`<div class="empty">本文を検索しています…</div>`;
     return;
   }
-  const token=++wallToken;
-  ROWS=filtered();
+  ROWS=currentRows();
+  // 同じ条件で完成したウォールが表示中なら何もしない
+  if(listOwner==="photos"&&viewLiveKey.photos===stateKey()&&wallCompleteKey===wallKey()) return;
+  if(tryRestoreView("photos")) return;
+  const sig=stateKey();
+  if(wallLoadingSig===sig) return; // 同じ条件の読み込みが進行中
+  const token=++wallToken; wallLoadingSig=sig;
   const years=poolYears();
-  const allReady=years.every(y=>IMGS[y]);
-  if(!allReady) document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真を読み込んでいます…）`;
-  let shown=false;
-  const step=(final)=>{
+  const finish=()=>{
     if(token!==wallToken||VIEW!=="photos") return;
-    buildWall();
-    if(final||WALL.length>=ppage*WPHOTO){ drawWall(); shown=true; }
+    wallLoadingSig=""; wallLoadingUI=false;
+    drawWall();
+    listOwner="photos"; viewLiveKey.photos=stateKey(); wallCompleteKey=wallKey();
   };
-  if(allReady){ step(true); return; }
-  let done=0;
-  await Promise.all(years.map(y=>ensureImgs(y).then(()=>{ done++; step(done>=years.length); })));
-  if(token===wallToken&&VIEW==="photos"&&!shown) step(true);
+  if(years.every(y=>IMGS[y])){ finish(); return; }
+  wallLoadingUI=true;
+  document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真を読み込んでいます…）`;
+  let lastDraw=0;
+  await loadYearsOrdered(yearPriorityOrder(years), ()=>{
+    if(token!==wallToken||VIEW!=="photos") return;
+    const now=Date.now();
+    if(now-lastDraw>=250&&wallPageReady()){ lastDraw=now; drawWall(); }
+  });
+  finish();
 }
 function bindOpen(scope){
   scope.querySelectorAll("[data-open]").forEach(el=>el.addEventListener("click",()=>openBlog(el.dataset.open)));
 }
 async function ensureImgs(year){
   if(IMGS[year]) return;
-  try{ const r=await fetch(BASE+`data/blog-imgs/y${year}.json`); IMGS[year]= r.ok ? await r.json() : {}; }
-  catch(e){ IMGS[year]={}; }
+  // 取得中のリクエストを共有し、同じ年ファイルを二重に取りに行かない
+  if(!IMG_PROM[year]){
+    IMG_PROM[year]=(async()=>{
+      try{ const r=await fetch(BASE+`data/blog-imgs/y${year}.json`); IMGS[year]= r.ok ? await r.json() : {}; }
+      catch(e){ IMGS[year]={}; }
+    })();
+  }
+  await IMG_PROM[year];
 }
 let LB={list:[], idx:0, metas:null};
 let lbSettling=false;
