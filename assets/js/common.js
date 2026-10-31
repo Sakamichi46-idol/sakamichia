@@ -87,8 +87,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 // 推しフローティングボタン：推し登録（localStorage "sakamichia-favs"）があるときだけ、
 // スマホ右下に推しの丸い写真を出す（日向坂公式のポカアイコン寄り：大きめ・枠なし・影なし）。
 // ページ表示の約1秒後に下からぴょこっと弾んで現れ、写真タップでメニュー
-// （最新ブログ／メンバー詳細／次の推しへ）を開く。45秒ローテーション・×でセッション内
-// 非表示は従来どおり。表示範囲（768px以下だけ）・登場アニメ・ボトムナビとの重なり・
+// （最新ブログ／メンバー詳細／次の推しへ／非表示にする）を開く。非表示は誤タップ
+// 防止のためメニュー内からのみ行い、セッション内は再表示しない。45秒ローテーションは
+// 従来どおり。表示範囲（768px以下だけ）・登場アニメ・ボトムナビとの重なり・
 // ドラフト指名バー表示中の退避は style.css 側で制御する。
 document.addEventListener("DOMContentLoaded",()=>{
   let favs=[];
@@ -144,9 +145,9 @@ document.addEventListener("DOMContentLoaded",()=>{
       +`<a class="favfloat-item" data-act="blog" href="">最新ブログ</a>`
       +`<a class="favfloat-item" data-act="member" href="">メンバー詳細</a>`
       +(cands.length>=2?`<button type="button" class="favfloat-item" data-act="next">次の推しへ</button>`:"")
+      +`<button type="button" class="favfloat-item" data-act="hide">非表示にする</button>`
       +`</div>`
-      +`<button type="button" class="favfloat-main" aria-label="" aria-haspopup="true" aria-expanded="false"><img src="" alt=""></button>`
-      +`<button type="button" class="favfloat-close" aria-label="推しボタンを閉じる">×</button>`;
+      +`<button type="button" class="favfloat-main" aria-label="" aria-haspopup="true" aria-expanded="false"><img src="" alt=""></button>`;
     const mainBtn=wrap.querySelector(".favfloat-main");
     const img=wrap.querySelector("img");
     const blogItem=wrap.querySelector('[data-act="blog"]');
@@ -214,7 +215,8 @@ document.addEventListener("DOMContentLoaded",()=>{
     document.addEventListener("visibilitychange",()=>{
       if(document.hidden) stopTimer(); else startTimer();
     });
-    wrap.querySelector(".favfloat-close").addEventListener("click",()=>{
+    // 「非表示にする」：要素を消してセッション内は再表示しない（タイマー類も全て止める）
+    wrap.querySelector('[data-act="hide"]').addEventListener("click",()=>{
       closed=true;
       stopTimer();
       if(fadeTimer){ clearTimeout(fadeTimer); fadeTimer=null; }
