@@ -170,43 +170,50 @@
    "55401": {
     "name": "岡本姫奈",
     "next_page": 15,
-    "done": false,
-    "empty_count": 0
+    "done": true,
+    "empty_count": 2
    },
    "63101": {
     "name": "愛宕心響",
-    "next_page": 1,
-    "done": false
+    "next_page": 5,
+    "done": true,
+    "empty_count": 2
    },
    "63102": {
     "name": "大越ひなの",
-    "next_page": 1,
-    "done": false
+    "next_page": 6,
+    "done": true,
+    "empty_count": 2
    },
    "63103": {
     "name": "小津玲奈",
-    "next_page": 1,
-    "done": false
+    "next_page": 4,
+    "done": true,
+    "empty_count": 2
    },
    "63104": {
     "name": "海邉朱莉",
-    "next_page": 1,
-    "done": false
+    "next_page": 5,
+    "done": true,
+    "empty_count": 2
    },
    "63105": {
     "name": "川端晃菜",
-    "next_page": 1,
-    "done": false
+    "next_page": 4,
+    "done": true,
+    "empty_count": 2
    },
    "63106": {
     "name": "鈴木佑捺",
-    "next_page": 1,
-    "done": false
+    "next_page": 7,
+    "done": true,
+    "empty_count": 2
    },
    "63107": {
     "name": "瀬戸口心月",
-    "next_page": 1,
-    "done": false
+    "next_page": 2,
+    "done": false,
+    "empty_count": 0
    },
    "63108": {
     "name": "長嶋凛桜",
