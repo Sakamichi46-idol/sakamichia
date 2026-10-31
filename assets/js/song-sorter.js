@@ -87,11 +87,18 @@ function renderStart(){
     <div class="tabs sort-tabs" id="songSortTypes"></div>
     <p id="songSortInfo" style="margin:12px 0 4px"></p>
     <p id="songSortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
-    <p style="margin:10px 0 0"><button type="button" id="songSortStart">スタート</button></p>
+    <p style="margin:10px 0 0"><button type="button" id="songSortStart">スタート</button> <button type="button" class="sub" id="songSortReset">条件をリセット</button></p>
     <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46の曲、日向坂46にはけやき坂46の曲も含まれます。種別は選んだグループにあるものだけが表示されます。全曲（${SONGS.length}曲）だと対戦数が非常に多くなるため、「表題曲のみ」やグループ別がおすすめです。</p>
   </div>`;
   refreshSelection();
   document.getElementById("songSortStart").addEventListener("click", startBattle);
+  document.getElementById("songSortReset").addEventListener("click", resetScope);
+}
+// 条件を初期状態（全グループ・全種別）に戻す
+function resetScope(){
+  scope.groups = new Set(LINEAGES);
+  scope.types = new Set(TYPES);
+  refreshSelection();
 }
 // 選択チップ（グループ・種別）を現在の scope で描き直し、件数表示を更新する
 function refreshSelection(){

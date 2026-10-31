@@ -205,6 +205,21 @@ async function init(){
   }));
   document.querySelectorAll(".mchip").forEach(ch=>ch.addEventListener("click",()=>{ MEDIA=ch.dataset.media; syncMediaChips(); resetPages(); render(); syncAdvBtn(); saveState(); }));
   document.querySelectorAll("[data-preset]").forEach(ch=>ch.addEventListener("click",()=>applyPreset(ch.dataset.preset)));
+  // 条件をリセット：絞り込み・詳細検索の条件をすべて初期状態に戻し、保存状態も上書きする
+  document.getElementById("resetAll").addEventListener("click",()=>{
+    GSEL.clear(); syncGroupChips(); buildMemberOptions();
+    document.getElementById("member").value="";
+    document.getElementById("q").value="";
+    document.getElementById("bq").value="";
+    document.getElementById("from").value="";
+    document.getElementById("to").value="";
+    document.getElementById("sort").value="new";
+    document.getElementById("gen").value="";
+    MEDIA=""; syncMediaChips();
+    yearSel=null; renderYearChips();
+    kickBodySearch();
+    resetPages(); render(); syncAdvBtn(); saveState();
+  });
   syncMediaChips();
   const adv=document.getElementById("advanced"), tog=document.getElementById("advToggle");
   tog.addEventListener("click",()=>{

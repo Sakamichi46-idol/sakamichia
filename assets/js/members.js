@@ -178,6 +178,16 @@ async function init() {
   document.getElementById("mbShowGrad").addEventListener("change", e => { fShowGrad = e.target.checked; render(); });
   document.getElementById("mbGen").addEventListener("input", e => { fGen = e.target.value; render(); });
   document.getElementById("mbSort").addEventListener("input", e => { fSort = e.target.value; render(); });
+  // 条件をリセット：グループ・期・卒業生表示・検索・並び替えをすべて初期状態に戻す
+  document.getElementById("mbReset").addEventListener("click", () => {
+    fGroup = "all"; fGen = "all"; fShowGrad = false; fQuery = ""; fSort = "group";
+    document.getElementById("mbQuery").value = "";
+    document.getElementById("mbShowGrad").checked = false;
+    document.getElementById("mbSort").value = "group";
+    chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.g === "all"));
+    syncGenOptions();
+    render();
+  });
   // ?member= で直接詳細を開く
   const q = new URLSearchParams(location.search).get("member");
   render();

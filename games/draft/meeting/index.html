@@ -60,7 +60,7 @@
 
 <div class="df-panel">
 <div class="df-head"><h3>指名候補</h3><span id="dmCandCount" class="df-round"></span></div>
-<div class="fm-filters"><input type="search" id="dmCandSearch" placeholder="名前・ふりがなで検索" aria-label="候補を検索"><select id="dmCandGen" aria-label="期別で絞り込む"><option value="all">すべての期</option></select></div>
+<div class="fm-filters"><input type="search" id="dmCandSearch" placeholder="名前・ふりがなで検索" aria-label="候補を検索"><select id="dmCandGen" aria-label="期別で絞り込む"><option value="all">すべての期</option></select><button type="button" class="btn" id="dmCandReset">条件をリセット</button></div>
 <div class="ychips" id="dmCandGroups" style="margin:4px 0 10px"></div>
 <div id="dmCands" class="fm-cands"></div>
 </div>
@@ -99,7 +99,7 @@
 </div>
 <div class="df-panel">
 <div class="df-head"><h3>指名候補</h3><span id="dmNetCandCount" class="df-round"></span></div>
-<div class="fm-filters"><input type="search" id="dmNetCandSearch" placeholder="名前・読みで検索" aria-label="候補を検索"><select id="dmNetCandGen" aria-label="期で絞り込む"><option value="all">すべての期</option></select></div>
+<div class="fm-filters"><input type="search" id="dmNetCandSearch" placeholder="名前・読みで検索" aria-label="候補を検索"><select id="dmNetCandGen" aria-label="期で絞り込む"><option value="all">すべての期</option></select><button type="button" class="btn" id="dmNetCandReset">条件をリセット</button></div>
 <div class="ychips" id="dmNetCandGroups" style="margin:4px 0 10px"></div>
 <div id="dmNetCands" class="fm-grid"></div>
 </div>
@@ -132,7 +132,7 @@
 
 <dialog id="dmPickDlg"><div class="dlg-body">
 <p style="margin:0 0 8px"><b id="dmPickTitle">配置するメンバーを選ぶ</b></p>
-<div class="fm-filters"><input type="search" id="dmPickSearch" placeholder="名前・読みで検索" aria-label="候補を検索"><select id="dmPickGen" aria-label="期で絞り込む"><option value="all">すべての期</option></select></div>
+<div class="fm-filters"><input type="search" id="dmPickSearch" placeholder="名前・読みで検索" aria-label="候補を検索"><select id="dmPickGen" aria-label="期で絞り込む"><option value="all">すべての期</option></select><button type="button" class="btn" id="dmPickReset">条件をリセット</button></div>
 <div class="ychips" id="dmPickGroups" style="margin:4px 0 10px"></div>
 <div id="dmPickList" class="fm-grid"></div>
 <div class="dlg-actions"><button type="button" class="btn" id="dmPickRemove">ベンチに戻す（外す）</button><button type="button" class="btn" id="dmPickClose">閉じる</button></div>

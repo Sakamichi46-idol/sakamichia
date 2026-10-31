@@ -16,8 +16,12 @@ function syncTabs(){
     x.classList.toggle("on", on);
     x.setAttribute("aria-pressed", on ? "true" : "false");
   });
+  // 「条件をリセット」はチップだけでなく検索・並び替えも含めて初期状態と異なる間だけ出す
   const clr=document.getElementById("clearSel");
-  if(clr) clr.hidden = !(SEL.size||YSEL.size||TSEL.size);
+  if(clr){
+    const qEl=document.getElementById("q"), sEl=document.getElementById("sort");
+    clr.hidden = !(SEL.size||YSEL.size||TSEL.size||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
+  }
 }
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
 async function init(){
@@ -63,13 +67,16 @@ async function init(){
     syncTabs();
     render();
   }));
+  // 条件をリセット：チップ（グループ・年・曲種）・検索・並び替えをすべて初期状態に戻す
   document.getElementById("clearSel").addEventListener("click",()=>{
     SEL.clear(); YSEL.clear(); TSEL.clear();
     document.body.dataset.group="";
+    document.getElementById("q").value="";
+    document.getElementById("sort").value="old";
     syncTabs();
     render();
   });
-  ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{ syncTabs(); render(); }));
   // ディープリンク（?q=<検索語>）：トップのサジェストなどから曲名で絞り込んで開く
   const qParam=new URLSearchParams(location.search).get("q");
   if(qParam) document.getElementById("q").value=qParam;

@@ -184,11 +184,17 @@ async function init(){
     advToggle.setAttribute("aria-expanded", String(open));
     render();
   });
-  document.getElementById("advClear").addEventListener("click",()=>{
+  // 条件をリセット：メインの絞り込み（キーワード・グループ・年）も含めてすべて初期状態に戻す
+  // （参戦記録そのものは消さない。「参戦した公演だけ」の絞り込みだけを解除する）
+  document.getElementById("resetAll").addEventListener("click",()=>{
     KSEL.clear();
     kt.querySelectorAll(".ychip.on").forEach(b=>b.classList.remove("on"));
+    GSEL.clear();
+    syncGroupChips();
     attendOnly=false;
     if(ao){ ao.classList.remove("on"); ao.setAttribute("aria-pressed","false"); }
+    document.getElementById("q").value="";
+    document.getElementById("year").value="";
     document.getElementById("sort").value="auto";
     regionSel.value="";
     document.getElementById("member").value="";

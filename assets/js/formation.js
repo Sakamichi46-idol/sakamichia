@@ -248,6 +248,15 @@ async function init() {
   document.getElementById("fmQuery").addEventListener("input", e => { fQuery = e.target.value.trim(); renderCandidates(); });
   document.getElementById("fmStatus").addEventListener("input", e => { fStatus = e.target.value; renderCandidates(); });
   document.getElementById("fmGen").addEventListener("input", e => { fGen = e.target.value; renderCandidates(); });
+  // 条件をリセット：候補の絞り込み（グループ・検索・活動状況・期）だけを初期状態に戻す（配置は変えない）
+  document.getElementById("fmFilterReset").addEventListener("click", () => {
+    fGroup = "all"; fGen = "all"; fStatus = "all"; fQuery = "";
+    document.getElementById("fmQuery").value = "";
+    document.getElementById("fmStatus").value = "all";
+    chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.g === "all"));
+    syncGenOptions();
+    renderCandidates();
+  });
   document.getElementById("fmCols").addEventListener("input", e => {
     const want = +e.target.value, next = [...state.rows];
     while (next.length < want) next.push(6);

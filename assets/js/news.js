@@ -43,6 +43,14 @@ async function init() {
   }));
   document.getElementById("nwQuery").addEventListener("input", e => { nwQuery = e.target.value.trim(); render(); });
   document.getElementById("nwCat").addEventListener("input", e => { nwCat = e.target.value; render(); });
+  // 条件をリセット：グループ・カテゴリ・キーワードをすべて初期状態に戻す
+  document.getElementById("nwReset").addEventListener("click", () => {
+    nwGroup = "all"; nwCat = "all"; nwQuery = "";
+    document.getElementById("nwQuery").value = "";
+    chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.g === "all"));
+    syncCats();
+    render();
+  });
   syncCats();
   render();
 }

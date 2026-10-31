@@ -336,6 +336,8 @@ async function init() {
   $("smReset2").addEventListener("click", reset);
   $("smCandSearch").addEventListener("input", e => { candQuery = e.target.value; renderCands(); });
   $("smCandType").addEventListener("input", e => { candType = e.target.value; renderCands(); });
+  // 条件をリセット：候補の絞り込み（グループ・種別・検索）を初期状態に戻す
+  $("smCandReset").addEventListener("click", () => { candGroup = "all"; candType = "all"; candQuery = ""; $("smCandSearch").value = ""; renderCands(); });
   $("smEncore").addEventListener("input", e => { enc[finishTab] = +e.target.value; save(); renderFinish(); });
   $("smTitle").addEventListener("input", e => { titles[finishTab] = e.target.value; save(); });
   $("smLotNext").addEventListener("click", () => {
@@ -702,6 +704,8 @@ function netInit() {
   $("smNetUnpick").addEventListener("click", () => netSend({ t: "unpick" }));
   $("smNetCandSearch").addEventListener("input", () => netRenderCands());
   $("smNetCandType").addEventListener("input", e => { netCandType = e.target.value; netRenderCands(); });
+  // 条件をリセット：候補の絞り込み（グループ・種別・検索）を初期状態に戻す
+  $("smNetCandReset").addEventListener("click", () => { netCandGroup = "all"; netCandType = "all"; $("smNetCandSearch").value = ""; netRenderCands(); });
   $("smNetEncore").addEventListener("input", e => {
     const cur = netShared(NET.you);
     cur.encAt = e.target.value === "" ? null : +e.target.value;

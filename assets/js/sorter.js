@@ -237,11 +237,21 @@ function renderStart(){
     <div id="sortCustomBox"></div>
     <p id="sortInfo" style="margin:12px 0 4px"></p>
     <p id="sortWarn" style="margin:0 0 8px;color:var(--muted);font-size:13px"></p>
-    <p style="margin:10px 0 0"><button type="button" id="sortStart">スタート</button></p>
+    <p style="margin:10px 0 0"><button type="button" id="sortStart">スタート</button> <button type="button" class="sub" id="sortReset">条件をリセット</button></p>
     <p style="margin:10px 0 0;color:var(--muted);font-size:12.5px">櫻坂46には欅坂46時代のメンバー、日向坂46にはけやき坂46時代のメンバーも含まれます。期を選ばないグループは全期が対象です。乃木坂46の「交換留学生」は松井玲奈、日向坂46の「ポカ」は公式マスコットのポカです。対戦数が多い範囲は時間がかかります。</p>
   </div>`;
   refreshSelection();
   document.getElementById("sortStart").addEventListener("click", startBattle);
+  document.getElementById("sortReset").addEventListener("click", resetScope);
+}
+// 条件を初期状態（全系統・全期・現役のみ、カスタム解除＋保存消去）に戻す
+function resetScope(){
+  scope = {groups: new Set(LINEAGES), grad: false,
+    gens: {"乃木坂46": new Set(), "櫻坂46": new Set(), "日向坂46": new Set()}};
+  customMode = false; customSel = null; customOpen = false; customRestored = false;
+  customView = {lin: "all", q: ""};
+  saveCustom();
+  refreshSelection();
 }
 // 選択チップ（グループ・期・対象）を現在の scope で描き直し、件数表示を更新する
 function refreshSelection(){

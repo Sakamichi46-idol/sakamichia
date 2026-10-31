@@ -434,6 +434,15 @@ function bind() {
   $('msGroup').addEventListener('change', renderCandidates);
   $('msSortMode').addEventListener('change', renderCandidates);
   document.querySelectorAll('input[name="ms-dir"]').forEach(r => r.addEventListener('change', renderCandidates));
+  // 条件をリセット：候補の絞り込み（検索・グループ・並び替え・方向）だけを初期状態に戻す（セットリスト本体は変えない）
+  $('msFilterReset').addEventListener('click', () => {
+    $('msSearch').value = '';
+    $('msGroup').value = 'all';
+    $('msSortMode').value = 'release';
+    const asc = document.querySelector('input[name="ms-dir"][value="asc"]');
+    if (asc) asc.checked = true;
+    renderCandidates();
+  });
   $('msName').addEventListener('input', e => { name = safeText(e.target.value, 90); save(); renderPreview(); });
   $('msNumberMode').addEventListener('change', e => { numberMode = e.target.value; save(); renderEditor(); renderPreview(); });
   for (const id of SHOW) {

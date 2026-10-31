@@ -459,6 +459,8 @@ async function init() {
   $("dmReset2").addEventListener("click", reset);
   $("dmCandSearch").addEventListener("input", e => { candQuery = e.target.value; renderCands(); });
   $("dmCandGen").addEventListener("input", e => { candGen = e.target.value; renderCands(); });
+  // 条件をリセット：候補の絞り込み（グループ・期・検索）を初期状態に戻す
+  $("dmCandReset").addEventListener("click", () => { candGroup = "all"; candGen = "all"; candQuery = ""; $("dmCandSearch").value = ""; renderCands(); });
   $("dmLotNext").addEventListener("click", () => {
     if (NET) return; // オンライン時は netLotStep 側が進める
     lotIdx++;
@@ -861,6 +863,8 @@ function netInit() {
   $("dmNetUnpick").addEventListener("click", () => netSend({ t: "unpick" }));
   $("dmNetCandSearch").addEventListener("input", () => netRenderCands());
   $("dmNetCandGen").addEventListener("input", e => { netCandGen = e.target.value; netRenderCands(); });
+  // 条件をリセット：候補の絞り込み（グループ・期・検索）を初期状態に戻す
+  $("dmNetCandReset").addEventListener("click", () => { netCandGroup = "all"; netCandGen = "all"; $("dmNetCandSearch").value = ""; netRenderCands(); });
   $("dmNetToLobby").addEventListener("click", () => netSend({ t: "backToLobby" }));
   $("dmNetImg").addEventListener("click", async () => {
     imgBlob = await netBuildImage();
@@ -886,5 +890,7 @@ netInit();
 /* 配置ピッカーの配線 */
 $("dmPickSearch").addEventListener("input", renderSlotPicker);
 $("dmPickGen").addEventListener("input", e => { pickGen = e.target.value; renderSlotPicker(); });
+// 条件をリセット：候補の絞り込み（グループ・期・検索）を初期状態に戻す
+$("dmPickReset").addEventListener("click", () => { pickGroup = "all"; pickGen = "all"; $("dmPickSearch").value = ""; renderSlotPicker(); });
 $("dmPickClose").addEventListener("click", () => $("dmPickDlg").close());
 $("dmPickRemove").addEventListener("click", () => { $("dmPickDlg").close(); pickCtx?.onChoose(null); });
