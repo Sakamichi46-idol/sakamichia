@@ -19,7 +19,9 @@ const MAXROWS = 5, MAXPERROW = 12;
 let MEMBERS = [], PHOTOS = {}, BYNAME = {};
 let state = { title: "マイ坂道選抜", rows: [5, 6, 7], showCenter: true, positions: Array(18).fill(null) };
 let selected = null, undoStack = [];
-let fGroup = "all", fGen = "all", fStatus = "all", fQuery = "";
+let fGroup = "all", fStatus = "all", fQuery = "";
+// 期の複数選択プルダウン（値は期番号の文字列の Set、選択同士は OR、空＝すべての期）
+const fGenSet = new Set(); let genMS = null;
 let exportBlob = null;
 
 function total() { return state.rows.reduce((a, b) => a + b, 0); }
@@ -100,7 +102,7 @@ function renderCandidates() {
   const list = MEMBERS.filter(m =>
     !placedSet.has(m.name)
     && (fGroup === "all" || (m.groups || [m.group]).includes(fGroup))
-    && (fGen === "all" || m.gen === +fGen)
+    && (!fGenSet.size || fGenSet.has(String(m.gen)))
     && (fStatus === "all" || (fStatus === "active" ? !m.graduated : !!m.graduated))
     && (!fQuery || m.name.includes(fQuery) || (m.reading || "").includes(fQuery)));
   const order = g => GROUPS.indexOf(g);
@@ -240,17 +242,20 @@ async function init() {
   chips.innerHTML = ["all", ...GROUPS].map(g =>
     `<button type="button" class="ychip${fGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "すべてのグループ" : g}</button>`).join("");
   chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
-    fGroup = b.dataset.g; fGen = "all"; syncGenOptions();
+    fGroup = b.dataset.g; fGenSet.clear(); syncGenOptions();
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
     renderCandidates();
   }));
+  genMS = createMultiSelect(document.getElementById("fmGenMS"), {
+    allLabel: "すべての期", selected: fGenSet, ariaLabel: "期生",
+    options: [], onChange: renderCandidates
+  });
   syncGenOptions();
   document.getElementById("fmQuery").addEventListener("input", e => { fQuery = e.target.value.trim(); renderCandidates(); });
   document.getElementById("fmStatus").addEventListener("input", e => { fStatus = e.target.value; renderCandidates(); });
-  document.getElementById("fmGen").addEventListener("input", e => { fGen = e.target.value; renderCandidates(); });
   // 条件をリセット：候補の絞り込み（グループ・検索・活動状況・期）だけを初期状態に戻す（配置は変えない）
   document.getElementById("fmFilterReset").addEventListener("click", () => {
-    fGroup = "all"; fGen = "all"; fStatus = "all"; fQuery = "";
+    fGroup = "all"; fGenSet.clear(); fStatus = "all"; fQuery = "";
     document.getElementById("fmQuery").value = "";
     document.getElementById("fmStatus").value = "all";
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.g === "all"));
@@ -295,10 +300,8 @@ async function init() {
   render();
 }
 function syncGenOptions() {
+  // 選択肢は表示中グループに実在する期だけにし、無くなった期の選択は自動で外す（MS 側で剪定される）
   const gens = [...new Set(MEMBERS.filter(m => fGroup === "all" || (m.groups || [m.group]).includes(fGroup)).map(m => m.gen).filter(g => g > 0))].sort((a, b) => a - b);
-  const sel = document.getElementById("fmGen");
-  sel.innerHTML = `<option value="all">すべての期</option>` + gens.map(g => `<option value="${g}">${g}期生</option>`).join("");
-  sel.value = gens.includes(+fGen) ? fGen : "all";
-  fGen = sel.value;
+  if (genMS) genMS.setOptions(gens.map(g => ({ value: String(g), label: g + "期生" })));
 }
 init();
