@@ -1,6 +1,8 @@
 // お知らせ：3グループ公式サイトのお知らせを横断表示（data/news.json、tools/fetch_news.py が定期取得）
 const NW_GROUPS = ["乃木坂46", "櫻坂46", "日向坂46"];
-let NW = [], nwGroup = "all", nwCat = "all", nwQuery = "";
+let NW = [], nwGroup = "all", nwQuery = "";
+const NWCATS = new Set();   // カテゴリの複数選択プルダウン（選択同士は OR、空＝すべて）
+let catMS = null;
 const WD = ["日", "月", "火", "水", "木", "金", "土"];
 function nwDateLabel(d) {
   const dt = new Date(d + "T00:00:00+09:00");
@@ -17,18 +19,16 @@ function nwRow(it) {
 function render() {
   const list = NW.filter(it =>
     (nwGroup === "all" || it.g === nwGroup)
-    && (nwCat === "all" || it.c === nwCat)
+    && (!NWCATS.size || NWCATS.has(it.c))
     && (!nwQuery || it.title.includes(nwQuery)));
   document.getElementById("nwCount").textContent = `${list.length}件`;
   document.getElementById("nwList").innerHTML =
     list.map(nwRow).join("") || `<p style="color:var(--muted)">条件に合うお知らせがありません。</p>`;
 }
 function syncCats() {
+  // 選択肢は表示中グループのカテゴリだけにし、無くなったカテゴリの選択は自動で外す（MS 側で剪定される）
   const cats = [...new Set(NW.filter(it => nwGroup === "all" || it.g === nwGroup).map(it => it.c).filter(Boolean))];
-  const sel = document.getElementById("nwCat");
-  sel.innerHTML = `<option value="all">すべてのカテゴリ</option>` + cats.map(c => `<option>${esc(c)}</option>`).join("");
-  if (!cats.includes(nwCat)) nwCat = "all";
-  sel.value = nwCat;
+  if (catMS) catMS.setOptions(cats.map(c => ({ value: c, label: c })));
 }
 async function init() {
   const data = await loadJSON("news.json");
@@ -41,11 +41,14 @@ async function init() {
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
     syncCats(); render();
   }));
+  catMS = createMultiSelect(document.getElementById("nwCatMS"), {
+    allLabel: "すべてのカテゴリ", selected: NWCATS, ariaLabel: "カテゴリ",
+    options: [], onChange: render
+  });
   document.getElementById("nwQuery").addEventListener("input", e => { nwQuery = e.target.value.trim(); render(); });
-  document.getElementById("nwCat").addEventListener("input", e => { nwCat = e.target.value; render(); });
   // 条件をリセット：グループ・カテゴリ・キーワードをすべて初期状態に戻す
   document.getElementById("nwReset").addEventListener("click", () => {
-    nwGroup = "all"; nwCat = "all"; nwQuery = "";
+    nwGroup = "all"; NWCATS.clear(); nwQuery = "";
     document.getElementById("nwQuery").value = "";
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.g === "all"));
     syncCats();
