@@ -1,4 +1,5 @@
 let DATA=[]; let FORMS={}; let MEMB={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set();
+let yearMS=null, typeMS=null;   // 年・曲種の複数選択プルダウン（値は文字列で保持）
 // ディープリンク（?member=<名前>）専用の参加曲絞り込み。参加の根拠は詳細ダイアログの
 // 「参加メンバー／歌唱メンバー」と同じく formations の rows（配置）／vocal（歌唱）とする
 let MFILTER=""; let PARTS=[];
@@ -36,16 +37,8 @@ function syncTabs(){
     x.classList.toggle("on", on);
     x.setAttribute("aria-pressed", on ? "true" : "false");
   });
-  document.querySelectorAll("#yearTabs button").forEach(x=>{
-    const on = x.dataset.y==="" ? YSEL.size===0 : YSEL.has(+x.dataset.y);
-    x.classList.toggle("on", on);
-    x.setAttribute("aria-pressed", on ? "true" : "false");
-  });
-  document.querySelectorAll("#typeTabs button").forEach(x=>{
-    const on = x.dataset.t==="" ? TSEL.size===0 : TSEL.has(x.dataset.t);
-    x.classList.toggle("on", on);
-    x.setAttribute("aria-pressed", on ? "true" : "false");
-  });
+  if(yearMS) yearMS.refresh();
+  if(typeMS) typeMS.refresh();
   // 「条件をリセット」はチップだけでなく検索・並び替えも含めて初期状態と異なる間だけ出す
   const clr=document.getElementById("clearSel");
   if(clr){
@@ -73,31 +66,22 @@ async function init(){
     }
     render();
   }));
+  // 年の複数選択プルダウン（選択同士は OR）
   const years=[...new Set(DATA.map(s=>s.year).filter(Boolean))].sort((a,b)=>b-a);
-  const ybox=document.getElementById("yearTabs");
-  ybox.innerHTML=`<button data-y="" class="on">すべての年</button>`+years.map(y=>`<button data-y="${y}">${y}年</button>`).join("")+`<span class="tabhint">年もタップで複数選択できます</span>`;
-  ybox.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
-    const y=b.dataset.y;
-    if(y==="") YSEL.clear();
-    else if(YSEL.has(+y)) YSEL.delete(+y);
-    else YSEL.add(+y);
-    syncTabs();
-    render();
-  }));
-  // 曲種チップ（データ内の type の実値から作る。複数選択可）
+  yearMS=createMultiSelect(document.getElementById("yearMS"),{
+    allLabel:"すべての年", selected:YSEL, ariaLabel:"年",
+    options:years.map(y=>({value:String(y), label:y+"年"})),
+    onChange:()=>{ syncTabs(); render(); }
+  });
+  // 曲種の複数選択プルダウン（データ内の type の実値から作る。選択同士は OR）
   const typeCounts={};
   DATA.forEach(s=>{ const t=s.type||""; if(t) typeCounts[t]=(typeCounts[t]||0)+1; });
   const types=Object.keys(typeCounts).sort((a,b)=>typeCounts[b]-typeCounts[a]);
-  const tbox=document.getElementById("typeTabs");
-  tbox.innerHTML=`<button data-t="" class="on">すべての曲種</button>`+types.map(t=>`<button data-t="${esc(t)}">${esc(t)}</button>`).join("")+`<span class="tabhint">曲種もタップで複数選択できます</span>`;
-  tbox.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
-    const t=b.dataset.t;
-    if(t==="") TSEL.clear();
-    else if(TSEL.has(t)) TSEL.delete(t);
-    else TSEL.add(t);
-    syncTabs();
-    render();
-  }));
+  typeMS=createMultiSelect(document.getElementById("typeMS"),{
+    allLabel:"すべての曲種", selected:TSEL, ariaLabel:"曲種",
+    options:types.map(t=>({value:t, label:t})),
+    onChange:()=>{ syncTabs(); render(); }
+  });
   // 条件をリセット：チップ（グループ・年・曲種）・検索・並び替えをすべて初期状態に戻す
   document.getElementById("clearSel").addEventListener("click",()=>{
     SEL.clear(); YSEL.clear(); TSEL.clear(); MFILTER="";
@@ -128,7 +112,7 @@ function matchG(s){
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&(TSEL.size===0||TSEL.has(s.type||""))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
