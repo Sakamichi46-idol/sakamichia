@@ -1,5 +1,23 @@
-let DATA=[]; let FORMS={}; let MEMB={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set();
-let yearMS=null, typeMS=null;   // 年・曲種の複数選択プルダウン（値は文字列で保持）
+let DATA=[]; let FORMS={}; let MEMB={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set(); const NSEL=new Set();
+let yearMS=null, typeMS=null, countMS=null;   // 年・曲種・人数の複数選択プルダウン（値は文字列で保持）
+let CBUCKET=[];   // 曲ごとの人数バケット（キー）。参加メンバー不明の曲は ""（人数フィルター時は対象外）
+// 人数の数え方は participantsOf と同じ（rows の配置、無ければ vocal、重複は除く）。
+// バケットは 10人まで人数そのまま、11〜15人／16〜20人は範囲にまとめ、21人以上は1つにする
+// （21人以上は人数ごとの曲数が1〜3曲とばらけるため。実データの分布に基づく）
+function countBucket(n){
+  if(n<=0) return "";
+  if(n<=10) return String(n);
+  if(n<=15) return "11-15";
+  if(n<=20) return "16-20";
+  return "21+";
+}
+function countLabel(key){
+  if(key==="1") return "1人（ソロ）";
+  if(key==="11-15") return "11〜15人";
+  if(key==="16-20") return "16〜20人";
+  if(key==="21+") return "21人以上";
+  return key+"人";
+}
 // ディープリンク（?member=<名前>）専用の参加曲絞り込み。参加の根拠は詳細ダイアログの
 // 「参加メンバー／歌唱メンバー」と同じく formations の rows（配置）／vocal（歌唱）とする
 let MFILTER=""; let PARTS=[];
@@ -30,7 +48,7 @@ function renderSongLive(title){
   box.innerHTML=`<h4 style="margin:16px 0 4px">この曲が披露されたライブ（${e.n}件）</h4>${rows}`
     + (e.n>SHOW_MAX ? `<p style="color:var(--muted);font-size:13px;margin:6px 0 0">新しい順に${SHOW_MAX}件まで表示しています（全${e.n}件）。</p>` : "");
 }
-// グループ・年・曲種チップの選択状態表示と「選択をクリア」ボタンの表示をまとめて同期する
+// グループ・年・曲種・人数の選択状態表示と「条件をリセット」ボタンの表示をまとめて同期する
 function syncTabs(){
   document.querySelectorAll("#groupTabs button").forEach(x=>{
     const on = x.dataset.g==="" ? SEL.size===0 : SEL.has(x.dataset.g);
@@ -39,11 +57,12 @@ function syncTabs(){
   });
   if(yearMS) yearMS.refresh();
   if(typeMS) typeMS.refresh();
+  if(countMS) countMS.refresh();
   // 「条件をリセット」はチップだけでなく検索・並び替えも含めて初期状態と異なる間だけ出す
   const clr=document.getElementById("clearSel");
   if(clr){
     const qEl=document.getElementById("q"), sEl=document.getElementById("sort");
-    clr.hidden = !(SEL.size||YSEL.size||TSEL.size||MFILTER||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
+    clr.hidden = !(SEL.size||YSEL.size||TSEL.size||NSEL.size||MFILTER||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
   }
 }
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
@@ -52,6 +71,7 @@ async function init(){
   [DATA, FORMS, members]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json"), loadJSON("members.json")]);
   MEMB={}; (members||[]).forEach(m=>{ MEMB[m.name]=m; });
   PARTS=DATA.map(s=>new Set(participantsOf(s)));
+  CBUCKET=PARTS.map(p=>countBucket(p.size));
   document.querySelectorAll("#groupTabs button").forEach(b=>b.addEventListener("click",()=>{
     const key=b.dataset.g;
     if(key==="") SEL.clear();
@@ -82,9 +102,17 @@ async function init(){
     options:types.map(t=>({value:t, label:t})),
     onChange:()=>{ syncTabs(); render(); }
   });
-  // 条件をリセット：チップ（グループ・年・曲種）・検索・並び替えをすべて初期状態に戻す
+  // 人数の複数選択プルダウン（選択同士は OR）。選択肢はデータに実在するバケットだけを人数順に作る
+  const bucketOrder=["1","2","3","4","5","6","7","8","9","10","11-15","16-20","21+"];
+  const present=new Set(CBUCKET.filter(Boolean));
+  countMS=createMultiSelect(document.getElementById("countMS"),{
+    allLabel:"すべての人数", selected:NSEL, ariaLabel:"人数",
+    options:bucketOrder.filter(k=>present.has(k)).map(k=>({value:k, label:countLabel(k)})),
+    onChange:()=>{ syncTabs(); render(); }
+  });
+  // 条件をリセット：チップ（グループ・年・曲種・人数）・検索・並び替えをすべて初期状態に戻す
   document.getElementById("clearSel").addEventListener("click",()=>{
-    SEL.clear(); YSEL.clear(); TSEL.clear(); MFILTER="";
+    SEL.clear(); YSEL.clear(); TSEL.clear(); NSEL.clear(); MFILTER="";
     document.body.dataset.group="";
     document.getElementById("q").value="";
     document.getElementById("sort").value="old";
@@ -112,7 +140,7 @@ function matchG(s){
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
