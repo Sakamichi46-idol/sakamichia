@@ -10,6 +10,9 @@
   ページに未掲載でも再構築で消えないよう、各メンバーの末尾にマージする
   （現在のプロフィール写真が新アー写に変わったがギャラリー未掲載のケース用。
   同じ f が既にあれば二重に追加しない）
+- n46db にギャラリーページが無いメンバー（ポカ）は本スクリプトの対象外で、
+  extras の全項目を正として索引に復元する。ポカの項目は
+  tools/fetch_poka_icon.py（公式ブログアイコン＝アー写ルール）が管理する。
 """
 import hashlib
 import json
@@ -110,6 +113,21 @@ def apply_extras(extra_items, items, mdir):
     return items
 
 
+def restore_extra_only_members(index, extras_all, photos):
+    """n46db にプロフィールが無いメンバー（ポカ等）は extras の全項目を正として
+    索引に復元する（実ファイルがある項目だけ）。"""
+    for name, items in extras_all.items():
+        if name in index or not items or name not in photos:
+            continue
+        stem = photos[name][:-4]
+        mdir = os.path.join(OUT_DIR, stem)
+        keep = [dict(it) for it in items
+                if it.get('f') and os.path.exists(os.path.join(mdir, it['f']))]
+        if keep:
+            index[name] = keep
+    return index
+
+
 def main():
     members = json.load(open(os.path.join(BASE, 'data', 'members.json'), encoding='utf-8'))
     photos = json.load(open(PHOTOS_PATH, encoding='utf-8'))
@@ -187,6 +205,7 @@ def main():
                   ensure_ascii=False, indent=1, sort_keys=True)
         if (i + 1) % 40 == 0:
             print(f'{i + 1}/{len(members)} members, files so far {total_files}', flush=True)
+    index = restore_extra_only_members(index, extras_all, photos)
     json.dump(index, open(INDEX_PATH, 'w', encoding='utf-8'),
               ensure_ascii=False, indent=1, sort_keys=True)
     print('members with gallery:', len(index), '| total files:', total_files, flush=True)
