@@ -84,6 +84,44 @@ function renderSettings() {
 }
 
 /* ---------- スロット ---------- */
+/* スロット枠：ラベルが長くても枠の大きさが変わらないよう、収まるフォントサイズへ自動調整する（枠はCSSで固定高さ） */
+let wheelMeasurer = null;
+function fitWheel(el) {
+  if (!el || !el.clientWidth) return;
+  if (!wheelMeasurer) {
+    wheelMeasurer = document.createElement("div");
+    wheelMeasurer.style.cssText = "position:absolute;visibility:hidden;left:-9999px;top:0;font-weight:700;line-height:1.3;padding:8px 6px;box-sizing:border-box;text-align:center;pointer-events:none";
+    document.body.appendChild(wheelMeasurer);
+  }
+  wheelMeasurer.style.width = el.clientWidth + "px";
+  wheelMeasurer.textContent = el.textContent;
+  let size = 19;
+  wheelMeasurer.style.fontSize = size + "px";
+  while (size > 10 && wheelMeasurer.offsetHeight > el.clientHeight) { size--; wheelMeasurer.style.fontSize = size + "px"; }
+  el.style.fontSize = size + "px";
+}
+/* 候補を選んだら画面下に固定の指名バーを出す（候補が多くてもスクロールせず指名できる） */
+let actionBar = null;
+function renderActionBar() {
+  const show = !!(state && state.pending && selCand && !spinning);
+  if (show && !actionBar) {
+    actionBar = document.createElement("div");
+    actionBar.className = "df-actionbar";
+    actionBar.innerHTML = `<span class="df-actionbar-title"></span><button type="button" class="btn">指名する</button>`;
+    actionBar.querySelector("button").addEventListener("click", doPick);
+    document.body.appendChild(actionBar);
+  }
+  if (!actionBar) return;
+  if (show) {
+    const s = song(selCand);
+    actionBar.querySelector(".df-actionbar-title").textContent = s ? `「${s.title}」` : "";
+    actionBar.classList.add("on");
+    document.body.classList.add("dfbar-on");
+  } else {
+    actionBar.classList.remove("on");
+    document.body.classList.remove("dfbar-on");
+  }
+}
 function renderSlot() {
   const s = state.settings;
   const done = state.acquired.length >= s.count;
@@ -99,6 +137,7 @@ function renderSlot() {
     wc.textContent = state.pending.value;
     wg.parentElement.style.setProperty("--page", GCOL[state.pending.group]);
   } else if (!done) { wg.textContent = "？"; wc.textContent = "？"; }
+  fitWheel(wg); fitWheel(wc);
   const box = $("ssCands");
   if (state.pending && !spinning) {
     const bucket = pendingCombo();
@@ -109,6 +148,7 @@ function renderSlot() {
     }).join("") || `<p style="color:var(--muted)">この条件で指名できる曲はありません。パスしてください。</p>`;
     box.querySelectorAll(".sg-row").forEach(c => c.addEventListener("click", () => { selCand = c.dataset.id; renderSlot(); }));
   } else box.innerHTML = "";
+  renderActionBar();
 }
 function spin() {
   if (state.pending || spinning) return;
@@ -123,6 +163,7 @@ function spin() {
   const iv = setInterval(() => {
     wg.textContent = groups[Math.floor(Math.random() * groups.length)];
     wc.textContent = conds[Math.floor(Math.random() * conds.length)] || "…";
+    fitWheel(wg); fitWheel(wc);
     if (++step > 14) {
       clearInterval(iv);
       state.pending = { group: chosen.group, mode: chosen.mode, value: chosen.value, key: chosen.key };
@@ -235,6 +276,7 @@ async function init() {
   $("ssPassLimit").addEventListener("input", e => { state.settings.passLimit = +e.target.value; save(); renderSlot(); });
   $("ssTitle").addEventListener("input", e => { state.title = e.target.value; save(); });
   $("ssEncore").addEventListener("input", e => { state.encAt = e.target.value === "" ? null : +e.target.value; save(); renderList(); });
+  window.addEventListener("resize", () => { fitWheel($("ssWheelGroup")); fitWheel($("ssWheelCond")); });
   $("ssSpin").addEventListener("click", spin);
   $("ssPass").addEventListener("click", doPass);
   $("ssPick").addEventListener("click", doPick);
