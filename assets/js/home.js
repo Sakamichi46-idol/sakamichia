@@ -11,15 +11,17 @@ function blogFontCls(b){
   return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata";
 }
 async function init(){
-  const [lives, bidx, songs, members, newsData, meta, photos, otd] = await Promise.all([
+  const [lives, bidx, songs, members, newsData, meta, photos, otd, mLatest] = await Promise.all([
     loadJSON("lives.json"), loadJSON("blogs/index.json"),
     loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news.json"),
-    loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON("on-this-day.json")]);
+    loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON("on-this-day.json"),
+    loadJSON("member-latest.json")]);
   const latestYear = Math.max(...Object.keys(bidx.years).map(Number));
   const blogs = await loadJSON(`blogs/y${latestYear}.json`);
   const news = (newsData && newsData.items) || [];
   DB = {lives, blogs, songs, members, news};
   renderToday(meta, photos, otd);
+  renderFavs(mLatest);
   const WD = ["日", "月", "火", "水", "木", "金", "土"];
   document.getElementById("homeNews").innerHTML = news.slice(0, 5).map(n => {
     const dt = new Date(n.d + "T00:00:00+09:00");
@@ -66,6 +68,48 @@ function renderToday(meta, photos, otd){
     }).join("")+`</div>`;
   }
   box.innerHTML=html;
+}
+// 「推しの新着」：推し登録（localStorage "sakamichia-favs"、メンバーページと共有）した
+// メンバーの最新ブログを出す。データは daily 再生成の member-latest.json だけを読む。
+// セクションの置き場所は「今日の坂道」の直前（DOMはここで差し込む）。
+function loadFavNames(){
+  try {
+    const v = JSON.parse(localStorage.getItem("sakamichia-favs") || "[]");
+    return Array.isArray(v) ? v.filter(x => typeof x === "string") : [];
+  } catch (e) { return []; }
+}
+function renderFavs(mLatest){
+  const today = document.getElementById("todaySection");
+  if(!today) return;
+  let box = document.getElementById("favSection");
+  if(!box){
+    box = document.createElement("div");
+    box.id = "favSection";
+    today.parentNode.insertBefore(box, today);
+  }
+  const favs = loadFavNames();
+  if(!favs.length){
+    box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2>
+    <p style="color:var(--muted)">推しを登録すると、ここに推しの最新のブログが並びます。登録は<a href="members/">メンバーページ</a>の各メンバーの詳細からできます。</p>`;
+    return;
+  }
+  const rows = favs
+    .map(name => ({name, latest: (mLatest && mLatest[name] && mLatest[name][0]) || null}))
+    .filter(r => r.latest)
+    .sort((a, b) => String(b.latest.date).localeCompare(String(a.latest.date)));
+  if(!rows.length){
+    box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2>
+    <p style="color:var(--muted)">推しのブログ記事がまだ見つかりませんでした。</p>`;
+    return;
+  }
+  box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2><div class="grid">` + rows.map(r => {
+    const b = r.latest;
+    const bb = {group: b.group, member: r.name};
+    return `<a class="card" href="blog/?open=${encodeURIComponent(b.id)}">`
+      + (b.thumb ? `<div class="bthumb"><img loading="lazy" src="${esc(b.thumb)}" alt="" onerror="this.parentNode.style.display='none'"></div>` : "")
+      + `${groupChip(b.group)}<span style="font-weight:700">${esc(r.name)}</span>`
+      + `<h3 class="${blogFontCls(bb)}">${esc(b.title)}</h3><p>${esc(b.date)}</p></a>`;
+  }).join("") + `</div>`;
 }
 function search(q){
   q = (q||"").trim(); const box = document.getElementById("results");

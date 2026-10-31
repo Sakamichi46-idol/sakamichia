@@ -210,6 +210,9 @@ async function init(){
     if(iso) el.value=fmtDateText(iso);
   }));
   render();
+  // ?show=<公演id> で該当公演の詳細を直接開く（楽曲詳細の「披露されたライブ」からの導線）
+  const qShow=new URLSearchParams(location.search).get("show");
+  if(qShow && DATA.some(l=>l.id===qShow)) openLive(qShow);
   // 曲名・メンバー検索の索引は裏で読み込み、届いたら絞り込みに反映する
   loadJSON("live-index.json").then(async idx=>{
     if(!idx || Array.isArray(idx)) return;

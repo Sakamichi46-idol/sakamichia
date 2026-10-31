@@ -463,3 +463,7 @@ dialog{max-height:92dvh}
   .bottomnav a svg{width:23px;height:23px}
   .bottomnav a.on{color:var(--accent)}
 }
+
+/* ===== 推し登録（メンバーカードの★バッジ） ===== */
+.mb-card{position:relative}
+.mb-fav{position:absolute;top:6px;left:6px;z-index:2;width:24px;height:24px;border-radius:999px;background:#f5b301;color:#fff;font-size:14px;line-height:24px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25)}

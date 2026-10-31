@@ -46,6 +46,12 @@ jobs:
       - name: Build on-this-day blog data
         run: python3 tools/build_on_this_day.py
 
+      - name: Build member latest blog index (favorites)
+        run: python3 tools/build_member_latest.py
+
+      - name: Build song-to-live performance index
+        run: python3 tools/build_song_live.py
+
       - name: Commit data updates
         id: commit
         run: |

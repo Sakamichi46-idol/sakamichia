@@ -3,6 +3,17 @@ const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
 let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, MEMBERLIVE = {}, GAL = {};
 let fGroup = "all", fGen = "all", fShowGrad = false, fQuery = "", fSort = "group";
+// 推し登録：localStorage の "sakamichia-favs"（メンバー名の配列）でトップページと共有する
+const FAV_KEY = "sakamichia-favs";
+function loadFavs() {
+  try {
+    const v = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+    return new Set(Array.isArray(v) ? v.filter(x => typeof x === "string") : []);
+  } catch (e) { return new Set(); }
+}
+let FAVS = loadFavs();
+function saveFavs() { try { localStorage.setItem(FAV_KEY, JSON.stringify([...FAVS])); } catch (e) {} }
+function favBtnLabel(name) { return FAVS.has(name) ? "★ 推し登録済み（タップで解除）" : "☆ 推しに登録"; }
 
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
 function galURL(name, f) { const p = PHOTOS[name]; if (!p) return ""; return BASE + "assets/member-gallery/" + p.replace(/\.jpg$/, "") + "/" + f; }
@@ -48,7 +59,7 @@ function cardHTML(m) {
   const lg = lastGroup(m);
   const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(m.name.slice(0, 1))}</span>`;
   const genTxt = isExchange(m) ? "・交換留学生" : (m.gen ? "・" + m.gen + "期" : "");
-  return `<button type="button" class="mb-card" data-name="${esc(m.name)}"><span class="mb-photo">${ph}</span><span class="fm-name">${esc(m.name)}</span><span class="fm-sub">${esc(lg)}${genTxt}${m.graduated ? "・卒業" : ""}</span><span class="fm-sub">ブログ ${BLOGS[m.name] || 0}件</span></button>`;
+  return `<button type="button" class="mb-card" data-name="${esc(m.name)}">${FAVS.has(m.name) ? `<span class="mb-fav" title="推し登録済み">★</span>` : ""}<span class="mb-photo">${ph}</span><span class="fm-name">${esc(m.name)}</span><span class="fm-sub">${esc(lg)}${genTxt}${m.graduated ? "・卒業" : ""}</span><span class="fm-sub">ブログ ${BLOGS[m.name] || 0}件</span></button>`;
 }
 function render() {
   let list = MEMBERS.filter(m =>
@@ -120,9 +131,18 @@ function openMember(name) {
         <p>${groupChip(lg)}${isExchange(m) ? " 交換留学生（SKE48から）" : (m.gen ? ` ${m.gen}期生` : "")}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
         <p>センター曲：<b>${cs.length}曲</b>（シングル表題曲センター：<b>${cst.length}曲</b>）　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
         ${cs.length ? `<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">${cs.map(s => esc(s.title)).join("、")}</p>` : ""}
-        <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a></p>
+        <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a> <button type="button" class="btn" id="favBtn" aria-pressed="${FAVS.has(name)}">${favBtnLabel(name)}</button></p>
+        <p style="color:var(--muted);font-size:12px;margin:2px 0 0">推しに登録すると、トップページに「推しの新着」（最新のブログ）が出ます。</p>
       </div>
     </div>${galHTML}`;
+  const favBtn = document.getElementById("favBtn");
+  if (favBtn) favBtn.addEventListener("click", () => {
+    if (FAVS.has(name)) FAVS.delete(name); else FAVS.add(name);
+    saveFavs();
+    favBtn.textContent = favBtnLabel(name);
+    favBtn.setAttribute("aria-pressed", String(FAVS.has(name)));
+    render();   // カード側の ★ バッジも追随させる
+  });
   const mainImg = document.getElementById("mbMainImg"), mainCap = document.getElementById("mbMainCap");
   if (mainImg) {
     document.querySelectorAll(".mb-gal-th").forEach(th => th.addEventListener("click", () => {
