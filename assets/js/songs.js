@@ -1,4 +1,14 @@
 let DATA=[]; let FORMS={}; let MEMB={}; const SEL=new Set(); const YSEL=new Set(); const TSEL=new Set();
+// ディープリンク（?member=<名前>）専用の参加曲絞り込み。参加の根拠は詳細ダイアログの
+// 「参加メンバー／歌唱メンバー」と同じく formations の rows（配置）／vocal（歌唱）とする
+let MFILTER=""; let PARTS=[];
+function participantsOf(s){
+  const f=FORMS[`${s.group}|${s.title}`];
+  if(!f) return [];
+  if(f.rows&&f.rows.length) return f.rows.flat();
+  if(f.vocal&&f.vocal.length) return f.vocal;
+  return [];
+}
 // 楽曲→ライブ逆引き（data/song-live.json、daily 再生成）。大きいので初回ダイアログ表示時に遅延読み込みする
 let SONGLIVE=null, SONGLIVE_P=null, openSongTitle=null;
 function ensureSongLive(){
@@ -40,7 +50,7 @@ function syncTabs(){
   const clr=document.getElementById("clearSel");
   if(clr){
     const qEl=document.getElementById("q"), sEl=document.getElementById("sort");
-    clr.hidden = !(SEL.size||YSEL.size||TSEL.size||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
+    clr.hidden = !(SEL.size||YSEL.size||TSEL.size||MFILTER||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
   }
 }
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
@@ -48,6 +58,7 @@ async function init(){
   let members=[];
   [DATA, FORMS, members]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json"), loadJSON("members.json")]);
   MEMB={}; (members||[]).forEach(m=>{ MEMB[m.name]=m; });
+  PARTS=DATA.map(s=>new Set(participantsOf(s)));
   document.querySelectorAll("#groupTabs button").forEach(b=>b.addEventListener("click",()=>{
     const key=b.dataset.g;
     if(key==="") SEL.clear();
@@ -89,7 +100,7 @@ async function init(){
   }));
   // 条件をリセット：チップ（グループ・年・曲種）・検索・並び替えをすべて初期状態に戻す
   document.getElementById("clearSel").addEventListener("click",()=>{
-    SEL.clear(); YSEL.clear(); TSEL.clear();
+    SEL.clear(); YSEL.clear(); TSEL.clear(); MFILTER="";
     document.body.dataset.group="";
     document.getElementById("q").value="";
     document.getElementById("sort").value="old";
@@ -100,6 +111,9 @@ async function init(){
   // ディープリンク（?q=<検索語>）：トップのサジェストなどから曲名で絞り込んで開く
   const qParam=new URLSearchParams(location.search).get("q");
   if(qParam) document.getElementById("q").value=qParam;
+  // ディープリンク（?member=<名前>）：推しフローティングの「参加曲」などから、そのメンバーの参加曲だけに絞って開く
+  const mParam=new URLSearchParams(location.search).get("member");
+  if(mParam) MFILTER=mParam;
   syncTabs();
   render();
 }
@@ -114,7 +128,7 @@ function matchG(s){
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s])=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&(TSEL.size===0||TSEL.has(s.type||""))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(s.year))&&(TSEL.size===0||TSEL.has(s.type||""))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
@@ -137,7 +151,7 @@ function render(){
       return a[1]-b[1];
     });
   }
-  document.getElementById("count").textContent=`${rows.length}曲`;
+  document.getElementById("count").textContent=`${rows.length}曲`+(MFILTER?`（${MFILTER}の参加曲）`:"");
   document.getElementById("list").innerHTML=rows.map(([s,i])=>`<div class="card">${groupChip(s.group)}
     <h3>${esc(s.title)}</h3><p>${s.year?esc(s.year)+"年 ・ ":""}${esc(s.type||"")}${s.center?`<br>センター：${esc(s.center)}`:""}</p>
     <p><button data-open="${i}">フォーメーション・詳細</button></p></div>`).join("")

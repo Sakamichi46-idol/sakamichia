@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 // 推しフローティングボタン：推し登録（localStorage "sakamichia-favs"）があるときだけ、
 // スマホ右下に推しの丸い写真を出す（日向坂公式のポカアイコン寄り：大きめ・枠なし・影なし）。
 // ページ表示の約1秒後に下からぴょこっと弾んで現れ、写真タップでメニュー
-// （最新ブログ／メンバー詳細／次の推しへ／非表示にする）を開く。非表示は誤タップ
+// （最新ブログ／ブログ一覧／写真一覧／参加曲／メンバー詳細／次の推しへ／非表示にする）を開く。非表示は誤タップ
 // 防止のためメニュー内からのみ行い、セッション内は再表示しない。45秒ローテーションは
 // 従来どおり。表示範囲（768px以下だけ）・登場アニメ・ボトムナビとの重なり・
 // ドラフト指名バー表示中の退避は style.css 側で制御する。
@@ -133,6 +133,11 @@ document.addEventListener("DOMContentLoaded",()=>{
       ? BASE+"blog/?open="+encodeURIComponent(c.article.id)
       : BASE+"blog/?member="+encodeURIComponent(c.name);
     const memberHrefOf=c=>BASE+"members/?member="+encodeURIComponent(c.name);
+    const blogListHrefOf=c=>BASE+"blog/?member="+encodeURIComponent(c.name);
+    // 写真一覧はブログの写真ウォール（blog.js の ?view=photos 深リンク）をそのメンバーで絞って開く
+    const photosHrefOf=c=>blogListHrefOf(c)+"&view=photos";
+    // 参加曲は楽曲図鑑の ?member= 深リンク（songs.js が formations の参加メンバーで絞る）
+    const songsHrefOf=c=>BASE+"songs/?member="+encodeURIComponent(c.name);
     // 初期表示は現行ルール：最新記事が最も新しい推し（同点・記事なしは登録順を優先）
     let cur=cands[0];
     for(const c of cands){
@@ -143,6 +148,9 @@ document.addEventListener("DOMContentLoaded",()=>{
     wrap.innerHTML=
       `<div class="favfloat-menu">`
       +`<a class="favfloat-item" data-act="blog" href="">最新ブログ</a>`
+      +`<a class="favfloat-item" data-act="blogs" href="">ブログ一覧</a>`
+      +`<a class="favfloat-item" data-act="photos" href="">写真一覧</a>`
+      +`<a class="favfloat-item" data-act="songs" href="">参加曲</a>`
       +`<a class="favfloat-item" data-act="member" href="">メンバー詳細</a>`
       +(cands.length>=2?`<button type="button" class="favfloat-item" data-act="next">次の推しへ</button>`:"")
       +`<button type="button" class="favfloat-item" data-act="hide">非表示にする</button>`
@@ -151,11 +159,17 @@ document.addEventListener("DOMContentLoaded",()=>{
     const mainBtn=wrap.querySelector(".favfloat-main");
     const img=wrap.querySelector("img");
     const blogItem=wrap.querySelector('[data-act="blog"]');
+    const blogsItem=wrap.querySelector('[data-act="blogs"]');
+    const photosItem=wrap.querySelector('[data-act="photos"]');
+    const songsItem=wrap.querySelector('[data-act="songs"]');
     const memberItem=wrap.querySelector('[data-act="member"]');
     const nextItem=wrap.querySelector('[data-act="next"]');
     const show=c=>{
       cur=c;
       blogItem.href=hrefOf(c);
+      blogsItem.href=blogListHrefOf(c);
+      photosItem.href=photosHrefOf(c);
+      songsItem.href=songsHrefOf(c);
       memberItem.href=memberHrefOf(c);
       mainBtn.setAttribute("aria-label",c.name+"のメニューを開く");
       // 推し写真のファイルが見つからない場合はプロフィール写真にフォールバックする

@@ -180,6 +180,14 @@ async function init(){
     const msel=document.getElementById("member");
     if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
   }
+  // ディープリンク（?view=photos|articles）：推しフローティングの「写真一覧」などから表示モードを指定して開く。
+  // 利用者の保存済みの表示モードは上書きしないよう、setView（保存する）は使わず今回の表示だけに効かせる
+  const qView=new URLSearchParams(location.search).get("view");
+  if(qView==="photos"||qView==="articles"){
+    VIEW=qView;
+    document.getElementById("viewArticles").classList.toggle("on", qView==="articles");
+    document.getElementById("viewPhotos").classList.toggle("on", qView==="photos");
+  }
   // ディープリンク（?open=<記事id>）：トップの「◯年前の今日」などから記事を直接開く。
   // 全年ロードの完了を待ち、保存済みの年絞り込みと合わない記事はその年に切り替えてから開く
   const qOpen=new URLSearchParams(location.search).get("open");
