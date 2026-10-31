@@ -124,7 +124,6 @@ function songCard(s, side, tieSize){
     <span>${groupChip(s.group)}<span class="tag">${esc(s.type || "")}</span></span>
     <span class="meta">${esc(releaseLabel(s))}</span>
     ${s.center ? `<span class="meta">センター：${esc(s.center)}</span>` : ""}
-    ${tieSize > 1 ? `<span class="meta">他${tieSize - 1}曲と同順位で対戦中</span>` : ""}
   </button>`;
 }
 function renderBattle(){

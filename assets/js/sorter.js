@@ -303,7 +303,6 @@ function memberCard(m, side, tieSize){
     ${url ? `<img src="${esc(url)}" alt="" onerror="this.remove()">` : ""}
     <span class="nm">${esc(m.name)}</span>
     <span>${groupChip(m.group)}${gen ? `<span class="meta">${esc(gen)}</span>` : ""}</span>
-    ${tieSize > 1 ? `<span class="meta">他${tieSize - 1}名と同順位で対戦中</span>` : ""}
   </button>`;
 }
 function renderBattle(){
