@@ -48,6 +48,9 @@ const KINDS=[
 ];
 const KSEL=new Set();
 const GSEL=new Set();
+const YSEL=new Set();   // 年の複数選択プルダウン（値は "2012" などの文字列、選択同士は OR）
+const RSEL=new Set();   // 地域の複数選択プルダウン（選択同士は OR）
+let yearMS=null, kindMS=null, regionMS=null;
 // マイ参戦記録：公演 id → 状態（"venue"=現地で参戦 / "stream"=配信で見た）を端末内に保存する。
 // 旧形式（参戦した公演 id の配列）で保存されている場合は、全て "venue" として読み込む（移行は読み込み時に透過的に行う）。
 const ATTEND_KEY="sakamichia-attended";
@@ -168,8 +171,11 @@ async function init(){
   DATA = await loadJSON("lives.json");
   JOINT_IDS = computeJointIds();
   const years=[...new Set(DATA.map(l=>l.date.slice(0,4)))].sort().reverse();
-  const sel=document.getElementById("year");
-  years.forEach(y=>{const o=document.createElement("option");o.textContent=y+"年";o.value=y;sel.appendChild(o);});
+  yearMS=createMultiSelect(document.getElementById("yearMS"),{
+    allLabel:"すべての年", selected:YSEL, ariaLabel:"年",
+    options:years.map(y=>({value:y, label:y+"年"})),
+    onChange:render
+  });
   const gc=document.getElementById("groupChips");
   const syncGroupChips=()=>{
     gc.querySelectorAll(".gchip").forEach(b=>{
@@ -190,22 +196,17 @@ async function init(){
     gc.appendChild(b);
   });
   syncGroupChips();
-  const kt=document.getElementById("kindTabs");
-  KINDS.forEach(k=>{
-    const b=document.createElement("button");
-    b.type="button"; b.className="ychip"; b.textContent=k.label;
-    b.addEventListener("click",()=>{
-      if(KSEL.has(k.label)){ KSEL.delete(k.label); b.classList.remove("on"); }
-      else{ KSEL.add(k.label); b.classList.add("on"); }
-      render();
-    });
-    kt.appendChild(b);
+  kindMS=createMultiSelect(document.getElementById("kindMS"),{
+    allLabel:"すべての種類", selected:KSEL, ariaLabel:"種類",
+    options:KINDS.map(k=>({value:k.label, label:k.label})),
+    onChange:render
   });
-  const regionSel=document.getElementById("region");
   const regionCount={};
   DATA.forEach(l=>{ const r=l.region||""; if(r) regionCount[r]=(regionCount[r]||0)+1; });
-  Object.keys(regionCount).sort((a,b)=>regionCount[b]-regionCount[a]).forEach(r=>{
-    const o=document.createElement("option"); o.value=r; o.textContent=r; regionSel.appendChild(o);
+  regionMS=createMultiSelect(document.getElementById("regionMS"),{
+    allLabel:"すべての地域", selected:RSEL, ariaLabel:"地域",
+    options:Object.keys(regionCount).sort((a,b)=>regionCount[b]-regionCount[a]).map(r=>({value:r, label:r})),
+    onChange:render
   });
   const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
   advToggle.addEventListener("click",()=>{
@@ -218,7 +219,11 @@ async function init(){
   // （参戦記録そのものは消さない。「参戦した公演だけ」「配信で見た公演だけ」の絞り込みだけを解除する）
   document.getElementById("resetAll").addEventListener("click",()=>{
     KSEL.clear();
-    kt.querySelectorAll(".ychip.on").forEach(b=>b.classList.remove("on"));
+    if(kindMS) kindMS.refresh();
+    YSEL.clear();
+    if(yearMS) yearMS.refresh();
+    RSEL.clear();
+    if(regionMS) regionMS.refresh();
     GSEL.clear();
     syncGroupChips();
     attendFilter.clear();
@@ -227,9 +232,7 @@ async function init(){
       if(el){ el.classList.remove("on"); el.setAttribute("aria-pressed","false"); }
     });
     document.getElementById("q").value="";
-    document.getElementById("year").value="";
     document.getElementById("sort").value="auto";
-    regionSel.value="";
     document.getElementById("member").value="";
     document.getElementById("role").value="any";
     document.getElementById("from").value="";
@@ -237,7 +240,7 @@ async function init(){
     render();
   });
   renderAttend();
-  ["q","year","sort","region","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  ["q","sort","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
     const el=document.getElementById(id), iso=parseDateText(el.value);
     if(iso) el.value=fmtDateText(iso);
@@ -269,17 +272,17 @@ async function init(){
   }
 }
 function render(){
-  const q=document.getElementById("q").value, y=document.getElementById("year").value;
+  const q=document.getElementById("q").value;
   document.body.dataset.group = GSEL.size===1 ? [...GSEL][0] : "";
-  const srt=document.getElementById("sort").value, region=document.getElementById("region").value;
+  const srt=document.getElementById("sort").value;
   const from=dateVal("from"), to=dateVal("to");
   const member=document.getElementById("member").value, role=document.getElementById("role").value;
   const advToggle=document.getElementById("advToggle"), advPanel=document.getElementById("advPanel");
-  const advActive=!!(KSEL.size || region || from || to || srt!=="auto" || member);
+  const advActive=!!(KSEL.size || RSEL.size || from || to || srt!=="auto" || member);
   advToggle.textContent=`詳細設定 ${advPanel.hidden?"▼":"▲"}${advActive?"（設定中）":""}`;
-  const rows=DATA.filter(l=>(!GSEL.size||GSEL.has(l.group))&&(!y||l.date.startsWith(y))
+  const rows=DATA.filter(l=>(!GSEL.size||GSEL.has(l.group))&&(!YSEL.size||YSEL.has(l.date.slice(0,4)))
     &&(!attendFilter.size||attendFilter.has(ATTENDED.get(l.id)))
-    &&(!region||l.region===region)&&(!from||l.date>=from)&&(!to||l.date<=to)
+    &&(!RSEL.size||RSEL.has(l.region||""))&&(!from||l.date>=from)&&(!to||l.date<=to)
     &&(!member || memberMatch(l, member, role))
     &&(!KSEL.size || KINDS.some(k=>KSEL.has(k.label)&&kindMatch(l,k)))
     &&includesAll(itemText([l.title,l.group,l.venue,l.region,l.date,l.tags,SEXTRA[l.id]||""]),q))
@@ -287,7 +290,7 @@ function render(){
       if(srt==="songs") return (b.songCount-a.songCount) || b.date.localeCompare(a.date);
       const key=x=>[x.date||"", x.time||"", x.id||""];
       const ka=key(a), kb=key(b);
-      for(let i=0;i<3;i++){ const c=ka[i].localeCompare(kb[i]); if(c) return (srt==="new"||(srt==="auto"&&!y)) ? -c : c; }
+      for(let i=0;i<3;i++){ const c=ka[i].localeCompare(kb[i]); if(c) return (srt==="new"||(srt==="auto"&&!YSEL.size)) ? -c : c; }
       return 0;
     });
   document.getElementById("count").textContent=`${rows.length}件の公演`;
