@@ -84,6 +84,51 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.body.classList.add("has-bnav");
 });
 
+// 推しフローティングボタン：推し登録（localStorage "sakamichia-favs"）があるときだけ、
+// スマホ右下に「最新記事が一番新しい推し」の丸い写真を出し、タップでその最新ブログへ飛ぶ。
+// 表示範囲（768px以下だけ）・ボトムナビとの重なり・ドラフト指名バー表示中の退避は style.css 側で制御する。
+document.addEventListener("DOMContentLoaded",()=>{
+  let favs=[];
+  try{
+    const v=JSON.parse(localStorage.getItem("sakamichia-favs")||"[]");
+    if(Array.isArray(v)) favs=v.filter(x=>typeof x==="string"&&x);
+  }catch(e){}
+  if(!favs.length) return;  // 推し未登録の訪問者にはデータを読ませない
+  const DISMISS_KEY="sakamichia-favfloat-dismissed";
+  try{ if(sessionStorage.getItem(DISMISS_KEY)) return; }catch(e){}
+  Promise.all([loadJSON("member-photos.json"),loadJSON("member-latest.json")]).then(([photos,latest])=>{
+    const photoOf=name=>{
+      const f=(photos&&!Array.isArray(photos))?photos[name]:null;
+      return f?BASE+"assets/member-photos/"+f:"";
+    };
+    const latestOf=name=>{
+      const arr=(latest&&!Array.isArray(latest))?latest[name]:null;
+      return (Array.isArray(arr)&&arr.length)?arr[0]:null;
+    };
+    // 写真のある推しの中で、最新記事が最も新しい人を選ぶ（同点・記事なしは登録順を優先）
+    let pick=null;
+    for(const name of favs){
+      if(!photoOf(name)) continue;
+      const art=latestOf(name);
+      if(!pick||(art&&(!pick.article||String(art.date)>String(pick.article.date)))) pick={name,article:art};
+    }
+    if(!pick) return;  // 写真のある推しがいない場合は出さない
+    const href=pick.article
+      ? BASE+"blog/?open="+encodeURIComponent(pick.article.id)
+      : BASE+"blog/?member="+encodeURIComponent(pick.name);
+    const wrap=document.createElement("div");
+    wrap.className="favfloat";
+    wrap.innerHTML=
+      `<a class="favfloat-main" href="${href}" aria-label="${esc(pick.name)}の最新ブログを開く"><img src="${esc(photoOf(pick.name))}" alt=""></a>`
+      +`<button type="button" class="favfloat-close" aria-label="推しボタンを閉じる">×</button>`;
+    wrap.querySelector(".favfloat-close").addEventListener("click",()=>{
+      wrap.remove();
+      try{ sessionStorage.setItem(DISMISS_KEY,"1"); }catch(e){}
+    });
+    document.body.appendChild(wrap);
+  }).catch(()=>{});
+});
+
 // ヘッダーのメニューを「≡ボタン＋右サイドドロワー」に置き換える（旧サイト『坂道日和』方式）
 document.addEventListener("DOMContentLoaded",()=>{
   const bar=document.querySelector("header.site .nav");
