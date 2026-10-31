@@ -93,6 +93,16 @@ def save_store(idx, years, imgs, dirty_years):
     for y in dirty_years:
         lst = sorted(years[y], key=lambda b: (b['date'], b.get('time') or '00:00'), reverse=True)
         years[y] = lst
+        # thumb は「記事自身の写真（blog-imgs）の先頭、写真が無ければ None」に統一する。
+        # 一覧ページ由来の画像（写真なし記事に付くメンバー写真など）が紛れ込む事故の
+        # 再発防止として、保存直前に必ず正規化する（全取り込み経路共通の最終ガード）。
+        _imgmap = imgs.get(y, {})
+        for b in lst:
+            _own = _imgmap.get(b['id'])
+            if _own:
+                b['thumb'] = _own[0]
+            elif not b.get('imgn'):
+                b['thumb'] = None
         json.dump(lst, open(os.path.join(BASE, f'data/blogs/y{y}.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
         json.dump(imgs.get(y, {}), open(os.path.join(BASE, f'data/blog-imgs/y{y}.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
         idx['years'][y] = len(lst)
@@ -640,7 +650,7 @@ def feed_newest_pass(max_pages=3):
                'group': cfg['group'](p['date'], member),
                'member': member, 'date': p['date'], 'title': title if title is not None else p['title'],
                'url': p['url'], 'media': 0, 'body': False,
-               'thumb': p['thumb'] or (plist[0] if plist else None),
+               'thumb': (plist[0] if plist else None),
                'imgn': len(plist)}
         if blocks:
             save_body(rec, blocks)
@@ -780,7 +790,7 @@ def newest_pass(max_extra_pages=3):
                                'member': member, 'series': sname,
                                'date': p['date'], 'title': clean_relay_title(p['title'], series_gen(ms['name']), author),
                                'url': p['url'], 'media': 0, 'body': False,
-                               'thumb': p['thumb'] or (plist[0] if plist else None),
+                               'thumb': (plist[0] if plist else None),
                                'imgn': len(plist)}
                         if blocks:
                             save_body(rec, blocks)
@@ -803,9 +813,12 @@ def newest_pass(max_extra_pages=3):
                     key = url_key(p['url'])
                     if key in known:
                         rec = known[key]
-                        if not rec.get('thumb') and p['thumb']:
-                            rec['thumb'] = p['thumb']
-                            dirty.add(rec['date'][:4])
+                        if not rec.get('thumb'):
+                            # thumb は記事自身の写真からだけ補う（一覧ページの画像は使わない）
+                            own = p.get('imgs') or imgs.get(rec['date'][:4], {}).get(rec['id'])
+                            if own:
+                                rec['thumb'] = own[0]
+                                dirty.add(rec['date'][:4])
                         # 日向坂: 一覧ブロックの写真リストが保存分より完全なら差し替える
                         if p.get('time') and not rec.get('time'):
                             rec['time'] = p['time']
@@ -835,7 +848,7 @@ def newest_pass(max_extra_pages=3):
                            'group': cfg['group'](p['date'], author),
                            'member': author, 'date': p['date'], 'title': p['title'],
                            'url': p['url'], 'media': 0, 'body': False,
-                           'thumb': p['thumb'] or (plist[0] if plist else None),
+                           'thumb': (plist[0] if plist else None),
                            'imgn': len(plist)}
                     if blocks:
                         save_body(rec, blocks)
@@ -923,7 +936,7 @@ def run(budget_pages=120):
                                'member': member, 'series': sname,
                                'date': p['date'], 'title': clean_relay_title(p['title'], series_gen(ms['name']), author),
                                'url': p['url'], 'media': 0, 'body': False,
-                               'thumb': p['thumb'] or (plist[0] if plist else None),
+                               'thumb': (plist[0] if plist else None),
                                'imgn': len(plist)}
                         if blocks:
                             save_body(rec, blocks)
@@ -946,10 +959,13 @@ def run(budget_pages=120):
                     key = url_key(p['url'])
                     if key in known:
                         rec = known[key]
-                        if not rec.get('thumb') and p['thumb']:
-                            rec['thumb'] = p['thumb']
-                            dirty.add(rec['date'][:4])
-                            repaired += 1
+                        if not rec.get('thumb'):
+                            # thumb は記事自身の写真からだけ補う（一覧ページの画像は使わない）
+                            own = p.get('imgs') or imgs.get(rec['date'][:4], {}).get(rec['id'])
+                            if own:
+                                rec['thumb'] = own[0]
+                                dirty.add(rec['date'][:4])
+                                repaired += 1
                         if p.get('time') and not rec.get('time'):
                             rec['time'] = p['time']
                             dirty.add(rec['date'][:4])
@@ -979,7 +995,7 @@ def run(budget_pages=120):
                            'group': cfg['group'](p['date'], member),
                            'member': member, 'date': p['date'], 'title': p['title'],
                            'url': p['url'], 'media': 0, 'body': False,
-                           'thumb': p['thumb'] or (plist[0] if plist else None), 'imgn': len(plist)}
+                           'thumb': (plist[0] if plist else None), 'imgn': len(plist)}
                     if blocks:
                         save_body(rec, blocks)
                     if tm:
@@ -1055,7 +1071,7 @@ def run_relay(budget_pages=200):
                        'member': member, 'series': sname,
                        'date': p['date'], 'title': clean_relay_title(p['title'], gen, author),
                        'url': p['url'], 'media': 0, 'body': False,
-                       'thumb': p['thumb'] or (plist[0] if plist else None),
+                       'thumb': (plist[0] if plist else None),
                        'imgn': len(plist)}
                 if blocks:
                     save_body(rec, blocks)

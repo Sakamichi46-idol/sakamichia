@@ -123,7 +123,7 @@ def main():
                 years.setdefault(year, []).append({
                     'id': bid, 'group': group, 'member': mem['name'], 'date': c['date'],
                     'title': c['title'], 'url': c['url'],
-                    'thumb': c['imgs'][0] if c['imgs'] else '',
+                    'thumb': c['imgs'][0] if c['imgs'] else None,
                     'imgn': len(c['imgs']), 'body': False, 'media': 0,
                 })
                 if c['imgs']:
