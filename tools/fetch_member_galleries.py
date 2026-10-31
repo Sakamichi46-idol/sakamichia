@@ -7,9 +7,13 @@
 - 索引: data/member-galleries.json {名前: [{f, t, y, c?}]}（c は現在のプロフィール写真と同一のもの）
 - 再実行安全（既存ファイルはスキップ）。ポカは対象外。
 - data/member-gallery-extra.json に載せた手動追加分は、n46db のギャラリー
-  ページに未掲載でも再構築で消えないよう、各メンバーの末尾にマージする
+  ページに未掲載でも再構築で消えないよう、各メンバーの並びにマージする
   （現在のプロフィール写真が新アー写に変わったがギャラリー未掲載のケース用。
   同じ f が既にあれば二重に追加しない）
+  マージ位置は各項目の指定に従う：after=<f> ならその項目の直後、
+  pos="head" なら先頭、指定なしなら末尾（従来どおり）。
+  after のアンカーが再構築結果に無い場合は、年の時系列位置に挿入する。
+  48pedia を参照して補完した過去分（f が pNNN.jpg のもの）もこの仕組みで保護する。
 - n46db にギャラリーページが無いメンバー（ポカ）は本スクリプトの対象外で、
   extras の全項目を正として索引に復元する。ポカの項目は
   tools/fetch_poka_icon.py（公式ブログアイコン＝アー写ルール）が管理する。
@@ -100,15 +104,38 @@ def load_extras():
 
 
 def apply_extras(extra_items, items, mdir):
-    """手動追加分を末尾にマージする（同じ f は追加せず、実ファイルがある分だけ）。"""
+    """手動追加分を並びにマージする（同じ f は追加せず、実ファイルがある分だけ）。
+
+    位置指定：after=<f> はその項目の直後、pos="head" は先頭、無指定は末尾。
+    after のアンカーが無い場合は年の時系列位置へ挿入する。
+    """
     have = {it['f'] for it in items}
+    head_done = 0
     for ex in extra_items:
         fn = ex.get('f')
         if not fn or fn in have:
             continue
         if not os.path.exists(os.path.join(mdir, fn)):
             continue
-        items.append(dict(ex))
+        item = {k: v for k, v in ex.items() if k not in ('after', 'pos')}
+        after = ex.get('after')
+        if ex.get('pos') == 'head':
+            items.insert(head_done, item)
+            head_done += 1
+        elif after and after in have:
+            idx = next(i for i, it in enumerate(items) if it['f'] == after)
+            items.insert(idx + 1, item)
+        elif after:
+            y = ex.get('y')
+            pos = len(items)
+            if y:
+                for i, it in enumerate(items):
+                    if it.get('y') and it['y'] > y:
+                        pos = i
+                        break
+            items.insert(pos, item)
+        else:
+            items.append(item)
         have.add(fn)
     return items
 
@@ -150,6 +177,15 @@ def main():
             continue
         entries = parse_gallery(html)
         if not entries:
+            # n46db にギャラリー写真が無いメンバーでも、手動追加分（extras）だけの
+            # ギャラリーがあれば索引に残す（48pedia 補完分などの保護）
+            if name in extras_all:
+                os.makedirs(mdir, exist_ok=True)
+                items = apply_extras(extras_all[name], [], mdir)
+                if items:
+                    index[name] = items
+                    json.dump(index, open(INDEX_PATH, 'w', encoding='utf-8'),
+                              ensure_ascii=False, indent=1, sort_keys=True)
             continue
         os.makedirs(mdir, exist_ok=True)
         cur_hash = None

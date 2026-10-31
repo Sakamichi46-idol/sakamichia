@@ -6,12 +6,891 @@
    "t": "公式ブログアイコン"
   }
  ],
+ "一ノ瀬美空": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "上村ひなの": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂46",
+   "y": 2018
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p002.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p003.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p004.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "上村莉菜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p005.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p006.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p007.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p008.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p009.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p010.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "p010.jpg",
+   "f": "p011.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  }
+ ],
+ "下田衣珠季": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "与田祐希": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2016
+  }
+ ],
+ "中元日芽香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "中嶋優月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p005.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p006.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p007.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "愛MUST BE",
+   "y": 2026
+  }
+ ],
+ "中川智尋": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  }
+ ],
+ "中村麗乃": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2016
+  }
+ ],
+ "中田花奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "中西アルノ": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "丹生明里": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  }
+ ],
+ "久保史緒里": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2016
+  }
+ ],
+ "五百城茉央": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "井上和": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "井上小百合": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "井上梨名": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p003.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p005.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p006.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p007.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p008.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p009.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "p009.jpg",
+   "f": "p010.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  }
+ ],
+ "井口眞緒": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  }
+ ],
+ "今泉佑唯": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s005.jpg",
+   "f": "p004.jpg",
+   "t": "アンビバレント",
+   "y": 2018
+  }
+ ],
+ "伊藤かりん": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2013
+  }
+ ],
+ "伊藤万理華": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "s006.jpg",
+   "f": "p004.jpg",
+   "t": "ガールズルール",
+   "y": 2013
+  }
+ ],
+ "伊藤寧々": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
  "伊藤理々杏": [
   {
    "c": true,
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "伊藤純奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "佐々木久美": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p010.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p011.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "佐々木琴子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "佐々木美玲": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p010.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p011.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "佐藤優羽": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "佐藤愛桜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "佐藤楓": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "佐藤璃果": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  }
+ ],
+ "佐藤詩織": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2016
   }
  ],
  "冨里奈央": [
@@ -19,6 +898,474 @@
    "c": true,
    "f": "s043.jpg",
    "t": "君ロス",
+   "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "加藤史帆": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p010.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p011.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "勝又春": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p006.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "北野日奈子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "原田まゆ": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  }
+ ],
+ "原田葵": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s006.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p005.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p006.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  }
+ ],
+ "吉本彩華": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  }
+ ],
+ "吉田綾乃クリスティー": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "向井純葉": [
+  {
+   "f": "p008.jpg",
+   "pos": "head",
+   "t": "オーディション",
+   "y": 2019
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p001.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p006.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p007.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "向井葉月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  },
+  {
+   "after": "s035.jpg",
+   "f": "p003.jpg",
+   "t": "チートデイ",
+   "y": 2024
+  }
+ ],
+ "和田まあや": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2011
+  }
+ ],
+ "土生瑞穂": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p005.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  }
+ ],
+ "坂井新奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "堀未央奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "増本綺良": [
+  {
+   "after": "s008.jpg",
+   "f": "p001.jpg",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p007.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p008.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p009.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p010.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p011.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p012.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p012.jpg",
+   "f": "p013.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p013.jpg",
+   "f": "p014.jpg",
+   "t": "15th Single BACKS LIVE!!",
    "y": 2026
   }
  ],
@@ -28,6 +1375,309 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "大和里菜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "大園桃子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "大園玲": [
+  {
+   "after": "s008.jpg",
+   "f": "p001.jpg",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p007.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "大沼晶保": [
+  {
+   "after": "s008.jpg",
+   "f": "p001.jpg",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p007.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p008.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p009.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p010.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p011.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p012.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p013.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p014.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p015.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p015.jpg",
+   "f": "p016.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "大田美月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "大越ひなの": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "大野愛実": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
   }
  ],
  "奥田いろは": [
@@ -36,6 +1686,454 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "守屋茜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p005.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  }
+ ],
+ "守屋麗奈": [
+  {
+   "after": "s008.jpg",
+   "f": "p001.jpg",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p007.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "安藤美雲": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "宮地すみれ": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "宮澤成良": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "宮田愛萌": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  }
+ ],
+ "富田鈴花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p006.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p007.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  }
+ ],
+ "寺田蘭世": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "小坂菜緒": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p006.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "小島凪紗": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p006.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p007.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p008.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p009.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p010.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p011.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p012.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "小川彩": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "小林由依": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p005.jpg",
+   "t": "As you know?",
+   "y": 2022
+  }
+ ],
+ "小池美波": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p007.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p008.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
   }
  ],
  "小津玲奈": [
@@ -44,6 +2142,433 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  }
+ ],
+ "小田倉麗奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p006.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p007.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p008.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p009.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p010.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p011.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p011.jpg",
+   "f": "p012.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "小西夏菜実": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p005.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "尾関梨香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p005.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p006.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "As you know?",
+   "y": 2022
+  }
+ ],
+ "山下瞳月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "山下美月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2016
+  }
+ ],
+ "山下葉留花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "山口陽世": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "日向坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "ソンナコトナイヨ",
+   "y": 2020
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p005.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p006.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p007.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p008.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "山崎怜奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "山川宇衣": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  }
+ ],
+ "山本穂乃香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  }
+ ],
+ "山田桃実": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p006.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "山﨑天": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "岡本姫奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s031.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
   }
  ],
  "岩本蓮加": [
@@ -52,6 +2577,78 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "岩瀬佑美子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "岸帆夏": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s009.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "川後陽菜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "川相陽菜名義",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "川村真洋": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2011
+  },
+  {
+   "after": "s006.jpg",
+   "f": "p004.jpg",
+   "t": "ガールズルール",
+   "y": 2013
   }
  ],
  "川端晃菜": [
@@ -60,6 +2657,350 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "川﨑桜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "市來玲奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "平尾帆夏": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "平岡海月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p007.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p008.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "平手友梨奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  }
+ ],
+ "幸阪茉里乃": [
+  {
+   "after": "s008.jpg",
+   "f": "p001.jpg",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p007.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p008.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p009.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p010.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p011.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p012.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p013.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p014.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p015.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p015.jpg",
+   "f": "p016.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "弓木奈於": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  }
+ ],
+ "影山優佳": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  }
+ ],
+ "志田愛佳": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2016
   }
  ],
  "愛宕心響": [
@@ -68,6 +3009,452 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "掛橋沙耶香": [
+  {
+   "after": "s028.jpg",
+   "f": "p001.jpg",
+   "t": "チートデイ",
+   "y": 2024
+  }
+ ],
+ "斉藤優里": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "斎藤ちはる": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "新内眞衣": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "星野みなみ": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "村井優": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p004.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "村山美羽": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p006.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p007.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "東村芽依": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p010.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p011.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "松井玲奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "気づいたら片想い",
+   "y": 2014
+  }
+ ],
+ "松尾桜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "松尾美佑": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  }
+ ],
+ "松平璃子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  }
+ ],
+ "松本和子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p006.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "松村沙友理": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "松田好花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p006.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "松田里奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p003.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p005.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p006.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "林瑠奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  }
+ ],
+ "柏幸奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
   }
  ],
  "柴田柚菜": [
@@ -78,11 +3465,424 @@
    "y": 2026
   }
  ],
+ "柿崎芽実": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  }
+ ],
+ "桜井玲香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "梅澤美波": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2016
+  }
+ ],
  "森平麗心": [
   {
    "c": true,
    "f": "s043.jpg",
    "t": "君ロス",
+   "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "森本茉莉": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "日向坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "ソンナコトナイヨ",
+   "y": 2020
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p005.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p006.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p007.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p008.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "森田ひかる": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "樋口日奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "橋本奈々未": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "正源司陽子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p004.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "武元唯衣": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p003.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p005.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p007.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p008.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p009.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p010.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "p010.jpg",
+   "f": "p011.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "永島聖羅": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "池田瑛紗": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "河田陽菜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p006.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "浅井恋乃未": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "四期生ライブ",
    "y": 2026
   }
  ],
@@ -91,6 +3891,830 @@
    "c": true,
    "f": "s043.jpg",
    "t": "君ロス",
+   "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "深川麻衣": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "清水理央": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "渡辺みり愛": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "渡辺梨加": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p005.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  }
+ ],
+ "渡辺莉奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "渡邉美穂": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  }
+ ],
+ "潮紗理菜": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s009.jpg",
+   "f": "p010.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "濱岸ひより": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p006.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p007.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  }
+ ],
+ "瀬戸口心月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "片山紗希": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "生田絵梨花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "生駒里奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "田村保乃": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p004.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "畠中清羅": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  }
+ ],
+ "白石麻衣": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "的野美青": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "目黒陽色": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p006.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "矢田萌華": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "矢田里沙子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "石塚瑶季": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p007.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p008.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p009.jpg",
+   "f": "p010.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "石森璃花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p006.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p007.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p008.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p009.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p010.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p010.jpg",
+   "f": "p011.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "石森虹花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2016
+  }
+ ],
+ "秋元真夏": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  }
+ ],
+ "稲熊ひな": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "四期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p003.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p004.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p006.jpg",
+   "t": "四期生ライブ",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "竹内希来里": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p007.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p008.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p009.jpg",
+   "f": "p010.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
    "y": 2026
   }
  ],
@@ -102,12 +4726,574 @@
    "y": 2026
   }
  ],
+ "米徳京花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "米谷奈々未": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2016
+  }
+ ],
+ "織田奈那": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2016
+  }
+ ],
+ "能條愛未": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "麻生梨里子名義",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "若月佑美": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p003.jpg",
+   "t": "インフルエンサー",
+   "y": 2017
+  }
+ ],
+ "菅井友香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "五月雨よ",
+   "y": 2022
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  }
+ ],
+ "菅原咲月": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s033.jpg",
+   "f": "p002.jpg",
+   "t": "新参者",
+   "y": 2023
+  }
+ ],
+ "蔵盛妃那乃": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p005.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p006.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p007.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p009.jpg",
+   "f": "p010.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
+   "y": 2026
+  }
+ ],
+ "藤吉夏鈴": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p003.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p004.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "藤嶌果歩": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2022
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p004.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "衛藤美彩": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "西川七海": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2013
+  }
+ ],
+ "西野七瀬": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  }
+ ],
+ "谷口愛季": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p004.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p005.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  }
+ ],
+ "遠藤光莉": [
+  {
+   "after": "s008.jpg",
+   "f": "p001.jpg",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p004.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p005.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p006.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p007.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p008.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p009.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p010.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p011.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s022.jpg",
+   "f": "p012.jpg",
+   "t": "13th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p013.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p014.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p014.jpg",
+   "f": "p015.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "遠藤理子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2023
+  },
+  {
+   "after": "s014.jpg",
+   "f": "p002.jpg",
+   "y": 2023
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p003.jpg",
+   "t": "新参者",
+   "y": 2023
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p006.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s019.jpg",
+   "f": "p007.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s020.jpg",
+   "f": "p008.jpg",
+   "t": "11th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s021.jpg",
+   "f": "p009.jpg",
+   "t": "12th Single BACKS LIVE!!",
+   "y": 2025
+  },
+  {
+   "after": "s023.jpg",
+   "f": "p010.jpg",
+   "t": "14th Single BACKS LIVE!!",
+   "y": 2026
+  },
+  {
+   "after": "s024.jpg",
+   "f": "p011.jpg",
+   "t": "Lonesome rabbit／What's \"KAZOKU\"?",
+   "y": 2026
+  },
+  {
+   "after": "p011.jpg",
+   "f": "p012.jpg",
+   "t": "15th Single BACKS LIVE!!",
+   "y": 2026
+  }
+ ],
+ "金村美玖": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p005.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p006.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
  "鈴木佑捺": [
   {
    "c": true,
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "鈴木絢音": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2013
+  }
+ ],
+ "鈴本美愉": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2016
   }
  ],
  "長嶋凛桜": [
@@ -115,6 +5301,419 @@
    "c": true,
    "f": "s043.jpg",
    "t": "君ロス",
+   "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "6期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s040.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  }
+ ],
+ "長沢菜々香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "長濱ねる": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  }
+ ],
+ "関有美子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2018
+  },
+  {
+   "after": "s007.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p003.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p004.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p005.jpg",
+   "t": "As you know?",
+   "y": 2022
+  }
+ ],
+ "阪口珠美": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "加入発表",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2016
+  }
+ ],
+ "高井俐香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p005.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "高山一実": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "乃木坂46",
+   "y": 2011
+  },
+  {
+   "after": "s026.jpg",
+   "f": "p003.jpg",
+   "t": "僕は僕を好きになる",
+   "y": 2021
+  }
+ ],
+ "高本彩花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p010.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p011.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "p011.jpg",
+   "f": "p012.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  }
+ ],
+ "高瀬愛奈": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p009.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p010.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p011.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p012.jpg",
+   "t": "12th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "p012.jpg",
+   "f": "p013.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  }
+ ],
+ "髙橋未来虹": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "日向坂46",
+   "y": 2020
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "ソンナコトナイヨ",
+   "y": 2020
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s010.jpg",
+   "f": "p005.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p006.jpg",
+   "t": "11th Single ひなた坂46 LIVE",
+   "y": 2024
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p007.jpg",
+   "t": "13th Single ひなた坂46 LIVE",
+   "y": 2025
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  }
+ ],
+ "鶴崎仁香": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "五期生特設サイト",
+   "y": 2025
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p003.jpg",
+   "y": 2025
+  },
+  {
+   "after": "s015.jpg",
+   "f": "p004.jpg",
+   "t": "新参者二〇二五",
+   "y": 2025
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p005.jpg",
+   "t": "16th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p006.jpg",
+   "t": "17th Single ひなた坂46 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "五期生 LIVE",
+   "y": 2026
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "ひなたフェス2026",
+   "y": 2026
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "18th Single ひなた坂46 LIVE",
    "y": 2026
   }
  ],
@@ -124,6 +5723,166 @@
    "f": "s043.jpg",
    "t": "君ロス",
    "y": 2026
+  },
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "坂道研修生",
+   "y": 2019
+  }
+ ],
+ "齊藤京子": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "けやき坂463次審査",
+   "y": 2016
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "けやき坂46",
+   "y": 2016
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "世界には愛しかない",
+   "y": 2016
+  },
+  {
+   "after": "p003.jpg",
+   "f": "p004.jpg",
+   "t": "二人セゾン",
+   "y": 2016
+  },
+  {
+   "after": "p004.jpg",
+   "f": "p005.jpg",
+   "t": "不協和音",
+   "y": 2017
+  },
+  {
+   "after": "p005.jpg",
+   "f": "p006.jpg",
+   "t": "風に吹かれても",
+   "y": 2017
+  },
+  {
+   "after": "p006.jpg",
+   "f": "p007.jpg",
+   "t": "ガラスを割れ!",
+   "y": 2018
+  },
+  {
+   "after": "p007.jpg",
+   "f": "p008.jpg",
+   "t": "走り出す瞬間",
+   "y": 2018
+  },
+  {
+   "after": "p008.jpg",
+   "f": "p009.jpg",
+   "t": "黒い羊",
+   "y": 2019
+  },
+  {
+   "after": "s004.jpg",
+   "f": "p010.jpg",
+   "t": "ひなたざか",
+   "y": 2020
+  },
+  {
+   "after": "s009.jpg",
+   "f": "p011.jpg",
+   "t": "脈打つ感情",
+   "y": 2023
+  }
+ ],
+ "齋藤冬優花": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "t": "欅坂46",
+   "y": 2015
+  },
+  {
+   "after": "p002.jpg",
+   "f": "p003.jpg",
+   "t": "欅坂46",
+   "y": 2016
+  },
+  {
+   "after": "s008.jpg",
+   "f": "p004.jpg",
+   "t": "欅坂46",
+   "y": 2020
+  },
+  {
+   "after": "s011.jpg",
+   "f": "p005.jpg",
+   "t": "BACKS LIVE!!",
+   "y": 2021
+  },
+  {
+   "after": "s012.jpg",
+   "f": "p006.jpg",
+   "t": "3rd Single BACKS LIVE!!",
+   "y": 2022
+  },
+  {
+   "after": "s013.jpg",
+   "f": "p007.jpg",
+   "t": "As you know?",
+   "y": 2022
+  },
+  {
+   "after": "s016.jpg",
+   "f": "p008.jpg",
+   "t": "7th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s017.jpg",
+   "f": "p009.jpg",
+   "t": "8th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "s018.jpg",
+   "f": "p010.jpg",
+   "t": "9th Single BACKS LIVE!!",
+   "y": 2024
+  },
+  {
+   "after": "p010.jpg",
+   "f": "p011.jpg",
+   "t": "10th Single BACKS LIVE!!",
+   "y": 2024
+  }
+ ],
+ "齋藤飛鳥": [
+  {
+   "f": "p001.jpg",
+   "pos": "head",
+   "y": 2011
+  },
+  {
+   "after": "p001.jpg",
+   "f": "p002.jpg",
+   "y": 2011
+  },
+  {
+   "after": "s025.jpg",
+   "f": "p003.jpg",
+   "t": "しあわせの保護色",
+   "y": 2020
   }
  ]
 }
