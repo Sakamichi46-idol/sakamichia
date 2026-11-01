@@ -7,7 +7,7 @@ function render() {
   list.forEach(e => { const y = e.date.slice(0, 4); (byYear[y] = byYear[y] || []).push(e); });
   const years = Object.keys(byYear).sort().reverse();
   document.getElementById("tlBody").innerHTML = years.map(y => `
-    <h3 class="home-ghead">${y}年</h3><div class="tl-list">${byYear[y].sort((a, b) => a.date.localeCompare(b.date)).map(e => `
+    <h3 class="home-ghead">${y}年</h3><div class="tl-list">${byYear[y].sort((a, b) => b.date.localeCompare(a.date)).map(e => `
       <a class="tl-row" href="${esc(e.href)}"><span class="tl-date">${+e.date.slice(5, 7)}/${+e.date.slice(8, 10)}</span>
       <span class="tl-kind tl-${e.kind}">${e.kind === "song" ? "リリース" : "ライブ"}</span>
       <span class="tl-main"><span class="tl-title">${esc(e.title)}</span><span class="tl-sub">${groupChip(e.group)}<span class="tl-note">${esc(e.note || "")}</span></span></span></a>`).join("")}</div>`).join("")
