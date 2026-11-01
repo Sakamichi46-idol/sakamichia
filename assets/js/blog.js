@@ -20,7 +20,9 @@ function thumbSrc(u){
   if(!/^https?:\/\//.test(u||"")) return u;
   // 二重エンコードURL（%25 を含む）は weserv が取得できないため、原寸を直接表示する
   if(u.includes("%25")) return u;
-  return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=360&h=360&fit=cover&q=62&output=webp";
+  const lite=document.documentElement.dataset.lite==="1";
+  const w=lite?220:360, q=lite?50:62;
+  return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+`&w=${w}&h=${w}&fit=cover&q=${q}&output=webp`;
 }
 function thumbFallback(img, original){
   img.addEventListener("error", ()=>{ if(img.src!==original) img.src=original; }, {once:true});
@@ -830,6 +832,7 @@ function wallPageReady(){
    年から順にアイドル時間で読み込んでおき、写真一覧への切り替えを即時にする */
 let prefetchToken=0;
 function scheduleImgPrefetch(){
+  if(document.documentElement.dataset.lite==="1") return;  // 軽量モードでは先読みしない
   if(!INDEX||!INDEX.years) return;
   if(poolYears().every(y=>IMGS[y])) return;
   const token=++prefetchToken;

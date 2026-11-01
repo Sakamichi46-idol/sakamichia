@@ -8,6 +8,14 @@ function applyTheme(t) {
   try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
 }
 try { if (localStorage.getItem(THEME_KEY) === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}
+// 軽量モード：写真を小さく・アニメーションと先読みを止める（切替はドロワー内、切替時に再読み込み）
+const LITE_KEY = "sakamichia-lite";
+function applyLite(on) {
+  if (on) document.documentElement.dataset.lite = "1";
+  else delete document.documentElement.dataset.lite;
+  try { localStorage.setItem(LITE_KEY, on ? "1" : "0"); } catch (e) {}
+}
+try { if (localStorage.getItem(LITE_KEY) === "1") document.documentElement.dataset.lite = "1"; } catch (e) {}
 async function loadJSON(name){
   const r = await fetch(BASE + "data/" + name);
   if(!r.ok) return [];
@@ -225,6 +233,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 // 従来どおり。表示範囲（768px以下だけ）・登場アニメ・ボトムナビとの重なり・
 // ドラフト指名バー表示中の退避は style.css 側で制御する。
 document.addEventListener("DOMContentLoaded",()=>{
+  if (document.documentElement.dataset.lite === "1") return;  // 軽量モードでは推しフローティングを出さない
   let favs=[];
   try{
     const v=JSON.parse(localStorage.getItem("sakamichia-favs")||"[]");
@@ -436,6 +445,12 @@ document.addEventListener("DOMContentLoaded",()=>{
   themeBtn.addEventListener("click",()=>{ applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"); syncThemeBtn(); });
   syncThemeBtn();
   drawer.appendChild(themeBtn);
+  const liteBtn=document.createElement("button");
+  liteBtn.type="button";liteBtn.className="btn sub drawer-share";
+  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"🪶 軽量モード：ON（タップでOFF）":"🪶 軽量モード：OFF（タップでON）"; };
+  liteBtn.addEventListener("click",()=>{ applyLite(document.documentElement.dataset.lite!=="1"); location.reload(); });
+  syncLiteBtn();
+  drawer.appendChild(liteBtn);
   const note=document.createElement("p");note.className="drawer-note";
   note.textContent="坂道ファンによる非公式ファンサイトです。公式運営とは関係ありません。";
   drawer.appendChild(note);

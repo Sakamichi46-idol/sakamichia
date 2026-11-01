@@ -654,3 +654,9 @@ html[data-theme="dark"] .sg-row+.sg-row{border-top-color:#332a45}
 html[data-theme="dark"] button,html[data-theme="dark"] .btn{border:1px solid #55496e}
 html[data-theme="dark"] .bd-thumb{background:#332a45}
 html[data-theme="dark"] .empty,html[data-theme="dark"] .gacha-empty{color:var(--muted)}
+
+/* 軽量モード（html[data-lite="1"]、ドロワーで切替・端末に保存） */
+html[data-lite="1"] *,html[data-lite="1"] *::before,html[data-lite="1"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html[data-lite="1"] header.site{backdrop-filter:none}
+html[data-lite="1"] .favfloat{display:none!important}
+html[data-lite="1"] .suggest,html[data-lite="1"] .drawer{box-shadow:none}

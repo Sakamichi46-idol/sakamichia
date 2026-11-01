@@ -30,7 +30,7 @@ async function draw() {
       const url = imgs[id][Math.floor(Math.random() * imgs[id].length)];
       img.onload = () => { img.hidden = false; msg.hidden = true; btn.disabled = false; };
       img.onerror = () => { btn.disabled = false; msg.textContent = "写真を読み込めませんでした。もう一度引いてください。"; };
-      img.src = weserv(url, 1100);
+      img.src = weserv(url, document.documentElement.dataset.lite === "1" ? 640 : 1100);
       cap.innerHTML = `${groupChip(b.group)} <b>${esc(b.member || "")}</b> ・ ${esc(b.date || "")}<br>${esc(b.title || "")}`;
       open.href = BASE + "blog/?open=" + encodeURIComponent(id);
       open.hidden = false;
