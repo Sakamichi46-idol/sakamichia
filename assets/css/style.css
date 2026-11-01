@@ -735,3 +735,7 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .om-home-rank{font-size:24px;font-weight:900;color:var(--accent);margin-right:4px}
 .om-rank[data-rank="凶"],.om-home-rank[data-rank="凶"]{color:#b0563a}
 .om-rank[data-rank="大凶"],.om-home-rank[data-rank="大凶"]{color:#a02c2c}
+.fq-tile.blank.active{outline:3px solid var(--accent);outline-offset:1px}
+.fq-tile.blank,.fq-tile.filled{cursor:pointer}
+.fq-tile.filled{border-color:var(--accent)}
+.fq-tile.miss{border-color:#d66;background:#fdeeee}

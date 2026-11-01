@@ -48,11 +48,19 @@ function fqModes(pool) {
   const ok = FQ_LINEAGES.filter(l => (counts[l] || 0) >= FQ_MIN_POOL);
   return { counts, ok, all: pool.filter(e => ok.includes(e.lineage)) };
 }
+// 難易度：1問で答える空欄の数が変わる
+const FQ_DIFFS = [
+  { key: "easy", label: "易", blanks: 1 },
+  { key: "normal", label: "中", blanks: 2 },
+  { key: "hard", label: "難", blanks: 3 },
+  { key: "oni", label: "鬼", blanks: 5 }
+];
 function fqMakeQuestion(e) {
   const cells = [];
-  e.rows.forEach((row, ri) => row.forEach((name, ci) => cells.push([ri, ci, name])));
-  const [ri, ci, answer] = cells[Math.floor(Math.random() * cells.length)];
-  return { ...e, blank: [ri, ci], answer, choices: [] };
+  e.rows.forEach((row, ri) => row.forEach((name, ci) => cells.push({ ri, ci, name })));
+  const n = Math.min(FQ.diff.blanks, cells.length);
+  const picks = fqShuffle(cells).slice(0, n).sort((a, b) => a.ri - b.ri || a.ci - b.ci);
+  return { ...e, blanks: picks.map(p => ({ ri: p.ri, ci: p.ci, answer: p.name })) };
 }
 // リリース日にそのグループに在籍していたか（在籍期間データ draft-timeline と同じ判定）。
 // 卒業済み・未加入のメンバーを選択肢に入れると消去法で分かってしまうため、優先的に除外する。
@@ -72,11 +80,12 @@ function fqEraEligible(name, q) {
   if ((code === "sakura" || code === "hinata") && rec.left && rec.left < range[0]) return false;
   return true;
 }
-function fqChoices(q) {
+function fqChoicesFor(q, bi, usedDecoys) {
+  const answer = q.blanks[bi].answer;
   const inForm = new Set(q.rows.flat());
-  const ans = FQ.memberByName[q.answer];
+  const ans = FQ.memberByName[answer];
   const linMembers = FQ.members.filter(m =>
-    m.name !== "ポカ" && !inForm.has(m.name) &&
+    m.name !== "ポカ" && !inForm.has(m.name) && !usedDecoys.has(m.name) &&
     fqLineage(m.group) === q.lineage);
   const isGen = m => ans && ans.gen > 0 && m.gen === ans.gen;
   const era = linMembers.filter(m => fqEraEligible(m.name, q));
@@ -90,8 +99,14 @@ function fqChoices(q) {
     }
     if (decoys.length >= 3) break;
   }
-  return fqShuffle([q.answer, ...decoys.map(m => m.name)]);
+  decoys.forEach(m => usedDecoys.add(m.name));
+  return fqShuffle([answer, ...decoys.map(m => m.name)]);
 }
+function fqSetupChoices(q) {
+  const usedDecoys = new Set();
+  return q.blanks.map((b, bi) => fqChoicesFor(q, bi, usedDecoys));
+}
+function fqPerBlank(q) { return Math.round(FQ_POINTS / q.blanks.length); }
 function fqTile(name, opts) {
   const url = fqPhoto(name);
   const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fq-initial" style="background:${FQ_GCOL[FQ.list[FQ.i].group] || "#999"}">${esc(name.slice(0, 1))}</span>`;
@@ -102,50 +117,73 @@ function fqRender() {
   const q = FQ.list[FQ.i];
   const centers = new Set(q.center ? q.center.split("・").filter(Boolean) : []);
   const maxn = Math.max(...q.rows.map(r => r.length));
-  const frontRow = q.rows.length - q.blank[0]; // 前から何列目か（データは後列→前列の順）
+  const blankAt = (ri, ci) => q.blanks.findIndex(b => b.ri === ri && b.ci === ci);
   const board = q.rows.map((row, ri) => `<div class="fq-row">${row.map((name, ci) => {
-    if (ri === q.blank[0] && ci === q.blank[1]) {
-      if (FQ.done) return fqTile(name, { ctr: centers.has(name), cls: "hit" });
-      return `<div class="fq-tile blank"><span class="fq-qmark">？</span><span class="fq-name">？？？</span></div>`;
+    const bi = blankAt(ri, ci);
+    if (bi < 0) return fqTile(name, { ctr: centers.has(name) });
+    const b = q.blanks[bi];
+    if (FQ.done) {
+      const ok = FQ.filled[bi] === b.answer;
+      return fqTile(ok ? b.answer : (FQ.filled[bi] || b.answer), { ctr: centers.has(b.answer), cls: ok ? "hit" : "miss" });
     }
-    return fqTile(name, { ctr: centers.has(name) });
+    if (FQ.filled[bi]) return `<div class="fq-tile filled" data-bi="${bi}" role="button" tabindex="0">${fqTileInner(FQ.filled[bi])}</div>`;
+    return `<div class="fq-tile blank${FQ.active === bi ? " active" : ""}" data-bi="${bi}" role="button" tabindex="0"><span class="fq-qmark">？</span><span class="fq-name">？？？</span></div>`;
   }).join("")}</div>`).join("");
+  const remaining = q.blanks.length - Object.keys(FQ.filled).length;
   let html = `<div class="card" style="margin-bottom:40px"><h3>第${FQ.i + 1}問 / ${FQ.list.length}問（現在 ${FQ.score}点）</h3>
-  <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}『${esc(q.title)}』${q.year ? `（${q.year}年）` : ""} のフォーメーションです。空欄（前から${frontRow}列目）は誰でしょう？</p>
+  <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}『${esc(q.title)}』${q.year ? `（${q.year}年）` : ""} のフォーメーションです。空欄は${q.blanks.length}人います。${FQ.done ? "" : "空欄をタップして対象を切り替え、下の4択から選んでください。"}</p>
   <div class="fq-board" style="--maxn:${maxn}">${board}</div>`;
   if (!FQ.done) {
-    html += `<div>${FQ.choices.map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+    if (remaining > 0) {
+      html += `<p style="margin:6px 0">空欄 ${FQ.active + 1} / ${q.blanks.length}（あと${remaining}人）</p>
+      <div>${FQ.choiceSets[FQ.active].map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+    } else {
+      html += `<p><button type="button" id="fqJudge" class="primary">回答する</button></p>`;
+    }
   } else {
-    const ok = FQ.picked === q.answer;
-    html += `<p class="score">${ok ? `正解！ +${FQ_POINTS}点` : `残念… 正解は「${esc(q.answer)}」でした`}</p>
-    <p>答え：<b>${esc(q.answer)}</b>（${esc(q.lineage)}『${esc(q.title)}』・前から${frontRow}列目）</p>
+    const per = fqPerBlank(q);
+    const correct = q.blanks.filter((b, bi) => FQ.filled[bi] === b.answer).length;
+    html += `<p class="score">${correct === q.blanks.length ? `全員正解！ +${per * correct}点` : `${q.blanks.length}人中 ${correct}人正解（+${per * correct}点）`}</p>
+    ${q.blanks.map((b, bi) => `<p style="margin:4px 0">前から${q.rows.length - b.ri}列目：<b>${esc(b.answer)}</b>${FQ.filled[bi] === b.answer ? "（正解）" : `（あなたの回答：${esc(FQ.filled[bi] || "未回答")}）`}</p>`).join("")}
     <p><button type="button" id="fqNext" class="primary">${FQ.i + 1 < FQ.list.length ? "次の問題へ" : "結果を見る"}</button></p>`;
   }
   area.innerHTML = html + "</div>";
-  area.querySelectorAll(".quiz-opt").forEach(b => b.addEventListener("click", () => {
-    FQ.picked = b.dataset.t;
-    FQ.done = true;
-    if (FQ.picked === q.answer) FQ.score += FQ_POINTS;
+  area.querySelectorAll("[data-bi]").forEach(el => el.addEventListener("click", () => {
+    if (FQ.done) return;
+    FQ.active = +el.dataset.bi;
     fqRender();
-    area.querySelectorAll(".quiz-opt").forEach(x => {
-      if (x.dataset.t === q.answer) x.classList.add("correct");
-      else if (x.dataset.t === FQ.picked) x.classList.add("wrong");
-      x.disabled = true;
-    });
   }));
+  area.querySelectorAll(".quiz-opt").forEach(b => b.addEventListener("click", () => {
+    FQ.filled[FQ.active] = b.dataset.t;
+    const nextBlank = q.blanks.findIndex((_, bi) => !(bi in FQ.filled));
+    if (nextBlank >= 0) FQ.active = nextBlank;
+    fqRender();
+  }));
+  const judge = document.getElementById("fqJudge");
+  if (judge) judge.addEventListener("click", () => {
+    const per = fqPerBlank(q);
+    FQ.score += per * q.blanks.filter((b, bi) => FQ.filled[bi] === b.answer).length;
+    FQ.done = true;
+    fqRender();
+  });
   const next = document.getElementById("fqNext");
   if (next) next.addEventListener("click", () => {
     FQ.i++;
     if (FQ.i >= FQ.list.length) { fqResult(); return; }
-    FQ.done = false; FQ.picked = null;
-    FQ.choices = fqChoices(FQ.list[FQ.i]);
+    FQ.done = false; FQ.filled = {}; FQ.active = 0;
+    FQ.choiceSets = fqSetupChoices(FQ.list[FQ.i]);
     fqRender();
   });
 }
+function fqTileInner(name) {
+  const url = fqPhoto(name);
+  const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fq-initial" style="background:${FQ_GCOL[FQ.list[FQ.i].group] || "#999"}">${esc(name.slice(0, 1))}</span>`;
+  return `${ph}<span class="fq-name">${esc(name)}</span>`;
+}
 function fqResult() {
   const area = document.getElementById("fqArea");
-  const max = FQ.list.length * FQ_POINTS;
-  const list = FQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.title)}』（${esc(e.lineage)}）の空欄は <b>${esc(e.answer)}</b></p>`).join("");
+  const max = FQ.list.reduce((a, e) => a + fqPerBlank(e) * e.blanks.length, 0);
+  const list = FQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.title)}』（${esc(e.lineage)}）の空欄は <b>${e.blanks.map(b => esc(b.answer)).join("、")}</b></p>`).join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${FQ.score} / ${max} 点</p>
   <h4 style="margin:18px 0 6px">出題されたフォーメーション</h4>
@@ -153,7 +191,7 @@ function fqResult() {
   <p>${FQ.score >= max * 0.8 ? "すごい！配置まで完璧に覚えていますね。" : FQ.score >= max * 0.5 ? "なかなかのフォーメーション通です。" : FQ.score >= max * 0.3 ? "前列は覚えていても、後列は意外と難しいですよね。" : "配置を当てるのは至難の業です。楽曲図鑑で眺めるのも楽しいですよ。"}</p>
   <p><button type="button" class="primary" onclick="location.reload()">モード選択に戻る</button> <button type="button" id="fqShare">結果を共有</button></p></div>`;
   const sh = document.getElementById("fqShare");
-  if (sh) sh.addEventListener("click", () => shareContent({ text: `サカミチア「フォーメーションクイズ」で ${FQ.score}／${max}点でした（モード：${FQ.mode === "all" ? "すべて" : FQ.mode}）。`, url: location.href }, sh));
+  if (sh) sh.addEventListener("click", () => shareScoreImage({ game: "フォーメーションクイズ", score: `${FQ.score}点／${max}点`, lines: [`難易度：${FQ.diff.label}（空欄${FQ.diff.blanks}人）／モード：${FQ.mode === "all" ? "すべて" : FQ.mode}`, ...FQ.list.slice(0, 5).map((e, i) => `${i + 1}. 『${e.title}』 ${e.blanks.map(b => b.answer).join("、")}`)] }, sh));
 }
 function fqStartPanel(pool) {
   const area = document.getElementById("fqArea");
@@ -165,22 +203,29 @@ function fqStartPanel(pool) {
   let mode = "all";
   const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${all.length}曲）</button>`,
     ...ok.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}曲）</button>`)].join("");
+  const diffChips = FQ_DIFFS.map((d, i) => `<button type="button" class="ychip${i === 0 ? " on" : ""}" data-d="${d.key}">${d.label}（空欄${d.blanks}人）</button>`).join("");
   const excluded = FQ_LINEAGES.filter(l => !ok.includes(l));
   const note = excluded.length ? `<p style="color:var(--muted)">${excluded.map(l => `${esc(l)}（公式確定分 ${counts[l] || 0}曲）`).join("・")}は、出題に使える公式確定のフォーメーションが${FQ_MIN_POOL}曲未満のため対象外です。</p>` : "";
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
   <p style="color:var(--muted)">出題は公式発表で確定しているフォーメーションのみです（参考データの配置は出題しません）。</p>
   ${note}
   <div class="filters" style="margin:10px 0">${chips}</div>
+  <h4 style="margin:14px 0 6px">難易度（1問で答える空欄の数）</h4>
+  <div class="filters" style="margin:6px 0 10px">${diffChips}</div>
   <p><button type="button" class="primary" id="fqStart">スタート</button></p></div>`;
   area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
     mode = b.dataset.m;
     area.querySelectorAll("[data-m]").forEach(x => x.classList.toggle("on", x === b));
   }));
+  area.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => {
+    FQ.diff = FQ_DIFFS.find(d => d.key === b.dataset.d) || FQ_DIFFS[0];
+    area.querySelectorAll("[data-d]").forEach(x => x.classList.toggle("on", x === b));
+  }));
   document.getElementById("fqStart").addEventListener("click", () => {
     const src = mode === "all" ? all : pool.filter(e => e.lineage === mode);
     FQ.list = fqShuffle(src).slice(0, FQ_MAX).map(fqMakeQuestion);
-    FQ.mode = mode; FQ.i = 0; FQ.score = 0; FQ.done = false; FQ.picked = null;
-    FQ.choices = fqChoices(FQ.list[0]);
+    FQ.mode = mode; FQ.i = 0; FQ.score = 0; FQ.done = false; FQ.filled = {}; FQ.active = 0;
+    FQ.choiceSets = fqSetupChoices(FQ.list[0]);
     fqRender();
   });
 }
@@ -193,7 +238,7 @@ async function fqInit() {
     area.innerHTML = `<div class="card"><p>出題データを読み込めませんでした。</p></div>`;
     return;
   }
-  FQ = { members, photos: photos || {}, memberByName: {}, eraByName: null, list: [], mode: "all", i: 0, score: 0, done: false, picked: null, choices: [] };
+  FQ = { members, photos: photos || {}, memberByName: {}, eraByName: null, list: [], mode: "all", diff: FQ_DIFFS[0], i: 0, score: 0, done: false, filled: {}, active: 0, choiceSets: [] };
   if (Array.isArray(draftMembers) && timeline && timeline.ready && timeline.members) {
     FQ.eraByName = {};
     for (const dm of draftMembers) {
