@@ -1,6 +1,7 @@
 let DATA=[]; const DETAILS={};
 let INDEX=null; const SEXTRA={}; // 曲名・メンバー検索の索引（あとから読み込む）
-// 日付欄はテキスト入力（枠の中に「年/月/日」と表示）。読み取り時は ISO 形式に直す。
+// 日付欄はカレンダー選択（input type="date"）で、値は ISO 形式（yyyy-mm-dd）。
+// parseDateText は念のための正規化（yyyy/mm/dd 表記も ISO に直して受ける）。
 function parseDateText(v){
   const d=String(v||"").replace(/[^\d]/g,"");
   if(d.length!==8) return "";
@@ -9,7 +10,7 @@ function parseDateText(v){
   return `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
 }
 function dateVal(id){ return parseDateText(document.getElementById(id).value); }
-function fmtDateText(iso){ return iso ? iso.replace(/-/g,"/") : ""; }
+function ymdLocal(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 function memberMatch(l, name, role){
   const e=INDEX && INDEX[l.id]; if(!e) return false;
   if(role==="center") return (e.c||[]).includes(name);
@@ -169,6 +170,9 @@ async function init(){
   const ash=document.getElementById("attendShare");
   if(ash) ash.addEventListener("click", shareAttendImage);
   DATA = await loadJSON("lives.json");
+  // 期間指定カレンダーの選択範囲は、データの最古公演日〜今日まで
+  const allDates=DATA.map(l=>l.date).filter(Boolean).sort();
+  if(allDates.length) ["from","to"].forEach(id=>{ const el=document.getElementById(id); el.min=allDates[0]; el.max=ymdLocal(new Date()); });
   JOINT_IDS = computeJointIds();
   const years=[...new Set(DATA.map(l=>l.date.slice(0,4)))].sort().reverse();
   yearMS=createMultiSelect(document.getElementById("yearMS"),{
@@ -241,10 +245,8 @@ async function init(){
   });
   renderAttend();
   ["q","sort","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
-  ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
-    const el=document.getElementById(id), iso=parseDateText(el.value);
-    if(iso) el.value=fmtDateText(iso);
-  }));
+  // type="date" はブラウザによって input だけ／change だけのことがあるため、change でも再描画する
+  ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",render));
   render();
   // ?show=<公演id> で該当公演の詳細を直接開く（楽曲詳細の「披露されたライブ」からの導線）
   const qShow=new URLSearchParams(location.search).get("show");

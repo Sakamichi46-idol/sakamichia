@@ -17,8 +17,8 @@
 <div class="filters advrow"><label>メンバー <select id="member"><option value="">すべてのメンバー</option></select></label>
 <label>役割 <select id="role"><option value="any">センター・参加どちらでも</option><option value="center">センターのみ</option><option value="perf">参加のみ</option></select></label>
 <span class="tabhint">参加は出演者記録・センター・全員歌唱の記録をもとに判定しています</span></div>
-<div class="filters advrow"><label>開始日 <input type="text" id="from" inputmode="numeric" autocomplete="off" placeholder="年/月/日" style="width:150px"></label>
-<label>終了日 <input type="text" id="to" inputmode="numeric" autocomplete="off" placeholder="年/月/日" style="width:150px"></label></div>
+<div class="filters advrow"><label>開始日 <input type="date" id="from" style="width:170px"></label>
+<label>終了日 <input type="date" id="to" style="width:170px"></label></div>
 </div>
 <p class="count" id="count"></p><div class="grid" id="list"></div></section></main>
 <dialog id="dlg"><div id="dlgBody"></div><div id="imgPreviewWrap" hidden style="margin-top:12px"><div id="imgPreviewPh" class="setlist-img-ph" hidden>セトリ画像を生成しています…</div><img id="imgPreview" alt="セットリスト画像" hidden style="max-width:100%;border:1px solid var(--line);border-radius:8px;opacity:0;transition:opacity .3s;cursor:pointer"></div><p><button class="sub" onclick="document.getElementById('dlg').close()">閉じる</button> <span id="attendCtl" class="attend-ctl" role="group" aria-label="参戦記録" hidden><button type="button" data-attend="">未記録</button><button type="button" data-attend="venue">参戦した</button><button type="button" data-attend="stream">配信で見た</button></span> <button type="button" id="editInSetlist" hidden>マイセットリストで編集</button></p></dialog>

@@ -127,6 +127,8 @@ async function init(){
   document.getElementById("list").innerHTML=`<div class="empty">読み込み中…</div>`;
   INDEX=await loadJSON("blogs/index.json");
   const years=Object.keys(INDEX.years).sort().reverse();
+  // 期間指定カレンダーの選択範囲は、データの最古年〜今日まで
+  ["from","to"].forEach(id=>{ const el=document.getElementById(id); el.min=`${years[years.length-1]}-01-01`; el.max=ymd(new Date()); });
   renderYearChips();
   MEMBERS=await loadJSON("members.json");
   buildMemberOptions();
@@ -171,8 +173,9 @@ async function init(){
     if(saved.member) document.getElementById("member").value=saved.member;
     if(saved.q) document.getElementById("q").value=saved.q;
     if(saved.bq) document.getElementById("bq").value=saved.bq;
-    if(saved.from) document.getElementById("from").value=fmtDateText(saved.from);
-    if(saved.to) document.getElementById("to").value=fmtDateText(saved.to);
+    // 保存済みの日付は ISO（yyyy-mm-dd）と旧表示形式（yyyy/mm/dd）の両方を受ける
+    if(saved.from) document.getElementById("from").value=parseDateText(saved.from);
+    if(saved.to) document.getElementById("to").value=parseDateText(saved.to);
     if(saved.sort) document.getElementById("sort").value=saved.sort;
     // 期生の保存形式は新形式（配列）と旧形式（"グループ|期" の単一文字列）の両方を受ける
     if(saved.gen){
@@ -221,10 +224,8 @@ async function init(){
   renderYearChips();
   ["q","member","from","to","sort","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.getElementById("member").addEventListener("input",()=>renderYearChips());
-  ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{
-    const el=document.getElementById(id), iso=parseDateText(el.value);
-    if(iso) el.value=fmtDateText(iso);
-  }));
+  // type="date" はブラウザによって input だけ／change だけのことがあるため、change でも同じ再描画を行う
+  ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.querySelectorAll(".mchip").forEach(ch=>ch.addEventListener("click",()=>{ MEDIA=ch.dataset.media; syncMediaChips(); resetPages(); render(); syncAdvBtn(); saveState(); }));
   document.querySelectorAll("[data-preset]").forEach(ch=>ch.addEventListener("click",()=>applyPreset(ch.dataset.preset)));
   // 条件をリセット：絞り込み・詳細検索の条件をすべて初期状態に戻し、保存状態も上書きする
@@ -285,7 +286,8 @@ function buildGenOptions(){
   }));
 }
 function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
-// 日付欄はテキスト入力（枠の中に「年/月/日」と表示）。読み取り時は ISO 形式に直す。
+// 日付欄はカレンダー選択（input type="date"）で、値は ISO 形式（yyyy-mm-dd）。
+// parseDateText は保存済みの旧形式（yyyy/mm/dd）も ISO に直して受けるための正規化。
 function parseDateText(v){
   const d=String(v||"").replace(/[^\d]/g,"");
   if(d.length!==8) return "";
@@ -294,7 +296,6 @@ function parseDateText(v){
   return `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
 }
 function dateVal(id){ return parseDateText(document.getElementById(id).value); }
-function fmtDateText(iso){ return iso ? iso.replace(/-/g,"/") : ""; }
 function applyPreset(k){
   if(k!=="clear") return;
   document.getElementById("from").value="";
