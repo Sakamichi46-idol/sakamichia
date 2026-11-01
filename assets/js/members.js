@@ -69,6 +69,23 @@ function formCountOf(name) {
   }
   return n;
 }
+// フォーメーション統計：登場曲数・フロント（最終列＝1列目）回数・左右の隣に来た回数
+function formationStatsOf(name) {
+  let songs = 0, front = 0; const nb = {};
+  for (const k in FORMS) {
+    const f = FORMS[k];
+    if (f.external || !f.rows) continue;
+    for (let r = 0; r < f.rows.length; r++) {
+      const row = f.rows[r], p = row.indexOf(name);
+      if (p < 0) continue;
+      songs++;
+      if (r === f.rows.length - 1) front++;
+      [row[p - 1], row[p + 1]].forEach(x => { if (x) nb[x] = (nb[x] || 0) + 1; });
+    }
+  }
+  const top = Object.entries(nb).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  return { songs, front, top };
+}
 function liveStatsOf(name) {
   // data/member-live.json（全員歌唱曲のある公演は当日在籍メンバー全員を参加として集計済み）
   const s = MEMBERLIVE[name] || {};
@@ -150,6 +167,7 @@ function openMember(name) {
         <p style="margin:0 0 2px;color:var(--muted)">${esc(m.reading || "")}</p>
         <p>${groupChip(lg)}${isExchange(m) ? " 交換留学生（SKE48から）" : (m.gen ? ` ${m.gen}期生` : "")}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
         <p>センター曲：<b>${cs.length}曲</b>（シングル表題曲センター：<b>${cst.length}曲</b>）　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
+        ${(() => { const fs2 = formationStatsOf(name); return fs2.songs ? `<p>フォーメーション統計：登場 <b>${fs2.songs}曲</b>・フロント（1列目）<b>${fs2.front}曲</b>${fs2.top.length ? `<br>よく隣になるメンバー：${fs2.top.map(([n, c]) => `<button type="button" class="mb-nb" data-goto="${esc(n)}">${esc(n)}</button>（${c}回）`).join("、")}` : ""}</p>` : ""; })()}
         ${cs.length ? `<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">${cs.map(s => esc(s.title)).join("、")}</p>` : ""}
         <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a> <button type="button" class="btn" id="favBtn" aria-pressed="${FAVS.has(name)}">${favBtnLabel(name)}</button></p>
         <p style="color:var(--muted);font-size:12px;margin:2px 0 0">推しに登録すると、トップページに「推しの新着」（最新のブログ）が出ます。</p>
@@ -184,6 +202,7 @@ function openMember(name) {
     });
   }
   renderFavPhotoCtl();
+  dlg.querySelectorAll(".mb-nb").forEach(b => b.addEventListener("click", () => openMember(b.dataset.goto)));
   const favBtn = document.getElementById("favBtn");
   if (favBtn) favBtn.addEventListener("click", () => {
     if (FAVS.has(name)) FAVS.delete(name); else FAVS.add(name);
