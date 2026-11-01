@@ -140,25 +140,25 @@ function renderFavs(mLatest, meta){
 // 「今日の推し運おみくじ」：サイトを訪れたら引く日課用にトップにも置く。
 // 抽選・保存は common.js の共通部品で、おみくじページと同じ結果になる。
 function renderOmikuji(photos){
-  const favBox = document.getElementById("favSection");
-  if(!favBox) return;
+  const anchor = document.getElementById("omikujiAnchor");
+  if(!anchor) return;
   let box = document.getElementById("omikujiSection");
   if(!box){
     box = document.createElement("div");
     box.id = "omikujiSection";
-    favBox.after(box);
+    anchor.appendChild(box);
   }
   const saved = omikujiLoad();
   if(saved){
     const f = photos && photos[saved.name];
-    box.innerHTML = `<h2 class="title" style="margin-top:26px">今日の推し運おみくじ</h2>
+    box.innerHTML = `<h2 class="title" style="margin-top:10px">今日の推し運おみくじ</h2>
     <div class="om-home">${f ? `<img src="${BASE}assets/member-photos/${esc(f)}" alt="">` : ""}
       <div class="om-home-main"><span class="om-home-rank">${esc(saved.rank)}</span> <b>${esc(saved.name)}</b>${groupChip(saved.group)}
       <p>${esc(saved.msg)}</p></div>
       <a class="btn sub" href="games/omikuji/">おみくじページ</a></div>`;
     return;
   }
-  box.innerHTML = `<h2 class="title" style="margin-top:26px">今日の推し運おみくじ</h2>
+  box.innerHTML = `<h2 class="title" style="margin-top:10px">今日の推し運おみくじ</h2>
   <div class="om-home"><span style="font-size:34px">🎴</span>
     <div class="om-home-main"><p style="margin:0">今日の運勢を引いてみましょう（1日1回）。</p></div>
     <button type="button" class="btn" id="homeOmikujiBtn">おみくじを引く</button></div>`;
