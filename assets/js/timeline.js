@@ -1,8 +1,8 @@
 // 坂道年表：表題曲/アルバムリード曲のリリース＋歴代ライブ（同ツアーは初日に集約）を年別に並べる
-let EVENTS = [], tlGroup = "all", tlSongs = true, tlLives = true;
+let EVENTS = [], tlGroup = "all", tlSongs = true, tlLives = true, tlYear = "all";
 const TL_GROUPS = ["乃木坂46", "櫻坂46", "日向坂46"];
 function render() {
-  const list = EVENTS.filter(e => (tlGroup === "all" || e.group === tlGroup) && (e.kind === "song" ? tlSongs : tlLives));
+  const list = EVENTS.filter(e => (tlGroup === "all" || e.group === tlGroup) && (tlYear === "all" || e.date.startsWith(tlYear)) && (e.kind === "song" ? tlSongs : tlLives));
   const byYear = {};
   list.forEach(e => { const y = e.date.slice(0, 4); (byYear[y] = byYear[y] || []).push(e); });
   const years = Object.keys(byYear).sort().reverse();
@@ -42,6 +42,16 @@ async function init() {
   chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     tlGroup = b.dataset.g;
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    render();
+  }));
+  const ychips = document.getElementById("tlYears");
+  const yearsAll = [...new Set(EVENTS.map(e => e.date.slice(0, 4)))].sort().reverse();
+  const wantYear = new URLSearchParams(location.search).get("year");
+  if (wantYear && yearsAll.includes(wantYear)) tlYear = wantYear;
+  ychips.innerHTML = ["all", ...yearsAll].map(y => `<button type="button" class="ychip${tlYear === y ? " on" : ""}" data-y="${y}">${y === "all" ? "すべての年" : y + "年"}</button>`).join("");
+  ychips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    tlYear = b.dataset.y;
+    ychips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
     render();
   }));
   document.getElementById("tlSongs").addEventListener("change", e => { tlSongs = e.target.checked; render(); });
