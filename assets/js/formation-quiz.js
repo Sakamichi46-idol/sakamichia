@@ -51,7 +51,7 @@ function fqModes(pool) {
 // 難易度：1問で答える空欄の数が変わる
 const FQ_DIFFS = [
   { key: "easy", label: "易", blanks: 1 },
-  { key: "normal", label: "中", blanks: 2 },
+  { key: "normal", label: "普", blanks: 2 },
   { key: "hard", label: "難", blanks: 3 },
   { key: "oni", label: "鬼", blanks: 5 }
 ];
