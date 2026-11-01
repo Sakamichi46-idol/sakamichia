@@ -153,9 +153,8 @@ function renderOmikuji(photos){
     const f = photos && photos[saved.name];
     box.innerHTML = `<h2 class="title" style="margin-top:10px">今日の推し運おみくじ</h2>
     <div class="om-home">${f ? `<img src="${BASE}assets/member-photos/${esc(f)}" alt="">` : ""}
-      <div class="om-home-main"><span class="om-home-rank">${esc(saved.rank)}</span> <b>${esc(saved.name)}</b>${groupChip(saved.group)}
-      <p>${esc(saved.msg)}</p></div>
-      <a class="btn sub" href="games/omikuji/">おみくじページ</a></div>`;
+      <div class="om-home-main"><span class="om-home-rank">${esc(saved.rank)}</span> <b style="white-space:nowrap">${esc(saved.name)}</b>${groupChip(saved.group)}
+      <p>${esc(saved.msg)}</p></div></div>`;
     return;
   }
   box.innerHTML = `<h2 class="title" style="margin-top:10px">今日の推し運おみくじ</h2>
