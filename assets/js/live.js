@@ -247,7 +247,7 @@ async function init(){
   ["q","sort","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   // 検索サジェスト：公演名と会場名から候補を出す（同じ名前は公演1件に集約）
   attachSuggest(document.getElementById("q"), q=>{
-    const hits=t=>String(t||"").toLowerCase().includes(q.toLowerCase());
+    const hits=t=>kanaNorm(String(t||"").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
     const items=[], seenT=new Set(), seenV=new Set();
     for(const l of DATA){
       if(items.length>=5) break;

@@ -124,7 +124,7 @@ async function init(){
   ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{ syncTabs(); render(); }));
   // 検索サジェスト：曲名・読み、メンバー名、「その他」のアーティスト名から候補を出す
   attachSuggest(document.getElementById("q"), q=>{
-    const hits=t=>String(t||"").toLowerCase().includes(q.toLowerCase());
+    const hits=t=>kanaNorm(String(t||"").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
     const items=[];
     DATA.filter(s=>hits(s.title)||hits(s.yomi)).slice(0,4).forEach(s=>items.push({kind:"楽曲", cls:"song", label:s.title, sub:[s.group, s.year?s.year+"年":""].filter(Boolean).join(" ・ ")}));
     Object.values(MEMB).filter(m=>hits(m.name)||hits(m.reading)).slice(0,3).forEach(m=>items.push({kind:"メンバー", cls:"member", label:m.name, sub:m.group||""}));
@@ -161,7 +161,7 @@ function cardMembers(s,i){
 }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special,s.artist,s.group==="その他"?[...PARTS[i]]:[]]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.yomi,s.center,s.group,s.year,s.special,s.artist,s.group==="その他"?[...PARTS[i]]:[]]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));

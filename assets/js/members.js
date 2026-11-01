@@ -253,7 +253,7 @@ async function init() {
   document.getElementById("mbQuery").addEventListener("input", e => { fQuery = e.target.value.trim(); render(); });
   // 検索サジェスト：名前・読みから候補を出す。卒業生が選ばれたら「卒業生も表示」を自動でオンにする
   attachSuggest(document.getElementById("mbQuery"), q => {
-    const hits = t => String(t || "").toLowerCase().includes(q.toLowerCase());
+    const hits = t => kanaNorm(String(t || "").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
     return MEMBERS.filter(m => hits(m.name) || hits(m.reading)).slice(0, 8).map(m => ({
       kind: "メンバー", cls: "member", label: m.name,
       sub: [lastGroup(m), m.gen ? m.gen + "期" : "", m.graduated ? "卒業" : ""].filter(Boolean).join(" ・ ")

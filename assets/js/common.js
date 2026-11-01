@@ -8,9 +8,12 @@ async function loadJSON(name){
 function esc(s){return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function groupChip(g){return g ? `<span class="chip g-${esc(g)}">${esc(g)}</span>` : "";}
 function tags(list){return (list||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("");}
+// カタカナをひらがなに寄せる（「アイシー」⇔「あいしー」のような表記ゆれを吸収する）。
+// NFKCで半角カナ・全角英数も寄せる（ｱｲｼｰ／Ｉ などでも当たるように）
+function kanaNorm(s){ return String(s ?? "").normalize("NFKC").replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)); }
 function includesAll(hay, q){
   if(!q) return true;
-  return hay.toLowerCase().includes(q.toLowerCase());
+  return kanaNorm(hay.toLowerCase()).includes(kanaNorm(q.toLowerCase()));
 }
 function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 

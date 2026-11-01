@@ -133,7 +133,7 @@ document.getElementById("searchForm").addEventListener("submit", e=>{ e.preventD
 // 横断検索のサジェスト：入力中にメンバー・楽曲・ライブの候補を出す
 const SG_MAX=8;
 function suggestItems(q){
-  const hits=(text)=>String(text||"").toLowerCase().includes(q.toLowerCase());
+  const hits=(text)=>kanaNorm(String(text||"").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
   const items=[];
   (DB.members||[]).filter(m=>hits(m.name)||hits(m.reading)).slice(0,4).forEach(m=>items.push(
     {kind:"メンバー", cls:"member", label:m.name, sub:m.group||"", href:`members/?member=${encodeURIComponent(m.name)}`}));
