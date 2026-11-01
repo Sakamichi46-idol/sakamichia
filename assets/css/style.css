@@ -395,6 +395,17 @@ dialog{max-height:92dvh}
 .searchbox{position:relative}
 .suggest{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 28px rgba(80,50,110,.14);overflow:hidden;z-index:30;text-align:left}
 .suggest[hidden]{display:none}
+.mz-head{display:flex;gap:14px;flex-wrap:wrap;font-weight:700;margin:6px 0 10px}
+.mz-stage{display:flex;justify-content:center}
+.mz-stage canvas{width:min(78vw,360px);height:auto;border-radius:16px;border:1px solid var(--line);background:#f1eaf7}
+.mz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.mz-choice{padding:13px 10px;font-size:15.5px}
+.mz-choice.ok{background:var(--k,#5eba53)!important;color:#fff}
+.mz-choice.ng{background:#d9534f!important;color:#fff}
+.mz-choice:disabled{opacity:.75}
+.mz-msg{min-height:1.7em;margin-top:10px}
+.mz-result{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.mz-rows p{margin:4px 0}
 .cmp-pick{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
 .cmp-pick select{flex:1;min-width:150px;padding:10px;border:2px solid var(--line);border-radius:12px;font-size:15px;background:#fff}
 .cmp-vs{font-weight:800;color:var(--accent)}
