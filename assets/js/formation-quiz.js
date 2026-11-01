@@ -37,7 +37,7 @@ function fqBuildPool(forms, songs) {
     const flat = f.rows.flat();
     if (flat.length < FQ_MIN_MEMBERS) continue;
     const s = songMap[key] || {};
-    pool.push({ group, lineage: lin, title, rows: f.rows, center: s.center || "", year: s.year || null, type: s.type || "" });
+    pool.push({ group, lineage: lin, title, rows: f.rows, center: s.center || "", year: s.year || null, date: s.date || null, type: s.type || "" });
   }
   return pool;
 }
@@ -54,16 +54,42 @@ function fqMakeQuestion(e) {
   const [ri, ci, answer] = cells[Math.floor(Math.random() * cells.length)];
   return { ...e, blank: [ri, ci], answer, choices: [] };
 }
+// リリース日にそのグループに在籍していたか（在籍期間データ draft-timeline と同じ判定）。
+// 卒業済み・未加入のメンバーを選択肢に入れると消去法で分かってしまうため、優先的に除外する。
+const FQ_GCODE = { "乃木坂46": "nogi", "欅坂46": "keyaki", "櫻坂46": "sakura", "けやき坂46": "hiragana", "日向坂46": "hinata" };
+const FQ_PERIODS = { keyaki: ["2015-08-21", "2020-10-13"], sakura: ["2020-10-14", null], hiragana: ["2015-11-30", "2019-02-10"], hinata: ["2019-02-11", null], nogi: ["2011-08-21", null] };
+function fqEraEligible(name, q) {
+  if (!FQ.eraByName || !q.date) return true;  // データが無い場合は従来どおり
+  const rec = FQ.eraByName[name];
+  if (!rec) return false;
+  const code = FQ_GCODE[q.group], range = code && FQ_PERIODS[code];
+  if (!code || !range) return true;
+  if (!rec.groups.includes(code)) return false;
+  if (q.date < range[0] || (range[1] && q.date > range[1])) return false;
+  if (!rec.joined || rec.joined > q.date) return false;
+  if (rec.uncertainEnd) return false;
+  if (rec.left && rec.left < q.date) return false;
+  if ((code === "sakura" || code === "hinata") && rec.left && rec.left < range[0]) return false;
+  return true;
+}
 function fqChoices(q) {
   const inForm = new Set(q.rows.flat());
   const ans = FQ.memberByName[q.answer];
   const linMembers = FQ.members.filter(m =>
     m.name !== "ポカ" && !inForm.has(m.name) &&
     fqLineage(m.group) === q.lineage);
-  const sameGen = linMembers.filter(m => ans && ans.gen > 0 && m.gen === ans.gen);
-  const rest = linMembers.filter(m => !(ans && ans.gen > 0 && m.gen === ans.gen));
-  const decoys = fqShuffle(sameGen).slice(0, 3);
-  if (decoys.length < 3) decoys.push(...fqShuffle(rest).slice(0, 3 - decoys.length));
+  const isGen = m => ans && ans.gen > 0 && m.gen === ans.gen;
+  const era = linMembers.filter(m => fqEraEligible(m.name, q));
+  // 在籍していたメンバー（同期→その他）を優先し、足りない場合だけ在籍外から補う
+  const tiers = [era.filter(isGen), era.filter(m => !isGen(m)), linMembers.filter(isGen), linMembers.filter(m => !isGen(m))];
+  const used = new Set(), decoys = [];
+  for (const tier of tiers) {
+    for (const m of fqShuffle(tier)) {
+      if (decoys.length >= 3) break;
+      if (!used.has(m.name)) { used.add(m.name); decoys.push(m); }
+    }
+    if (decoys.length >= 3) break;
+  }
   return fqShuffle([q.answer, ...decoys.map(m => m.name)]);
 }
 function fqTile(name, opts) {
@@ -160,13 +186,21 @@ function fqStartPanel(pool) {
 }
 async function fqInit() {
   const area = document.getElementById("fqArea");
-  const [forms, songs, members, photos] = await Promise.all([
-    loadJSON("formations.json"), loadJSON("songs.json"), loadJSON("members.json"), loadJSON("member-photos.json")]);
+  const [forms, songs, members, photos, draftMembers, timeline] = await Promise.all([
+    loadJSON("formations.json"), loadJSON("songs.json"), loadJSON("members.json"), loadJSON("member-photos.json"),
+    loadJSON("draft-members.json"), loadJSON("draft-timeline.json")]);
   if (!forms || !Array.isArray(songs) || !Array.isArray(members)) {
     area.innerHTML = `<div class="card"><p>出題データを読み込めませんでした。</p></div>`;
     return;
   }
-  FQ = { members, photos: photos || {}, memberByName: {}, list: [], mode: "all", i: 0, score: 0, done: false, picked: null, choices: [] };
+  FQ = { members, photos: photos || {}, memberByName: {}, eraByName: null, list: [], mode: "all", i: 0, score: 0, done: false, picked: null, choices: [] };
+  if (Array.isArray(draftMembers) && timeline && timeline.ready && timeline.members) {
+    FQ.eraByName = {};
+    for (const dm of draftMembers) {
+      const t = timeline.members[dm.id];
+      if (t) FQ.eraByName[dm.name] = { groups: dm.groups || [dm.group], joined: t.joined, left: t.left, uncertainEnd: !!t.uncertainEnd };
+    }
+  }
   for (const m of members) FQ.memberByName[m.name] = m;
   fqStartPanel(fqBuildPool(forms, songs));
 }
