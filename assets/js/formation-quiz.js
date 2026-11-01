@@ -53,7 +53,7 @@ const FQ_DIFFS = [
   { key: "easy", label: "易", blanks: 1 },
   { key: "normal", label: "普", blanks: 2 },
   { key: "hard", label: "難", blanks: 3 },
-  { key: "oni", label: "鬼", blanks: 5, input: true }
+  { key: "oni", label: "鬼", blanks: 5 }
 ];
 function fqMakeQuestion(e) {
   const cells = [];
@@ -136,7 +136,7 @@ function fqRender() {
   if (!FQ.done) {
     if (remaining > 0) {
       html += `<p style="margin:6px 0">空欄 ${FQ.active + 1} / ${q.blanks.length}（あと${remaining}人）</p>`;
-      if (FQ.diff.input) {
+      if (FQ.style === "input") {
         html += `<div class="fq-inputrow"><input id="fqInput" type="text" placeholder="メンバー名を入力（候補からも選べます）" autocomplete="off" value="${esc(FQ.filled[FQ.active] || "")}"><button type="button" class="btn" id="fqFill">決定</button></div>`;
       } else {
         html += `<div>${FQ.choiceSets[FQ.active].map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
@@ -218,7 +218,7 @@ function fqResult() {
   <p>${FQ.score >= max * 0.8 ? "すごい！配置まで完璧に覚えていますね。" : FQ.score >= max * 0.5 ? "なかなかのフォーメーション通です。" : FQ.score >= max * 0.3 ? "前列は覚えていても、後列は意外と難しいですよね。" : "配置を当てるのは至難の業です。楽曲図鑑で眺めるのも楽しいですよ。"}</p>
   <p><button type="button" class="primary" onclick="location.reload()">モード選択に戻る</button> <button type="button" id="fqShare">結果を共有</button></p></div>`;
   const sh = document.getElementById("fqShare");
-  if (sh) sh.addEventListener("click", () => shareScoreImage({ game: "フォーメーションクイズ", score: `${FQ.score}点／${max}点`, lines: [`難易度：${FQ.diff.label}（空欄${FQ.diff.blanks}人）／モード：${FQ.mode === "all" ? "すべて" : FQ.mode}`, ...FQ.list.slice(0, 5).map((e, i) => `${i + 1}. 『${e.title}』 ${e.blanks.map(b => b.answer).join("、")}`)] }, sh));
+  if (sh) sh.addEventListener("click", () => shareScoreImage({ game: "フォーメーションクイズ", score: `${FQ.score}点／${max}点`, lines: [`難易度：${FQ.diff.label}（空欄${FQ.diff.blanks}人）／${FQ.style === "input" ? "打ち込み式" : "4択式"}／モード：${FQ.mode === "all" ? "すべて" : FQ.mode}`, ...FQ.list.slice(0, 5).map((e, i) => `${i + 1}. 『${e.title}』 ${e.blanks.map(b => b.answer).join("、")}`)] }, sh));
 }
 function fqStartPanel(pool) {
   const area = document.getElementById("fqArea");
@@ -231,6 +231,7 @@ function fqStartPanel(pool) {
   const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${all.length}曲）</button>`,
     ...ok.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}曲）</button>`)].join("");
   const diffChips = FQ_DIFFS.map((d, i) => `<button type="button" class="ychip${i === 0 ? " on" : ""}" data-d="${d.key}">${d.label}（空欄${d.blanks}人）</button>`).join("");
+  const styleChips = [`<button type="button" class="ychip on" data-s="choice">4択式</button>`, `<button type="button" class="ychip" data-s="input">打ち込み式</button>`].join("");
   const excluded = FQ_LINEAGES.filter(l => !ok.includes(l));
   const note = excluded.length ? `<p style="color:var(--muted)">${excluded.map(l => `${esc(l)}（公式確定分 ${counts[l] || 0}曲）`).join("・")}は、出題に使える公式確定のフォーメーションが${FQ_MIN_POOL}曲未満のため対象外です。</p>` : "";
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
@@ -239,6 +240,8 @@ function fqStartPanel(pool) {
   <div class="filters" style="margin:10px 0">${chips}</div>
   <h4 style="margin:14px 0 6px">難易度（1問で答える空欄の数）</h4>
   <div class="filters" style="margin:6px 0 10px">${diffChips}</div>
+  <h4 style="margin:14px 0 6px">回答方式</h4>
+  <div class="filters" style="margin:6px 0 10px">${styleChips}</div>
   <p><button type="button" class="primary" id="fqStart">スタート</button></p></div>`;
   area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
     mode = b.dataset.m;
@@ -247,6 +250,16 @@ function fqStartPanel(pool) {
   area.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => {
     FQ.diff = FQ_DIFFS.find(d => d.key === b.dataset.d) || FQ_DIFFS[0];
     area.querySelectorAll("[data-d]").forEach(x => x.classList.toggle("on", x === b));
+    // 回答方式を自分で選んでいない場合は、鬼だけ打ち込み式を初期値にする
+    if (!FQ.styleTouched) {
+      FQ.style = FQ.diff.key === "oni" ? "input" : "choice";
+      area.querySelectorAll("[data-s]").forEach(x => x.classList.toggle("on", x.dataset.s === FQ.style));
+    }
+  }));
+  area.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => {
+    FQ.style = b.dataset.s;
+    FQ.styleTouched = true;
+    area.querySelectorAll("[data-s]").forEach(x => x.classList.toggle("on", x === b));
   }));
   document.getElementById("fqStart").addEventListener("click", () => {
     const src = mode === "all" ? all : pool.filter(e => e.lineage === mode);
@@ -265,7 +278,7 @@ async function fqInit() {
     area.innerHTML = `<div class="card"><p>出題データを読み込めませんでした。</p></div>`;
     return;
   }
-  FQ = { members, photos: photos || {}, memberByName: {}, eraByName: null, list: [], mode: "all", diff: FQ_DIFFS[0], i: 0, score: 0, done: false, filled: {}, active: 0, choiceSets: [] };
+  FQ = { members, photos: photos || {}, memberByName: {}, eraByName: null, list: [], mode: "all", diff: FQ_DIFFS[0], style: "choice", styleTouched: false, i: 0, score: 0, done: false, filled: {}, active: 0, choiceSets: [] };
   if (Array.isArray(draftMembers) && timeline && timeline.ready && timeline.members) {
     FQ.eraByName = {};
     for (const dm of draftMembers) {
