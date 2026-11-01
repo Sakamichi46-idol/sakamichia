@@ -107,8 +107,10 @@ body[data-group="坂道AKB"]{--page:#d24a43}
 .fm{background:#fff;border:.15em solid var(--line);border-radius:999px;padding:.26em .62em;font-size:1em;white-space:nowrap;flex:none}
 .fm.ctr{background:var(--page);border-color:var(--page);color:#fff;font-weight:700}
 .g-坂道選抜{background:#2f9e8f}
+.g-その他{background:#607d8b}
 body[data-group="坂道選抜"]{--page:#2f9e8f}
 .card:has(.g-坂道選抜){border-left-color:#2f9e8f}
+.card:has(.g-その他){border-left-color:#607d8b}
 
 .tabhint{color:var(--muted);font-size:12px;align-self:center;white-space:nowrap}
 .bthumb{aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:#efeaf2;margin-bottom:10px;cursor:pointer}

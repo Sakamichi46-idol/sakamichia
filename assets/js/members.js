@@ -64,6 +64,7 @@ function formCountOf(name) {
   let n = 0;
   for (const k in FORMS) {
     const f = FORMS[k];
+    if (f.external) continue;   // 「その他」（外部参加・MV出演）はフォーメーション参加曲数に数えない
     if ((f.rows && f.rows.flat().includes(name)) || (f.vocal && f.vocal.includes(name))) n++;
   }
   return n;

@@ -26,7 +26,7 @@ function releaseLabel(s){
   return parts.join(" ・ ");
 }
 function scopePool(){
-  return SONGS.filter(s => scope.groups.has(Core.songLineage(s)) && scope.types.has(s.type || ""));
+  return SONGS.filter(s => s.group !== "その他" && scope.groups.has(Core.songLineage(s)) && scope.types.has(s.type || ""));
 }
 // 選択中のグループ群に実在する種別を、件数つきで返す（並びは全体の件数順 TYPES に従う）。
 // 種別チップはこの結果だけを描くので、選んだグループに無い種別は表示されない。

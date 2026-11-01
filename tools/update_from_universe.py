@@ -334,7 +334,7 @@ def update_songs_and_formations(summary):
     newf = {}
     kept_official = 0
     for key, v in old.items():
-        if v.get('official') or key in KEEP_FORMATIONS:
+        if v.get('official') or v.get('external') or key in KEEP_FORMATIONS:
             newf[key] = v
             kept_official += 1
     changed = 0

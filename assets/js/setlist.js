@@ -231,7 +231,7 @@ function previewRows() {
 // --- 描画：候補 ---
 function renderCandidates() {
   const q = $('msSearch').value.trim().toLocaleLowerCase(), g = $('msGroup').value;
-  const list = sortSongs(songs.filter(s => groupMatches(s, g)
+  const list = sortSongs(songs.filter(s => s.group !== 'その他' && groupMatches(s, g)
     && (!q || [s.title, s.yomi || '', ...(s.writers || []), ...(s.arrangers || [])].join(' ').toLocaleLowerCase().includes(q))));
   $('msCount').textContent = `${list.length}曲を表示（全${songs.length}曲）`;
   const host = $('msCandidates');

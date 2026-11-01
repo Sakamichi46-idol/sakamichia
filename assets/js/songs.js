@@ -26,6 +26,7 @@ function participantsOf(s){
   if(!f) return [];
   if(f.rows&&f.rows.length) return f.rows.flat();
   if(f.vocal&&f.vocal.length) return f.vocal;
+  if(f.mv&&f.mv.length) return f.mv;   // 「その他」のMV出演曲：メンバー検索（?member=）の対象にする
   return [];
 }
 // 楽曲→ライブ逆引き（data/song-live.json、daily 再生成）。大きいので初回ダイアログ表示時に遅延読み込みする
@@ -65,13 +66,14 @@ function syncTabs(){
     clr.hidden = !(SEL.size||YSEL.size||TSEL.size||NSEL.size||MFILTER||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
   }
 }
-const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f"};
+const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639","坂道AKB":"#d24a43","坂道選抜":"#2f9e8f","その他":"#607d8b"};
 async function init(){
   let members=[];
   [DATA, FORMS, members]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json"), loadJSON("members.json")]);
   MEMB={}; (members||[]).forEach(m=>{ MEMB[m.name]=m; });
   PARTS=DATA.map(s=>new Set(participantsOf(s)));
-  CBUCKET=PARTS.map(p=>countBucket(p.size));
+  // 「その他」（外部楽曲）は坂道側だけの人数になるため、人数フィルターの対象外にする（""＝不明扱い）
+  CBUCKET=DATA.map((s,i)=>s.group==="その他" ? "" : countBucket(PARTS[i].size));
   document.querySelectorAll("#groupTabs button").forEach(b=>b.addEventListener("click",()=>{
     const key=b.dataset.g;
     if(key==="") SEL.clear();
@@ -140,7 +142,7 @@ function matchG(s){
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special,s.artist]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
@@ -165,8 +167,8 @@ function render(){
   }
   document.getElementById("count").textContent=`${rows.length}曲`+(MFILTER?`（${MFILTER}の参加曲）`:"");
   document.getElementById("list").innerHTML=rows.map(([s,i])=>`<div class="card">${groupChip(s.group)}
-    <h3>${esc(s.title)}</h3><p>${s.year?esc(s.year)+"年 ・ ":""}${esc(s.type||"")}${s.center?`<br>センター：${esc(s.center)}`:""}</p>
-    <p><button data-open="${i}">フォーメーション・詳細</button></p></div>`).join("")
+    <h3>${esc(s.title)}</h3><p>${s.year?esc(s.year)+"年 ・ ":""}${esc(s.type||"")}${s.artist?`<br>${esc(s.artist)}`:""}${s.center?`<br>センター：${esc(s.center)}`:""}</p>
+    <p><button data-open="${i}">${s.group==="その他"?"詳細":"フォーメーション・詳細"}</button></p></div>`).join("")
     || `<div class="empty">条件に合う楽曲がありません。</div>`;
   document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openSong(+b.dataset.open)));
 }
@@ -202,7 +204,19 @@ function openSong(i){
   <p>${s.date?esc(s.date)+"発売":""}${s.type?` ・ ${esc(s.type)}`:""}${s.center?`<br>センター：<b>${esc(s.center)}</b>`:""}</p>`;
   if((s.writers&&s.writers.length)||(s.arrangers&&s.arrangers.length))
     html+=`<p style="color:var(--muted);font-size:13px">${s.writers&&s.writers.length?`作曲：${esc(s.writers.join("、"))}`:""}${s.arrangers&&s.arrangers.length?`　編曲：${esc(s.arrangers.join("、"))}`:""}</p>`;
-  if(f && f.rows && f.rows.length){
+  if(s.artist) html+=`<p>アーティスト：<b>${esc(s.artist)}</b>${s.afterGrad?` <span class="tag">卒業後の参加・出演</span>`:""}</p>`;
+  if(s.work) html+=`<p style="color:var(--muted);font-size:13px">収録：${esc(s.work)}</p>`;
+  if(f && f.external){
+    if(f.vocal && f.vocal.length){
+      const label = s.type==="外部作品収録" ? "参加メンバー" : "歌唱参加メンバー（坂道側）";
+      const all=sortedParticipants(f.vocal);
+      html+=`<h4 style="margin:16px 0 4px">${label}（${all.length}名）</h4><p style="line-height:2">${all.map(esc).join("、")}</p>`;
+    }
+    if(f.mv && f.mv.length){
+      const all=sortedParticipants(f.mv);
+      html+=`<h4 style="margin:16px 0 4px">MV出演メンバー（${all.length}名）</h4><p style="line-height:2">${all.map(esc).join("、")}</p>`;
+    }
+  } else if(f && f.rows && f.rows.length){
     const last=f.rows.length-1;
     html+=`<h4 style="margin:16px 0 4px">フォーメーション</h4>
     <p style="color:var(--muted);font-size:12px;margin:0 0 6px">上が後列、下が前列です。色付きがセンター。${f.official?"（公式発表に基づく）":"（参考データに基づく）"}</p>
@@ -223,6 +237,7 @@ function openSong(i){
   }
   if(f && f.vocal && f.rows && f.rows.length)
     html+=`<h4 style="margin:16px 0 4px">歌唱メンバー（${f.vocal.length}名）</h4><p style="line-height:2">${f.vocal.map(esc).join("、")}</p>`;
+  if(s.note) html+=`<p style="color:var(--muted);font-size:13px;margin-top:12px">${esc(s.note)}</p>`;
   html+=`<div id="dlgSongLive"></div>`;
   document.getElementById("dlgBody").innerHTML=html;
   dlg.showModal();
