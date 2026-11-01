@@ -46,7 +46,7 @@ function uqRender() {
   const q = UQ.list[UQ.i];
   let html = `<div class="card" style="margin-bottom:40px"><h3>第${UQ.i + 1}問 / ${UQ.list.length}問（現在 ${UQ.score}点）</h3>
   <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}のユニット曲です。この組み合わせは、どの曲でしょう？</p>
-  <div class="uq-members">${q.vocal.map(n => uqMemberHTML(n, q.group)).join("")}</div>`;
+  <div class="uq-members${q.vocal.length <= 4 ? " fit" + q.vocal.length : ""}">${q.vocal.map(n => uqMemberHTML(n, q.group)).join("")}</div>`;
   if (!UQ.done) {
     html += `<div>${UQ.choices.map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">『${esc(c)}』</button>`).join("")}</div>`;
   } else {

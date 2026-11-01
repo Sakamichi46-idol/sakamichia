@@ -679,3 +679,7 @@ html[data-lite="1"] .suggest,html[data-lite="1"] .drawer{box-shadow:none}
 html[data-theme="dark"] .vn-box,html[data-theme="dark"] .om-card,html[data-theme="dark"] .hq-hint,
 html[data-theme="dark"] .mz-result,html[data-theme="dark"] .vn-head{background-color:var(--card);color:var(--ink)}
 html[data-theme="dark"] .vn-shows,html[data-theme="dark"] .vn-show{border-top-color:#332a45;border-bottom-color:#332a45}
+/* ユニットクイズ：4人までは写真を縮めて1行に収める */
+.uq-members.fit2 .uq-member{width:calc((100% - 8px)/2);max-width:150px}
+.uq-members.fit3 .uq-member{width:calc((100% - 16px)/3)}
+.uq-members.fit4 .uq-member{width:calc((100% - 24px)/4)}
