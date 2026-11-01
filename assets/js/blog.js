@@ -197,6 +197,9 @@ async function init(){
     const msel=document.getElementById("member");
     if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
   }
+  // ディープリンク（?year=YYYY）：ブログ統計の年別バーなどから、その年だけに絞って開く
+  const qYear=new URLSearchParams(location.search).get("year");
+  if(qYear && /^\d{4}$/.test(qYear)){ yearSel=qYear; }
   // ディープリンク（?view=photos|articles）：推しフローティングの「写真一覧」などから表示モードを指定して開く。
   // 利用者の保存済みの表示モードは上書きしないよう、setView（保存する）は使わず今回の表示だけに効かせる
   const qView=new URLSearchParams(location.search).get("view");
