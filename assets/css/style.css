@@ -683,3 +683,31 @@ html[data-theme="dark"] .vn-shows,html[data-theme="dark"] .vn-show{border-top-co
 .uq-members.fit2 .uq-member{width:calc((100% - 8px)/2);max-width:150px}
 .uq-members.fit3 .uq-member{width:calc((100% - 16px)/3)}
 .uq-members.fit4 .uq-member{width:calc((100% - 24px)/4)}
+
+/* ===== 軽量モード＝スタイリッシュ簡易版（影なし・細線・モノトーン基調） ===== */
+html[data-lite="1"] .card,html[data-lite="1"] dialog,html[data-lite="1"] .sg-box,
+html[data-lite="1"] .ms-pop,html[data-lite="1"] .uq-members,html[data-lite="1"] .vn-box,
+html[data-lite="1"] .om-card,html[data-lite="1"] .mz-stage,html[data-lite="1"] .dlg-card{box-shadow:none!important}
+html[data-lite="1"] .card{border-radius:10px;border-left-width:1px}
+html[data-lite="1"] dialog{border:1px solid var(--line);border-radius:12px}
+html[data-lite="1"]:not([data-theme="dark"]) body{background:#fcfcfd}
+html[data-lite="1"]:not([data-theme="dark"]) header.site{background:#fff}
+html[data-lite="1"] h2.title{border-left:3px solid var(--ink);letter-spacing:.03em}
+html[data-lite="1"] .btn.sub{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+html[data-lite="1"] .ychip,html[data-lite="1"] .pager button{border-width:1px;background:transparent}
+html[data-lite="1"] .ychip.on,html[data-lite="1"] .pager button.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+html[data-lite="1"] .chip{background:transparent;border:1.2px solid}
+html[data-lite="1"] .g-乃木坂46{color:var(--n)}html[data-lite="1"] .g-櫻坂46{color:var(--s)}
+html[data-lite="1"] .g-日向坂46{color:var(--h)}html[data-lite="1"] .g-欅坂46{color:var(--k)}
+html[data-lite="1"] .g-けやき坂46{color:#7f9c1d}html[data-lite="1"] .g-その他{color:#607d8b}
+html[data-lite="1"] .g-坂道AKB{color:#d24a43}
+html[data-lite="1"] .bottomnav{box-shadow:none;border-top:1px solid var(--line)}
+html[data-lite="1"] .bottomnav a.on{color:var(--ink);font-weight:800;box-shadow:inset 0 2px 0 var(--ink)}
+html[data-lite="1"] input,html[data-lite="1"] select,html[data-lite="1"] .ms-btn{border-width:1px;border-radius:8px}
+html[data-lite="1"] section.page{padding-top:20px}
+/* ===== 全体UX：トップへ戻るボタンと押下フィードバック ===== */
+.toTop{position:fixed;right:14px;bottom:86px;z-index:44;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:19px;box-shadow:0 4px 14px rgba(60,30,80,.16);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
+.toTop.show{opacity:1;pointer-events:auto}
+@media(min-width:769px){.toTop{bottom:22px}}
+.btn:active,.ychip:active,.pager button:active{transform:scale(.97)}
+.pager button{min-height:38px;min-width:38px}

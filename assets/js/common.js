@@ -260,6 +260,16 @@ document.addEventListener("DOMContentLoaded",()=>{
   ).join("");
   document.body.appendChild(nav);
   document.body.classList.add("has-bnav");
+  // トップへ戻るボタン（長くスクロールしたときだけ出す）
+  const toTop = document.createElement("button");
+  toTop.type = "button"; toTop.className = "toTop"; toTop.textContent = "↑"; toTop.setAttribute("aria-label", "トップへ戻る");
+  toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: document.documentElement.dataset.lite === "1" ? "auto" : "smooth" }));
+  document.body.appendChild(toTop);
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 700); ticking = false; });
+  }, { passive: true });
 });
 
 // 推しフローティングボタン：推し登録（localStorage "sakamichia-favs"）があるときだけ、
@@ -484,7 +494,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   drawer.appendChild(themeBtn);
   const liteBtn=document.createElement("button");
   liteBtn.type="button";liteBtn.className="btn sub drawer-share";
-  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"🪶 軽量モード：ON（タップでOFF）":"🪶 軽量モード：OFF（タップでON）"; };
+  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"🪶 簡易版（スタイリッシュ）：ON（タップで通常版）":"🪶 簡易版（スタイリッシュ）：OFF（タップでON）"; };
   liteBtn.addEventListener("click",()=>{ applyLite(document.documentElement.dataset.lite!=="1"); location.reload(); });
   syncLiteBtn();
   drawer.appendChild(liteBtn);
