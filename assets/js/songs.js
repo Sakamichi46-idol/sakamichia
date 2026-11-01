@@ -225,7 +225,7 @@ function openSong(i){
     html+=`<p style="color:var(--muted);font-size:13px">${s.writers&&s.writers.length?`作曲：${esc(s.writers.join("、"))}`:""}${s.arrangers&&s.arrangers.length?`　編曲：${esc(s.arrangers.join("、"))}`:""}</p>`;
   if(s.artist) html+=`<p>アーティスト：<b>${esc(s.artist)}</b>${s.afterGrad?` <span class="tag">卒業後の参加・出演</span>`:""}</p>`;
   if(s.work) html+=`<p style="color:var(--muted);font-size:13px">収録：${esc(s.work)}</p>`;
-  if(s.mv) html+=`<p><a class="btn" href="${esc(s.mv)}" target="_blank" rel="noopener">▶ 公式MVを見る（YouTube）</a></p>`;
+  if(s.mv) html+=`<p><a class="btn" href="${esc(s.mv)}" target="_blank" rel="noopener">▶ 公式MV${s.mvKind==="short"?"（Short Ver.）":""}を見る（YouTube）</a></p>`;
   if(f && f.external){
     if(f.vocal && f.vocal.length){
       const label = s.type==="外部作品収録" ? "参加メンバー" : "歌唱参加メンバー（坂道側）";
