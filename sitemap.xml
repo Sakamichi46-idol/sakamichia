@@ -2,47 +2,137 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sakamichia.pages.dev/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-11-01</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://sakamichia.pages.dev/live/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <loc>https://sakamichia.pages.dev/songs/</loc>
+    <lastmod>2026-11-01</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/live/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/live/ranking/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/live/venues/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://sakamichia.pages.dev/blog/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-11-01</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sakamichia.pages.dev/songs/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <loc>https://sakamichia.pages.dev/blog/stats/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/members/</loc>
+    <lastmod>2026-11-01</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/members/compare/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/birthdays/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/timeline/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/news/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sakamichia.pages.dev/games/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/center/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/group/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/lyrics-kanji/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/sorter/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/song-sorter/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/formation-quiz/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/unit-quiz/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/draft/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/setlist-draft/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/photo-gacha/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/mosaic/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/games/omikuji/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://sakamichia.pages.dev/formation/</loc>
+    <lastmod>2026-11-01</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sakamichia.pages.dev/setlist/</loc>
-    <lastmod>2026-10-30</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sakamichia.pages.dev/members/</loc>
-    <lastmod>2026-10-30</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sakamichia.pages.dev/formation/</loc>
-    <lastmod>2026-10-30</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sakamichia.pages.dev/news/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-11-01</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>
