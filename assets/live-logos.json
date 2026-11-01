@@ -51,9 +51,8 @@
   {
    "match": "三期生LIVE",
    "group": "hinata",
-   "url": "/assets/live-logos/tour-hinata-3rdgen-live.jpg",
-   "source": "https://www.hinatazaka46.com/s/official/page/3rd_generation_live （公式KV全体を背景透かし用に使用）",
-   "mode": "bg"
+   "url": "/assets/live-logos/tour-hinata-3rdgen-live-logo.jpg",
+   "source": "https://www.hinatazaka46.com/s/official/page/3rd_generation_live （公式ロゴ画像・ユーザー提供）"
   },
   {
    "match": "真夏の全国ツアー2025",
