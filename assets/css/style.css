@@ -733,3 +733,5 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .om-home-main{flex:1;min-width:0}
 .om-home-main p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
 .om-home-rank{font-size:24px;font-weight:900;color:var(--accent);margin-right:4px}
+.om-rank[data-rank="凶"],.om-home-rank[data-rank="凶"]{color:#b0563a}
+.om-rank[data-rank="大凶"],.om-home-rank[data-rank="大凶"]{color:#a02c2c}

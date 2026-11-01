@@ -6,7 +6,7 @@ function render(res, already) {
   const f = PHOTOS[res.name];
   main.innerHTML = `<div class="om-card">
     ${f ? `<img class="om-photo" src="${BASE}assets/member-photos/${esc(f)}" alt="">` : ""}
-    <p class="om-rank">${esc(res.rank)}</p>
+    <p class="om-rank" data-rank="${esc(res.rank)}">${esc(res.rank)}</p>
     <h3 style="margin:4px 0">${esc(res.name)}${groupChip(res.group)}</h3>
     <p class="om-msg">${esc(res.msg)}</p>
     <div class="gacha-btns" style="justify-content:center">

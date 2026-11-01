@@ -35,13 +35,17 @@ function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 
 // おみくじ（共通ロジック）：トップページとおみくじページで同じ結果になるよう共通化。
 // 1日1回・結果は日付シードで決まり、localStorage に保存して両ページで共有する。
-const OMIKUJI_RANKS = ["大吉", "中吉", "小吉", "吉", "末吉"];
+const OMIKUJI_RANKS = ["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"];
+// 出現ウェイト（合計100）：凶はたまに、大凶は滅多に出ない
+const OMIKUJI_WEIGHTS = [16, 24, 24, 20, 10, 5, 1];
 const OMIKUJI_MSGS = {
   "大吉": ["推しのブログ更新が早そう。通知の見逃しに注意。", "ライブ運も絶好調。チケット運が上がっています。", "推しの笑顔にたくさん出会える一日。"],
   "中吉": ["推しの懐かしい写真との出会いがありそう。写真ガチャがおすすめ。", "楽曲図鑑で新しい発見がありそう。", "推しの誕生日カウントダウンをチェックしてみて。"],
   "小吉": ["まったり推し活日和。ブログアーカイブの旅が吉。", "好きな曲を聴き返すと運気アップ。", "推しのセンター曲を聴くと良いことがありそう。"],
   "吉": ["焦らずマイペースに。推しは逃げません。", "年表を眺めると懐かしい記憶がよみがえりそう。", "今日は情報を集める日。お知らせチェックが吉。"],
-  "末吉": ["運気はこれから上昇。モザイククイズで腕試しを。", "見逃しは明日取り戻せます。無理せず休息も大事。", "小さな幸運は夕方から。ブログの新着を待ってみて。"]
+  "末吉": ["運気はこれから上昇。モザイククイズで腕試しを。", "見逃しは明日取り戻せます。無理せず休息も大事。", "小さな幸運は夕方から。ブログの新着を待ってみて。"],
+  "凶": ["今日は静かに推す日。無理せず、好きな曲を聴いて過ごして。", "見逃しがあっても大丈夫。アーカイブが待っています。", "運気は底打ち間近。明日に期待しましょう。"],
+  "大凶": ["今日はお休みモードで。推し活は明日から本気出す。", "何をやっても裏目な日かも。懐かしいブログ記事でのんびりと。", "レアな大凶を引きました。逆に記念日です。"]
 };
 const OMIKUJI_KEY = "sakamichia-omikuji";
 function omikujiTodayStr() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`; }
@@ -58,7 +62,8 @@ function omikujiDraw(members) {
   const seed = omikujiSeed(omikujiTodayStr() + "|" + pool.map(m => m.name).join(","));
   const m = pool[seed % pool.length];
   const r = omikujiSeed(omikujiTodayStr() + "|" + m.name);
-  const rank = OMIKUJI_RANKS[Math.floor((r / 4294967296) * 5) % 5] || "吉";
+  let rank = "吉";
+  { let x = r % 100, acc = 0; for (let i = 0; i < OMIKUJI_RANKS.length; i++) { acc += OMIKUJI_WEIGHTS[i]; if (x < acc) { rank = OMIKUJI_RANKS[i]; break; } } }
   const msgs = OMIKUJI_MSGS[rank] || OMIKUJI_MSGS["吉"];
   return { date: omikujiTodayStr(), name: m.name, group: m.group, rank, msg: msgs[r % msgs.length] };
 }
