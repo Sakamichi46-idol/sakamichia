@@ -22,6 +22,7 @@ async function init(){
   DB = {lives, blogs, songs, members, news};
   renderToday(meta, photos, otd);
   renderFavs(mLatest, meta);
+  renderOmikuji(photos);
   const WD = ["日", "月", "火", "水", "木", "金", "土"];
   document.getElementById("homeNews").innerHTML = news.slice(0, 5).map(n => {
     const dt = new Date(n.d + "T00:00:00+09:00");
@@ -135,6 +136,38 @@ function renderFavs(mLatest, meta){
       + `${groupChip(b.group)}<span style="font-weight:700">${esc(r.name)}</span>`
       + `<h3 class="${blogFontCls(bb)}">${esc(b.title)}</h3><p>${esc(b.date)}</p></a>`;
   }).join("") + `</div>`;
+}
+// 「今日の推し運おみくじ」：サイトを訪れたら引く日課用にトップにも置く。
+// 抽選・保存は common.js の共通部品で、おみくじページと同じ結果になる。
+function renderOmikuji(photos){
+  const favBox = document.getElementById("favSection");
+  if(!favBox) return;
+  let box = document.getElementById("omikujiSection");
+  if(!box){
+    box = document.createElement("div");
+    box.id = "omikujiSection";
+    favBox.after(box);
+  }
+  const saved = omikujiLoad();
+  if(saved){
+    const f = photos && photos[saved.name];
+    box.innerHTML = `<h2 class="title" style="margin-top:26px">今日の推し運おみくじ</h2>
+    <div class="om-home">${f ? `<img src="${BASE}assets/member-photos/${esc(f)}" alt="">` : ""}
+      <div class="om-home-main"><span class="om-home-rank">${esc(saved.rank)}</span> <b>${esc(saved.name)}</b>${groupChip(saved.group)}
+      <p>${esc(saved.msg)}</p></div>
+      <a class="btn sub" href="games/omikuji/">おみくじページ</a></div>`;
+    return;
+  }
+  box.innerHTML = `<h2 class="title" style="margin-top:26px">今日の推し運おみくじ</h2>
+  <div class="om-home"><span style="font-size:34px">🎴</span>
+    <div class="om-home-main"><p style="margin:0">今日の運勢を引いてみましょう（1日1回）。</p></div>
+    <button type="button" class="btn" id="homeOmikujiBtn">おみくじを引く</button></div>`;
+  document.getElementById("homeOmikujiBtn").addEventListener("click", () => {
+    const res = omikujiDraw(DB.members || []);
+    if(!res) return;
+    omikujiSave(res);
+    renderOmikuji(photos);
+  });
 }
 function search(q){
   q = (q||"").trim(); const box = document.getElementById("results");

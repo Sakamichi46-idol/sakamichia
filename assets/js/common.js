@@ -33,6 +33,37 @@ function includesAll(hay, q){
 }
 function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 
+// おみくじ（共通ロジック）：トップページとおみくじページで同じ結果になるよう共通化。
+// 1日1回・結果は日付シードで決まり、localStorage に保存して両ページで共有する。
+const OMIKUJI_RANKS = ["大吉", "中吉", "小吉", "吉", "末吉"];
+const OMIKUJI_MSGS = {
+  "大吉": ["推しのブログ更新が早そう。通知の見逃しに注意。", "ライブ運も絶好調。チケット運が上がっています。", "推しの笑顔にたくさん出会える一日。"],
+  "中吉": ["推しの懐かしい写真との出会いがありそう。写真ガチャがおすすめ。", "楽曲図鑑で新しい発見がありそう。", "推しの誕生日カウントダウンをチェックしてみて。"],
+  "小吉": ["まったり推し活日和。ブログアーカイブの旅が吉。", "好きな曲を聴き返すと運気アップ。", "推しのセンター曲を聴くと良いことがありそう。"],
+  "吉": ["焦らずマイペースに。推しは逃げません。", "年表を眺めると懐かしい記憶がよみがえりそう。", "今日は情報を集める日。お知らせチェックが吉。"],
+  "末吉": ["運気はこれから上昇。モザイククイズで腕試しを。", "見逃しは明日取り戻せます。無理せず休息も大事。", "小さな幸運は夕方から。ブログの新着を待ってみて。"]
+};
+const OMIKUJI_KEY = "sakamichia-omikuji";
+function omikujiTodayStr() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`; }
+function omikujiSeed(str) { let h = 2166136261; for (const c of str) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function omikujiLoad() {
+  try { const v = JSON.parse(localStorage.getItem(OMIKUJI_KEY) || "null"); return (v && v.date === omikujiTodayStr() && v.name) ? v : null; } catch (e) { return null; }
+}
+function omikujiDraw(members) {
+  let favs = [];
+  try { const v = JSON.parse(localStorage.getItem("sakamichia-favs") || "[]"); if (Array.isArray(v)) favs = v.filter(x => typeof x === "string"); } catch (e) {}
+  let pool = (members || []).filter(m => favs.includes(m.name));
+  if (!pool.length) pool = (members || []).filter(m => !m.graduated);
+  if (!pool.length) return null;
+  const seed = omikujiSeed(omikujiTodayStr() + "|" + pool.map(m => m.name).join(","));
+  const m = pool[seed % pool.length];
+  const r = omikujiSeed(omikujiTodayStr() + "|" + m.name);
+  const rank = OMIKUJI_RANKS[Math.floor((r / 4294967296) * 5) % 5] || "吉";
+  const msgs = OMIKUJI_MSGS[rank] || OMIKUJI_MSGS["吉"];
+  return { date: omikujiTodayStr(), name: m.name, group: m.group, rank, msg: msgs[r % msgs.length] };
+}
+function omikujiSave(res) { try { localStorage.setItem(OMIKUJI_KEY, JSON.stringify(res)); } catch (e) {} }
+
 // ゲーム結果の画像共有（共通）：結果カード画像（1200x630）を作って共有/保存する
 async function shareScoreImage(opts, btn) {
   const cv = document.createElement("canvas"); cv.width = 1200; cv.height = 630;

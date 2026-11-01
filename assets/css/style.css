@@ -728,3 +728,8 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 @media(max-width:820px){
   html[data-lite="1"] .grid .card .btn{display:block;text-align:center;margin:6px 0 0}
 }
+.om-home{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px}
+.om-home img{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none}
+.om-home-main{flex:1;min-width:0}
+.om-home-main p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.om-home-rank{font-size:24px;font-weight:900;color:var(--accent);margin-right:4px}
