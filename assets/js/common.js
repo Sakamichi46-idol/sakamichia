@@ -14,6 +14,45 @@ function includesAll(hay, q){
 }
 function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 
+// 検索サジェスト共通部品：入力の下に候補ドロップダウンを出す（Google式）。
+// attachSuggest(input, provider, onPick)
+//   provider(q) -> [{label, sub, kind, cls}]（最大8件まで表示）
+//   onPick(item, input) -> 候補を選んだときの処理
+// 日本語入力の変換中（composition中）は候補を更新せず、変換確定後にだけ出す。
+function attachSuggest(input, provider, onPick){
+  if(!input || input.dataset.sgAttached) return;
+  input.dataset.sgAttached="1";
+  input.setAttribute("autocomplete","off");
+  const wrap=document.createElement("span"); wrap.className="sg-wrap";
+  input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
+  const box=document.createElement("div"); box.className="suggest sg-box"; box.hidden=true; wrap.appendChild(box);
+  let items=[], active=-1, composing=false;
+  function close(){ box.hidden=true; items=[]; active=-1; }
+  function render(){
+    if(composing) return;
+    const q=input.value.trim();
+    if(!q){ close(); return; }
+    items=(provider(q)||[]).slice(0,8);
+    if(!items.length){ close(); return; }
+    box.innerHTML=items.map((it,i)=>`<button type="button" class="sg-row sg-item${i===active?" on":""}" data-i="${i}">${it.kind?`<span class="sg-kind sg-${esc(it.cls||"member")}">${esc(it.kind)}</span>`:""}<span class="sg-label">${esc(it.label)}</span>${it.sub?`<span class="sg-sub">${esc(it.sub)}</span>`:""}</button>`).join("");
+    box.hidden=false;
+    box.querySelectorAll(".sg-item").forEach(b=>b.addEventListener("mousedown",e=>{ e.preventDefault(); pick(+b.dataset.i); }));
+  }
+  function pick(i){ const it=items[i]; if(!it) return; close(); onPick(it, input); }
+  input.addEventListener("input", render);
+  input.addEventListener("focus", render);
+  input.addEventListener("compositionstart", ()=>{ composing=true; });
+  input.addEventListener("compositionend", ()=>{ composing=false; render(); });
+  input.addEventListener("keydown", e=>{
+    if(box.hidden || !items.length) return;
+    if(e.key==="ArrowDown"){ e.preventDefault(); active=Math.min(active+1, items.length-1); render(); }
+    else if(e.key==="ArrowUp"){ e.preventDefault(); active=Math.max(active-1, 0); render(); }
+    else if(e.key==="Enter"){ if(active>=0){ e.preventDefault(); pick(active); } }
+    else if(e.key==="Escape"){ close(); }
+  });
+  input.addEventListener("blur", ()=>setTimeout(close, 120));
+}
+
 // 共有：対応環境では共有シートを開き、なければクリップボードへコピーする
 async function shareContent(data, btn){
   const payload={title:data.title||document.title, text:data.text||"", url:data.url||location.href};

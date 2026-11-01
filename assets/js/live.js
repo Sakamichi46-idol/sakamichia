@@ -245,6 +245,21 @@ async function init(){
   });
   renderAttend();
   ["q","sort","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+  // 検索サジェスト：公演名と会場名から候補を出す（同じ名前は公演1件に集約）
+  attachSuggest(document.getElementById("q"), q=>{
+    const hits=t=>String(t||"").toLowerCase().includes(q.toLowerCase());
+    const items=[], seenT=new Set(), seenV=new Set();
+    for(const l of DATA){
+      if(items.length>=5) break;
+      const base=l.title.replace(/［[^］]*］\s*$/,"");
+      if(hits(l.title) && !seenT.has(base)){ seenT.add(base); items.push({kind:"公演", cls:"live", label:base, sub:l.date||""}); }
+    }
+    for(const l of DATA){
+      if(items.length>=8) break;
+      if(l.venue && hits(l.venue) && !seenV.has(l.venue)){ seenV.add(l.venue); items.push({kind:"会場", cls:"song", label:l.venue, sub:"会場"}); }
+    }
+    return items;
+  }, (it,input)=>{ input.value=it.label; input.dispatchEvent(new Event("input",{bubbles:true})); input.focus(); });
   // type="date" はブラウザによって input だけ／change だけのことがあるため、change でも再描画する
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",render));
   render();

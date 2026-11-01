@@ -251,6 +251,18 @@ async function init() {
   });
   syncGenOptions();
   document.getElementById("mbQuery").addEventListener("input", e => { fQuery = e.target.value.trim(); render(); });
+  // 検索サジェスト：名前・読みから候補を出す。卒業生が選ばれたら「卒業生も表示」を自動でオンにする
+  attachSuggest(document.getElementById("mbQuery"), q => {
+    const hits = t => String(t || "").toLowerCase().includes(q.toLowerCase());
+    return MEMBERS.filter(m => hits(m.name) || hits(m.reading)).slice(0, 8).map(m => ({
+      kind: "メンバー", cls: "member", label: m.name,
+      sub: [lastGroup(m), m.gen ? m.gen + "期" : "", m.graduated ? "卒業" : ""].filter(Boolean).join(" ・ ")
+    }));
+  }, (it, input) => {
+    const m = MEMBERS.find(x => x.name === it.label);
+    if (m && m.graduated && !fShowGrad) { fShowGrad = true; document.getElementById("mbShowGrad").checked = true; }
+    input.value = it.label; fQuery = it.label; render(); input.focus();
+  });
   document.getElementById("mbShowGrad").addEventListener("change", e => { fShowGrad = e.target.checked; render(); });
   document.getElementById("mbSort").addEventListener("input", e => { fSort = e.target.value; render(); });
   // 条件をリセット：グループ・期・卒業生表示・検索・並び替えをすべて初期状態に戻す

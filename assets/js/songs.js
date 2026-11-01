@@ -122,6 +122,15 @@ async function init(){
     render();
   });
   ["q","sort"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{ syncTabs(); render(); }));
+  // 検索サジェスト：曲名・読み、メンバー名、「その他」のアーティスト名から候補を出す
+  attachSuggest(document.getElementById("q"), q=>{
+    const hits=t=>String(t||"").toLowerCase().includes(q.toLowerCase());
+    const items=[];
+    DATA.filter(s=>hits(s.title)||hits(s.yomi)).slice(0,4).forEach(s=>items.push({kind:"楽曲", cls:"song", label:s.title, sub:[s.group, s.year?s.year+"年":""].filter(Boolean).join(" ・ ")}));
+    Object.values(MEMB).filter(m=>hits(m.name)||hits(m.reading)).slice(0,3).forEach(m=>items.push({kind:"メンバー", cls:"member", label:m.name, sub:m.group||""}));
+    [...new Set(DATA.filter(s=>s.artist&&hits(s.artist)).map(s=>s.artist))].slice(0,2).forEach(a=>items.push({kind:"アーティスト", cls:"live", label:a, sub:"その他"}));
+    return items;
+  }, (it,input)=>{ input.value=it.label; input.dispatchEvent(new Event("input",{bubbles:true})); input.focus(); });
   // ディープリンク（?q=<検索語>）：トップのサジェストなどから曲名で絞り込んで開く
   const qParam=new URLSearchParams(location.search).get("q");
   if(qParam) document.getElementById("q").value=qParam;
