@@ -80,16 +80,18 @@ function fqEraEligible(name, q) {
   if ((code === "sakura" || code === "hinata") && rec.left && rec.left < range[0]) return false;
   return true;
 }
-function fqChoicesFor(q, bi, usedDecoys) {
+function fqChoicesFor(q, bi) {
   const answer = q.blanks[bi].answer;
   const inForm = new Set(q.rows.flat());
   const ans = FQ.memberByName[answer];
   const linMembers = FQ.members.filter(m =>
-    m.name !== "ポカ" && !inForm.has(m.name) && !usedDecoys.has(m.name) &&
+    m.name !== "ポカ" && !inForm.has(m.name) &&
     fqLineage(m.group) === q.lineage);
   const isGen = m => ans && ans.gen > 0 && m.gen === ans.gen;
   const era = linMembers.filter(m => fqEraEligible(m.name, q));
-  // 在籍していたメンバー（同期→その他）を優先し、足りない場合だけ在籍外から補う
+  // 在籍していたメンバー（同期→その他）を優先し、足りない場合だけ在籍外から補う。
+  // 空欄ごとに独立して選ぶ（他の空欄で使った候補も再利用可）ので、
+  // 期別曲のように同期の在籍者が少ない場合でも各空欄の選択肢が同期中心になる。
   const tiers = [era.filter(isGen), era.filter(m => !isGen(m)), linMembers.filter(isGen), linMembers.filter(m => !isGen(m))];
   const used = new Set(), decoys = [];
   for (const tier of tiers) {
@@ -99,12 +101,10 @@ function fqChoicesFor(q, bi, usedDecoys) {
     }
     if (decoys.length >= 3) break;
   }
-  decoys.forEach(m => usedDecoys.add(m.name));
   return fqShuffle([answer, ...decoys.map(m => m.name)]);
 }
 function fqSetupChoices(q) {
-  const usedDecoys = new Set();
-  return q.blanks.map((b, bi) => fqChoicesFor(q, bi, usedDecoys));
+  return q.blanks.map((b, bi) => fqChoicesFor(q, bi));
 }
 function fqPerBlank(q) { return Math.round(FQ_POINTS / q.blanks.length); }
 function fqTile(name, opts) {
