@@ -16,12 +16,13 @@ function photoN(b){ return (b.media||0)||(b.imgn||0); }
 // 一覧表示のサムネイルは画像プロキシ経由で小さく軽くする(原寸約250KB→約7KB)。
 // 通信制限中でも一覧が見られるようにするため(ユーザー要望)。タップ後の
 // 拡大表示は従来どおり公式の原寸を使う。プロキシが失敗したら原寸に戻す。
-function thumbSrc(u){
+function thumbSrc(u, wall){
   if(!/^https?:\/\//.test(u||"")) return u;
   // 二重エンコードURL（%25 を含む）は weserv が取得できないため、原寸を直接表示する
   if(u.includes("%25")) return u;
   const lite=document.documentElement.dataset.lite==="1";
-  const w=lite?220:360, q=lite?50:62;
+  // 写真一覧のタイルは表示サイズが小さいので、取得サイズも小さくして転送量を半分程度にする
+  const w=wall ? (lite?180:252) : (lite?220:360), q=lite?50:62;
   return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+`&w=${w}&h=${w}&fit=cover&q=${q}&output=webp`;
 }
 function thumbFallback(img, original){
@@ -664,7 +665,11 @@ function wallLabel(p){
   return `${b.member}${b.series&&b.series!==b.member?`（${b.series}）`:""} ・ ${dateTime(b)} ・ ${b.title}`;
 }
 function pcellHTML(p,i){
-  return `<figure class="pcell" data-wi="${i}"><img loading="lazy" decoding="async" src="${esc(thumbSrc(p.u))}" alt=""><figcaption>${esc(wallCap(p))}</figcaption></figure>`;
+  // 表示中ページの先頭分は優先読み込み（lazy一律だと先頭行も後回しになるため）
+  const pos=i-(ppage-1)*WPHOTO;
+  const eager=pos>=0&&pos<16;
+  const prio=pos>=0&&pos<8?' fetchpriority="high"':"";
+  return `<figure class="pcell" data-wi="${i}"><img ${eager?'loading="eager"':'loading="lazy"'}${prio} decoding="async" src="${esc(thumbSrc(p.u, true))}" alt=""><figcaption>${esc(wallCap(p))}</figcaption></figure>`;
 }
 // ウォールの実効リスト：スタンプと確定したものを除いたもの。件数表示・
 // ページ分割・タイル描画・ライトボックスはすべてこのリストを基準にする
@@ -807,7 +812,7 @@ function loadYearsOrdered(years, onYear){
   return new Promise(resolve=>{
     let active=0;
     const pump=()=>{
-      while(active<4&&queue.length){
+      while(active<6&&queue.length){
         const y=queue.shift(); active++;
         ensureImgs(y).then(()=>{ active--; if(onYear) onYear(y); if(!queue.length&&active===0) resolve(); else pump(); });
       }
@@ -842,6 +847,7 @@ function scheduleImgPrefetch(){
   if(poolYears().every(y=>IMGS[y])) return;
   const token=++prefetchToken;
   const run=()=>{ if(token===prefetchToken) loadYearsOrdered(yearPriorityOrder(poolYears()), null); };
+  if(VIEW==="photos"){ run(); return; }  // 写真一覧を表示中なら待たずに読み始める
   if(window.requestIdleCallback) requestIdleCallback(run,{timeout:2500});
   else setTimeout(run,1200);
 }
@@ -871,6 +877,7 @@ async function renderPhotos(){
   if(years.every(y=>IMGS[y])){ finish(); return; }
   wallLoadingUI=true;
   document.getElementById("count").textContent=`${ROWS.length}件の記事情報（写真を読み込んでいます…）`;
+  drawWall();  // 骨組みと読み込み済み分の写真を先に出す（真っ白な待ち時間をなくす）
   let lastDraw=0;
   await loadYearsOrdered(yearPriorityOrder(years), ()=>{
     if(token!==wallToken||VIEW!=="photos") return;
