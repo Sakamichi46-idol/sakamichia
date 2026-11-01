@@ -18,23 +18,35 @@ function uqLineage(g) { return g === "欅坂46" ? "櫻坂46" : g === "けやき�
 function uqPhoto(name) { const f = UQ.photos[name]; return f ? BASE + "assets/member-photos/" + f : null; }
 
 function uqBuildPool(songs, forms) {
-  const pool = [];
+  // 同じメンバー構成の曲が複数ある場合は1つの出題単位にまとめる（正解が2つになるのを防ぐ）
+  const bySig = new Map();
   for (const s of songs) {
     if (s.type !== "ユニット曲") continue;
     const lin = uqLineage(s.group);
     if (!UQ_LINEAGES.includes(lin)) continue;
     const f = (forms || {})[s.group + "|" + s.title];
     if (!f || !Array.isArray(f.vocal) || f.vocal.length < 2) continue;
-    pool.push({ group: s.group, lineage: lin, title: s.title, vocal: f.vocal, year: s.year || null, release: s.release || "" });
+    const sig = [...f.vocal].sort().join("");
+    if (!bySig.has(sig)) bySig.set(sig, { sig, lineage: lin, vocal: f.vocal, titles: [] });
+    bySig.get(sig).titles.push({ group: s.group, title: s.title, year: s.year || null, release: s.release || "" });
   }
-  return pool;
+  return [...bySig.values()];
+}
+function uqMakeQuestion(entry) {
+  const answer = entry.titles[Math.floor(Math.random() * entry.titles.length)];
+  return { ...entry, answer };
 }
 function uqChoices(q) {
-  const same = UQ.pool.filter(e => e.lineage === q.lineage && e.title !== q.title);
-  const others = UQ.pool.filter(e => e.lineage !== q.lineage && e.title !== q.title);
-  const decoys = uqShuffle(same).slice(0, 3);
-  if (decoys.length < 3) decoys.push(...uqShuffle(others).slice(0, 3 - decoys.length));
-  return uqShuffle([q.title, ...decoys.map(s => s.title)]);
+  const same = UQ.pool.filter(e => e.sig !== q.sig && e.lineage === q.lineage);
+  const others = UQ.pool.filter(e => e.sig !== q.sig && e.lineage !== q.lineage);
+  const used = new Set([q.answer.title]);
+  const decoys = [];
+  for (const e of [...uqShuffle(same), ...uqShuffle(others)]) {
+    if (decoys.length >= 3) break;
+    const cand = uqShuffle(e.titles.map(t => t.title)).find(t => !used.has(t));
+    if (cand) { used.add(cand); decoys.push(cand); }
+  }
+  return uqShuffle([q.answer.title, ...decoys]);
 }
 function uqMemberHTML(name, group) {
   const url = uqPhoto(name);
@@ -46,23 +58,25 @@ function uqRender() {
   const q = UQ.list[UQ.i];
   let html = `<div class="card" style="margin-bottom:40px"><h3>第${UQ.i + 1}問 / ${UQ.list.length}問（現在 ${UQ.score}点）</h3>
   <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}のユニット曲です。この組み合わせは、どの曲でしょう？</p>
-  <div class="uq-members${q.vocal.length <= 4 ? " fit" + q.vocal.length : ""}">${q.vocal.map(n => uqMemberHTML(n, q.group)).join("")}</div>`;
+  <div class="uq-members${q.vocal.length <= 4 ? " fit" + q.vocal.length : ""}">${q.vocal.map(n => uqMemberHTML(n, q.answer.group)).join("")}</div>`;
   if (!UQ.done) {
     html += `<div>${UQ.choices.map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">『${esc(c)}』</button>`).join("")}</div>`;
   } else {
-    const ok = UQ.picked === q.title;
-    html += `<p class="score">${ok ? `正解！ +${UQ_POINTS}点` : `残念… 正解は『${esc(q.title)}』でした`}</p>
-    <p>答え：<b>『${esc(q.title)}』</b>（${esc(q.group)}${q.year ? "・" + q.year + "年" : ""}／${q.vocal.length}人のユニット）</p>
+    const ok = UQ.picked === q.answer.title;
+    const others = q.titles.filter(t => t.title !== q.answer.title);
+    html += `<p class="score">${ok ? `正解！ +${UQ_POINTS}点` : `残念… 正解は『${esc(q.answer.title)}』でした`}</p>
+    <p>答え：<b>『${esc(q.answer.title)}』</b>（${esc(q.answer.group)}${q.answer.year ? "・" + q.answer.year + "年" : ""}／${q.vocal.length}人のユニット）</p>
+    ${others.length ? `<p style="color:var(--muted)">同じメンバーの組み合わせには、ほかに${others.map(t => `『${esc(t.title)}』`).join("、")}もあります。</p>` : ""}
     <p><button type="button" id="uqNext" class="primary">${UQ.i + 1 < UQ.list.length ? "次の問題へ" : "結果を見る"}</button></p>`;
   }
   area.innerHTML = html + "</div>";
   area.querySelectorAll(".quiz-opt").forEach(b => b.addEventListener("click", () => {
     UQ.picked = b.dataset.t;
     UQ.done = true;
-    if (UQ.picked === q.title) UQ.score += UQ_POINTS;
+    if (UQ.picked === q.answer.title) UQ.score += UQ_POINTS;
     uqRender();
     area.querySelectorAll(".quiz-opt").forEach(x => {
-      if (x.dataset.t === q.title) x.classList.add("correct");
+      if (x.dataset.t === q.answer.title) x.classList.add("correct");
       else if (x.dataset.t === UQ.picked) x.classList.add("wrong");
       x.disabled = true;
     });
@@ -79,7 +93,7 @@ function uqRender() {
 function uqResult() {
   const area = document.getElementById("uqArea");
   const max = UQ.list.length * UQ_POINTS;
-  const list = UQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.title)}』（${esc(e.lineage)}／${e.vocal.length}人：${e.vocal.map(esc).join("・")}）</p>`).join("");
+  const list = UQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.answer.title)}』（${esc(e.lineage)}／${e.vocal.length}人：${e.vocal.map(esc).join("・")}）${e.titles.length > 1 ? `　※同じメンバーで${e.titles.filter(t => t.title !== e.answer.title).map(t => `『${esc(t.title)}』`).join("、")}もあり` : ""}</p>`).join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${UQ.score} / ${max} 点</p>
   <h4 style="margin:18px 0 6px">出題されたユニット曲</h4>
@@ -100,8 +114,8 @@ function uqStartPanel(pool) {
     return;
   }
   let mode = "all";
-  const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${all.length}曲）</button>`,
-    ...ok.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}曲）</button>`)].join("");
+  const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${all.length}組）</button>`,
+    ...ok.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}組）</button>`)].join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
   <p style="color:var(--muted)">グループ別に絞って遊べます。出題は歌唱メンバーが確定しているユニット曲のみです。</p>
   <div class="filters" style="margin:10px 0">${chips}</div>
@@ -112,7 +126,7 @@ function uqStartPanel(pool) {
   }));
   document.getElementById("uqStart").addEventListener("click", () => {
     const src = mode === "all" ? all : pool.filter(e => e.lineage === mode);
-    UQ.list = uqShuffle(src).slice(0, UQ_MAX);
+    UQ.list = uqShuffle(src).slice(0, UQ_MAX).map(uqMakeQuestion);
     UQ.mode = mode; UQ.i = 0; UQ.score = 0; UQ.done = false; UQ.picked = null;
     UQ.choices = uqChoices(UQ.list[0]);
     uqRender();
