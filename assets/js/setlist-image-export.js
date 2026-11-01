@@ -64,12 +64,12 @@
   if(!manifest||!show)return null;
   const direct=manifest.shows?.[String(show.id||'')];
   if(typeof direct==='string')return {url:direct,mode:'side'};
-  if(direct&&typeof direct.url==='string'&&(!direct.group||direct.group===show.group))return {url:direct.url,mode:direct.mode==='bg'?'bg':'side'};
+  if(direct&&typeof direct.url==='string'&&(!direct.group||direct.group===show.group))return {url:direct.url,mode:direct.mode==='bg'?'bg':'side',bgUrl:typeof direct.bgUrl==='string'?direct.bgUrl:''};
   // Longer, more specific title match wins. No guesses from unrelated groups.
   const name=clean(show.title),arr=(manifest.tours||[]).filter(e=>e&&typeof e.match==='string'&&typeof e.url==='string'&&e.group===show.group&&clean(e.match)&&name.includes(clean(e.match)));
   arr.sort((a,b)=>clean(b.match).length-clean(a.match).length);
   const hit=arr[0];
-  return hit?{url:hit.url,mode:hit.mode==='bg'?'bg':'side'}:null;
+  return hit?{url:hit.url,mode:hit.mode==='bg'?'bg':'side',bgUrl:typeof hit.bgUrl==='string'?hit.bgUrl:''}:null;
  }
  function resolveLogo(manifest,show){return resolveLogoEntry(manifest,show)?.url||'';}
  function measure(ctx,row,width,fontSize,useRightCredits=false){
@@ -202,8 +202,12 @@
   ctx.fillStyle='#f7f8fc';ctx.fillRect(0,0,W,13);
   const logo=options.logoImage||null;
   const sideMode=!!logo&&options.logoMode!=='bg';
-  // 透かし(F)はロゴがある場合の共通要素として本文背景に敷く
-  if(logo&&!options.hideTitle)drawWatermark(ctx,logo,data,sideMode?0.10:0.13,sideMode?0.25:0.22);
+  // 透かし(F)はロゴがある場合の共通要素として本文背景に敷く。
+  // bgImage が別途ある公演（三期生LIVE等）は、ヘッダーのロゴとは別に
+  // その画像を背景モード相当の薄さで敷く。
+  const bgImg=options.bgImage||null;
+  if(bgImg&&!options.hideTitle)drawWatermark(ctx,bgImg,data,0.13,0.22);
+  else if(logo&&!options.hideTitle)drawWatermark(ctx,logo,data,sideMode?0.10:0.13,sideMode?0.25:0.22);
   if(options.hideTitle){ /* Title deliberately hidden by the user. */ }
   else if(logo&&options.logoMode==='bg'){
    // 背景モード:ヘッダーはタイトル文字のみ(素材は透かしとして全体に敷く)
@@ -284,23 +288,32 @@
  }
  async function getLogo(manifestUrl,show){if(!show)return null;
   // R2-backed registration first. Keep static mapping as a fallback for older deployments.
+  // bgUrl（背景透かし専用画像）は、ロゴ本体がどちらの登録で解決しても拾えるよう別枠で探す。
   const paths=['/api/live-logos',manifestUrl||'/assets/live-logos.json'];
+  let found=null,bgUrl='';
   for(const path of [...new Set(paths)]){
    try{
     const manifest=await fetchManifest(path);if(!manifest)continue;
     const entry=resolveLogoEntry(manifest,show);
     if(!entry)continue;
-    const img=await loadImageCached(entry.url);if(img)return {image:img,mode:entry.mode};
+    if(!bgUrl&&entry.bgUrl)bgUrl=entry.bgUrl;
+    if(!found)found=entry;
    }catch(_){} // Missing logo never blocks the setlist export.
   }
-  return null;
+  if(!found)return null;
+  try{
+   const img=await loadImageCached(found.url);if(!img)return null;
+   let bgImage=null;
+   if(bgUrl&&bgUrl!==found.url){try{bgImage=await loadImageCached(bgUrl);}catch(_){}}
+   return {image:img,mode:found.mode,bgImage};
+  }catch(_){return null;}
  }
  // 一覧表示中などのアイドル時間に、登録済みロゴを先読みしておく
  async function preloadLogos(manifestUrl,shows){
   try{
    const manifest=await fetchManifest(manifestUrl||'/assets/live-logos.json');if(!manifest)return 0;
    const urls=new Set();
-   for(const show of shows||[]){const e=resolveLogoEntry(manifest,show);if(e)urls.add(e.url);}
+   for(const show of shows||[]){const e=resolveLogoEntry(manifest,show);if(e){urls.add(e.url);if(e.bgUrl)urls.add(e.bgUrl);}}
    await Promise.all([...urls].map(u=>loadImageCached(u)));
    return urls.size;
   }catch(_){return 0;}

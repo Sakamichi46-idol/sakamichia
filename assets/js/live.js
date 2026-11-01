@@ -420,7 +420,7 @@ async function openLive(id){
       const cachedBlob=blobCache.get(l.id);
       const blobPromise=cachedBlob ? Promise.resolve(cachedBlob)
         : logoPromise
-          .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined}))
+          .then(logo=>window.SakamichiSetlistImageExport.create(rows, header, {mode:"full", logoImage:logo?logo.image:null, logoMode:logo?logo.mode:undefined, bgImage:logo?logo.bgImage:null}))
           .then(r=>{ const b=r&&r.blob; if(b) blobCache.set(l.id, b); return b; })
           .catch(()=>null);
       // 画像が完全に読み込めて、さらにデコードまで済んでからフェードインで
