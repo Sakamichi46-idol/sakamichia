@@ -1,4 +1,4 @@
-// ドラフト会議（2〜4人・同じ端末で交代）：旧『坂道日和』ドラフト会議の移植。
+// メンバードラフト会議（2〜4人・同じ端末で交代）：旧『坂道日和』メンバードラフト会議の移植。
 // 競合判定・抽選・配置のルールは draft-engine.js（SakamichiDraftEngine）に委譲し、ここは画面と進行管理。
 const KEY = "sakamichia-draft-meeting-v1";
 const GLABEL = { nogi: "乃木坂46", keyaki: "欅坂46", sakura: "櫻坂46", hiragana: "けやき坂46", hinata: "日向坂46" };
@@ -417,7 +417,7 @@ async function buildImage(pids) {
   const ctx = cv.getContext("2d");
   ctx.fillStyle = "#faf9fb"; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "#2b2430"; ctx.font = "700 42px sans-serif"; ctx.textAlign = "center";
-  ctx.fillText("ドラフト会議 結果", W / 2, 62);
+  ctx.fillText("メンバードラフト会議 結果", W / 2, 62);
   let y = 96;
   for (const pid of pids) y += await drawBoard(ctx, pid, W, y, `${playerName(pid)} の編成`);
   return new Promise(res => cv.toBlob(res, "image/png"));
