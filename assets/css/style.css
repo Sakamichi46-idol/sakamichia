@@ -739,3 +739,6 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .fq-tile.blank,.fq-tile.filled{cursor:pointer}
 .fq-tile.filled{border-color:var(--accent)}
 .fq-tile.miss{border-color:#d66;background:#fdeeee}
+.fq-inputrow{display:flex;gap:8px;align-items:stretch}
+.fq-inputrow input{flex:1}
+.fq-inputrow input[aria-invalid="true"]{border-color:#d66;background:#fff5f5}

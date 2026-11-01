@@ -53,7 +53,7 @@ const FQ_DIFFS = [
   { key: "easy", label: "易", blanks: 1 },
   { key: "normal", label: "普", blanks: 2 },
   { key: "hard", label: "難", blanks: 3 },
-  { key: "oni", label: "鬼", blanks: 5 }
+  { key: "oni", label: "鬼", blanks: 5, input: true }
 ];
 function fqMakeQuestion(e) {
   const cells = [];
@@ -135,8 +135,12 @@ function fqRender() {
   <div class="fq-board" style="--maxn:${maxn}">${board}</div>`;
   if (!FQ.done) {
     if (remaining > 0) {
-      html += `<p style="margin:6px 0">空欄 ${FQ.active + 1} / ${q.blanks.length}（あと${remaining}人）</p>
-      <div>${FQ.choiceSets[FQ.active].map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+      html += `<p style="margin:6px 0">空欄 ${FQ.active + 1} / ${q.blanks.length}（あと${remaining}人）</p>`;
+      if (FQ.diff.input) {
+        html += `<div class="fq-inputrow"><input id="fqInput" type="text" placeholder="メンバー名を入力（候補からも選べます）" autocomplete="off" value="${esc(FQ.filled[FQ.active] || "")}"><button type="button" class="btn" id="fqFill">決定</button></div>`;
+      } else {
+        html += `<div>${FQ.choiceSets[FQ.active].map(c => `<button type="button" class="quiz-opt" data-t="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+      }
     } else {
       html += `<p><button type="button" id="fqJudge" class="primary">回答する</button></p>`;
     }
@@ -159,6 +163,29 @@ function fqRender() {
     if (nextBlank >= 0) FQ.active = nextBlank;
     fqRender();
   }));
+  const fqIn = document.getElementById("fqInput");
+  if (fqIn) {
+    const inForm = new Set(q.rows.flat());
+    const pool = FQ.members.filter(m => m.name !== "ポカ" && !inForm.has(m.name) && fqLineage(m.group) === q.lineage);
+    const fillWith = name => {
+      const nm = String(name || "").replace(/[\s　]/g, "");
+      const hit = pool.find(m => m.name.replace(/[\s　]/g, "") === nm) || FQ.members.find(m => m.name.replace(/[\s　]/g, "") === nm);
+      if (!hit) { fqIn.setAttribute("aria-invalid", "true"); fqIn.focus(); return; }
+      FQ.filled[FQ.active] = hit.name;
+      const nextBlank = q.blanks.findIndex((_, bi) => !(bi in FQ.filled));
+      if (nextBlank >= 0) FQ.active = nextBlank;
+      fqRender();
+    };
+    attachSuggest(fqIn, query => {
+      const hits = t => kanaNorm(String(t || "").toLowerCase()).includes(kanaNorm(query.toLowerCase()));
+      return pool.filter(m => hits(m.name) || hits(m.reading))
+        .sort((a, b) => (fqEraEligible(b.name, q) - fqEraEligible(a.name, q)))
+        .map(m => ({ kind: "メンバー", cls: "member", label: m.name, sub: m.group }));
+    }, it => fillWith(it.label));
+    document.getElementById("fqFill").addEventListener("click", () => fillWith(fqIn.value));
+    fqIn.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); fillWith(fqIn.value); } });
+    fqIn.focus({ preventScroll: true });
+  }
   const judge = document.getElementById("fqJudge");
   if (judge) judge.addEventListener("click", () => {
     const per = fqPerBlank(q);
