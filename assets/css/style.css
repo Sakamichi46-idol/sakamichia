@@ -623,3 +623,23 @@ body.dfbar-on{padding-bottom:70px}
 .setlist-img-ph{width:100%;aspect-ratio:3/4;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;background:#fdfcfe;animation:setlistPhPulse 1.4s ease-in-out infinite}
 .setlist-img-ph[hidden]{display:none}
 @keyframes setlistPhPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ダークモード（html[data-theme="dark"]、ドロワーで切替・端末に保存） */
+html[data-theme="dark"]{--bg:#16121d;--ink:#ede8f4;--muted:#aa9db8;--card:#211b2b;--line:#3b3049;color-scheme:dark}
+html[data-theme="dark"] header.site{background:rgba(22,18,29,.92)}
+html[data-theme="dark"] .bottomnav{background:rgba(22,18,29,.97)}
+html[data-theme="dark"] .card,html[data-theme="dark"] .bd-row,html[data-theme="dark"] .rk-row,
+html[data-theme="dark"] .tl-row,html[data-theme="dark"] .cmp-head,html[data-theme="dark"] .cmp-table,
+html[data-theme="dark"] .gacha-stage,html[data-theme="dark"] .suggest,html[data-theme="dark"] .drawer,
+html[data-theme="dark"] .nw-row,html[data-theme="dark"] dialog,html[data-theme="dark"] .mb-card,
+html[data-theme="dark"] .fm-card,html[data-theme="dark"] .sg-item,html[data-theme="dark"] .dlg-box{background-color:var(--card);color:var(--ink)}
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html[data-theme="dark"] select,html[data-theme="dark"] textarea{background-color:#2a2138;color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .sg-row:hover,html[data-theme="dark"] .sg-box .sg-item:hover,html[data-theme="dark"] .sg-box .sg-item.on,
+html[data-theme="dark"] .nav nav a:hover,html[data-theme="dark"] .nav nav a.on{background-color:#2e2542}
+html[data-theme="dark"] .st-track{background:#332a45}
+html[data-theme="dark"] .cmp-row+.cmp-row,html[data-theme="dark"] .sg-box .sg-item+.sg-item,
+html[data-theme="dark"] .sg-row+.sg-row{border-top-color:#332a45}
+html[data-theme="dark"] button,html[data-theme="dark"] .btn{border:1px solid #55496e}
+html[data-theme="dark"] .bd-thumb{background:#332a45}
+html[data-theme="dark"] .empty,html[data-theme="dark"] .gacha-empty{color:var(--muted)}

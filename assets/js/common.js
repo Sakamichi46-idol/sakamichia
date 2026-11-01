@@ -1,5 +1,13 @@
 // サカミチア 共通処理：データ読み込み・カード描画・絞り込み
 const BASE = document.body.dataset.base || "./";
+// ダークモード：保存済みの選択を即時適用（切替はドロワー内のボタン）
+const THEME_KEY = "sakamichia-theme";
+function applyTheme(t) {
+  if (t === "dark") document.documentElement.dataset.theme = "dark";
+  else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+}
+try { if (localStorage.getItem(THEME_KEY) === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}
 async function loadJSON(name){
   const r = await fetch(BASE + "data/" + name);
   if(!r.ok) return [];
@@ -422,6 +430,12 @@ document.addEventListener("DOMContentLoaded",()=>{
   shareBtn.type="button";shareBtn.className="btn sub drawer-share";shareBtn.textContent="このページを共有する";
   shareBtn.addEventListener("click",()=>shareContent({},shareBtn));
   drawer.appendChild(shareBtn);
+  const themeBtn=document.createElement("button");
+  themeBtn.type="button";themeBtn.className="btn sub drawer-share";
+  const syncThemeBtn=()=>{ themeBtn.textContent=document.documentElement.dataset.theme==="dark"?"☀️ ライトモードに切り替え":"🌙 ダークモードに切り替え"; };
+  themeBtn.addEventListener("click",()=>{ applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"); syncThemeBtn(); });
+  syncThemeBtn();
+  drawer.appendChild(themeBtn);
   const note=document.createElement("p");note.className="drawer-note";
   note.textContent="坂道ファンによる非公式ファンサイトです。公式運営とは関係ありません。";
   drawer.appendChild(note);
