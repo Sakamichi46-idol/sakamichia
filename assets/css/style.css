@@ -395,6 +395,22 @@ dialog{max-height:92dvh}
 .searchbox{position:relative}
 .suggest{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 28px rgba(80,50,110,.14);overflow:hidden;z-index:30;text-align:left}
 .suggest[hidden]{display:none}
+.vn-box{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.vn-head{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer;text-align:left;flex-wrap:wrap}
+.vn-name{font-weight:800;font-size:16px}
+.vn-meta{display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap}
+.vn-last{color:var(--muted);font-size:12px}
+.vn-shows{border-top:1px solid #f3edf7;padding:8px 14px 12px}
+.vn-show{display:flex;gap:10px;align-items:center;padding:6px 0;color:var(--ink);border-bottom:1px dashed #f3edf7}
+.vn-sdate{flex:none;color:var(--muted);font-size:13px;min-width:86px}
+.om-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;text-align:center;max-width:520px;margin:0 auto}
+.om-photo{width:150px;height:150px;border-radius:50%;object-fit:cover}
+.om-rank{font-size:44px;font-weight:900;color:var(--accent);margin:8px 0 0}
+.om-msg{font-size:15.5px}
+.hq-hints{display:flex;flex-direction:column;gap:8px;margin:6px 0 12px}
+.hq-hint{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0;color:var(--muted)}
+.hq-hint.open{color:var(--ink)}
+.hq-no{display:inline-block;font-weight:800;color:var(--accent);margin-right:10px;font-size:13px}
 .mz-head{display:flex;gap:14px;flex-wrap:wrap;font-weight:700;margin:6px 0 10px}
 .mz-stage{display:flex;justify-content:center}
 .mz-stage canvas{width:min(78vw,360px);height:auto;border-radius:16px;border:1px solid var(--line);background:#f1eaf7}
@@ -660,3 +676,6 @@ html[data-lite="1"] *,html[data-lite="1"] *::before,html[data-lite="1"] *::after
 html[data-lite="1"] header.site{backdrop-filter:none}
 html[data-lite="1"] .favfloat{display:none!important}
 html[data-lite="1"] .suggest,html[data-lite="1"] .drawer{box-shadow:none}
+html[data-theme="dark"] .vn-box,html[data-theme="dark"] .om-card,html[data-theme="dark"] .hq-hint,
+html[data-theme="dark"] .mz-result,html[data-theme="dark"] .vn-head{background-color:var(--card);color:var(--ink)}
+html[data-theme="dark"] .vn-shows,html[data-theme="dark"] .vn-show{border-top-color:#332a45;border-bottom-color:#332a45}

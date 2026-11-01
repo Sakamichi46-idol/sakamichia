@@ -21,7 +21,7 @@ async function init(){
   const news = (newsData && newsData.items) || [];
   DB = {lives, blogs, songs, members, news};
   renderToday(meta, photos, otd);
-  renderFavs(mLatest);
+  renderFavs(mLatest, meta);
   const WD = ["日", "月", "火", "水", "木", "金", "土"];
   document.getElementById("homeNews").innerHTML = news.slice(0, 5).map(n => {
     const dt = new Date(n.d + "T00:00:00+09:00");
@@ -48,7 +48,17 @@ function renderToday(meta, photos, otd){
     return Array.isArray(b) && b[1]===mo && b[2]===da;
   });
   const past=(otd && otd[md]) || [];
-  if(!bdays.length && !past.length){ box.innerHTML=""; return; }
+  // 今日の1曲：MVリンクのある曲から日替わりで1曲（同じ日は誰の画面でも同じ曲）
+  const mvSongs=(DB.songs||[]).filter(s=>s.mv);
+  let songCard="";
+  if(mvSongs.length){
+    const seed=`${now.getFullYear()}-${md}`;
+    let h=0; for(const c of seed) h=(h*31 + c.charCodeAt(0))>>>0;
+    const s=mvSongs[h % mvSongs.length];
+    songCard=`<h3 class="home-ghead">🎵 今日の1曲</h3><div class="grid"><a class="card" href="songs/?q=${encodeURIComponent(s.title)}">${groupChip(s.group)}<h3>${esc(s.title)}</h3><p>${s.year}年 ・ ${esc(s.type||"")}${s.center?` ・ センター：${esc(s.center)}`:""}</p></a>`
+      +`<a class="card" href="${esc(s.mv)}" target="_blank" rel="noopener"><h3>▶ 公式MVを見る</h3><p>YouTube（公式チャンネル）で『${esc(s.title)}』${s.mvKind==="short"?"（Short Ver.）":""}を再生します。</p></a></div>`;
+  }
+  if(!bdays.length && !past.length && !songCard){ box.innerHTML=""; return; }
   let html=`<h2 class="title" style="margin-top:26px">今日の坂道</h2>`;
   if(bdays.length){
     html+=`<h3 class="home-ghead">🎂 今日が誕生日のメンバー</h3><div class="bday-row">`+bdays.map(m=>{
@@ -67,6 +77,7 @@ function renderToday(meta, photos, otd){
         +`<h3 class="${blogFontCls(b)}">${esc(b.title)}</h3><p>${esc(b.date)} ・ ${esc(b.member)}</p></a>`;
     }).join("")+`</div>`;
   }
+  html+=songCard;
   box.innerHTML=html;
 }
 // 「推しの新着」：推し登録（localStorage "sakamichia-favs"、メンバーページと共有）した
@@ -78,7 +89,7 @@ function loadFavNames(){
     return Array.isArray(v) ? v.filter(x => typeof x === "string") : [];
   } catch (e) { return []; }
 }
-function renderFavs(mLatest){
+function renderFavs(mLatest, meta){
   const today = document.getElementById("todaySection");
   if(!today) return;
   let box = document.getElementById("favSection");
@@ -102,7 +113,21 @@ function renderFavs(mLatest){
     <p style="color:var(--muted)">推しのブログ記事がまだ見つかりませんでした。</p>`;
     return;
   }
-  box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2><div class="grid">` + rows.map(r => {
+  // 推しの次の誕生日までのカウントダウン
+  let bdayLine = "";
+  if (meta) {
+    const now = new Date(); const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let best = null;
+    favs.forEach(name => {
+      const b = meta[name] && meta[name].b; if (!Array.isArray(b)) return;
+      let t = new Date(now.getFullYear(), b[1] - 1, b[2]);
+      if (t < today0) t = new Date(now.getFullYear() + 1, b[1] - 1, b[2]);
+      const days = Math.round((t - today0) / 86400000);
+      if (!best || days < best.days) best = { name, days, mo: b[1], da: b[2] };
+    });
+    if (best) bdayLine = `<p style="margin:2px 0 10px">🎂 推しの次の誕生日：<a href="members/?member=${encodeURIComponent(best.name)}"><b>${esc(best.name)}</b></a>（${best.mo}月${best.da}日）まで${best.days === 0 ? "<b>今日です！</b>" : `あと<b>${best.days}日</b>`}</p>`;
+  }
+  box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2>` + bdayLine + `<div class="grid">` + rows.map(r => {
     const b = r.latest;
     const bb = {group: b.group, member: r.name};
     return `<a class="card" href="blog/?open=${encodeURIComponent(b.id)}">`

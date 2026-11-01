@@ -229,6 +229,11 @@ async function init(){
   renderYearChips();
   ["q","member","from","to","sort","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.getElementById("member").addEventListener("input",()=>renderYearChips());
+  // 検索サジェスト：メンバー名（漢字・読み）から候補を出す
+  attachSuggest(document.getElementById("q"), q=>{
+    const hits=t=>kanaNorm(String(t||"").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
+    return MEMBERS.filter(m=>hits(m.name)||hits(m.reading)).slice(0,8).map(m=>({kind:"メンバー", cls:"member", label:m.name, sub:(m.groups||[m.group]).join("・")}));
+  }, (it,input)=>{ input.value=it.label; input.dispatchEvent(new Event("input",{bubbles:true})); input.focus(); });
   // type="date" はブラウザによって input だけ／change だけのことがあるため、change でも同じ再描画を行う
   ["from","to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{resetPages();render();syncAdvBtn();saveState();}));
   document.querySelectorAll(".mchip").forEach(ch=>ch.addEventListener("click",()=>{ MEDIA=ch.dataset.media; syncMediaChips(); resetPages(); render(); syncAdvBtn(); saveState(); }));

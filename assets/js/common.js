@@ -33,6 +33,43 @@ function includesAll(hay, q){
 }
 function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 
+// ゲーム結果の画像共有（共通）：結果カード画像（1200x630）を作って共有/保存する
+async function shareScoreImage(opts, btn) {
+  const cv = document.createElement("canvas"); cv.width = 1200; cv.height = 630;
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#faf9fb"; ctx.fillRect(0, 0, 1200, 630);
+  // ロゴの三色（縦分割・単色のみ、グラデーションなし）
+  ["#7e57c2", "#e77a9b", "#5aa9d6"].forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(64 + i * 26, 56, 26, 74); });
+  ctx.fillStyle = "#2b2430"; ctx.textBaseline = "alphabetic";
+  ctx.font = "900 44px 'Hiragino Maru Gothic ProN','Hiragino Sans',sans-serif";
+  ctx.fillText("サカミチア", 172, 112);
+  ctx.font = "700 40px 'Hiragino Maru Gothic ProN','Hiragino Sans',sans-serif";
+  ctx.fillText(opts.game || "", 64, 208);
+  ctx.font = "900 92px 'Hiragino Maru Gothic ProN','Hiragino Sans',sans-serif";
+  ctx.fillStyle = "#7e57c2";
+  ctx.fillText(opts.score || "", 64, 322);
+  ctx.fillStyle = "#2b2430"; ctx.font = "400 30px 'Hiragino Sans',sans-serif";
+  (opts.lines || []).slice(0, 6).forEach((ln, i) => ctx.fillText(String(ln), 64, 392 + i * 40));
+  ctx.fillStyle = "#7a7080"; ctx.font = "400 26px 'Hiragino Sans',sans-serif";
+  ctx.fillText("sakamichia.pages.dev", 64, 586);
+  const blob = await new Promise(r => cv.toBlob(r, "image/png"));
+  const fileName = "sakamichia-result.png";
+  if (blob && navigator.canShare) {
+    const file = new File([blob], fileName, { type: "image/png" });
+    if (navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "サカミチア" }); return; } catch (e) { /* キャンセル時は何もしない */ return; }
+    }
+  }
+  if (blob) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    if (btn) { const t = btn.textContent; btn.textContent = "画像を保存しました"; setTimeout(() => { btn.textContent = t; }, 1800); }
+    return;
+  }
+  shareContent({ text: `${opts.game}：${opts.score}` }, btn);
+}
+
 // 検索サジェスト共通部品：入力の下に候補ドロップダウンを出す（Google式）。
 // attachSuggest(input, provider, onPick)
 //   provider(q) -> [{label, sub, kind, cls}]（最大8件まで表示）

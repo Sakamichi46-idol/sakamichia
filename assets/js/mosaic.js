@@ -58,7 +58,7 @@ function render() {
       <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.name)} ― ${r.ok ? `<b>${r.pts}点</b>（${r.stage + 1}段階目）` : `不正解（正解は${esc(r.name)}）`}</p>`).join("")}</div>
       <div class="gacha-btns"><button type="button" class="btn" id="mzRetry">もう一度遊ぶ</button><button type="button" class="btn sub" id="mzShare">結果を共有する</button></div></div>`;
     document.getElementById("mzRetry").addEventListener("click", start);
-    document.getElementById("mzShare").addEventListener("click", e => shareContent({ text: `モザイククイズで${score}点／${max}点でした！ #サカミチア` }, e.target));
+    document.getElementById("mzShare").addEventListener("click", e => shareScoreImage({ game: "モザイククイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.name}：${r.ok ? r.pts + "点（" + (r.stage + 1) + "段階目）" : "不正解"}`) }, e.target));
     return;
   }
   const q = qs[qi];

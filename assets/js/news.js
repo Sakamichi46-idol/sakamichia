@@ -46,6 +46,18 @@ async function init() {
     options: [], onChange: render
   });
   document.getElementById("nwQuery").addEventListener("input", e => { nwQuery = e.target.value.trim(); render(); });
+  // 検索サジェスト：お知らせのタイトルとカテゴリから候補を出す
+  attachSuggest(document.getElementById("nwQuery"), q => {
+    const hits = t => kanaNorm(String(t || "").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
+    const items = [], seen = new Set();
+    for (const it of NW) {
+      if (items.length >= 5) break;
+      if (hits(it.title) && !seen.has(it.title)) { seen.add(it.title); items.push({ kind: "お知らせ", cls: "live", label: it.title, sub: it.d || "" }); }
+    }
+    [...new Set(NW.map(it => it.c).filter(Boolean))].filter(c => hits(c)).slice(0, 3)
+      .forEach(c => items.push({ kind: "カテゴリ", cls: "song", label: c, sub: "カテゴリ" }));
+    return items;
+  }, (it, input) => { input.value = it.label; input.dispatchEvent(new Event("input", { bubbles: true })); input.focus(); });
   // 条件をリセット：グループ・カテゴリ・キーワードをすべて初期状態に戻す
   document.getElementById("nwReset").addEventListener("click", () => {
     nwGroup = "all"; NWCATS.clear(); nwQuery = "";
