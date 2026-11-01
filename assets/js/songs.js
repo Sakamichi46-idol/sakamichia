@@ -140,9 +140,19 @@ function matchG(s){
   return false;
 }
 function genreRank(s){ const g=s.genre||""; return (/^A[:：]/.test(g)||/表題曲|リード曲/.test(g)) ? 0 : 1; }
+// 「その他」のカードには、誰が参加・出演したかが一目で分かるようメンバーを出す。
+// 3名までは全員、4名以上は先頭3名＋「ほか（全N名）」（全員は詳細で表示する）
+function cardMembers(s,i){
+  if(s.group!=="その他") return "";
+  const names=sortedParticipants([...(PARTS[i]||[])]);
+  if(!names.length) return "";
+  const label=s.type==="MV出演" ? "出演" : "参加";
+  const txt=names.length<=3 ? names.join("、") : `${names.slice(0,3).join("、")} ほか（全${names.length}名）`;
+  return `<br>${label}：${esc(txt)}`;
+}
 function render(){
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
-  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special,s.artist]),q));
+  let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.center,s.group,s.year,s.special,s.artist,s.group==="その他"?[...PARTS[i]]:[]]),q));
   if(sort==="title"){
     const ykey=s=>s.yomi||s.title;
     rows.sort((a,b)=>ykey(a[0]).localeCompare(ykey(b[0]),"ja") || a[0].title.localeCompare(b[0].title,"ja"));
@@ -167,7 +177,7 @@ function render(){
   }
   document.getElementById("count").textContent=`${rows.length}曲`+(MFILTER?`（${MFILTER}の参加曲）`:"");
   document.getElementById("list").innerHTML=rows.map(([s,i])=>`<div class="card">${groupChip(s.group)}
-    <h3>${esc(s.title)}</h3><p>${s.year?esc(s.year)+"年 ・ ":""}${esc(s.type||"")}${s.artist?`<br>${esc(s.artist)}`:""}${s.center?`<br>センター：${esc(s.center)}`:""}</p>
+    <h3>${esc(s.title)}</h3><p>${s.year?esc(s.year)+"年 ・ ":""}${esc(s.type||"")}${s.artist?`<br>${esc(s.artist)}`:""}${cardMembers(s,i)}${s.center?`<br>センター：${esc(s.center)}`:""}</p>
     <p><button data-open="${i}">${s.group==="その他"?"詳細":"フォーメーション・詳細"}</button></p></div>`).join("")
     || `<div class="empty">条件に合う楽曲がありません。</div>`;
   document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openSong(+b.dataset.open)));
