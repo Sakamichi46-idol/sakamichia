@@ -491,6 +491,8 @@ def update_blogs(summary):
         if nres['added']:
             changed = True
             summary['newest_added'] = len(nres['added'])
+        if nres.get('fetch_errors'):
+            summary['newest_fetch_errors'] = len(nres['fetch_errors'])
     except Exception as e:
         summary['newest_error'] = str(e)
     # 過去分の段階取り込み
@@ -501,6 +503,8 @@ def update_blogs(summary):
             summary['backfill_added'] = len(bfres['added'])
             summary['backfill_progress'] = bfres['progress']
             summary['backfill_complete'] = bfres['complete']
+        if bfres.get('fetch_errors'):
+            summary['backfill_fetch_errors'] = len(bfres['fetch_errors'])
     except Exception as e:
         summary['backfill_error'] = str(e)
     try:

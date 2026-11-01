@@ -56,6 +56,14 @@ def main():
                 by_member[b.get('member', '?')] += 1
         out = {'status': 'ok', 'newest_added': len(added),
                'by_member': dict(by_member), 'pages_used': r.get('pages_used')}
+        # 取得失敗を「新着0件」と区別できるよう、失敗件数とURLを結果に含める
+        # （他のグループの取り込み結果やコミットは止めない）
+        ferr = r.get('fetch_errors') or []
+        if ferr:
+            out['fetch_errors'] = len(ferr)
+            out['fetch_error_urls'] = [e['url'] for e in ferr[:10]]
+            print(f"⚠ fetch failures during newest check: {len(ferr)} "
+                  f"(newest_added may be incomplete)", file=sys.stderr, flush=True)
         if added:
             if not os.environ.get('SAKAMICHIA_NO_ZIP'):
                 out['zip'] = upd.build_zip()

@@ -6,22 +6,93 @@
 - 卒業メンバーの一覧は公式側で空になっているため、対象は現行メンバーの一覧に限る。
 状態は tools/blog-backfill-state.json に保持し、1回の実行では budget_pages 件までの一覧ページを処理する。
 """
-import json, os, re, time, urllib.request
+import json, os, re, sys, time, urllib.request, urllib.error
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_PATH = os.path.join(BASE, 'tools', 'blog-backfill-state.json')
 UA = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'}
 SLEEP = 1.5
 
-def fetch(url):
-    import sys, time
-    t0 = time.time()
+# 最終的に失敗した取得の記録（{'url':..., 'error':...}）。
+# 呼び出し側が実行結果に含め、「記事が無かった」と「取得に失敗した」を
+# 区別できるようにするためのもの。
+FETCH_FAILURES = []
+
+def _fetch_once(url):
+    """取得を1回だけ試みて bytes を返す。失敗時は例外を投げる。
+    公式CDNの chunked 応答は http.client が途中で読み切れず IncompleteRead に
+    なることがあるため、backfill_bodies.py と同じく curl を優先する
+    （curl は途中切断を終了コードで検出できる）。"""
+    import shutil, subprocess
+    if shutil.which('curl'):
+        p = subprocess.run(
+            ['curl', '-sS', '-L', '--compressed', '--max-time', '30',
+             '-A', UA['User-Agent'], '-w', '\n%{http_code}', url],
+            capture_output=True, timeout=40)
+        if p.returncode == 0:
+            body, sep, code = p.stdout.rpartition(b'\n')
+            if not sep or not code.strip().isdigit():
+                raise OSError('curl: http_code を取得できませんでした')
+            status = int(code.strip())
+            if status >= 400:
+                raise urllib.error.HTTPError(url, status, f'HTTP {status}', None, None)
+            return body
+        if p.returncode != 2:
+            raise OSError(f"curl exit {p.returncode}: "
+                          f"{p.stderr.decode('utf-8', 'ignore').strip()[:160]}")
+        # exit 2 はオプション解釈エラー等の環境問題なので urllib にフォールバック
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=30) as r:
-        data = r.read().decode('utf-8', 'ignore')
-    if os.environ.get('BF_DEBUG'):
-        print(f'fetch {time.time()-t0:.1f}s {len(data)}B {url[:90]}', file=sys.stderr, flush=True)
-    return data
+        raw = r.read()
+        # chunked の途中切断は read() が IncompleteRead を投げるのでここには来ない。
+        # Content-Length がある場合は読み切りを照合する。
+        cl = r.headers.get('Content-Length')
+        if cl is not None and int(cl) != len(raw):
+            import http.client
+            raise http.client.IncompleteRead(raw, int(cl) - len(raw))
+        return raw
+
+def fetch(url, attempts=3):
+    """公式ページを取得して str で返す。一時的な失敗（接続リセット、
+    chunked 応答の途中切断、タイムアウト等）はバックオフ付きでリトライし、
+    最終的に失敗したら FETCH_FAILURES に記録し stderr にも残したうえで
+    例外を投げる（黙って「記事なし」に化けさせない）。"""
+    t0 = time.time()
+    last = None
+    for i in range(attempts):
+        try:
+            data = _fetch_once(url).decode('utf-8', 'ignore')
+            if os.environ.get('BF_DEBUG'):
+                print(f'fetch {time.time()-t0:.1f}s {len(data)}B {url[:90]}', file=sys.stderr, flush=True)
+            return data
+        except urllib.error.HTTPError as e:
+            last = e
+            if 400 <= e.code < 500 and e.code != 429:
+                break  # 404 等の恒常的なエラーはリトライしない
+            if i + 1 < attempts:
+                print(f'fetch retry {i+1}/{attempts}: HTTP {e.code} {url[:90]}',
+                      file=sys.stderr, flush=True)
+                time.sleep(2 ** i)
+        except Exception as e:
+            last = e
+            if i + 1 < attempts:
+                print(f'fetch retry {i+1}/{attempts}: {type(e).__name__}: {e} {url[:90]}',
+                      file=sys.stderr, flush=True)
+                time.sleep(2 ** i)
+    FETCH_FAILURES.append({'url': url, 'error': f'{type(last).__name__}: {last}'})
+    print(f'fetch FAILED ({attempts} attempts): {type(last).__name__}: {last} {url}',
+          file=sys.stderr, flush=True)
+    raise last
+
+def _take_fetch_errors(start):
+    """FETCH_FAILURES の start 以降分を返し、あれば stderr に要約を出す。
+    各パスの開始時に len(FETCH_FAILURES) を控えておき、終了時にこれを呼ぶ。"""
+    errs = FETCH_FAILURES[start:]
+    if errs:
+        print(f'⚠ 取得失敗 {len(errs)} 件: ' +
+              '; '.join(f"{e['url'][:80]} ({e['error']})" for e in errs[:5]) +
+              (' …' if len(errs) > 5 else ''), file=sys.stderr, flush=True)
+    return errs
 
 def load_store():
     idx = json.load(open(os.path.join(BASE, 'data/blogs/index.json')))
@@ -636,6 +707,7 @@ def feed_newest_pass(max_pages=3):
     乃木坂フィードのカードには著者が載らないため詳細ヘッダーで著者を確定する。
     乃木坂リレーはフィードで著者が判らないため、リレー各コードの1ページ目も確認する。
     全メンバー巡回は毎朝の newest_pass が担う。"""
+    _f0 = len(FETCH_FAILURES)
     state = json.load(open(STATE_PATH)) if os.path.exists(STATE_PATH) else {}
     idx, years, imgs = load_store()
     known = {}
@@ -737,12 +809,14 @@ def feed_newest_pass(max_pages=3):
                      title=clean_relay_title(p['title'], series_gen(ms['name']), author))
     if dirty:
         save_store(idx, years, imgs, dirty)
-    return {'added': added, 'pages_used': pages_used}
+    return {'added': added, 'pages_used': pages_used,
+            'fetch_errors': _take_fetch_errors(_f0)}
 
 
 def newest_pass(max_extra_pages=3):
     """各メンバーの最新ページを確認し、未登録の新着記事を公式サイトから直接取り込む。
     旧サイトの公開データに依存しない、サカミチア独自の新着取り込み。"""
+    _f0 = len(FETCH_FAILURES)
     state = json.load(open(STATE_PATH)) if os.path.exists(STATE_PATH) else {}
     idx, years, imgs = load_store()
     known = {}
@@ -870,9 +944,11 @@ def newest_pass(max_extra_pages=3):
     if dirty:
         save_store(idx, years, imgs, dirty)
     json.dump(state, open(STATE_PATH, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    return {'added': added, 'pages_used': pages_used}
+    return {'added': added, 'pages_used': pages_used,
+            'fetch_errors': _take_fetch_errors(_f0)}
 
 def run(budget_pages=120):
+    _f0 = len(FETCH_FAILURES)
     state = json.load(open(STATE_PATH)) if os.path.exists(STATE_PATH) else {}
     idx, years, imgs = load_store()
     known = {}
@@ -1020,10 +1096,12 @@ def run(budget_pages=120):
         ms = state[site]['members']
         progress[site] = {'members_done': sum(1 for v in ms.values() if v['done']), 'members_total': len(ms)}
     return {'added': added, 'repaired': repaired, 'pages_used': pages_used, 'progress': progress,
-            'complete': all(v['members_done'] == v['members_total'] for v in progress.values())}
+            'complete': all(v['members_done'] == v['members_total'] for v in progress.values()),
+            'fetch_errors': _take_fetch_errors(_f0)}
 
 def run_relay(budget_pages=200):
     """乃木坂46リレーブログ専用の取り込み（著者判定つき）。"""
+    _f0 = len(FETCH_FAILURES)
     state = json.load(open(STATE_PATH)) if os.path.exists(STATE_PATH) else {}
     idx, years, imgs = load_store()
     known = {}
@@ -1092,12 +1170,13 @@ def run_relay(budget_pages=200):
     json.dump(state, open(STATE_PATH, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     progress = {ct: {'name': members[ct]['name'], 'next_page': members[ct]['next_page'], 'done': members[ct]['done']}
                 for ct in members if members[ct].get('relay')}
-    return {'added': added, 'pages_used': pages_used, 'progress': progress}
+    return {'added': added, 'pages_used': pages_used, 'progress': progress,
+            'fetch_errors': _take_fetch_errors(_f0)}
 
 if __name__ == '__main__':
-    import sys
     budget = int(sys.argv[1]) if len(sys.argv) > 1 else 25
     r = run(budget)
     print(json.dumps({'added_count': len(r['added']), 'pages_used': r['pages_used'],
                       'progress': r['progress'], 'complete': r['complete'],
+                      'fetch_errors': len(r.get('fetch_errors') or []),
                       'sample': r['added'][:5]}, ensure_ascii=False, indent=1))
