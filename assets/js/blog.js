@@ -412,8 +412,10 @@ function pool(){ return poolYears().flatMap(y=>YEARS[y]||[]); }
    バイグラムは本文テキスト（空白除去後）の UTF-16 コードユニット2つ組で、
    FNV-1a ハッシュで64シャードに振り分ける（ビルダー側と一致させること）。
    意味づけ: 2文字クエリはバイグラムそのものなので完全一致になる。
-   3文字以上はバイグラムの AND で、本文中に語を含む記事のスーパーセット
-   （近似）になる。本文を再取得しての検証はしない（シャードが大きく現実的でないため）。 */
+   3文字はトライグラム索引（data/body-index3/）、4文字以上は 4-gram 索引
+   （data/body-index4/）の AND で引くため、ほぼ完全一致になる（語の断片が
+   別々の場所に現れる記事だけが混ざりうる）。
+   本文を再取得しての完全な検証はしない（シャードが大きく現実的でないため）。 */
 let BODYSET=null;      // Set<id> | null（null=本文条件なし、または未解決）
 let bodyPending=false; // 索引を解決中かどうか
 let bodyQuery="";      // 解決対象の正規化済みクエリ
@@ -460,7 +462,155 @@ function loadBodyShard(n){
   }
   return bidxShards[n];
 }
+/* --- トライグラム索引（3文字以上のクエリ用、data/body-index3/） ---
+   形式はバイグラムと同型で、キーが UTF-16 コードユニット3つ組（48bit 数値）、
+   FNV-1a ハッシュで128シャードに振り分ける（ビルダー側と一致させること）。 */
+let bidx3Meta=null, bidx3Ids=null; const bidx3Shards={};
+function bodyTrigramShard(u1,u2,u3){
+  let h=0x811c9dc5;
+  h^=u1; h=Math.imul(h,0x01000193);
+  h^=u2; h=Math.imul(h,0x01000193);
+  h^=u3; h=Math.imul(h,0x01000193);
+  return (h>>>0)%128;
+}
+async function loadBodyIndex3Meta(){
+  if(bidx3Meta) return bidx3Meta;
+  const r=await fetch(BASE+"data/body-index3/meta.json");
+  if(!r.ok) throw new Error("body-index3 meta");
+  bidx3Meta=await r.json();
+  const ri=await fetch(BASE+`data/body-index3/ids.json?v=${encodeURIComponent(bidx3Meta.builtAt)}`);
+  if(!ri.ok) throw new Error("body-index3 ids");
+  bidx3Ids=await ri.json();
+  return bidx3Meta;
+}
+function decodeBodyShard3(buf){
+  const dv=new DataView(buf); let off=0;
+  const K=dv.getUint32(off,true); off+=4;
+  const map=new Map();
+  const readVarint=()=>{ let v=0,s=0; for(;;){ const b=dv.getUint8(off++); v|=(b&0x7f)<<s; if(!(b&0x80)) break; s+=7; } return v; };
+  for(let i=0;i<K;i++){
+    const u1=dv.getUint16(off,true), u2=dv.getUint16(off+2,true), u3=dv.getUint16(off+4,true); off+=6;
+    const M=dv.getUint32(off,true); off+=4;
+    const arr=new Uint32Array(M); let cur=0;
+    for(let j=0;j<M;j++){ cur+=readVarint(); arr[j]=cur; }
+    map.set((u1*65536+u2)*65536+u3, arr);
+  }
+  return map;
+}
+function loadBodyShard3(n){
+  if(!(n in bidx3Shards)){
+    bidx3Shards[n]=loadBodyIndex3Meta()
+      .then(()=>fetch(BASE+`data/body-index3/shard-${n}.bin?v=${encodeURIComponent(bidx3Meta.builtAt)}`))
+      .then(r=>{ if(!r.ok) throw new Error("body-index3 shard"); return r.arrayBuffer(); })
+      .then(decodeBodyShard3);
+  }
+  return bidx3Shards[n];
+}
+async function resolveBodySet3(q){
+  const grams=[], need=new Set();
+  for(let i=0;i<q.length-2;i++){
+    const u1=q.charCodeAt(i), u2=q.charCodeAt(i+1), u3=q.charCodeAt(i+2);
+    grams.push((u1*65536+u2)*65536+u3);
+    need.add(bodyTrigramShard(u1,u2,u3));
+  }
+  const shardNums=[...need];
+  const maps=await Promise.all(shardNums.map(loadBodyShard3));
+  const byShard={}; shardNums.forEach((n,i)=>byShard[n]=maps[i]);
+  await loadBodyIndex3Meta();
+  let cur=null;
+  for(let i=0;i<grams.length;i++){
+    const post=byShard[bodyTrigramShard(q.charCodeAt(i),q.charCodeAt(i+1),q.charCodeAt(i+2))].get(grams[i]);
+    if(!post){ cur=[]; break; }
+    if(cur===null){ cur=Array.from(post); continue; }
+    const set=new Set(post);
+    cur=cur.filter(n=>set.has(n));
+    if(!cur.length) break;
+  }
+  const ids=new Set();
+  for(const n of (cur||[])) ids.add(bidx3Ids[n]);
+  return ids;
+}
+/* --- 4-gram 索引（4文字以上のクエリ用、data/body-index4/） ---
+   レコードのキーは 4-gram の FNV-1a 32bit ハッシュ値（ビルダー側と一致）。
+   シャード内ではキー昇順に差分 varint で格納される。ハッシュが衝突した
+   4-gram 同士はポスティングが合体する（ヒット漏れはなく、外れが僅かに増える）。 */
+let bidx4Meta=null, bidx4Ids=null; const bidx4Shards={};
+function bodyQuadgramHash(u1,u2,u3,u4){
+  let h=0x811c9dc5;
+  h^=u1; h=Math.imul(h,0x01000193);
+  h^=u2; h=Math.imul(h,0x01000193);
+  h^=u3; h=Math.imul(h,0x01000193);
+  h^=u4; h=Math.imul(h,0x01000193);
+  return h>>>0;
+}
+function bodyQuadgramShard(u1,u2,u3,u4){ return bodyQuadgramHash(u1,u2,u3,u4)%256; }
+async function loadBodyIndex4Meta(){
+  if(bidx4Meta) return bidx4Meta;
+  const r=await fetch(BASE+"data/body-index4/meta.json");
+  if(!r.ok) throw new Error("body-index4 meta");
+  bidx4Meta=await r.json();
+  const ri=await fetch(BASE+`data/body-index4/ids.json?v=${encodeURIComponent(bidx4Meta.builtAt)}`);
+  if(!ri.ok) throw new Error("body-index4 ids");
+  bidx4Ids=await ri.json();
+  return bidx4Meta;
+}
+function decodeBodyShard4(buf){
+  const dv=new DataView(buf); let off=0;
+  const K=dv.getUint32(off,true); off+=4;
+  const map=new Map();
+  const readVarint=()=>{ let v=0,s=0; for(;;){ const b=dv.getUint8(off++); v+=(b&0x7f)*Math.pow(2,s); if(!(b&0x80)) break; s+=7; } return v; };
+  let key=0;
+  for(let i=0;i<K;i++){
+    key+=readVarint();
+    const M=readVarint();
+    const arr=new Uint32Array(M); let cur=0;
+    for(let j=0;j<M;j++){ cur+=readVarint(); arr[j]=cur; }
+    map.set(key, arr);
+  }
+  return map;
+}
+function loadBodyShard4(n){
+  if(!(n in bidx4Shards)){
+    bidx4Shards[n]=loadBodyIndex4Meta()
+      .then(()=>fetch(BASE+`data/body-index4/shard-${n}.bin?v=${encodeURIComponent(bidx4Meta.builtAt)}`))
+      .then(r=>{ if(!r.ok) throw new Error("body-index4 shard"); return r.arrayBuffer(); })
+      .then(decodeBodyShard4);
+  }
+  return bidx4Shards[n];
+}
+async function resolveBodySet4(q){
+  const grams=[], need=new Set();
+  for(let i=0;i<q.length-3;i++){
+    const u1=q.charCodeAt(i), u2=q.charCodeAt(i+1), u3=q.charCodeAt(i+2), u4=q.charCodeAt(i+3);
+    grams.push(bodyQuadgramHash(u1,u2,u3,u4));
+    need.add(bodyQuadgramShard(u1,u2,u3,u4));
+  }
+  const shardNums=[...need];
+  const maps=await Promise.all(shardNums.map(loadBodyShard4));
+  const byShard={}; shardNums.forEach((n,i)=>byShard[n]=maps[i]);
+  await loadBodyIndex4Meta();
+  let cur=null;
+  for(let i=0;i<grams.length;i++){
+    const post=byShard[bodyQuadgramShard(q.charCodeAt(i),q.charCodeAt(i+1),q.charCodeAt(i+2),q.charCodeAt(i+3))].get(grams[i]);
+    if(!post){ cur=[]; break; }
+    if(cur===null){ cur=Array.from(post); continue; }
+    const set=new Set(post);
+    cur=cur.filter(n=>set.has(n));
+    if(!cur.length) break;
+  }
+  const ids=new Set();
+  for(const n of (cur||[])) ids.add(bidx4Ids[n]);
+  return ids;
+}
 async function resolveBodySet(q){
+  if(q.length>=4){
+    try{ return await resolveBodySet4(q); }
+    catch(e){ /* 4-gram 索引が読めない場合はトライグラムへフォールバック */ }
+  }
+  if(q.length>=3){
+    try{ return await resolveBodySet3(q); }
+    catch(e){ /* トライグラム索引が読めない場合はバイグラム近似にフォールバック */ }
+  }
   const grams=[], need=new Set();
   for(let i=0;i<q.length-1;i++){
     grams.push((q.charCodeAt(i)<<16)|q.charCodeAt(i+1));
