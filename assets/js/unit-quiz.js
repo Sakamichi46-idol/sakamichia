@@ -94,8 +94,11 @@ function uqResult() {
   const area = document.getElementById("uqArea");
   const max = UQ.list.length * UQ_POINTS;
   const list = UQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.answer.title)}』（${esc(e.lineage)}／${e.vocal.length}人：${e.vocal.map(esc).join("・")}）${e.titles.length > 1 ? `　※同じメンバーで${e.titles.filter(t => t.title !== e.answer.title).map(t => `『${esc(t.title)}』`).join("、")}もあり` : ""}</p>`).join("");
+  const bestIsNew = quizBestSave("unit", UQ.score);
+  const bestNow = quizBest("unit");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${UQ.score} / ${max} 点</p>
+  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
   <h4 style="margin:18px 0 6px">出題されたユニット曲</h4>
   ${list}
   <p>${UQ.score >= max * 0.8 ? "すごい！ユニットの組み合わせまで完璧ですね。" : UQ.score >= max * 0.5 ? "なかなかのユニット通です。" : UQ.score >= max * 0.3 ? "定番ユニットは押さえていても、意外な組み合わせもありますよね。" : "ユニット曲は隠れた名曲の宝庫です。楽曲図鑑で探してみてください。"}</p>
@@ -118,6 +121,7 @@ function uqStartPanel(pool) {
     ...ok.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}組）</button>`)].join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
   <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `全${UQ_MAX}問・1問${UQ_POINTS}点。グループ別にも遊べます。` : `全${UQ_MAX}問・1問${UQ_POINTS}点のクイズです。グループ別に絞って遊べます。出題は歌唱メンバーが確定しているユニット曲のみです。`}</p>
+  ${quizBest("unit") ? `<p style="color:var(--muted)">自己ベスト：${quizBest("unit")}点</p>` : ""}
   <div class="filters" style="margin:10px 0">${chips}</div>
   <p><button type="button" class="primary" id="uqStart">スタート</button></p></div>`;
   area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {

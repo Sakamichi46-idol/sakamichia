@@ -38,7 +38,10 @@ function render() {
   const main = document.getElementById("hqMain");
   if (qi >= qs.length) {
     const max = HQ_N * 100;
+    const bestIsNew = quizBestSave("hint", score);
+    const bestNow = quizBest("hint");
     main.innerHTML = `<div class="mz-result"><h3>結果：${score}点 ／ ${max}点</h3>
+      ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
       <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.mine)} ― ${r.ok ? `<b>${r.pts}点</b>（ヒント${r.stage + 1}段階目）` : `不正解（正解は${esc(r.title)}）`}</p>`).join("")}</div>
       <div class="gacha-btns"><button type="button" class="btn" id="hqRetry">もう一度遊ぶ</button><button type="button" class="btn sub" id="hqShare">結果を共有する</button></div></div>`;
     document.getElementById("hqRetry").addEventListener("click", start);
@@ -104,6 +107,7 @@ function startPanel() {
   const main = document.getElementById("hqMain");
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `ヒントを開いて曲名を当てる全${HQ_N}問。早く答えるほど高得点、時間制限なし。` : `ヒントを1つずつ開いて曲名を当てる全${HQ_N}問のクイズです。早く答えるほど高得点（ヒント1で正解＝100点〜ヒント6＝15点）。時間制限はありません。`}</p>
+  ${quizBest("hint") ? `<p style="color:var(--muted)">自己ベスト：${quizBest("hint")}点</p>` : ""}
   <h4 style="margin:14px 0 6px">回答方式</h4>
   <div class="filters" style="margin:6px 0 10px"><button type="button" class="ychip${hqStyle === "choice" ? " on" : ""}" data-s="choice">4択式</button><button type="button" class="ychip${hqStyle === "input" ? " on" : ""}" data-s="input">記述式（候補サジェスト付き）</button></div>
   <p><button type="button" class="primary" id="hqStart">スタート</button></p></div>`;

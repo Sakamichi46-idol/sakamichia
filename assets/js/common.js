@@ -103,6 +103,10 @@ function omikujiDraw(members) {
 }
 function omikujiSave(res) { try { localStorage.setItem(OMIKUJI_KEY, JSON.stringify(res)); } catch (e) {} }
 
+// クイズの自己ベスト（端末に保存）。quizBestSave は新記録のとき true を返す
+function quizBest(key) { try { return +localStorage.getItem("sakamichia-best-" + key) || 0; } catch (e) { return 0; } }
+function quizBestSave(key, score) { try { if (score > quizBest(key)) { localStorage.setItem("sakamichia-best-" + key, String(score)); return true; } } catch (e) {} return false; }
+
 // ゲーム結果の画像共有（共通）：結果カード画像（1200x630）を作って共有/保存する
 async function shareScoreImage(opts, btn) {
   const cv = document.createElement("canvas"); cv.width = 1200; cv.height = 630;

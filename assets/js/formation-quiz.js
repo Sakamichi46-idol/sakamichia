@@ -226,8 +226,11 @@ function fqResult() {
   const area = document.getElementById("fqArea");
   const max = FQ.list.reduce((a, e) => a + fqPerBlank(e) * e.blanks.length, 0);
   const list = FQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.title)}』（${esc(e.lineage)}）の空欄は <b>${e.blanks.map(b => esc(b.answer)).join("、")}</b></p>`).join("");
+  const bestIsNew = quizBestSave("formation", FQ.score);
+  const bestNow = quizBest("formation");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${FQ.score} / ${max} 点</p>
+  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
   <h4 style="margin:18px 0 6px">出題されたフォーメーション</h4>
   ${list}
   <p>${FQ.score >= max * 0.8 ? "すごい！配置まで完璧に覚えていますね。" : FQ.score >= max * 0.5 ? "なかなかのフォーメーション通です。" : FQ.score >= max * 0.3 ? "前列は覚えていても、後列は意外と難しいですよね。" : "配置を当てるのは至難の業です。楽曲図鑑で眺めるのも楽しいですよ。"}</p>
@@ -252,6 +255,7 @@ function fqStartPanel(pool) {
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
   <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `全${FQ_MAX}問。出題は公式確定のフォーメーションのみです。` : `全${FQ_MAX}問のクイズです。出題は公式発表で確定しているフォーメーションのみです（参考データの配置は出題しません）。`}</p>
   ${note}
+  ${quizBest("formation") ? `<p style="color:var(--muted)">自己ベスト：${quizBest("formation")}点</p>` : ""}
   <div class="filters" style="margin:10px 0">${chips}</div>
   <h4 style="margin:14px 0 6px">難易度（1問で答える空欄の数）</h4>
   <div class="filters" style="margin:6px 0 10px">${diffChips}</div>

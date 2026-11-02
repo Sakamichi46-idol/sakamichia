@@ -76,8 +76,11 @@ function kqResult() {
   const area = document.getElementById("kqArea");
   const max = KQ.list.length * 100;
   const songList = KQ.list.map((e, idx) => `<p style="margin:6px 0">${idx + 1}. 『${esc(e.title)}』（${esc(e.group)}）${e.uta ? ` <a href="${esc(e.uta)}" target="_blank" rel="noopener">歌詞を見る</a>` : ""}</p>`).join("");
+  const bestIsNew = quizBestSave("lyrics", KQ.score);
+  const bestNow = quizBest("lyrics");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${KQ.score} / ${max} 点</p>
+  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
   <h4 style="margin:18px 0 6px">出題された曲の歌詞を確認する（歌ネット）</h4>
   ${songList}
   <p>${KQ.score >= max * 0.8 ? "すごい！かなりの早さで分かりましたね。" : KQ.score >= max * 0.5 ? "なかなかの勘の良さです。" : KQ.score >= max * 0.3 ? "もう少し早く当てられるようになると、さらに楽しいですよ。" : "漢字の並びから曲を当てるのは意外と難しいですよね。"}</p>
@@ -95,6 +98,7 @@ function kqStartPanel(data, songs) {
     ...groups.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}曲）</button>`)].join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
   <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `全${KQ_MAX}問。グループ別にも遊べます。` : `全${KQ_MAX}問のクイズです。グループ別に絞って遊べます。収録曲が10曲未満のモードは、ある曲すべてが出題されます。`}</p>
+  ${quizBest("lyrics") ? `<p style="color:var(--muted)">自己ベスト：${quizBest("lyrics")}点</p>` : ""}
   <div class="filters" style="margin:10px 0">${chips}</div>
   <p><button type="button" class="primary" id="kqStart">スタート</button></p></div>`;
   area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {
