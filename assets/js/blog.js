@@ -1197,22 +1197,31 @@ async function openBlog(id){
   // 元の記事ではスタンプは文章の行の中にインラインで置かれているが、取り込み時に
   // [テキスト][画像][テキスト] とブロック分割されたため単独行になってしまう。
   // スタンプが段落の直後にある場合は、その段落の末尾へインラインで移し、直後に
-  // 段落が続く場合は同じ段落に連結して元の段落を復元する。判定は非同期に確定する
-  // ため、分類のたびに本文全体を走査し直す（復元済みのスタンプは段落内にあるので
-  // 走査対象にならない）。写真ブロックに隣接する場合や直前が段落でない場合は、
+  // 段落が続く場合は同じ段落に連結して元の段落を復元する。改行ブロックを挟んで
+  // 次の段落の頭に来る形（[段落][改行][スタンプ][段落]）も元の記事では段落頭の
+  // インライン配置なので、次の段落の先頭へ移す。判定は非同期に確定するため、
+  // 分類のたびに本文全体を走査し直す（復元済みのスタンプは段落内にあるので
+  // 走査対象にならない）。写真ブロックに隣接する場合や前後とも段落でない場合は、
   // 従来どおり小さいブロック表示のままにする。
   const restoreInlineStamps=()=>{
     const bb=body.querySelector(".blog-body"); if(!bb) return;
     [...bb.children].forEach(st=>{
       if(st.tagName!=="IMG"||!st.classList.contains("bstamp")) return;
       const prev=st.previousElementSibling;
-      if(!prev||prev.tagName!=="P") return;
-      prev.appendChild(st);
-      st.classList.add("inl");
-      let nxt=prev.nextElementSibling;
-      while(nxt&&nxt.tagName==="P"){
-        while(nxt.firstChild) prev.appendChild(nxt.firstChild);
-        const rm=nxt; nxt=nxt.nextElementSibling; rm.remove();
+      if(prev&&prev.tagName==="P"){
+        prev.appendChild(st);
+        st.classList.add("inl");
+        let nxt=prev.nextElementSibling;
+        while(nxt&&nxt.tagName==="P"){
+          while(nxt.firstChild) prev.appendChild(nxt.firstChild);
+          const rm=nxt; nxt=nxt.nextElementSibling; rm.remove();
+        }
+        return;
+      }
+      const nxt=st.nextElementSibling;
+      if(nxt&&nxt.tagName==="P"){
+        nxt.insertBefore(st, nxt.firstChild);
+        st.classList.add("inl");
       }
     });
   };
