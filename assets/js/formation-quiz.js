@@ -22,6 +22,21 @@ function fqShuffle(a) {
 }
 function fqLineage(g) { return g === "欅坂46" ? "櫻坂46" : g === "けやき坂46" ? "日向坂46" : g; }
 function fqPhoto(name) { const f = FQ.photos[name]; return f ? BASE + "assets/member-photos/" + f : null; }
+// タイルが狭く名前が「藤…」のように省略されてしまうため、名字と名前を2行に分けて表示する。
+// 名字の長さは原則2文字で、3文字・1文字の名字だけ例外リストで判定する（長い順に照合）。
+const FQ_SUR3 = ["一ノ瀬", "五百城", "正源司", "向井地"];
+const FQ_SUR1 = ["林", "柏", "関", "岸", "堀", "潮"];
+function fqSplitName(name) {
+  for (const s of FQ_SUR3) if (name.startsWith(s) && name.length > s.length) return [s, name.slice(s.length)];
+  if (FQ_SUR1.includes(name[0]) && name.length > 2) return [name[0], name.slice(1)];
+  if (name.length >= 3) return [name.slice(0, 2), name.slice(2)];
+  return [name, ""];
+}
+function fqNameHtml(name) {
+  const [fam, giv] = fqSplitName(name);
+  if (!giv) return `<span class="fq-name"><span class="fq-fam">${esc(fam)}</span></span>`;
+  return `<span class="fq-name"><span class="fq-fam">${esc(fam)}</span><span class="fq-giv${giv.length >= 4 ? " long" : ""}">${esc(giv)}</span></span>`;
+}
 
 function fqBuildPool(forms, songs) {
   const songMap = {};
@@ -110,7 +125,7 @@ function fqPerBlank(q) { return Math.round(FQ_POINTS / q.blanks.length); }
 function fqTile(name, opts) {
   const url = fqPhoto(name);
   const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fq-initial" style="background:${FQ_GCOL[FQ.list[FQ.i].group] || "#999"}">${esc(name.slice(0, 1))}</span>`;
-  return `<div class="fq-tile${opts.ctr ? " ctr" : ""}${opts.cls ? " " + opts.cls : ""}">${ph}<span class="fq-name">${esc(name)}</span></div>`;
+  return `<div class="fq-tile${opts.ctr ? " ctr" : ""}${opts.cls ? " " + opts.cls : ""}">${ph}${fqNameHtml(name)}</div>`;
 }
 function fqRender() {
   const area = document.getElementById("fqArea");
@@ -132,7 +147,7 @@ function fqRender() {
   const remaining = q.blanks.length - Object.keys(FQ.filled).length;
   let html = `<div class="card" style="margin-bottom:40px"><h3>第${FQ.i + 1}問 / ${FQ.list.length}問（現在 ${FQ.score}点）</h3>
   <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}『${esc(q.title)}』${q.year ? `（${q.year}年）` : ""} のフォーメーションです。空欄は${q.blanks.length}人います。${FQ.done ? "" : "空欄をタップして対象を切り替え、下の4択から選んでください。"}</p>
-  <div class="fq-board" style="--maxn:${maxn}">${board}</div>`;
+  <div class="fq-board${maxn >= 10 ? " wide" : ""}" style="--maxn:${maxn}">${board}</div>`;
   if (!FQ.done) {
     if (remaining > 0) {
       html += `<p style="margin:6px 0">空欄 ${FQ.active + 1} / ${q.blanks.length}（あと${remaining}人）</p>`;
@@ -205,7 +220,7 @@ function fqRender() {
 function fqTileInner(name) {
   const url = fqPhoto(name);
   const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fq-initial" style="background:${FQ_GCOL[FQ.list[FQ.i].group] || "#999"}">${esc(name.slice(0, 1))}</span>`;
-  return `${ph}<span class="fq-name">${esc(name)}</span>`;
+  return `${ph}${fqNameHtml(name)}`;
 }
 function fqResult() {
   const area = document.getElementById("fqArea");

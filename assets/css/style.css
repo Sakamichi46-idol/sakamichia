@@ -572,7 +572,10 @@ body.dfbar-on{padding-bottom:70px}
 .fq-row{display:flex;justify-content:center;gap:6px;margin:6px 0}
 .fq-tile{flex:none;width:calc((100% - (var(--maxn) - 1)*6px)/var(--maxn));max-width:104px;border:2px solid var(--line);border-radius:10px;background:#fff;overflow:hidden;text-align:center}
 .fq-tile img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
-.fq-tile .fq-name{display:block;padding:3px 1px;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fq-tile .fq-name{display:block;padding:3px 1px;font-size:11px;font-weight:700;line-height:1.3}
+.fq-tile .fq-name .fq-fam,.fq-tile .fq-name .fq-giv{display:block;white-space:nowrap}
+.fq-tile .fq-name .fq-giv.long{font-size:8.5px;letter-spacing:-.03em}
+.fq-board.wide .fq-tile .fq-name{font-size:9.5px}
 .fq-tile.ctr .fq-name{background:#f2e9fb}
 .fq-tile.blank{border-style:dashed;background:#fdfcfe;display:flex;flex-direction:column}
 .fq-tile.blank .fq-qmark{flex:1;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--muted);width:100%;aspect-ratio:4/5}
@@ -582,7 +585,7 @@ body.dfbar-on{padding-bottom:70px}
 .uq-member{width:84px;border:2px solid var(--line);border-radius:10px;overflow:hidden;text-align:center;background:#fff}
 .uq-member img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
 .uq-member .fq-name{display:block;padding:3px 1px;font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media(max-width:640px){.fq-tile .fq-name,.uq-member .fq-name{font-size:10px}.uq-member{width:68px}}
+@media(max-width:640px){.fq-tile .fq-name{font-size:9.5px}.fq-board.wide .fq-tile .fq-name{font-size:8.5px}.uq-member .fq-name{font-size:10px}.uq-member{width:68px}}
 
 /* マイ参戦記録：参戦（現地）／配信で見た の2状態対応（2026-10-31追加） */
 .attend-ctl{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;vertical-align:middle;background:#fff}
