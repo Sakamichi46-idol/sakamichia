@@ -284,6 +284,20 @@ document.addEventListener("DOMContentLoaded",()=>{
     document.head.appendChild(l);
   }
   if("serviceWorker" in navigator){
+    // 更新版のSWが有効になったら知らせる。JS/CSSは stale-while-revalidate のため、
+    // 開いているページは旧版のまま動き続ける（「直したのに見えない」の一因）。
+    // 初回登録時は controller が無いので通知しない。
+    const hadController = !!navigator.serviceWorker.controller;
+    let updateShown = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!hadController || updateShown) return;
+      updateShown = true;
+      const bar = document.createElement("div");
+      bar.className = "update-toast";
+      bar.innerHTML = `<span>サイトが更新されました</span><button type="button">再読み込み</button>`;
+      bar.querySelector("button").addEventListener("click", () => location.reload());
+      document.body.appendChild(bar);
+    });
     window.addEventListener("load",()=>{
       navigator.serviceWorker.register(BASE+"sw.js").catch(()=>{});
     });
