@@ -104,10 +104,15 @@ function fqChoicesFor(q, bi) {
     fqLineage(m.group) === q.lineage);
   const isGen = m => ans && ans.gen > 0 && m.gen === ans.gen;
   const era = linMembers.filter(m => fqEraEligible(m.name, q));
-  // 在籍していたメンバー（同期→その他）を優先し、足りない場合だけ在籍外から補う。
-  // 空欄ごとに独立して選ぶ（他の空欄で使った候補も再利用可）ので、
-  // 期別曲のように同期の在籍者が少ない場合でも各空欄の選択肢が同期中心になる。
-  const tiers = [era.filter(isGen), era.filter(m => !isGen(m)), linMembers.filter(isGen), linMembers.filter(m => !isGen(m))];
+  // 通常曲: 在籍していたメンバー（同期→その他）を優先し、足りない場合だけ在籍外から補う。
+  // 期別曲だけ例外: 期別曲はその期のほぼ全員が編成内で、在籍中の同期候補が
+  // 構造的に不足するため（公式確定40曲中34曲が期間無視でも同期外部候補3人未満）、
+  // 期間外でも同期を最優先にする。在籍外の他期は最後。
+  // 空欄ごとに独立して選ぶ（他の空欄で使った候補も再利用可）。
+  const isGenSong = q.type === "期別曲";
+  const tiers = isGenSong
+    ? [linMembers.filter(isGen), era.filter(m => !isGen(m)), linMembers.filter(m => !isGen(m))]
+    : [era.filter(isGen), era.filter(m => !isGen(m)), linMembers.filter(isGen), linMembers.filter(m => !isGen(m))];
   const used = new Set(), decoys = [];
   for (const tier of tiers) {
     for (const m of fqShuffle(tier)) {
