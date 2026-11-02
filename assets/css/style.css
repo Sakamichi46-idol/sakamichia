@@ -64,6 +64,8 @@ body.drawer-open{overflow:hidden}
 .drawer-links{display:flex;flex-direction:column;padding:8px;overflow-y:auto}
 .drawer-glabel{padding:14px 12px 2px;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--muted)}
 .home-ghead{margin:18px 0 8px;font-size:15px;font-weight:700;color:var(--ink)}
+.more-links{margin:4px 0 8px;color:var(--muted);font-size:13.5px;line-height:2}
+.more-links a{white-space:nowrap}
 .drawer-links a{padding:14px 12px;border-radius:12px;font-size:16px;font-weight:600}
 .drawer-links a.on{background:#f2e9fb;box-shadow:inset 3px 0 0 var(--accent)}
 .drawer-note{margin-top:auto;padding:16px 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
