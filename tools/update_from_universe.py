@@ -48,7 +48,8 @@ FILES = {
     'Hsetlist': 'Hset', 'Hlive_remarks': 'Hset',
     'Nformation': 'Nform', 'Sformation': 'Sform', 'Hformation': 'Hform',
 }
-CENTER_OVERRIDES = {'太陽ノック': '生駒里奈', '五月雨よ': '田村保乃'}
+# イザベルについて: ユニット曲でセンターはいない（CSVの中央2人が機械的にセンター扱いされるのを打ち消す）
+CENTER_OVERRIDES = {'太陽ノック': '生駒里奈', '五月雨よ': '田村保乃', 'イザベルについて': ''}
 GROUP_PREFIX = {'乃木坂46': 'nogi', '櫻坂46': 'sakura', '欅坂46': 'keyaki', '日向坂46': 'hinata', 'けやき坂46': 'hiragana'}
 FAM_OF_PREFIX = {'nogi': 'N', 'sakura': 'S', 'keyaki': 'S', 'hinata': 'H', 'hiragana': 'H'}
 
