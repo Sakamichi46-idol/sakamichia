@@ -15,13 +15,16 @@ function hintsOf(s) {
   const f = FORMS[s.group + "|" + s.title];
   const front = f && f.rows && f.rows.length ? f.rows[f.rows.length - 1].length : 0;
   const center = s.center || "";
-  const surname = center ? center.split("・")[0].slice(0, 1) : "";
+  const centerList = center ? center.split("・").filter(Boolean) : [];
+  const initials = centerList.map(c => c.slice(0, 1));
   return [
     `グループは ${s.group}、発売は ${s.year}年`,
     `種別は「${s.type || "不明"}」／収録：${s.release ? relLabel(s.release) : "不明"}`,
     `歌唱・フォーメーション参加は ${parts.length}人`,
     front ? `フォーメーションは ${f.rows.length}列構成、最前列は ${front}人` : `作曲：${(s.writers || []).join("・") || "不明"}`,
-    center ? `センターの名字の頭文字は「${surname}」` : `タイトルは ${String(s.title).length}文字`,
+    center ? (centerList.length > 1
+      ? `センターは${centerList.length}人、名字の頭文字は${initials.map(i => `「${i}」`).join("と")}`
+      : `センターの名字の頭文字は「${initials[0]}」`) : `タイトルは ${String(s.title).length}文字`,
     center ? `センターは ${center}` : `タイトルの読みは「${s.yomi || ""}」`
   ];
 }
