@@ -688,7 +688,7 @@ function filtered(){
   const arr=pool().filter(b=>{
       const mHit=mv&&(b.member===mv||b.series===mv);
       if(mv&&!mHit) return false;
-      if(GSEL.size&&!GSEL.has(b.group)&&!mHit) return false;
+      if(GSEL.size&&!GSEL.has(b.group)) return false;
       // 期生は複数選択可（選んだ「グループ・期」のいずれかに合えば通す＝OR）
       if(GEN_SEL.size){
         let gHit=false;
