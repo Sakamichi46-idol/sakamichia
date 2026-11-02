@@ -15,7 +15,7 @@ function render() {
   const list = SY.filter(m => !syActiveOnly || !m.graduated);
   const byCohort = {};
   list.forEach(m => { const c = syCohort(m.b); (byCohort[c] = byCohort[c] || []).push(m); });
-  const cohorts = Object.keys(byCohort).map(Number).sort((a, b) => b - a);
+  const cohorts = Object.keys(byCohort).map(Number).sort((a, b) => a - b);
   document.getElementById("syBody").innerHTML = cohorts.map(c => {
     const ms = byCohort[c].slice().sort((a, b) => (a.b[0] - b.b[0]) || (a.b[1] - b.b[1]) || (a.b[2] - b.b[2]) || a.name.localeCompare(b.name, "ja"));
     return `<h3 class="home-ghead">${c}年度生まれ（${c}年4月2日〜${c + 1}年4月1日）・${ms.length}人</h3><div class="bd-list">${ms.map(syRow).join("")}</div>`;
