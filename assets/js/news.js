@@ -1,5 +1,5 @@
 // お知らせ：3グループ公式サイトのお知らせを横断表示（data/news.json、tools/fetch_news.py が定期取得）
-const NW_GROUPS = ["乃木坂46", "櫻坂46", "日向坂46"];
+const NW_GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 let NW = [], nwGroup = "all", nwQuery = "";
 const NWCATS = new Set();   // カテゴリの複数選択プルダウン（選択同士は OR、空＝すべて）
 let catMS = null;
