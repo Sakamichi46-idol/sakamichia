@@ -278,7 +278,11 @@ dialog{max-height:92dvh}
 .fm-row{display:flex;justify-content:center;gap:8px;flex-wrap:nowrap;margin:8px 0}
 .fm-tile{position:relative;flex:none;width:calc((100% - (var(--maxn) - 1)*8px)/var(--maxn));max-width:150px;padding:0;border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;color:var(--ink)}
 .fm-tile img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
-.fm-tile .fm-name{display:block;padding:4px 2px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-tile .fm-name{display:block;padding:4px 2px;font-size:11.5px;font-weight:700;line-height:1.3;text-align:center}
+.fm-tile .fm-name .fm-fam,.fm-tile .fm-name .fm-giv,.fm-cand .fm-name .fm-fam,.fm-cand .fm-name .fm-giv{display:block;white-space:nowrap}
+.fm-tile .fm-name .fm-giv.long,.fm-cand .fm-name .fm-giv.long{font-size:9.5px;letter-spacing:-.03em}
+#fmBoard.wide .fm-tile .fm-name{font-size:9.5px}
+#fmBoard.wide .fm-tile .fm-name .fm-giv{font-size:8.5px}
 .fm-tile.filled .fm-name{background:#fff}
 .fm-tile.ctr .fm-name{background:#f2e9fb}
 .fm-tile.sel{outline:3px solid var(--accent);outline-offset:1px}
@@ -297,7 +301,8 @@ dialog{max-height:92dvh}
 .kq-stage .kq-more{color:var(--muted);letter-spacing:0}
 .fm-cand,.mb-card{padding:0;border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;color:var(--ink);text-align:center}
 .fm-cand img,.mb-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
-.fm-cand .fm-name,.mb-card .fm-name{display:block;padding:4px 2px 0;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-cand .fm-name{display:block;padding:4px 2px 0;font-size:11.5px;font-weight:700;line-height:1.3}
+.mb-card .fm-name{display:block;padding:4px 2px 0;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fm-sub{display:block;padding:0 2px 5px;color:var(--muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400}
 .mb-photo{display:block}
 .mb-detail{display:flex;gap:18px}

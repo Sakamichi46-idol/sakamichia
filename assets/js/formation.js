@@ -53,11 +53,26 @@ function load() {
 function rowOffsets() { const o = []; let a = 0; state.rows.forEach(n => { o.push(a); a += n; }); return o; }
 function centerIndexes(n) { return n % 2 === 1 ? [Math.floor(n / 2)] : [n / 2 - 1, n / 2]; }
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
+// タイルが狭く名前が「藤…」のように省略されてしまうため、名字と名前を2行に分けて表示する
+// （フォーメーションクイズの fqNameHtml と同じ判定。名字は原則2文字、例外のみリストで判定）
+const FM_SUR3 = ["一ノ瀬", "五百城", "正源司", "向井地"];
+const FM_SUR1 = ["林", "柏", "関", "岸", "堀", "潮"];
+function fmSplitName(name) {
+  for (const s of FM_SUR3) if (name.startsWith(s) && name.length > s.length) return [s, name.slice(s.length)];
+  if (FM_SUR1.includes(name[0]) && name.length > 2) return [name[0], name.slice(1)];
+  if (name.length >= 3) return [name.slice(0, 2), name.slice(2)];
+  return [name, ""];
+}
+function fmNameHtml(name) {
+  const [fam, giv] = fmSplitName(name);
+  if (!giv) return `<span class="fm-name"><span class="fm-fam">${esc(fam)}</span></span>`;
+  return `<span class="fm-name"><span class="fm-fam">${esc(fam)}</span><span class="fm-giv${giv.length >= 4 ? " long" : ""}">${esc(giv)}</span></span>`;
+}
 function tileInner(name) {
   const m = BYNAME[name];
   const url = photoURL(name);
   const ph = url ? `<img loading="lazy" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[m.group] || "#999"}">${esc(name.slice(0, 1))}</span>`;
-  return `${ph}<span class="fm-name">${esc(name)}</span>`;
+  return `${ph}${fmNameHtml(name)}`;
 }
 
 function renderSettings() {
@@ -75,6 +90,7 @@ function renderBoard() {
   const offs = rowOffsets();
   const board = document.getElementById("fmBoard");
   board.style.setProperty("--maxn", Math.max(...state.rows));
+  board.classList.toggle("wide", Math.max(...state.rows) >= 10);
   let html = "";
   for (let r = state.rows.length - 1; r >= 0; r--) {          // 表示は上が後列
     const n = state.rows[r], off = offs[r];
