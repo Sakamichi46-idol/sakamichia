@@ -259,7 +259,7 @@ def hina_page(ct, page):
         if not (tm and dtm and dm):
             continue
         imgs = []
-        for u in re.findall(r'<img\s+src="(https://[^"]*?(?:moblog|cdn\.hinatazaka46\.com/files/)[^"]+)"', b):
+        for u in re.findall(r'<img\s+src="(https://[^"]*?(?:moblog|cdn\.hinatazaka46\.com/(?:files/|images/))[^"]+)"', b):
             if u not in imgs:
                 imgs.append(u)
         url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'
@@ -473,6 +473,12 @@ _MOBLOG_PAT = re.compile(r'(?:https://[^"\'\s<>]+)?/[^"\'\s<>]*moblog[^"\'\s<>]*
 _PRE_PAT = re.compile(r'/files/46/_pre/blog/[^"\'\s<>]+\.(?:jpg|jpeg|png)', re.I)
 # 櫻坂46の新しい写真は /images/14/<dir>/<hash>(-NN).jpg 形式（moblogでない）で配信される
 _IMAGES14_PAT = re.compile(r'/images/14/[0-9a-f]{3}/[0-9a-f]+(?:-\d+)?\.(?:jpg|jpeg|png)', re.I)
+# 乃木坂46の新しい写真は /images/46/<dir>/<hash>.jpg 形式（moblogでない）で配信される
+_IMAGES46_PAT = re.compile(r'/images/46/[0-9a-f]{3}/[0-9a-f]+(?:-\d+)?\.(?:jpg|jpeg|png)', re.I)
+# 乃木坂46の現行ブログの写真は /files/46/diary/n46/MEMBER/<YYMMDD>_<n>.jpg 形式のこともある（moblogでない）
+_NOGI_FILES_PAT = re.compile(r'/files/46/diary/[^\s"\'<>]+\.(?:jpg|jpeg|png)', re.I)
+# 櫻坂46・日向坂46（ポカの smccms 含む）の files 形式の写真（/files/14/diary/.../<hash>.jpg、moblogでない）
+_FILES14_PAT = re.compile(r'/files/14/diary/[^\s"\'<>]+\.(?:jpg|jpeg|png)', re.I)
 
 def extract_imgs_scoped(url, html):
     """公式記事ページから、その記事自身の写真だけを抽出する。
@@ -486,7 +492,7 @@ def extract_imgs_scoped(url, html):
         cut = html.find('bd--ne')
         seg = html[:cut] if cut > 0 else html
         hits = []
-        for pat in (_MOBLOG_PAT, _PRE_PAT):
+        for pat in (_MOBLOG_PAT, _PRE_PAT, _IMAGES46_PAT, _NOGI_FILES_PAT):
             for m in pat.finditer(seg):
                 hits.append((m.start(), m.group(0)))
         out = []
@@ -499,7 +505,7 @@ def extract_imgs_scoped(url, html):
         cut = html.find('blog-foot')
         seg = html[:cut] if cut > 0 else html
         hits = []
-        for pat in (_MOBLOG_PAT, _IMAGES14_PAT):
+        for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
             for m in pat.finditer(seg):
                 hits.append((m.start(), m.group(0)))
         out = []
@@ -515,9 +521,13 @@ def extract_imgs_scoped(url, html):
             open_idx = html.rfind('<div', 0, i)
             if open_idx >= 0:
                 seg = _slice_div(html, open_idx)
+                hits = []
+                for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
+                    for m in pat.finditer(seg):
+                        hits.append((m.start(), m.group(0)))
                 out = []
-                for m in _MOBLOG_PAT.finditer(seg):
-                    u = urljoin(url, m.group(0))
+                for _, u0 in sorted(hits):
+                    u = urljoin(url, u0)
                     if u not in out:
                         out.append(u)
                 if out:
@@ -525,10 +535,11 @@ def extract_imgs_scoped(url, html):
         m = re.search(r'property="og:image" content="([^"]+)"', html)
         return [m.group(1)] if m else []
     out = []
-    for m in _MOBLOG_PAT.finditer(html):
-        u = urljoin(url, m.group(0))
-        if u not in out:
-            out.append(u)
+    for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
+        for m in pat.finditer(html):
+            u = urljoin(url, m.group(0))
+            if u not in out:
+                out.append(u)
     return out
 
 # ---------- 乃木坂46リレーブログの著者判定 ----------
@@ -676,7 +687,7 @@ def _feed_cards(site, page):
             if not (tm and dtm and dm):
                 continue
             imgs = []
-            for u in re.findall(r'<img\s+src="(https://[^"]*?(?:moblog|cdn\.hinatazaka46\.com/files/)[^"]+)"', b):
+            for u in re.findall(r'<img\s+src="(https://[^"]*?(?:moblog|cdn\.hinatazaka46\.com/(?:files/|images/))[^"]+)"', b):
                 if u not in imgs:
                     imgs.append(u)
             url = f'https://www.hinatazaka46.com/s/official/diary/detail/{dm.group(1)}'

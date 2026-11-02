@@ -427,6 +427,11 @@ def extract_imgs(url):
 
 _MOBLOG_PAT = re.compile(r'(?:https://[^"\'\s<>]+)?/[^"\'\s<>]*moblog[^"\'\s<>]*\.(?:jpg|jpeg|png)', re.I)
 _PRE_PAT = re.compile(r'/files/46/_pre/blog/[^"\'\s<>]+\.(?:jpg|jpeg|png)', re.I)
+# 新しい写真配信形式（moblogでない）— blog_backfill.py 側と揃える
+_IMAGES14_PAT = re.compile(r'/images/14/[0-9a-f]{3}/[0-9a-f]+(?:-\d+)?\.(?:jpg|jpeg|png)', re.I)
+_IMAGES46_PAT = re.compile(r'/images/46/[0-9a-f]{3}/[0-9a-f]+(?:-\d+)?\.(?:jpg|jpeg|png)', re.I)
+_NOGI_FILES_PAT = re.compile(r'/files/46/diary/[^\s"\'<>]+\.(?:jpg|jpeg|png)', re.I)
+_FILES14_PAT = re.compile(r'/files/14/diary/[^\s"\'<>]+\.(?:jpg|jpeg|png)', re.I)
 
 def extract_imgs_scoped(url, html):
     """公式記事ページから、その記事自身の写真だけを抽出する。
@@ -440,7 +445,7 @@ def extract_imgs_scoped(url, html):
         cut = html.find('bd--ne')
         seg = html[:cut] if cut > 0 else html
         hits = []
-        for pat in (_MOBLOG_PAT, _PRE_PAT):
+        for pat in (_MOBLOG_PAT, _PRE_PAT, _IMAGES46_PAT, _NOGI_FILES_PAT):
             for m in pat.finditer(seg):
                 hits.append((m.start(), m.group(0)))
         out = []
@@ -452,9 +457,13 @@ def extract_imgs_scoped(url, html):
     if 'sakurazaka46.com' in url:
         cut = html.find('blog-foot')
         seg = html[:cut] if cut > 0 else html
+        hits = []
+        for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
+            for m in pat.finditer(seg):
+                hits.append((m.start(), m.group(0)))
         out = []
-        for m in _MOBLOG_PAT.finditer(seg):
-            u = urljoin(url, m.group(0))
+        for _, u0 in sorted(hits):
+            u = urljoin(url, u0)
             if u not in out:
                 out.append(u)
         return out
@@ -462,10 +471,11 @@ def extract_imgs_scoped(url, html):
         m = re.search(r'property="og:image" content="([^"]+)"', html)
         return [m.group(1)] if m else []
     out = []
-    for m in _MOBLOG_PAT.finditer(html):
-        u = urljoin(url, m.group(0))
-        if u not in out:
-            out.append(u)
+    for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
+        for m in pat.finditer(html):
+            u = urljoin(url, m.group(0))
+            if u not in out:
+                out.append(u)
     return out
 
 def update_blogs(summary):
