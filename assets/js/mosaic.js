@@ -107,11 +107,19 @@ function render() {
   }));
 }
 function start() { qs = pickQuestions(); qi = 0; score = 0; results = []; render(); }
+function startPanel() {
+  const main = document.getElementById("mzMain");
+  main.innerHTML = `<div class="card"><h3>遊び方</h3>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `モザイク写真が少しずつ鮮明に。誰か当てる全${MZ_N}問。早く当てるほど高得点。` : `最新アー写のモザイクが2秒ごとに少しずつ鮮明になります。誰か分かったら4択から選んでください（回答は1回だけ）。早く当てるほど高得点です（最初の段階で正解＝100点〜最後の段階＝10点）。全${MZ_N}問です。`}</p>
+  ${quizBest("mosaic") ? `<p style="color:var(--muted)">自己ベスト：${quizBest("mosaic")}点</p>` : ""}
+  <p><button type="button" class="primary" id="mzStart">スタート</button></p></div>`;
+  document.getElementById("mzStart").addEventListener("click", start);
+}
 async function init() {
   const [members, photos, gals] = await Promise.all([loadJSON("members.json"), loadJSON("member-photos.json"), loadJSON("member-galleries.json")]);
   MEMBERS = members || []; PHOTOS = photos || {}; GAL = gals || {};
   POOL = MEMBERS.map(m => m.name).filter(n => GAL[n] && GAL[n].length && PHOTOS[n]);
   if (POOL.length < MZ_N) { document.getElementById("mzMain").innerHTML = `<p style="color:var(--muted)">写真データが足りません。</p>`; return; }
-  start();
+  startPanel();
 }
 init();
