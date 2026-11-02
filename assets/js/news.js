@@ -37,7 +37,10 @@ function syncCats() {
   if (catMS) catMS.setOptions(cats.map(c => ({ value: c, label: c })));
 }
 async function init() {
-  const data = await loadJSON("news.json");
+  // 簡易版ではまず直近分（軽量版）だけで表示し、全期間データ（6MB超）は裏で読み込んで差し替える
+  const lite = document.documentElement.dataset.lite === "1";
+  let data = await loadJSON(lite ? "news-recent.json" : "news.json");
+  if (!data && lite) data = await loadJSON("news.json");
   NW = (data && data.items) || [];
   const chips = document.getElementById("nwGroups");
   chips.innerHTML = ["all", ...NW_GROUPS].map(g =>
@@ -75,5 +78,11 @@ async function init() {
   });
   syncCats();
   render();
+  if (lite) {
+    const swap = () => loadJSON("news.json").then(full => {
+      if (full && full.items && full.items.length > NW.length) { NW = full.items; syncCats(); render(); }
+    });
+    if ("requestIdleCallback" in window) requestIdleCallback(swap, { timeout: 5000 }); else setTimeout(swap, 3000);
+  }
 }
 init();

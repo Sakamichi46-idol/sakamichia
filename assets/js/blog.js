@@ -28,6 +28,12 @@ function thumbSrc(u, wall){
 function thumbFallback(img, original){
   img.addEventListener("error", ()=>{ if(img.src!==original) img.src=original; }, {once:true});
 }
+// 簡易版の本文写真用：切り抜きなしで幅だけ縮小するプロキシURL（小さい画像は拡大されない）
+function bodyImgSrc(u){
+  if(!/^https?:\/\//.test(u||"")) return u;
+  if(u.includes("%25")) return u;
+  return "https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=900&q=60&output=webp";
+}
 // スタンプ（小さい装飾画像）の寸法判定。本文中の画像と同じく、幅・高さとも
 // 128px以下をスタンプとする。写真一覧とフォールバックグリッドのサムネイルは
 // weserv が 360×360 に拡大して返すため、表示中の img の naturalWidth では
@@ -1173,7 +1179,11 @@ async function openBlog(id){
         html+=`<div class="blog-body">${(d.blocks||[]).map(x=>{
           if(x.type==="paragraph") return `<p>${esc(x.text||"").replace(/\n/g,"<br>")}</p>`;
           if(x.type==="break") return `<br>`;
-          if(x.type==="image") return `<img class="bimg" loading="lazy" src="${esc(x.src)}" alt="" data-photo="${photos.indexOf(x.src)}">`;
+          if(x.type==="image"){
+            // 簡易版では本文写真もプロキシで幅900pxに縮小して転送量を抑える（拡大表示は原寸）
+            const lite=document.documentElement.dataset.lite==="1";
+            return `<img class="bimg" loading="lazy" src="${esc(lite?bodyImgSrc(x.src):x.src)}" alt="" data-photo="${photos.indexOf(x.src)}"${lite?` data-orig="${esc(x.src)}"`:''}>`;
+          }
           return "";
         }).join("")}</div>${d.source==="official"?`<p style="color:var(--muted);font-size:12px">本文は公式ブログから取り込んだものです。</p>`:""}`;
       }
@@ -1256,12 +1266,14 @@ async function openBlog(id){
     if(img.classList.contains("bstamp")) return;
     if(img.classList.contains("bimg")){
       const bigs=[...body.querySelectorAll("img.bimg:not(.bstamp)")];
-      if(bigs.length) openLightbox(bigs.map(x=>x.getAttribute("src")), bigs.indexOf(img));
+      if(bigs.length) openLightbox(bigs.map(x=>x.dataset.orig||x.getAttribute("src")), bigs.indexOf(img));
     } else if(img.closest(".photo-grid")){
       const gimgs=[...body.querySelectorAll(".photo-grid img")];
       if(gimgs.length) openLightbox(gimgs.map(x=>photos[+x.dataset.photo]), gimgs.indexOf(img));
     } else openLightbox(photos, +img.dataset.photo);
   }));
   body.querySelectorAll(".photo-grid img[data-photo]").forEach(img=>thumbFallback(img, photos[+img.dataset.photo]));
+  // 簡易版でプロキシ経由にした本文写真は、失敗したら原寸にフォールバックする
+  body.querySelectorAll("img.bimg[data-orig]").forEach(img=>thumbFallback(img, img.dataset.orig));
 }
 init();

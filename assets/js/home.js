@@ -36,9 +36,12 @@ async function init(){
     `登録データ：ライブ ${lives.length}件 / ブログ ${bidx.total}件 / 楽曲 ${songs.length}曲 / メンバー ${members.length}人`;
   const q = new URLSearchParams(location.search).get("q");
   if(q){ document.getElementById("q").value = q; search(q); }
-  // 横断検索用に全期間のお知らせは後から読み込む（初回表示は直近分だけで軽くする）
-  const loadFullNews = () => loadJSON("news.json").then(full => { if (full && full.items) DB.news = full.items; });
-  if ("requestIdleCallback" in window) requestIdleCallback(loadFullNews, { timeout: 4000 }); else setTimeout(loadFullNews, 2500);
+  // 横断検索用に全期間のお知らせは後から読み込む（初回表示は直近分だけで軽くする）。
+  // 簡易版では通信量を優先し、全期間データ（6MB超）は読み込まない（お知らせ検索は直近分のみ）
+  if (document.documentElement.dataset.lite !== "1") {
+    const loadFullNews = () => loadJSON("news.json").then(full => { if (full && full.items) DB.news = full.items; });
+    if ("requestIdleCallback" in window) requestIdleCallback(loadFullNews, { timeout: 4000 }); else setTimeout(loadFullNews, 2500);
+  }
 }
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639"};
 // 「今日の坂道」：今日が誕生日のメンバー＋◯年前の今日のブログ。両方なければセクション自体を出さない
