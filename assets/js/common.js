@@ -76,7 +76,6 @@ const OMIKUJI_MSGS = {
 };
 const OMIKUJI_KEY = "sakamichia-omikuji";
 function omikujiTodayStr() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`; }
-function omikujiSeed(str) { let h = 2166136261; for (const c of str) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
 function omikujiLoad() {
   try { const v = JSON.parse(localStorage.getItem(OMIKUJI_KEY) || "null"); return (v && v.date === omikujiTodayStr() && v.name) ? v : null; } catch (e) { return null; }
 }
@@ -86,13 +85,12 @@ function omikujiDraw(members) {
   let pool = (members || []).filter(m => favs.includes(m.name));
   if (!pool.length) pool = (members || []).filter(m => !m.graduated);
   if (!pool.length) return null;
-  const seed = omikujiSeed(omikujiTodayStr() + "|" + pool.map(m => m.name).join(","));
-  const m = pool[seed % pool.length];
-  const r = omikujiSeed(omikujiTodayStr() + "|" + m.name);
+  // 端末ごとにランダムに引く（引いた結果はその日その端末に保存され、引き直しはできない）
+  const m = pool[Math.floor(Math.random() * pool.length)];
   let rank = "吉";
-  { let x = r % 100, acc = 0; for (let i = 0; i < OMIKUJI_RANKS.length; i++) { acc += OMIKUJI_WEIGHTS[i]; if (x < acc) { rank = OMIKUJI_RANKS[i]; break; } } }
+  { let x = Math.random() * 100, acc = 0; for (let i = 0; i < OMIKUJI_RANKS.length; i++) { acc += OMIKUJI_WEIGHTS[i]; if (x < acc) { rank = OMIKUJI_RANKS[i]; break; } } }
   const msgs = OMIKUJI_MSGS[rank] || OMIKUJI_MSGS["吉"];
-  return { date: omikujiTodayStr(), name: m.name, group: m.group, rank, msg: msgs[r % msgs.length] };
+  return { date: omikujiTodayStr(), name: m.name, group: m.group, rank, msg: msgs[Math.floor(Math.random() * msgs.length)] };
 }
 function omikujiSave(res) { try { localStorage.setItem(OMIKUJI_KEY, JSON.stringify(res)); } catch (e) {} }
 
