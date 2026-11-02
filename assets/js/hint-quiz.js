@@ -103,7 +103,7 @@ function start() { qs = pickQuestions(); qi = 0; score = 0; stage = 0; answered 
 function startPanel() {
   const main = document.getElementById("hqMain");
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">ヒントを1つずつ開いて曲名を当てる全${HQ_N}問のクイズです。早く答えるほど高得点（ヒント1で正解＝100点〜ヒント6＝15点）。時間制限はありません。</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `ヒントを開いて曲名を当てる全${HQ_N}問。早く答えるほど高得点、時間制限なし。` : `ヒントを1つずつ開いて曲名を当てる全${HQ_N}問のクイズです。早く答えるほど高得点（ヒント1で正解＝100点〜ヒント6＝15点）。時間制限はありません。`}</p>
   <h4 style="margin:14px 0 6px">回答方式</h4>
   <div class="filters" style="margin:6px 0 10px"><button type="button" class="ychip${hqStyle === "choice" ? " on" : ""}" data-s="choice">4択式</button><button type="button" class="ychip${hqStyle === "input" ? " on" : ""}" data-s="input">記述式（候補サジェスト付き）</button></div>
   <p><button type="button" class="primary" id="hqStart">スタート</button></p></div>`;

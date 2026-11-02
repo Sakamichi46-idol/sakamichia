@@ -117,7 +117,7 @@ function uqStartPanel(pool) {
   const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${all.length}組）</button>`,
     ...ok.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}組）</button>`)].join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
-  <p style="color:var(--muted)">全${UQ_MAX}問・1問${UQ_POINTS}点のクイズです。グループ別に絞って遊べます。出題は歌唱メンバーが確定しているユニット曲のみです。</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `全${UQ_MAX}問・1問${UQ_POINTS}点。グループ別にも遊べます。` : `全${UQ_MAX}問・1問${UQ_POINTS}点のクイズです。グループ別に絞って遊べます。出題は歌唱メンバーが確定しているユニット曲のみです。`}</p>
   <div class="filters" style="margin:10px 0">${chips}</div>
   <p><button type="button" class="primary" id="uqStart">スタート</button></p></div>`;
   area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {

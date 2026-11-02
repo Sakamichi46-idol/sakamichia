@@ -16,6 +16,15 @@ function applyLite(on) {
   try { localStorage.setItem(LITE_KEY, on ? "1" : "0"); } catch (e) {}
 }
 try { if (localStorage.getItem(LITE_KEY) === "1") document.documentElement.dataset.lite = "1"; } catch (e) {}
+// 軽量版では、data-lite-text 属性のある要素を「簡潔で短い専用の文章」に差し替える。
+// 文章量を減らす分、その短い文だけで内容が分かるようにするための仕組み。
+// ※属性名は data-lite-text にすること（data-lite は <html> の dataset.lite と衝突する）
+function applyLiteCopy() {
+  if (document.documentElement.dataset.lite !== "1") return;
+  document.querySelectorAll("[data-lite-text]").forEach(el => { el.textContent = el.getAttribute("data-lite-text"); });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applyLiteCopy);
+else applyLiteCopy();
 let loadFailShown = false;
 function showLoadFail(){
   if(loadFailShown) return; loadFailShown = true;

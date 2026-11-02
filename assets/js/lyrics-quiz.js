@@ -94,7 +94,7 @@ function kqStartPanel(data, songs) {
   const chips = [`<button type="button" class="ychip on" data-m="all">すべて（${data.length}曲）</button>`,
     ...groups.map(g => `<button type="button" class="ychip" data-m="${esc(g)}">${esc(g)}（${counts[g]}曲）</button>`)].join("");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
-  <p style="color:var(--muted)">全${KQ_MAX}問のクイズです。グループ別に絞って遊べます。収録曲が10曲未満のモードは、ある曲すべてが出題されます。</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `全${KQ_MAX}問。グループ別にも遊べます。` : `全${KQ_MAX}問のクイズです。グループ別に絞って遊べます。収録曲が10曲未満のモードは、ある曲すべてが出題されます。`}</p>
   <div class="filters" style="margin:10px 0">${chips}</div>
   <p><button type="button" class="primary" id="kqStart">スタート</button></p></div>`;
   area.querySelectorAll("[data-m]").forEach(b => b.addEventListener("click", () => {

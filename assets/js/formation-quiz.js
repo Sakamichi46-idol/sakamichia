@@ -250,7 +250,7 @@ function fqStartPanel(pool) {
   const excluded = FQ_LINEAGES.filter(l => !ok.includes(l));
   const note = excluded.length ? `<p style="color:var(--muted)">${excluded.map(l => `${esc(l)}（公式確定分 ${counts[l] || 0}曲）`).join("・")}は、出題に使える公式確定のフォーメーションが${FQ_MIN_POOL}曲未満のため対象外です。</p>` : "";
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>モードを選んでください</h3>
-  <p style="color:var(--muted)">全${FQ_MAX}問のクイズです。出題は公式発表で確定しているフォーメーションのみです（参考データの配置は出題しません）。</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `全${FQ_MAX}問。出題は公式確定のフォーメーションのみです。` : `全${FQ_MAX}問のクイズです。出題は公式発表で確定しているフォーメーションのみです（参考データの配置は出題しません）。`}</p>
   ${note}
   <div class="filters" style="margin:10px 0">${chips}</div>
   <h4 style="margin:14px 0 6px">難易度（1問で答える空欄の数）</h4>
