@@ -16,10 +16,20 @@ function applyLite(on) {
   try { localStorage.setItem(LITE_KEY, on ? "1" : "0"); } catch (e) {}
 }
 try { if (localStorage.getItem(LITE_KEY) === "1") document.documentElement.dataset.lite = "1"; } catch (e) {}
+let loadFailShown = false;
+function showLoadFail(){
+  if(loadFailShown) return; loadFailShown = true;
+  const el = document.createElement("div");
+  el.className = "load-fail";
+  el.textContent = "データを読み込めませんでした。通信環境を確認して、ページを再読み込みしてください。";
+  document.body.appendChild(el);
+}
 async function loadJSON(name){
-  const r = await fetch(BASE + "data/" + name);
-  if(!r.ok) return [];
-  return r.json();
+  try{
+    const r = await fetch(BASE + "data/" + name);
+    if(!r.ok){ showLoadFail(); return []; }
+    return await r.json();
+  }catch(e){ showLoadFail(); return []; }
 }
 function esc(s){return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function groupChip(g){return g ? `<span class="chip g-${esc(g)}">${esc(g)}</span>` : "";}

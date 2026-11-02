@@ -675,6 +675,20 @@ html[data-theme="dark"] .sg-row+.sg-row{border-top-color:#332a45}
 html[data-theme="dark"] button,html[data-theme="dark"] .btn{border:1px solid #55496e}
 html[data-theme="dark"] .bd-thumb{background:#332a45}
 html[data-theme="dark"] .empty,html[data-theme="dark"] .gacha-empty{color:var(--muted)}
+html[data-theme="dark"] .fq-board,html[data-theme="dark"] .fq-tile,html[data-theme="dark"] .fm,html[data-theme="dark"] .fm-tile,
+html[data-theme="dark"] .quiz-opt,html[data-theme="dark"] .ychip,html[data-theme="dark"] .tabs button,
+html[data-theme="dark"] .vtoggle button,html[data-theme="dark"] .pager button,html[data-theme="dark"] .slot,
+html[data-theme="dark"] .df-panel,html[data-theme="dark"] .df-pstat,html[data-theme="dark"] .sl-row,
+html[data-theme="dark"] .ms-song,html[data-theme="dark"] .ms-preview,html[data-theme="dark"] .kq-stage,
+html[data-theme="dark"] .fm-cand,html[data-theme="dark"] .sg-row,html[data-theme="dark"] .sg-box,
+html[data-theme="dark"] .advanced,html[data-theme="dark"] .attend-box,html[data-theme="dark"] .empty{background-color:var(--card);color:var(--ink)}
+html[data-theme="dark"] .fq-tile.ctr .fq-name,html[data-theme="dark"] .fm-tile.ctr .fm-name{background:#3a2d55}
+html[data-theme="dark"] .fm-tile.filled .fm-name{background:var(--card)}
+html[data-theme="dark"] .fq-tile.blank,html[data-theme="dark"] .fm-tile.empty{background:#1d1828}
+html[data-theme="dark"] .fq-tile.hit,html[data-theme="dark"] .quiz-opt.correct{background:#1e3a24}
+html[data-theme="dark"] .fq-tile.miss{background:#402626}
+.load-fail{position:fixed;left:12px;right:12px;bottom:84px;z-index:200;background:#7a2c2c;color:#fff;padding:10px 14px;border-radius:10px;font-size:13.5px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+@media(min-width:769px){.load-fail{bottom:20px;left:auto;right:20px;max-width:430px}}
 
 /* 軽量モード（html[data-lite="1"]、ドロワーで切替・端末に保存） */
 html[data-lite="1"] *,html[data-lite="1"] *::before,html[data-lite="1"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
