@@ -16,14 +16,20 @@ function nwRow(it) {
     <span class="nw-main"><span class="nw-meta">${groupChip(it.g)}${it.c ? `<span class="nw-cat">${esc(it.c)}</span>` : ""}${it.t ? `<span class="nw-cat">${esc(it.t)}</span>` : ""}</span>
     <span class="nw-title">${esc(it.title)}</span></span></a>`;
 }
+const NW_PAGE = 120;
+let nwShown = NW_PAGE;
 function render() {
   const list = NW.filter(it =>
     (nwGroup === "all" || it.g === nwGroup)
     && (!NWCATS.size || NWCATS.has(it.c))
     && (!nwQuery || it.title.includes(nwQuery)));
   document.getElementById("nwCount").textContent = `${list.length}件`;
+  const more = list.length > nwShown
+    ? `<p style="text-align:center;margin:16px 0 40px"><button type="button" class="btn" id="nwMore">もっと見る（残り${list.length - nwShown}件）</button></p>` : "";
   document.getElementById("nwList").innerHTML =
-    list.map(nwRow).join("") || `<p style="color:var(--muted)">条件に合うお知らせがありません。</p>`;
+    list.slice(0, nwShown).map(nwRow).join("") + more || `<p style="color:var(--muted)">条件に合うお知らせがありません。</p>`;
+  const mb = document.getElementById("nwMore");
+  if (mb) mb.addEventListener("click", () => { nwShown += NW_PAGE; render(); });
 }
 function syncCats() {
   // 選択肢は表示中グループのカテゴリだけにし、無くなったカテゴリの選択は自動で外す（MS 側で剪定される）
@@ -39,13 +45,14 @@ async function init() {
   chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     nwGroup = b.dataset.g;
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    nwShown = NW_PAGE;
     syncCats(); render();
   }));
   catMS = createMultiSelect(document.getElementById("nwCatMS"), {
     allLabel: "すべてのカテゴリ", selected: NWCATS, ariaLabel: "カテゴリ",
-    options: [], onChange: render
+    options: [], onChange: () => { nwShown = NW_PAGE; render(); }
   });
-  document.getElementById("nwQuery").addEventListener("input", e => { nwQuery = e.target.value.trim(); render(); });
+  document.getElementById("nwQuery").addEventListener("input", e => { nwQuery = e.target.value.trim(); nwShown = NW_PAGE; render(); });
   // 検索サジェスト：お知らせのタイトルとカテゴリから候補を出す
   attachSuggest(document.getElementById("nwQuery"), q => {
     const hits = t => kanaNorm(String(t || "").toLowerCase()).includes(kanaNorm(q.toLowerCase()));

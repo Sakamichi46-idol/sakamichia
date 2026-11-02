@@ -5,7 +5,9 @@
 - 櫻坂46: 一覧HTML（?dy=YYYYMM）を解析
 - 日向坂46: 一覧HTML（?dy=YYYYMM）を解析（別マークアップ）
 - 保存するのは日付・カテゴリ・タイトル・公式記事URLのみ（本文は持たない）
-- 既存ファイルとマージし、直近120日・最大400件を新しい順に保持。
+- 既存ファイルとマージし、取得できた全期間を新しい順に保持（件数・期間の上限なし）。
+  遡及取得は --months N で行う（例: --months 190 で約16年分）。
+  公式側の到達範囲: 乃木坂46=2012年〜（API）、櫻坂46=2020年10月〜、日向坂46=2019年2月〜。
   中身が変わったときだけ書き換える（自動更新の無駄なコミット防止）。
 """
 import html as htmllib
@@ -121,10 +123,8 @@ def main():
     for it in fresh:
         if it['title']:
             by_url[it['url']] = it
-    cutoff = (date.today() - timedelta(days=120)).isoformat()
-    items = [it for it in by_url.values() if it['d'] >= cutoff]
+    items = list(by_url.values())
     items.sort(key=lambda it: (it['d'], it.get('t', '')), reverse=True)
-    items = items[:400]
     if items == old:
         print('no changes')
         return
