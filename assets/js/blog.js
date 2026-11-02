@@ -1425,5 +1425,22 @@ async function openBlog(id){
   body.querySelectorAll(".photo-grid img[data-photo]").forEach(img=>thumbFallback(img, photos[+img.dataset.photo]));
   // 簡易版でプロキシ経由にした本文写真は、失敗したら原寸にフォールバックする
   body.querySelectorAll("img.bimg[data-orig]").forEach(img=>thumbFallback(img, img.dataset.orig));
+  // 同じメンバーの前後の記事へそのまま移動できるボタン（読み込み済みの年の範囲内）。
+  // 一覧の並び（新しい順）で、前の要素が「新しい記事」、後ろの要素が「古い記事」
+  const allLoaded = Object.keys(YEARS).sort().reverse().flatMap(y => YEARS[y] || []);
+  const mine = allLoaded.filter(x => x.member === b.member);
+  const mix = mine.findIndex(x => x.id === id);
+  const newer = mix > 0 ? mine[mix - 1] : null;
+  const older = mix >= 0 && mix < mine.length - 1 ? mine[mix + 1] : null;
+  if (newer || older) {
+    const nav = document.createElement("div");
+    nav.className = "blog-nav";
+    nav.innerHTML = `${newer ? `<button type="button" class="btn" data-nav="${esc(newer.id)}">← 新しい記事</button>` : "<span></span>"}${older ? `<button type="button" class="btn" data-nav="${esc(older.id)}">古い記事 →</button>` : "<span></span>"}`;
+    nav.querySelectorAll("[data-nav]").forEach(btn => btn.addEventListener("click", () => {
+      openBlog(btn.dataset.nav);
+      const d = document.getElementById("dlg"); if (d) d.scrollTop = 0;
+    }));
+    body.appendChild(nav);
+  }
 }
 init();
