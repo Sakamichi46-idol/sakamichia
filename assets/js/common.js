@@ -31,6 +31,23 @@ async function loadJSON(name){
     return await r.json();
   }catch(e){ showLoadFail(); return []; }
 }
+// お知らせの年別シャード（data/news/index.json + y<year>.json）を新しい年から順に読み、
+// 各年が揃うたびに onBatch(蓄積済みの全件) を呼ぶ。全期間版 news.json（6MB超）を
+// 丸ごと読まずに段階的に表示・検索できるようにするための共通ローダー。
+// シャードが無い場合は null を返す（呼び出し側で news.json にフォールバックする）。
+async function loadNewsShards(onBatch){
+  const idx = await loadJSON("news/index.json");
+  if(!idx || !Array.isArray(idx.years) || !idx.years.length) return null;
+  let all = [];
+  for(const y of idx.years){
+    const d = await loadJSON("news/y" + y + ".json");
+    if(d && d.items && d.items.length){
+      all = all.concat(d.items);
+      if(onBatch) onBatch(all);
+    }
+  }
+  return all;
+}
 function esc(s){return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function groupChip(g){return g ? `<span class="chip g-${esc(g)}">${esc(g)}</span>` : "";}
 function tags(list){return (list||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join("");}

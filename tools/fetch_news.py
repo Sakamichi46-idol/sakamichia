@@ -169,6 +169,18 @@ def main():
             old_recent = None
     if recent != old_recent:
         json.dump(recent, open(recent_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    # 年別シャード（data/news/y<year>.json + index.json）も出す：お知らせページとトップの
+    # 横断検索が、全期間版（6MB超）を丸ごと読まず新しい年から段階的に読めるようにするため
+    news_dir = os.path.join(BASE, 'data', 'news')
+    os.makedirs(news_dir, exist_ok=True)
+    by_year = {}
+    for it in items:
+        by_year.setdefault(it['d'][:4], []).append(it)
+    for y, yitems in by_year.items():
+        with open(os.path.join(news_dir, f'y{y}.json'), 'w', encoding='utf-8') as f:
+            json.dump({'updated': payload['updated'], 'items': yitems}, f, ensure_ascii=False, indent=1)
+    with open(os.path.join(news_dir, 'index.json'), 'w', encoding='utf-8') as f:
+        json.dump({'updated': payload['updated'], 'years': sorted(by_year, reverse=True)}, f, ensure_ascii=False, indent=1)
     print('wrote', len(items), 'items')
 
 

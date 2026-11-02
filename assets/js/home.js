@@ -39,7 +39,9 @@ async function init(){
   // 横断検索用に全期間のお知らせは後から読み込む（初回表示は直近分だけで軽くする）。
   // 簡易版では通信量を優先し、全期間データ（6MB超）は読み込まない（お知らせ検索は直近分のみ）
   if (document.documentElement.dataset.lite !== "1") {
-    const loadFullNews = () => loadJSON("news.json").then(full => { if (full && full.items) DB.news = full.items; });
+    const loadFullNews = () => loadNewsShards(acc => { DB.news = acc; }).then(all => {
+      if (!all) return loadJSON("news.json").then(full => { if (full && full.items) DB.news = full.items; });
+    });
     if ("requestIdleCallback" in window) requestIdleCallback(loadFullNews, { timeout: 4000 }); else setTimeout(loadFullNews, 2500);
   }
 }

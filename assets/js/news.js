@@ -36,11 +36,16 @@ function syncCats() {
   const cats = [...new Set(NW.filter(it => nwGroup === "all" || it.g === nwGroup).map(it => it.c).filter(Boolean))];
   if (catMS) catMS.setOptions(cats.map(c => ({ value: c, label: c })));
 }
+function mergeNews(items) {
+  // URLで重複を除きながら追加する（直近分は最新年シャードと重なるため）。
+  // 直近分→新しい年の順に足すので、全体の新しい順は保たれる
+  const seen = new Set(NW.map(x => x.url));
+  for (const it of items) if (!seen.has(it.url)) { seen.add(it.url); NW.push(it); }
+}
 async function init() {
-  // 簡易版ではまず直近分（軽量版）だけで表示し、全期間データ（6MB超）は裏で読み込んで差し替える
+  // まず直近分（軽量版）だけで表示し、全期間分は年別シャードで新しい年から段階的に読み足す
   const lite = document.documentElement.dataset.lite === "1";
-  let data = await loadJSON(lite ? "news-recent.json" : "news.json");
-  if (!data && lite) data = await loadJSON("news.json");
+  const data = await loadJSON("news-recent.json");
   NW = (data && data.items) || [];
   const chips = document.getElementById("nwGroups");
   chips.innerHTML = ["all", ...NW_GROUPS].map(g =>
@@ -78,11 +83,18 @@ async function init() {
   });
   syncCats();
   render();
-  if (lite) {
-    const swap = () => loadJSON("news.json").then(full => {
+  let merged = 0;
+  const loadRest = () => loadNewsShards(acc => {
+    mergeNews(acc.slice(merged)); merged = acc.length;
+    syncCats(); render();
+  }).then(all => {
+    if (!all) return loadJSON("news.json").then(full => {
       if (full && full.items && full.items.length > NW.length) { NW = full.items; syncCats(); render(); }
     });
-    if ("requestIdleCallback" in window) requestIdleCallback(swap, { timeout: 5000 }); else setTimeout(swap, 3000);
-  }
+  });
+  // 簡易版ではアイドル時に、それ以外は表示直後から裏で読み始める
+  if (lite) {
+    if ("requestIdleCallback" in window) requestIdleCallback(loadRest, { timeout: 5000 }); else setTimeout(loadRest, 3000);
+  } else loadRest();
 }
 init();
