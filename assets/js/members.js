@@ -1,7 +1,7 @@
 // メンバーページ：206人の一覧・検索と、ブログ/楽曲/ライブを横断した詳細表示
 const GROUPS = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 const GCOL = { "乃木坂46": "#7e57c2", "櫻坂46": "#e77a9b", "日向坂46": "#5aa9d6", "欅坂46": "#5eba53", "けやき坂46": "#a4c639" };
-let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, MEMBERLIVE = {}, GAL = {};
+let MEMBERS = [], PHOTOS = {}, BLOGS = {}, SONGS = [], FORMS = {}, MEMBERLIVE = {}, GAL = {}, META = {};
 let fGroup = "all", fShowGrad = false, fQuery = "", fSort = "group";
 // 期の複数選択プルダウン（値は期番号の文字列の Set、選択同士は OR、空＝すべての期）
 const fGenSet = new Set(); let genMS = null;
@@ -134,6 +134,13 @@ function render() {
   }
   grid.querySelectorAll(".mb-card").forEach(c => c.addEventListener("click", () => openMember(c.dataset.name)));
 }
+// 学年（4月2日〜翌年4月1日生まれ）を誕生日から割り出す。学年一覧ページと同じ規則
+function cohortOf(name) {
+  const b = META[name] && META[name].b;
+  if (!Array.isArray(b)) return null;
+  const [y, mo, d] = b;
+  return (mo > 4 || (mo === 4 && d >= 2)) ? y : y - 1;
+}
 function openMember(name) {
   const m = MEMBERS.find(x => x.name === name); if (!m) return;
   const url = mainPhotoURL(name);
@@ -167,6 +174,7 @@ function openMember(name) {
         <p style="margin:0 0 2px;color:var(--muted)">${esc(m.reading || "")}</p>
         <p>${groupChip(lg)}${isExchange(m) ? " 交換留学生（SKE48から）" : (m.gen ? ` ${m.gen}期生` : "")}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
         <p>センター曲：<b>${cs.length}曲</b>（シングル表題曲センター：<b>${cst.length}曲</b>）　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
+        ${(() => { const c = cohortOf(name); if (c == null) return ""; const n = MEMBERS.filter(x => cohortOf(x.name) === c).length; return `<p>学年：<b>${c}年度</b>（<a href="../school-years/#y${c}">同級生 全${n}人を見る</a>）</p>`; })()}
         ${(() => { const fs2 = formationStatsOf(name); return fs2.songs ? `<p>フォーメーション統計：登場 <b>${fs2.songs}曲</b>・フロント（1列目）<b>${fs2.front}曲</b>${fs2.top.length ? `<br>よく隣になるメンバー：${fs2.top.map(([n, c]) => `<button type="button" class="mb-nb" data-goto="${esc(n)}">${esc(n)}</button>（${c}回）`).join("、")}` : ""}</p>` : ""; })()}
         ${cs.length ? `<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">${cs.map(s => esc(s.title)).join("、")}</p>` : ""}
         <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a> <button type="button" class="btn" id="favBtn" aria-pressed="${FAVS.has(name)}">${favBtnLabel(name)}</button></p>
@@ -251,6 +259,8 @@ async function init() {
   FORMS = await loadJSON("formations.json");
   MEMBERLIVE = await loadJSON("member-live.json");
   GAL = await loadJSON("member-galleries.json");
+  META = await loadJSON("member-meta.json");
+  if (!META || Array.isArray(META)) META = {};
   if (!GAL || Array.isArray(GAL)) GAL = {};
   if (!Array.isArray(MEMBERS)) MEMBERS = [];
   if (!Array.isArray(SONGS)) SONGS = [];

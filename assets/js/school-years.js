@@ -18,7 +18,7 @@ function render() {
   const cohorts = Object.keys(byCohort).map(Number).sort((a, b) => a - b);
   document.getElementById("syBody").innerHTML = cohorts.map(c => {
     const ms = byCohort[c].slice().sort((a, b) => (a.b[0] - b.b[0]) || (a.b[1] - b.b[1]) || (a.b[2] - b.b[2]) || a.name.localeCompare(b.name, "ja"));
-    return `<h3 class="home-ghead">${c}年度生まれ（${c}年4月2日〜${c + 1}年4月1日）・${ms.length}人</h3><div class="bd-list">${ms.map(syRow).join("")}</div>`;
+    return `<h3 class="home-ghead" id="y${c}">${c}年度生まれ（${c}年4月2日〜${c + 1}年4月1日）・${ms.length}人</h3><div class="bd-list">${ms.map(syRow).join("")}</div>`;
   }).join("") || `<p style="color:var(--muted)">該当するメンバーがいません。</p>`;
 }
 async function init() {
@@ -28,5 +28,7 @@ async function init() {
   SY = Object.entries(meta || {}).filter(([, v]) => v && v.b).map(([name, v]) => ({ ...(byName[name] || { name }), b: v.b })).filter(m => m.name);
   document.getElementById("syActiveOnly").addEventListener("change", e => { syActiveOnly = e.target.checked; render(); });
   render();
+  // メンバー詳細などから #y<年度> で来たら、その学年までスクロールする
+  if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
 }
 init();
