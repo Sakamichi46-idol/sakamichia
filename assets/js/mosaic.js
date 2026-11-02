@@ -55,10 +55,10 @@ function render() {
   if (qi >= qs.length) {
     const max = MZ_N * 100;
     main.innerHTML = `<div class="mz-result"><h3>結果：${score}点 ／ ${max}点</h3>
-      <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.name)} ― ${r.ok ? `<b>${r.pts}点</b>（${r.stage + 1}段階目）` : `不正解（正解は${esc(r.name)}）`}</p>`).join("")}</div>
+      <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.mine)} ― ${r.ok ? `<b>${r.pts}点</b>（${r.stage + 1}段階目）` : `不正解（正解は${esc(r.name)}）`}</p>`).join("")}</div>
       <div class="gacha-btns"><button type="button" class="btn" id="mzRetry">もう一度遊ぶ</button><button type="button" class="btn sub" id="mzShare">結果を共有する</button></div></div>`;
     document.getElementById("mzRetry").addEventListener("click", start);
-    document.getElementById("mzShare").addEventListener("click", e => shareScoreImage({ game: "モザイククイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.name}：${r.ok ? r.pts + "点（" + (r.stage + 1) + "段階目）" : "不正解"}`) }, e.target));
+    document.getElementById("mzShare").addEventListener("click", e => shareScoreImage({ game: "モザイククイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.mine}：${r.ok ? r.pts + "点（" + (r.stage + 1) + "段階目）" : "不正解（正解は" + r.name + "）"}`) }, e.target));
     return;
   }
   const q = qs[qi];
@@ -69,9 +69,20 @@ function render() {
   const cv = document.getElementById("mzCv");
   stage = 0; answered = false;
   const lab = () => { const el = document.getElementById("mzStageLab"); if (el) el.textContent = `解像度 ${stage + 1}／${MZ_STAGES.length}段階（今答えると${MZ_POINTS[stage]}点）`; };
+  // 回答後は自動で進まず、「次の問題へ」ボタンで進む（ユーザー要望 2026-11-02）
+  const showNext = () => {
+    const last = qi >= qs.length - 1;
+    const nav = document.createElement("p");
+    nav.innerHTML = `<button type="button" class="btn" id="mzGoNext">${last ? "結果を見る" : "次の問題へ"}</button>`;
+    main.appendChild(nav);
+    document.getElementById("mzGoNext").addEventListener("click", () => { qi++; render(); });
+  };
   loadToBase(galLatestURL(q.name)).then(() => { drawStage(cv, stage); lab(); }).catch(() => {
-    document.getElementById("mzMsg").textContent = "写真を読み込めませんでした。次の問題へ進みます。";
-    setTimeout(() => { results.push({ name: q.name, ok: false, pts: 0, stage: 0 }); qi++; render(); }, 1200);
+    if (answered) return;
+    answered = true; clearInterval(timer);
+    document.getElementById("mzMsg").textContent = "写真を読み込めませんでした。この問題は不正解になります。";
+    results.push({ name: q.name, mine: "（写真を表示できませんでした）", ok: false, pts: 0, stage: 0 });
+    showNext();
   });
   clearInterval(timer);
   timer = setInterval(() => {
@@ -84,12 +95,12 @@ function render() {
     const ok = b.dataset.c === q.name;
     const pts = ok ? MZ_POINTS[stage] : 0;
     score += pts;
-    results.push({ name: q.name, ok, pts, stage });
-    // 正解の写真をクリアに表示してから次へ
+    results.push({ name: q.name, mine: b.dataset.c, ok, pts, stage });
+    // 正解の写真をクリアに表示する
     drawStage(cv, MZ_STAGES.length - 1);
     main.querySelectorAll(".mz-choice").forEach(x => { x.disabled = true; if (x.dataset.c === q.name) x.classList.add("ok"); else if (x === b) x.classList.add("ng"); });
     document.getElementById("mzMsg").innerHTML = ok ? `<b>正解！ ${pts}点</b>（${esc(q.name)}）` : `残念…正解は <b>${esc(q.name)}</b> でした`;
-    setTimeout(() => { qi++; render(); }, 1600);
+    showNext();
   }));
 }
 function start() { qs = pickQuestions(); qi = 0; score = 0; results = []; render(); }

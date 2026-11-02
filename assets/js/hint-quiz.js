@@ -39,10 +39,10 @@ function render() {
   if (qi >= qs.length) {
     const max = HQ_N * 100;
     main.innerHTML = `<div class="mz-result"><h3>結果：${score}点 ／ ${max}点</h3>
-      <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.title)} ― ${r.ok ? `<b>${r.pts}点</b>（ヒント${r.stage + 1}段階目）` : `不正解（正解は${esc(r.title)}）`}</p>`).join("")}</div>
+      <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.mine)} ― ${r.ok ? `<b>${r.pts}点</b>（ヒント${r.stage + 1}段階目）` : `不正解（正解は${esc(r.title)}）`}</p>`).join("")}</div>
       <div class="gacha-btns"><button type="button" class="btn" id="hqRetry">もう一度遊ぶ</button><button type="button" class="btn sub" id="hqShare">結果を共有する</button></div></div>`;
     document.getElementById("hqRetry").addEventListener("click", start);
-    document.getElementById("hqShare").addEventListener("click", e => shareScoreImage({ game: "段階ヒント曲当てクイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.title}：${r.ok ? r.pts + "点" : "不正解"}`) }, e.target));
+    document.getElementById("hqShare").addEventListener("click", e => shareScoreImage({ game: "段階ヒント曲当てクイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.mine}：${r.ok ? r.pts + "点" : "不正解（正解は" + r.title + "）"}`) }, e.target));
     return;
   }
   const q = qs[qi];
@@ -50,7 +50,7 @@ function render() {
     <div class="hq-hints">${q.hints.map((h, i) => `<p class="hq-hint${i <= stage ? " open" : ""}">${i <= stage ? `<span class="hq-no">ヒント${i + 1}</span>${esc(h)}` : `<span class="hq-no">ヒント${i + 1}</span>？？？`}</p>`).join("")}</div>
     ${stage < q.hints.length - 1 && !answered ? `<p><button type="button" class="btn sub" id="hqNext">次のヒントを開く（得点は${HQ_POINTS[stage + 1]}点に）</button></p>` : ""}
     ${hqStyle === "input"
-      ? `<div class="fq-inputrow"><input id="hqInput" type="text" placeholder="曲名を入力（候補から選ぶと表記揺れなし）" autocomplete="off"><button type="button" class="btn" id="hqAnswer">回答する</button></div>`
+      ? `<div class="fq-inputrow"><input id="hqInput" type="text" placeholder="曲名を入力（候補を選ぶと入力されます）" autocomplete="off"><button type="button" class="btn" id="hqAnswer">回答する</button></div>`
       : `<div class="mz-choices">${q.choices.map(c => `<button type="button" class="mz-choice" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>`}
     <p class="mz-msg" id="hqMsg"></p>`;
   const next = document.getElementById("hqNext");
@@ -61,12 +61,18 @@ function render() {
     const ok = picked === q.s.title;
     const pts = ok ? HQ_POINTS[stage] : 0;
     score += pts;
-    results.push({ title: q.s.title, ok, pts, stage });
+    results.push({ title: q.s.title, mine: picked, ok, pts, stage });
     main.querySelectorAll(".mz-choice").forEach(x => { x.disabled = true; if (x.dataset.c === q.s.title) x.classList.add("ok"); else if (x.dataset.c === picked) x.classList.add("ng"); });
     const inp = document.getElementById("hqInput");
     if (inp) { inp.disabled = true; const ab = document.getElementById("hqAnswer"); if (ab) ab.disabled = true; }
+    const hnb = document.getElementById("hqNext");
+    if (hnb) hnb.remove();
+    const last = qi >= qs.length - 1;
     document.getElementById("hqMsg").innerHTML = ok ? `<b>正解！ ${pts}点</b>` : `残念…正解は <b>${esc(q.s.title)}</b> でした`;
-    setTimeout(() => { qi++; stage = 0; answered = false; render(); }, 1500);
+    const nav = document.createElement("p");
+    nav.innerHTML = `<button type="button" class="btn" id="hqGoNext">${last ? "結果を見る" : "次の問題へ"}</button>`;
+    main.appendChild(nav);
+    document.getElementById("hqGoNext").addEventListener("click", () => { qi++; stage = 0; answered = false; render(); });
   };
   main.querySelectorAll(".mz-choice").forEach(b => b.addEventListener("click", () => judge(b.dataset.c)));
   const hqIn = document.getElementById("hqInput");
@@ -83,14 +89,14 @@ function render() {
       }
       judge(hit.title);
     };
+    // 候補を選んでも・Enterを押しても回答にはならない。回答は「回答する」ボタンのみ（ユーザー要望 2026-11-02）
     attachSuggest(hqIn, query => {
       const nq = kanaNorm(query.toLowerCase());
       const hits = t => kanaNorm(String(t || "").toLowerCase()).includes(nq);
       return hqPool.filter(s => hits(s.title) || hits(s.yomi))
         .map(s => ({ kind: "楽曲", cls: "song", label: s.title, sub: `${s.group}・${s.year}年` }));
-    }, it => judge(it.label));
+    }, (it, input) => { input.value = it.label; input.removeAttribute("aria-invalid"); input.focus(); });
     document.getElementById("hqAnswer").addEventListener("click", answerTyped);
-    hqIn.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); answerTyped(); } });
   }
 }
 function start() { qs = pickQuestions(); qi = 0; score = 0; stage = 0; answered = false; results = []; render(); }
