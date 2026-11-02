@@ -158,6 +158,17 @@ def main():
         return
     payload = {'updated': date.today().isoformat(), 'items': items}
     json.dump(payload, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    # トップページ用に直近分だけの軽量版も出す（全期間版は6MB超でトップ表示には重い）
+    recent_path = os.path.join(BASE, 'data', 'news-recent.json')
+    recent = {'updated': payload['updated'], 'items': items[:80]}
+    old_recent = None
+    if os.path.exists(recent_path):
+        try:
+            old_recent = json.load(open(recent_path, encoding='utf-8'))
+        except Exception:
+            old_recent = None
+    if recent != old_recent:
+        json.dump(recent, open(recent_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('wrote', len(items), 'items')
 
 
