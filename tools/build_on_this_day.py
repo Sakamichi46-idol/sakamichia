@@ -76,6 +76,15 @@ def main():
     dest = os.path.join(ROOT, "data", "on-this-day.json")
     with open(dest, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
+    # 月別ファイルも出す：トップは当月分（約1/12）だけ読めば「今日の坂道」を出せる
+    otd_dir = os.path.join(ROOT, "data", "on-this-day")
+    os.makedirs(otd_dir, exist_ok=True)
+    by_month = {}
+    for md, entries in out.items():
+        by_month.setdefault(md[:2], {})[md] = entries
+    for mo, sub in by_month.items():
+        with open(os.path.join(otd_dir, f"m{mo}.json"), "w", encoding="utf-8") as f:
+            json.dump(sub, f, ensure_ascii=False, separators=(",", ":"))
     print(f"on-this-day: {len(out)} days, "
           f"{sum(len(v) for v in out.values())} entries -> {dest}")
 

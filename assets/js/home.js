@@ -14,13 +14,16 @@ async function init(){
   const [lives, bidx, songs, members, newsData, meta, photos, otd, mLatest] = await Promise.all([
     loadJSON("lives.json"), loadJSON("blogs/index.json"),
     loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news-recent.json"),
-    loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON("on-this-day.json"),
+    loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON(`on-this-day/m${String(new Date().getMonth() + 1).padStart(2, "0")}.json`),
     loadJSON("member-latest.json")]);
   const latestYear = Math.max(...Object.keys(bidx.years).map(Number));
   const blogs = await loadJSON(`blogs/y${latestYear}.json`);
   const news = (newsData && newsData.items) || [];
   DB = {lives, blogs, songs, members, news};
-  renderToday(meta, photos, otd);
+  // 月別ファイルが読めなかった場合（デプロイ直後など）は全期間版にフォールバック
+  let otdFull = otd;
+  if (Array.isArray(otdFull)) { const f = await loadJSON("on-this-day.json"); if (f && !Array.isArray(f)) otdFull = f; }
+  renderToday(meta, photos, otdFull);
   renderFavs(mLatest, meta);
   renderOmikuji(photos);
   const WD = ["日", "月", "火", "水", "木", "金", "土"];
