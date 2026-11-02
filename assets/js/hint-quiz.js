@@ -20,8 +20,8 @@ function hintsOf(s) {
     `種別は「${s.type || "不明"}」／収録：${s.release || "不明"}`,
     `歌唱・フォーメーション参加は ${parts.length}人`,
     front ? `フォーメーションは ${f.rows.length}列構成、最前列は ${front}人` : `作曲：${(s.writers || []).join("・") || "不明"}`,
-    center ? `センターの名字の頭文字は「${surname}」` : `タイトルの読みは「${s.yomi || ""}」`,
-    center ? `センターは ${center}` : `タイトルは ${String(s.title).length}文字`
+    center ? `センターの名字の頭文字は「${surname}」` : `タイトルは ${String(s.title).length}文字`,
+    center ? `センターは ${center}` : `タイトルの読みは「${s.yomi || ""}」`
   ];
 }
 function pickQuestions() {
