@@ -48,7 +48,7 @@ async function init() {
   TOTAL = YEARS.reduce((a, [, n]) => a + n, 0);
   const btn = document.getElementById("gachaDraw");
   btn.addEventListener("click", draw);
-  if (TOTAL) { btn.disabled = false; document.getElementById("gachaMsg").textContent = "ボタンを押して1枚引いてください。"; draw(); }
+  if (TOTAL) { btn.disabled = false; document.getElementById("gachaMsg").textContent = "ボタンを押して1枚引いてください。"; }
   else document.getElementById("gachaMsg").textContent = "データを読み込めませんでした。";
 }
 init();
