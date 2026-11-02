@@ -18,7 +18,7 @@ function hintsOf(s) {
   const surname = center ? center.split("・")[0].slice(0, 1) : "";
   return [
     `グループは ${s.group}、発売は ${s.year}年`,
-    `種別は「${s.type || "不明"}」／収録：${s.release || "不明"}`,
+    `種別は「${s.type || "不明"}」／収録：${s.release ? relLabel(s.release) : "不明"}`,
     `歌唱・フォーメーション参加は ${parts.length}人`,
     front ? `フォーメーションは ${f.rows.length}列構成、最前列は ${front}人` : `作曲：${(s.writers || []).join("・") || "不明"}`,
     center ? `センターの名字の頭文字は「${surname}」` : `タイトルは ${String(s.title).length}文字`,

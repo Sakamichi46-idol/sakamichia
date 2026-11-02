@@ -11,7 +11,7 @@ let shareBlob = null;
 
 function shuffle(a){ a = [...a]; for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function releaseLabel(s){
-  const r = s.release || "";
+  const r = relLabel(s.release || "");
   let base = "";
   if(/SG$/.test(r)) base = r.replace(/SG$/, "シングル");
   else if(/BestAL$/.test(r)) base = r.replace(/BestAL$/, "ベストアルバム");

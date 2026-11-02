@@ -126,7 +126,7 @@ function nextCur() {
   if (p) curPid = p.id;
 }
 function songRow(s, sel) {
-  return `<button type="button" class="sg-row${sel ? " sel" : ""}" data-id="${s.id}"><span class="sg-bar" style="background:${GCOL[s.group] || "#999"}"></span><span class="sg-main"><span class="sg-title">${esc(s.title)}</span><span class="sg-sub">${esc(s.group)} ・ ${esc(s.type)} ・ ${s.year}年${s.center ? " ・ C：" + esc(s.center) : ""} ・ ${esc(s.release || "")}</span></span></button>`;
+  return `<button type="button" class="sg-row${sel ? " sel" : ""}" data-id="${s.id}"><span class="sg-bar" style="background:${GCOL[s.group] || "#999"}"></span><span class="sg-main"><span class="sg-title">${esc(s.title)}</span><span class="sg-sub">${esc(s.group)} ・ ${esc(s.type)} ・ ${s.year}年${s.center ? " ・ C：" + esc(s.center) : ""} ・ ${esc(relLabel(s.release))}</span></span></button>`;
 }
 function renderGame() {
   const active = S && S.status === "active";

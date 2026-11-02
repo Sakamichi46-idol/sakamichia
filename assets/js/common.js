@@ -63,6 +63,9 @@ function tags(list){return (list||[]).map(t=>`<span class="tag">${esc(t)}</span>
 // カタカナをひらがなに寄せる（「アイシー」⇔「あいしー」のような表記ゆれを吸収する）。
 // NFKCで半角カナ・全角英数も寄せる（ｱｲｼｰ／Ｉ などでも当たるように）
 function kanaNorm(s){ return String(s ?? "").normalize("NFKC").replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)); }
+// リリースコードはデータ上の分類用に接頭辞が付く（K=欅坂46、S=櫻坂46、HK=けやき坂46）。
+// ユーザーに見せる表示では接頭辞を外す（ユーザー要望 2026-11-03）。データ自体は変えない。
+function relLabel(code){ return String(code || "").replace(/^(?:HK|K|S)(?=\d|Digital|BestAL|Unreleased)/, ""); }
 function includesAll(hay, q){
   if(!q) return true;
   return kanaNorm(hay.toLowerCase()).includes(kanaNorm(q.toLowerCase()));

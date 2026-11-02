@@ -222,7 +222,7 @@ function previewRows() {
     if (settings.group && s.group) meta.push(s.group);
     if (settings.composer && (s.writers || []).length) meta.push('作曲：' + s.writers.join('・'));
     if (settings.arranger && (s.arrangers || []).length) meta.push('編曲：' + s.arrangers.join('・'));
-    if (settings.release && s.release) meta.push(s.release);
+    if (settings.release && s.release) meta.push(relLabel(s.release));
     out.push({ type: 'song', number: d.label, title: settings.song ? s.title : '？？？？？', center, members, meta });
   }
   return out;
@@ -239,7 +239,7 @@ function renderCandidates() {
   for (const s of list) {
     const b = m('button', 'ms-song');
     b.type = 'button';
-    b.append(m('strong', '', s.title), m('small', '', `${s.group}${s.date ? ' · ' + s.date : ''}${s.release ? ' · ' + s.release : ''}`));
+    b.append(m('strong', '', s.title), m('small', '', `${s.group}${s.date ? ' · ' + s.date : ''}${s.release ? ' · ' + relLabel(s.release) : ''}`));
     b.addEventListener('click', () => addSong(s.id));
     host.append(b);
   }

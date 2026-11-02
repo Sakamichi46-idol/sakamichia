@@ -144,7 +144,7 @@ function renderSlot() {
     const ids = bucket ? bucket.ids : [];
     box.innerHTML = ids.map(id => {
       const x = song(id);
-      return `<button type="button" class="sg-row${selCand === id ? " sel" : ""}" data-id="${id}"><span class="sg-bar" style="background:${GCOL[x.group]}"></span><span class="sg-main"><span class="sg-title">${esc(x.title)}</span><span class="sg-sub">${esc(x.group)} ・ ${esc(x.type)} ・ ${x.year}年${x.center ? " ・ C：" + esc(x.center) : ""} ・ ${esc(x.release || "")}</span></span></button>`;
+      return `<button type="button" class="sg-row${selCand === id ? " sel" : ""}" data-id="${id}"><span class="sg-bar" style="background:${GCOL[x.group]}"></span><span class="sg-main"><span class="sg-title">${esc(x.title)}</span><span class="sg-sub">${esc(x.group)} ・ ${esc(x.type)} ・ ${x.year}年${x.center ? " ・ C：" + esc(x.center) : ""} ・ ${esc(relLabel(x.release))}</span></span></button>`;
     }).join("") || `<p style="color:var(--muted)">この条件で指名できる曲はありません。パスしてください。</p>`;
     box.querySelectorAll(".sg-row").forEach(c => c.addEventListener("click", () => { selCand = c.dataset.id; renderSlot(); }));
   } else box.innerHTML = "";
