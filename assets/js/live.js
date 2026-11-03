@@ -375,7 +375,6 @@ async function openLive(id){
   } else {
     html+=`<p>セットリストはまだ登録されていません。</p>`;
   }
-  if(d.ref) html+=`<p style="font-size:13px"><a href="${esc(d.ref)}" target="_blank" rel="noopener">出典・参考ページ</a></p>`;
   body.innerHTML=html;
   // 名前（クレジット）が右カラムで3行を超える行は、読みやすいよう曲名の下に回す（旧サイトの画像出力と同じ考え方）
   body.querySelectorAll(".srow").forEach(row=>{
