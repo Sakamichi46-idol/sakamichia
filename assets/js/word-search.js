@@ -38,12 +38,27 @@ function effectivePoolFor(members, groups, includeGrad) {
 }
 function effectivePool() { return effectivePoolFor(MEMBERS, settings.groups, settings.grad); }
 
-// 純粋関数：pool から盤面を生成する。単語は横（左→右）/縦（上→下）配置、一致する交差は可。
+// 配置方向：横 h（左→右）/縦 v（上→下）/斜め d（右下がり↘）/斜め u（右上がり↗）
+const WS_DIRS = [{ k: "h", dr: 0, dc: 1 }, { k: "v", dr: 1, dc: 0 }, { k: "d", dr: 1, dc: 1 }, { k: "u", dr: -1, dc: 1 }];
+// 純粋関数：pool から盤面を生成する。2語目以降は、既配置の単語と文字が一致するマスで
+// 交差する配置を優先的に試し、無理なら通常のランダム配置にフォールバックする。
 // 配置できない場合は引き直す。戻り値 {grid: string[10][10], words: [{name, kana, dir, cells:[[r,c],...]}]}、失敗時 null
 function buildPuzzle(pool, rng) {
   const rand = rng || Math.random;
   const alpha = [...new Set(pool.flatMap(p => [...p.kana]))];
   if (pool.length < WS_WORDS || !alpha.length) return null;
+  // (r,c,dir) に単語 w が置けるか判定し、置ける場合は cells、置けない場合は null
+  const tryFit = (grid, w, r, c, dr, dc) => {
+    const er = r + dr * (w.length - 1), ec = c + dc * (w.length - 1);
+    if (r < 0 || c < 0 || er < 0 || ec < 0 || r >= WS_SIZE || c >= WS_SIZE || er >= WS_SIZE || ec >= WS_SIZE) return null;
+    const cells = [];
+    for (let i = 0; i < w.length; i++) {
+      const rr = r + dr * i, cc = c + dc * i;
+      if (grid[rr][cc] && grid[rr][cc] !== w[i]) return null;
+      cells.push([rr, cc]);
+    }
+    return cells;
+  };
   for (let attempt = 0; attempt < 60; attempt++) {
     const picks = shuffleR([...pool], rand).slice(0, WS_WORDS);
     const grid = Array.from({ length: WS_SIZE }, () => Array(WS_SIZE).fill(""));
@@ -52,21 +67,32 @@ function buildPuzzle(pool, rng) {
     for (const p of picks) {
       const w = p.kana;
       let done = false;
-      for (let t = 0; t < 300 && !done; t++) {
-        const dir = rand() < 0.5 ? "h" : "v";
-        const dr = dir === "v" ? 1 : 0, dc = dir === "h" ? 1 : 0;
-        const r = Math.floor(rand() * WS_SIZE), c = Math.floor(rand() * WS_SIZE);
-        if (r + dr * (w.length - 1) >= WS_SIZE || c + dc * (w.length - 1) >= WS_SIZE) continue;
-        const cells = [];
-        let fits = true;
-        for (let i = 0; i < w.length; i++) {
-          const rr = r + dr * i, cc = c + dc * i;
-          if (grid[rr][cc] && grid[rr][cc] !== w[i]) { fits = false; break; }
-          cells.push([rr, cc]);
+      // 交差優先：既配置単語の各マスと文字が一致する位置で交差する配置候補を先に試す
+      if (placed.length) {
+        const cands = [];
+        for (const pw of placed) pw.cells.forEach(([pr, pc], pi) => {
+          for (let i = 0; i < w.length; i++) {
+            if (w[i] !== pw.kana[pi]) continue;
+            for (const d of WS_DIRS) cands.push({ r: pr - d.dr * i, c: pc - d.dc * i, d });
+          }
+        });
+        for (const cand of shuffleR(cands, rand)) {
+          const cells = tryFit(grid, w, cand.r, cand.c, cand.d.dr, cand.d.dc);
+          if (!cells) continue;
+          cells.forEach(([rr, cc], i) => { grid[rr][cc] = w[i]; });
+          placed.push({ name: p.name, kana: w, dir: cand.d.k, cells });
+          done = true;
+          break;
         }
-        if (!fits) continue;
+      }
+      // フォールバック：通常のランダム配置
+      for (let t = 0; t < 300 && !done; t++) {
+        const d = WS_DIRS[Math.floor(rand() * WS_DIRS.length)];
+        const r = Math.floor(rand() * WS_SIZE), c = Math.floor(rand() * WS_SIZE);
+        const cells = tryFit(grid, w, r, c, d.dr, d.dc);
+        if (!cells) continue;
         cells.forEach(([rr, cc], i) => { grid[rr][cc] = w[i]; });
-        placed.push({ name: p.name, kana: w, dir, cells });
+        placed.push({ name: p.name, kana: w, dir: d.k, cells });
         done = true;
       }
       if (!done) { ok = false; break; }
@@ -79,17 +105,23 @@ function buildPuzzle(pool, rng) {
   return null;
 }
 
-// 始点a→終点bの直線（行または列方向にスナップ）マス列を返す
+// 始点a→終点bの直線マス列を返す。方向は横・縦・斜め（45°単位）のうち最も近いものにスナップする
 function lineCells(a, b) {
   const dr = b.r - a.r, dc = b.c - a.c;
-  const cells = [];
-  if (Math.abs(dr) >= Math.abs(dc)) {
-    const step = dr >= 0 ? 1 : -1;
-    for (let r = a.r; ; r += step) { cells.push([r, a.c]); if (r === b.r) break; }
-  } else {
-    const step = dc >= 0 ? 1 : -1;
-    for (let c = a.c; ; c += step) { cells.push([a.r, c]); if (c === b.c) break; }
+  const adr = Math.abs(dr), adc = Math.abs(dc);
+  let sr = 0, sc = 0, len = 0;
+  if (adr === 0 && adc === 0) return [[a.r, a.c]];
+  if (adc >= adr * 2) { sc = dc > 0 ? 1 : -1; len = adc; }        // 横
+  else if (adr >= adc * 2) { sr = dr > 0 ? 1 : -1; len = adr; }   // 縦
+  else { sr = dr > 0 ? 1 : -1; sc = dc > 0 ? 1 : -1; len = Math.max(adr, adc); } // 斜め
+  // 盤面の外に出ないよう長さを丸める
+  while (len > 0) {
+    const er = a.r + sr * len, ec = a.c + sc * len;
+    if (er >= 0 && er < WS_SIZE && ec >= 0 && ec < WS_SIZE) break;
+    len--;
   }
+  const cells = [];
+  for (let i = 0; i <= len; i++) cells.push([a.r + sr * i, a.c + sc * i]);
   return cells;
 }
 function cellEl(r, c) { return document.querySelector(`.ws-cell[data-r="${r}"][data-c="${c}"]`); }
@@ -208,7 +240,7 @@ function startPanel() {
   const main = document.getElementById("wsMain");
   const best = wsBest();
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `盤面に隠れたメンバー${WS_WORDS}人の名前（カタカナ）を全部探すゲームです。出題するグループや卒業生の有無は下で選べます。` : `10×10のカタカナの盤面に、メンバー${WS_WORDS}人の名前（読み）が横（左→右）か縦（上→下）に隠れています。名前の最初から最後までをドラッグでなぞるか、始点と終点をタップして選んでください。全部見つけるまでのタイムが記録になります。出題するグループ（複数選択可）と卒業生の有無は下で選べます。`}</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `盤面に隠れたメンバー${WS_WORDS}人の名前（カタカナ）を全部探すゲームです。出題するグループや卒業生の有無は下で選べます。` : `10×10のカタカナの盤面に、メンバー${WS_WORDS}人の名前（読み）が横・縦・斜めに隠れています。名前の最初から最後までをドラッグでなぞるか、始点と終点をタップして選んでください。全部見つけるまでのタイムが記録になります。出題するグループ（複数選択可）と卒業生の有無は下で選べます。`}</p>
   <p style="margin:10px 0 6px"><b>グループ</b>（複数選択可）</p>
   <div class="ychips" id="wsGroups"><button type="button" class="ychip" data-g="">すべて</button>${GROUPS.map(g => `<button type="button" class="ychip" data-g="${esc(g)}">${esc(g)}</button>`).join("")}</div>
   <p style="margin:10px 0 0"><label style="cursor:pointer"><input type="checkbox" id="wsGrad"> 卒業生も含める</label></p>
