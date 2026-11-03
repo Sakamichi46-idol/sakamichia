@@ -12,7 +12,7 @@
 - 寸法監査（dims.jsonl）で両辺128px以下と実測されたURLはスタンプとして補わない。
 - 既存の一覧からは一切削除しない（追加と並び替えのみ）。並びは本文順を正とする。
 - 欅坂46の www/cdn ホスト違いは同一写真として扱い、二重に追加しない。
-- 一覧が変わった記事は thumb を「一覧の先頭」に合わせる（thumb ルール）。
+- 一覧が変わった記事は thumb を「一覧の先頭」に合わせ（thumb ルール）、imgn も実件数に合わせる。
 使い方：python3 tools/repair_blog_imgs.py [--apply] [--dims <dims.jsonl>]
 """
 import json, os, sys, glob
@@ -116,6 +116,10 @@ def main():
                 if b.get("thumb") != want:
                     b["thumb"] = want
                     thumb_fixed += 1
+                    dirty = True
+                # imgn も実件数に合わせる（thumb だけ直すとバッジが出ない不整合になる）
+                if b.get("imgn") != len(new_list):
+                    b["imgn"] = len(new_list)
                     dirty = True
         if dirty:
             with open(os.path.join(BASE, f"data/blogs/y{y}.json"), "w", encoding="utf-8") as fh:

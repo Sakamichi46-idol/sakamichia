@@ -170,6 +170,10 @@ def save_store(idx, years, imgs, dirty_years):
         _imgmap = imgs.get(y, {})
         for b in lst:
             _own = _imgmap.get(b['id'])
+            # imgn も blog-imgs の実件数に必ず一致させる。thumb だけ正規化して
+            # imgn を取り残すと「写真は出るのに『写真N枚』バッジが出ない」不整合に
+            # なる（修復ツール等が blog-imgs だけを書き換えた場合に実際に発生した）。
+            b['imgn'] = len(_own) if _own else 0
             if _own:
                 b['thumb'] = _own[0]
             elif not b.get('imgn'):
