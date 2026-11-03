@@ -1,0 +1,88 @@
+name: deploy-contact
+
+# お問い合わせ受け側 Worker（KV 保存）をデプロイし、疎通確認まで行う
+# 管理トークンは GitHub シークレット CONTACT_ADMIN_TOKEN が登録されている場合のみ
+# Worker シークレット ADMIN_TOKEN として投入する（未登録の間は管理画面は閉じたまま）
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/contact/**"
+      - ".github/workflows/deploy-contact.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy contact worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/storage/kv/namespaces"
+          KV_ID=$(curl -sf -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API?per_page=100" | jq -r '.result[] | select(.title=="sakamichia-contact") | .id' | head -1)
+          if [ -z "$KV_ID" ]; then
+            KV_ID=$(curl -sf -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" --data '{"title":"sakamichia-contact"}' "$API" | jq -r '.result.id')
+          fi
+          test -n "$KV_ID"
+          echo "KV_ID=$KV_ID" >> "$GITHUB_ENV"
+          sed "s/PENDING_CI/$KV_ID/" server/contact/wrangler.toml > server/contact/wrangler.ci.toml
+          npx --yes wrangler@4 deploy --config server/contact/wrangler.ci.toml 2>&1 | tee /tmp/deploy-contact.log
+          URL=$(grep -o 'https://sakamichia-contact[A-Za-z0-9._-]*workers\.dev' /tmp/deploy-contact.log | head -1)
+          echo "WORKER_URL=$URL" >> "$GITHUB_ENV"
+          test -n "$URL"
+      - name: Set admin token secret (if registered)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CONTACT_ADMIN_TOKEN: ${{ secrets.CONTACT_ADMIN_TOKEN }}
+        run: |
+          if [ -n "$CONTACT_ADMIN_TOKEN" ]; then
+            printf %s "$CONTACT_ADMIN_TOKEN" | npx --yes wrangler@4 secret put ADMIN_TOKEN --config server/contact/wrangler.ci.toml
+            echo "ADMIN_TOKEN secret has been set"
+          else
+            echo "CONTACT_ADMIN_TOKEN is not registered; admin endpoint stays closed"
+          fi
+      - name: Smoke test (health + submit + readback + cleanup)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CONTACT_ADMIN_TOKEN: ${{ secrets.CONTACT_ADMIN_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl -sf "$WORKER_URL/health"
+          MARK="ci-smoke-${GITHUB_RUN_ID}"
+          RESP=$(curl -sf -X POST "$WORKER_URL/submit" -H "Origin: https://sakamichia.pages.dev" -H "Content-Type: application/json" --data "{\"type\":\"other\",\"message\":\"$MARK\",\"pageUrl\":\"https://sakamichia.pages.dev/contact/\"}")
+          echo "$RESP" | grep -q '"ok":true'
+          KEY=$(echo "$RESP" | jq -r '.id')
+          sleep 3
+          API="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/storage/kv/namespaces/$KV_ID"
+          ENC_KEY=$(jq -rn --arg k "$KEY" '$k|@uri')
+          curl -sf -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API/values/$ENC_KEY" | grep -q "$MARK"
+          echo "KV readback OK"
+          if [ -n "$CONTACT_ADMIN_TOKEN" ]; then
+            curl -sf "$WORKER_URL/admin?token=$CONTACT_ADMIN_TOKEN" | grep -q "$MARK"
+            echo "admin list OK"
+            curl -sf -X DELETE "$WORKER_URL/admin?token=$CONTACT_ADMIN_TOKEN&key=$ENC_KEY" | grep -q '"ok":true'
+            echo "admin delete OK (smoke data removed)"
+          else
+            curl -sf -X DELETE -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API/values/$ENC_KEY" > /dev/null
+            echo "smoke data removed via KV API"
+          fi
+      - name: Record worker URL in repo
+        run: |
+          if [ -n "$WORKER_URL" ] && [ "$(cat server/contact/URL.txt 2>/dev/null)" != "$WORKER_URL" ]; then
+            printf '%s' "$WORKER_URL" > server/contact/URL.txt
+            git config user.name "Muse"
+            git config user.email "muse@example.com"
+            git add server/contact/URL.txt
+            git commit -m "お問い合わせWorkerのURLを記録"
+            git push
+          fi

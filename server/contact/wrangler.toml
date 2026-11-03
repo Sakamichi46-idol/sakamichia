@@ -1,0 +1,9 @@
+name = "sakamichia-contact"
+main = "src/index.js"
+compatibility_date = "2025-09-15"
+
+# KV 名前空間の id はデプロイ時（GitHub Actions）に実IDへ置換した
+# wrangler.ci.toml を生成して使うため、ここはプレースホルダのままにする
+[[kv_namespaces]]
+binding = "CONTACT_KV"
+id = "PENDING_CI"
