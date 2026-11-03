@@ -62,10 +62,15 @@ jobs:
           RESP=$(curl -sf -X POST "$WORKER_URL/submit" -H "Origin: https://sakamichia.pages.dev" -H "Content-Type: application/json" --data "{\"type\":\"other\",\"message\":\"$MARK\",\"pageUrl\":\"https://sakamichia.pages.dev/contact/\"}")
           echo "$RESP" | grep -q '"ok":true'
           KEY=$(echo "$RESP" | jq -r '.id')
-          sleep 3
           API="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/storage/kv/namespaces/$KV_ID"
           ENC_KEY=$(jq -rn --arg k "$KEY" '$k|@uri')
-          curl -sf -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API/values/$ENC_KEY" | grep -q "$MARK"
+          # KV は結果整合性のため、読み戻しは最大60秒リトライする
+          FOUND=""
+          for i in $(seq 1 12); do
+            if curl -sf -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API/values/$ENC_KEY" 2>/dev/null | grep -q "$MARK"; then FOUND=1; break; fi
+            sleep 5
+          done
+          test -n "$FOUND"
           echo "KV readback OK"
           if [ -n "$CONTACT_ADMIN_TOKEN" ]; then
             curl -sf "$WORKER_URL/admin?token=$CONTACT_ADMIN_TOKEN" | grep -q "$MARK"
