@@ -134,7 +134,7 @@ async function shareScoreImage(opts, btn) {
   if (blob && navigator.canShare) {
     const file = new File([blob], fileName, { type: "image/png" });
     if (navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: "サカミチア" }); return; } catch (e) { /* キャンセル時は何もしない */ return; }
+      try { await navigator.share({ files: [file], title: "サカミチア", text: withShareTag("") }); return; } catch (e) { /* キャンセル時は何もしない */ return; }
     }
   }
   if (blob) {
@@ -186,9 +186,16 @@ function attachSuggest(input, provider, onPick){
   input.addEventListener("blur", ()=>setTimeout(close, 120));
 }
 
+// 共有文には必ずハッシュタグ「#サカミチア」を末尾に付ける（既に含まれていれば二重に付けない）
+function withShareTag(text){
+  const t=(text||"").trim();
+  if(!t) return "#サカミチア";
+  return t.includes("#サカミチア") ? t : t+" #サカミチア";
+}
+
 // 共有：対応環境では共有シートを開き、なければクリップボードへコピーする
 async function shareContent(data, btn){
-  const payload={title:data.title||document.title, text:data.text||"", url:data.url||location.href};
+  const payload={title:data.title||document.title, text:withShareTag(data.text||""), url:data.url||location.href};
   if(navigator.share){
     try{ await navigator.share(payload); }catch(e){ /* キャンセル時は何もしない */ }
     return;

@@ -415,7 +415,7 @@ async function shareImage() {
   try {
     const blob = await imageBlob(), file = new File([blob], 'sakamichia-setlist.png', { type: 'image/png' });
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], text: '自分で作った坂道セットリスト！\nhttps://sakamichia.pages.dev/setlist/' });
+      await navigator.share({ files: [file], text: withShareTag('自分で作った坂道セットリスト！\nhttps://sakamichia.pages.dev/setlist/') });
       return;
     }
     notify('このブラウザでは画像共有に対応していません。画像をダウンロードして共有してください。');

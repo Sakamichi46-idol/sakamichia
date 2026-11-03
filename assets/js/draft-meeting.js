@@ -495,7 +495,7 @@ async function init() {
     if (!imgBlob) return;
     const file = new File([imgBlob], "sakamichia-draft-meeting.png", { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file] }); } catch (e) {}
+      try { await navigator.share({ files: [file], text: withShareTag("") }); } catch (e) {}
     } else $("dmImgDl").click();
   });
   /* 前回の続き */
