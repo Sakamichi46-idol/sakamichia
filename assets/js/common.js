@@ -584,6 +584,12 @@ document.addEventListener("DOMContentLoaded",()=>{
   shareBtn.type="button";shareBtn.className="btn sub drawer-share";shareBtn.textContent="このページを共有する";
   shareBtn.addEventListener("click",()=>shareContent({},shareBtn));
   drawer.appendChild(shareBtn);
+  const contactLink=document.createElement("a");
+  contactLink.className="drawer-contact";
+  contactLink.href=BASE+"contact/";
+  contactLink.textContent="データの誤り・ご要望";
+  contactLink.style.cssText="display:block;text-align:center;margin:10px 0 2px;font-size:.85em;color:var(--accent,#7e57c2)";
+  drawer.appendChild(contactLink);
   const themeBtn=document.createElement("button");
   themeBtn.type="button";themeBtn.className="btn sub drawer-share";
   const syncThemeBtn=()=>{ themeBtn.textContent=document.documentElement.dataset.theme==="dark"?"☀️ ライトモードに切り替え":"🌙 ダークモードに切り替え"; };
