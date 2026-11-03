@@ -445,17 +445,61 @@ _IMAGES46_PAT = re.compile(r'/images/46/[0-9a-f]{3}/[0-9a-f]+(?:-\d+)?\.(?:jpg|j
 _NOGI_FILES_PAT = re.compile(r'/files/46/diary/[^\s"\'<>]+\.(?:jpg|jpeg|png)', re.I)
 _FILES14_PAT = re.compile(r'/files/14/diary/[^\s"\'<>]+\.(?:jpg|jpeg|png)', re.I)
 
+def _slice_div(html, open_idx):
+    """open_idx の <div> の内側HTMLを、divの入れ子を数えて切り出す。（blog_backfill.py と同一）"""
+    gt = html.find('>', open_idx)
+    if gt < 0:
+        return ''
+    start = gt + 1
+    depth = 1
+    for m in re.finditer(r'<div\b|</div\s*>', html[start:]):
+        if m.group(0).startswith('</'):
+            depth -= 1
+            if depth == 0:
+                return html[start:start + m.start()]
+        else:
+            depth += 1
+    return html[start:]
+
+
+def _drop_div_by_class(html, frag):
+    """class に frag を含む最も外側の <div> 要素を丸ごと取り除く（blog_backfill.py と同一）。"""
+    m = re.search(r'<div[^>]*class="[^"]*' + re.escape(frag) + r'[^"]*"', html)
+    if not m:
+        return html
+    open_idx = m.start()
+    inner = _slice_div(html, open_idx)
+    gt = html.find('>', open_idx)
+    if gt < 0:
+        return html
+    inner_end = gt + 1 + len(inner)
+    close = html.find('</div', inner_end)
+    if close < 0:
+        return html[:open_idx]
+    close_end = html.find('>', close)
+    if close_end < 0:
+        return html[:open_idx]
+    return html[:open_idx] + html[close_end + 1:]
+
+
 def extract_imgs_scoped(url, html):
     """公式記事ページから、その記事自身の写真だけを抽出する。
     詳細ページには他記事の写真モジュールが含まれるため、グループごとに本文範囲へ限定する。
     乃木坂46: 最新記事モジュール(bd--ne)より前、moblog＋移行データ(_pre)の両方。
+      ただし著者プロフィール(bd--prof)内の顔写真は記事の写真ではないので除去する
+      （/images/46/ 形式で配信されるため、除去しないと写真として混入する）。
     櫻坂46: フッター(blog-foot)より前。写真は相対パスなので絶対化する。
-    日向坂46: 詳細ページは写真モジュールと混ざるため og:image（先頭写真）のみを返す。"""
+    日向坂46: 本文コンテナ(c-blog-article__text)内に限定し、無ければ og:image。
+    欅坂46: 記事コンテナ(keyaki-blog_single)から最新記事モジュール(box-txt)までの範囲に
+      限定する。限定しないとモジュール内の他記事の写真が混入する。
+    ※この関数は現在 update_blogs からは使われていない（blog_backfill 側が正）が、
+      blog_backfill.py の同名関数と同一内容に保つ。"""
     from urllib.parse import urljoin
     html = html.replace('&amp;', '&')
     if 'nogizaka46.com' in url:
         cut = html.find('bd--ne')
         seg = html[:cut] if cut > 0 else html
+        seg = _drop_div_by_class(seg, 'bd--prof')
         hits = []
         for pat in (_MOBLOG_PAT, _PRE_PAT, _IMAGES46_PAT, _NOGI_FILES_PAT):
             for m in pat.finditer(seg):
@@ -480,8 +524,40 @@ def extract_imgs_scoped(url, html):
                 out.append(u)
         return out
     if 'hinatazaka46.com' in url:
+        # 本文コンテナ内に限れば、その記事自身の写真だけを文書順に取得できる
+        i = html.find('c-blog-article__text')
+        if i >= 0:
+            open_idx = html.rfind('<div', 0, i)
+            if open_idx >= 0:
+                seg = _slice_div(html, open_idx)
+                hits = []
+                for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
+                    for m in pat.finditer(seg):
+                        hits.append((m.start(), m.group(0)))
+                out = []
+                for _, u0 in sorted(hits):
+                    u = urljoin(url, u0)
+                    if u not in out:
+                        out.append(u)
+                if out:
+                    return out
         m = re.search(r'property="og:image" content="([^"]+)"', html)
         return [m.group(1)] if m else []
+    if 'keyakizaka46.com' in url:
+        # 記事コンテナ内だけに限定する（ページ全体を走査すると最新記事モジュールの
+        # 他記事の写真が混入する。コンテナが無い古い形式では従来どおり全体を対象）
+        i = html.find('keyaki-blog_single')
+        seg = html
+        if i >= 0:
+            j = html.find('box-txt', i)
+            seg = html[i:j] if j > i else html[i:]
+        out = []
+        for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
+            for m in pat.finditer(seg):
+                u = urljoin(url, m.group(0))
+                if u not in out:
+                    out.append(u)
+        return out
     out = []
     for pat in (_MOBLOG_PAT, _IMAGES14_PAT, _FILES14_PAT):
         for m in pat.finditer(html):
