@@ -1,18 +1,20 @@
 // ワードサーチ：メンバーの名前（カタカナ読み）を10×10の盤面から探すパズル（プレビュー版）
-const WS_SIZE = 10, WS_WORDS = 6;
+const WS_SIZE = 10;
+// 出題人数は5〜10人から選べる（既定は6人）
+const WS_COUNTS = [5, 6, 7, 8, 9, 10], WS_DEFAULT_COUNT = 6;
 const WS_GROUP_ORDER = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 let MEMBERS = []; // {name（漢字）, kana（カタカナ読み）, group, graduated}
 let GROUPS = []; // データに実在するグループ（表示順に整列済み）
-let settings = { groups: [], grad: false, mode: "normal" }; // groups が空 = すべて / mode: "normal"（名前リスト表示）| "challenge"（名前リストを隠す）
+let settings = { groups: [], grad: false, mode: "normal", count: WS_DEFAULT_COUNT }; // groups が空 = すべて / mode: "normal"（名前リスト表示）| "challenge"（名前リストを隠す）/ count: 出題人数
 function loadSettings() {
   try {
     const s = JSON.parse(localStorage.getItem("sakamichia-wordsearch-settings") || "null");
-    if (s) settings = { groups: Array.isArray(s.groups) ? s.groups.filter(g => GROUPS.includes(g)) : [], grad: !!s.grad, mode: s.mode === "challenge" ? "challenge" : "normal" };
+    if (s) settings = { groups: Array.isArray(s.groups) ? s.groups.filter(g => GROUPS.includes(g)) : [], grad: !!s.grad, mode: s.mode === "challenge" ? "challenge" : "normal", count: WS_COUNTS.includes(+s.count) ? +s.count : WS_DEFAULT_COUNT };
   } catch (e) {}
 }
 function saveSettings() { try { localStorage.setItem("sakamichia-wordsearch-settings", JSON.stringify(settings)); } catch (e) {} }
 let puzzle = null, foundKana = new Set(), startAt = 0, timer = null, playing = false;
-let gameMode = "normal", hintCount = 0, hintedKana = new Set();
+let gameMode = "normal", gameCount = WS_DEFAULT_COUNT, hintCount = 0, hintedKana = new Set();
 let downCell = null, curCell = null, anchorCell = null;
 
 function toKata(s) { return String(s || "").replace(/[ぁ-ん]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60)); }
@@ -20,10 +22,15 @@ function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.fl
 function shuffleR(a, rand) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function fmtTime(sec) { return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
 // ベストタイム（秒・小さい方が記録）。quizBest 系は大きい方が記録の仕様なので、このゲーム専用に持つ
-// ベストタイムはモード別に保存する（通常＝従来から使っているキー、チャレンジ＝別キー）
-function wsBestKey(mode) { return mode === "challenge" ? "sakamichia-best-wordsearch-challenge" : "sakamichia-best-wordsearch"; }
-function wsBest(mode) { try { return +localStorage.getItem(wsBestKey(mode)) || 0; } catch (e) { return 0; } }
-function wsBestSave(mode, sec) { try { const b = wsBest(mode); if (!b || sec < b) { localStorage.setItem(wsBestKey(mode), String(sec)); return true; } } catch (e) {} return false; }
+// ベストタイムはモード別×人数別に保存する。6人は従来から使っているキー（通常＝sakamichia-best-wordsearch、
+// チャレンジ＝…-challenge）をそのまま使うので、旧記録は6人のベストとして自然に引き継がれる。
+// 6人以外は末尾に -<人数> を付けたキーを使う
+function wsBestKey(mode, count) {
+  const base = mode === "challenge" ? "sakamichia-best-wordsearch-challenge" : "sakamichia-best-wordsearch";
+  return count === WS_DEFAULT_COUNT ? base : `${base}-${count}`;
+}
+function wsBest(mode, count) { try { return +localStorage.getItem(wsBestKey(mode, count)) || 0; } catch (e) { return 0; } }
+function wsBestSave(mode, count, sec) { try { const b = wsBest(mode, count); if (!b || sec < b) { localStorage.setItem(wsBestKey(mode, count), String(sec)); return true; } } catch (e) {} return false; }
 
 // 出題プールから除外するメンバー（ユーザー指定）：松井玲奈はSKE48からの交換留学生という特殊扱いのため、
 // 卒業生オンの場合も含めてワードサーチの対象外とする
@@ -34,17 +41,20 @@ function buildPool(members, groups, includeGrad) {
   return (members || []).filter(m => !WS_EXCLUDED_NAMES.has(m.name) && (!groups || !groups.length || groups.includes(m.group)) && (includeGrad || !m.graduated))
     .filter(p => p.kana.length >= 4 && p.kana.length <= 8 && !seen.has(p.kana) && seen.add(p.kana));
 }
-// 条件どおりのプールが WS_WORDS 人に満たない場合は段階的に範囲を広げる（widened: 0=そのまま, 1=選択グループ内で卒業生も含めた, 2=全グループ＋卒業生）
-function effectivePoolFor(members, groups, includeGrad) {
+// 条件どおりのプールが選択中の出題人数（need、省略時は既定の6人）に満たない場合は段階的に範囲を広げる
+// （widened: 0=そのまま, 1=選択グループ内で卒業生も含めた, 2=全グループ＋卒業生）
+function effectivePoolFor(members, groups, includeGrad, need) {
+  const n = need || WS_DEFAULT_COUNT;
   let pool = buildPool(members, groups, includeGrad);
-  if (pool.length >= WS_WORDS) return { pool, widened: 0 };
+  if (pool.length >= n) return { pool, widened: 0 };
   pool = buildPool(members, groups, true);
-  if (pool.length >= WS_WORDS) return { pool, widened: 1 };
+  if (pool.length >= n) return { pool, widened: 1 };
   return { pool: buildPool(members, [], true), widened: 2 };
 }
-function effectivePool() { return effectivePoolFor(MEMBERS, settings.groups, settings.grad); }
+function effectivePool() { return effectivePoolFor(MEMBERS, settings.groups, settings.grad, settings.count); }
 
-// 発見ハイライトの色：出題メンバーごとに単語のインデックスで割り当てる6色（3グループの色＋緑・オレンジ・藍の中間トーン）
+// 発見ハイライトの色：出題メンバーごとに単語のインデックスで割り当てる10色（最大10人ぶん）
+// 先頭6色は従来の色（3グループの色＋緑・オレンジ・藍の中間トーン）をそのまま維持し、7色目以降に判別しやすい色を足した
 // fg はその背景でカナが読める文字色（明るい背景には濃い文字色）
 const WS_COLORS = [
   { bg: "#7e57c2", fg: "#ffffff" }, // 紫（乃木坂46）
@@ -52,7 +62,11 @@ const WS_COLORS = [
   { bg: "#5aa9d6", fg: "#0b3049" }, // 空色（日向坂46）
   { bg: "#5eba53", fg: "#0e3409" }, // 緑（欅坂46）
   { bg: "#f0a13c", fg: "#4a2700" }, // オレンジ
-  { bg: "#4a6fa5", fg: "#ffffff" }  // 藍
+  { bg: "#4a6fa5", fg: "#ffffff" }, // 藍
+  { bg: "#cf5b3a", fg: "#ffffff" }, // テラコッタ
+  { bg: "#2f9e8f", fg: "#05302a" }, // ティール
+  { bg: "#eccd3a", fg: "#453600" }, // 黄
+  { bg: "#71808f", fg: "#ffffff" }  // スレートグレー
 ];
 function wordColor(idx) { return WS_COLORS[((idx % WS_COLORS.length) + WS_COLORS.length) % WS_COLORS.length]; }
 
@@ -65,11 +79,13 @@ const WS_DIRS = [
 ];
 // 純粋関数：pool から盤面を生成する。2語目以降は、既配置の単語と文字が一致するマスで
 // 交差する配置を優先的に試し、無理なら通常のランダム配置にフォールバックする。
-// 配置できない場合は引き直す。戻り値 {grid: string[10][10], words: [{name, kana, dir, cells:[[r,c],...]}]}、失敗時 null
-function buildPuzzle(pool, rng) {
+// 配置できない場合はメンバーを引き直して再挑戦する（上限付き）。count は出題人数（省略時は6人）
+// 戻り値 {grid: string[10][10], words: [{name, kana, dir, cells:[[r,c],...]}]}、失敗時 null
+function buildPuzzle(pool, rng, count) {
   const rand = rng || Math.random;
+  const n = count || WS_DEFAULT_COUNT;
   const alpha = [...new Set(pool.flatMap(p => [...p.kana]))];
-  if (pool.length < WS_WORDS || !alpha.length) return null;
+  if (pool.length < n || !alpha.length) return null;
   // (r,c,dir) に単語 w が置けるか判定し、置ける場合は cells、置けない場合は null
   const tryFit = (grid, w, r, c, dr, dc) => {
     const er = r + dr * (w.length - 1), ec = c + dc * (w.length - 1);
@@ -82,8 +98,9 @@ function buildPuzzle(pool, rng) {
     }
     return cells;
   };
-  for (let attempt = 0; attempt < 60; attempt++) {
-    const picks = shuffleR([...pool], rand).slice(0, WS_WORDS);
+  for (let attempt = 0; attempt < 100; attempt++) {
+    // 引き直すたびにメンバーも選び直す。配置は長い名前から行うと、後半の詰まりが減って安定する
+    const picks = shuffleR([...pool], rand).slice(0, n).sort((a, b) => b.kana.length - a.kana.length);
     const grid = Array.from({ length: WS_SIZE }, () => Array(WS_SIZE).fill(""));
     const placed = [];
     let ok = true;
@@ -181,7 +198,7 @@ function judge(cells) {
   li.classList.add("done");
   li.style.setProperty("--wc", col.bg); // 名前リスト側の発見表示にも、その単語の色のドットを付ける
   const lab = document.getElementById("wsFound");
-  if (lab) lab.textContent = `見つけた ${foundKana.size}／${WS_WORDS}`;
+  if (lab) lab.textContent = `見つけた ${foundKana.size}／${puzzle.words.length}`;
   const rem = document.getElementById("wsRemain");
   if (rem) rem.textContent = `あと${puzzle.words.length - foundKana.size}人`;
   if (foundKana.size >= puzzle.words.length) { finish(); return; }
@@ -259,17 +276,18 @@ function useHint() {
 
 function start() {
   const eff = effectivePool();
-  puzzle = buildPuzzle(eff.pool);
+  puzzle = buildPuzzle(eff.pool, undefined, settings.count);
   const main = document.getElementById("wsMain");
   if (!puzzle) { main.innerHTML = `<p style="color:var(--muted)">盤面を作れませんでした。もう一度お試しください。</p>`; return; }
   foundKana = new Set(); downCell = null; curCell = null; anchorCell = null;
   gameMode = settings.mode;
+  gameCount = puzzle.words.length;
   hintCount = 0; hintedKana = new Set();
   const listHtml = gameMode === "challenge"
-    ? `<p class="ws-remain" id="wsRemain">あと${WS_WORDS}人</p><ul class="ws-list" id="wsList"></ul>
+    ? `<p class="ws-remain" id="wsRemain">あと${gameCount}人</p><ul class="ws-list" id="wsList"></ul>
     <p class="ws-hintrow"><button type="button" class="btn" id="wsHint">ヒント（名前を1人表示）</button> <span id="wsHintCount">ヒント 0回</span></p>`
     : `<ul class="ws-list" id="wsList">${shuffle([...puzzle.words]).map(w => `<li data-kana="${esc(w.kana)}">${esc(w.name)}</li>`).join("")}</ul>`;
-  main.innerHTML = `<div class="ws-head"><span id="wsFound">見つけた 0／${WS_WORDS}</span><span>経過時間 <span id="wsTime">0:00</span></span></div>
+  main.innerHTML = `<div class="ws-head"><span id="wsFound">見つけた 0／${gameCount}</span><span>経過時間 <span id="wsTime">0:00</span></span></div>
     <div class="ws-grid" id="wsGrid">${puzzle.grid.map((row, r) => row.map((ch, c) => `<button type="button" class="ws-cell" data-r="${r}" data-c="${c}">${esc(ch)}</button>`).join("")).join("")}</div>
     <p class="ws-msg" id="wsMsg">名前をドラッグ、または始点→終点のタップで選んでください</p>
     ${listHtml}`;
@@ -290,8 +308,8 @@ function finish() {
   playing = false;
   clearInterval(timer);
   const sec = Math.floor((Date.now() - startAt) / 1000);
-  const isNew = wsBestSave(gameMode, sec);
-  const best = wsBest(gameMode);
+  const isNew = wsBestSave(gameMode, gameCount, sec);
+  const best = wsBest(gameMode, gameCount);
   const main = document.getElementById("wsMain");
   main.innerHTML = `<div class="card"><h3>🎉 クリア！</h3>
     <p>タイム：<b>${fmtTime(sec)}</b></p>
@@ -306,12 +324,14 @@ function finish() {
 function startPanel() {
   const main = document.getElementById("wsMain");
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `盤面に隠れたメンバー${WS_WORDS}人の名前（カタカナ）を全部探すゲームです。名前は縦・横・斜め＋逆向きの8方向に隠れています。出題するグループや卒業生の有無、名前の表示は下で選べます。` : `10×10のカタカナの盤面に、メンバー${WS_WORDS}人の名前（読み）が隠れています。名前が並ぶ向きは、縦・横・斜めに逆向き（右から左、下から上など）を加えた全8方向のどれかです。名前の最初から最後までをドラッグでなぞるか、始点と終点をタップして選んでください。全部見つけるまでのタイムが記録になります。出題するグループ（複数選択可）と卒業生の有無、名前の表示方法は下で選べます。チャレンジモードでは探す名前のリストが表示されません（ヒントボタンで1人ずつ表示できます）。`}</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `盤面に隠れたメンバーの名前（カタカナ）を全部探すゲームです。名前は縦・横・斜め＋逆向きの8方向に隠れています。出題するグループや卒業生の有無、人数、名前の表示は下で選べます。` : `10×10のカタカナの盤面に、メンバーの名前（読み）が隠れています。名前が並ぶ向きは、縦・横・斜めに逆向き（右から左、下から上など）を加えた全8方向のどれかです。名前の最初から最後までをドラッグでなぞるか、始点と終点をタップして選んでください。全部見つけるまでのタイムが記録になります（ベストタイムは人数ごとに別々に残ります）。出題するグループ（複数選択可）と卒業生の有無、出題人数、名前の表示方法は下で選べます。チャレンジモードでは探す名前のリストが表示されません（ヒントボタンで1人ずつ表示できます）。`}</p>
   <p style="margin:10px 0 6px"><b>グループ</b>（複数選択可）</p>
   <div class="ychips" id="wsGroups"><button type="button" class="ychip" data-g="">すべて</button>${GROUPS.map(g => `<button type="button" class="ychip" data-g="${esc(g)}">${esc(g)}</button>`).join("")}</div>
   <p style="margin:10px 0 0"><label style="cursor:pointer"><input type="checkbox" id="wsGrad"> 卒業生も含める</label></p>
   <p style="margin:10px 0 6px"><b>名前の表示</b></p>
   <div class="ychips" id="wsMode"><button type="button" class="ychip" data-m="normal">通常（名前リストを表示）</button><button type="button" class="ychip" data-m="challenge">チャレンジ（名前リストを隠す）</button></div>
+  <p style="margin:10px 0 6px"><b>人数</b></p>
+  <div class="ychips" id="wsCount">${WS_COUNTS.map(n => `<button type="button" class="ychip" data-n="${n}">${n}人</button>`).join("")}</div>
   <p style="color:var(--muted);font-size:13px" id="wsPoolNote"></p>
   <p style="color:var(--muted)" id="wsBestLine"></p>
   <p><button type="button" class="primary" id="wsStart">スタート</button></p></div>`;
@@ -324,13 +344,19 @@ function startPanel() {
     });
     gradBox.checked = settings.grad;
     document.querySelectorAll("#wsMode .ychip").forEach(ch => ch.classList.toggle("on", ch.dataset.m === settings.mode));
+    document.querySelectorAll("#wsCount .ychip").forEach(ch => ch.classList.toggle("on", +ch.dataset.n === settings.count));
     const n = buildPool(MEMBERS, settings.groups, settings.grad).length;
-    document.getElementById("wsPoolNote").textContent = `対象は${n}人です。この中から${WS_WORDS}人が出題されます。` + (n < WS_WORDS ? "人数が足りないため、自動で範囲を広げて出題します。" : "");
-    const b = wsBest(settings.mode);
-    document.getElementById("wsBestLine").textContent = b > 0 ? `${settings.mode === "challenge" ? "チャレンジモードのベストタイム" : "ベストタイム"}：${fmtTime(b)}` : "";
+    document.getElementById("wsPoolNote").textContent = `対象は${n}人です。この中から${settings.count}人が出題されます。` + (n < settings.count ? "人数が足りないため、自動で範囲を広げて出題します。" : "");
+    const b = wsBest(settings.mode, settings.count);
+    document.getElementById("wsBestLine").textContent = b > 0 ? `${settings.mode === "challenge" ? "チャレンジモードのベストタイム" : "ベストタイム"}（${settings.count}人）：${fmtTime(b)}` : "";
   };
   document.querySelectorAll("#wsMode .ychip").forEach(ch => ch.addEventListener("click", () => {
     settings.mode = ch.dataset.m === "challenge" ? "challenge" : "normal";
+    saveSettings();
+    paintSettings();
+  }));
+  document.querySelectorAll("#wsCount .ychip").forEach(ch => ch.addEventListener("click", () => {
+    settings.count = WS_COUNTS.includes(+ch.dataset.n) ? +ch.dataset.n : WS_DEFAULT_COUNT;
     saveSettings();
     paintSettings();
   }));
@@ -352,7 +378,7 @@ async function init() {
   MEMBERS = (members || []).map(m => ({ name: m.name, kana: toKata(m.reading), group: m.group, graduated: !!m.graduated }));
   GROUPS = WS_GROUP_ORDER.filter(g => MEMBERS.some(m => m.group === g));
   loadSettings();
-  if (buildPool(MEMBERS, [], true).length < WS_WORDS) { document.getElementById("wsMain").innerHTML = `<p style="color:var(--muted)">メンバーデータが足りません。</p>`; return; }
+  if (buildPool(MEMBERS, [], true).length < WS_DEFAULT_COUNT) { document.getElementById("wsMain").innerHTML = `<p style="color:var(--muted)">メンバーデータが足りません。</p>`; return; }
   startPanel();
 }
 init();
