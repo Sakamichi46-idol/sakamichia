@@ -174,6 +174,12 @@ def save_store(idx, years, imgs, dirty_years):
             # imgn を取り残すと「写真は出るのに『写真N枚』バッジが出ない」不整合に
             # なる（修復ツール等が blog-imgs だけを書き換えた場合に実際に発生した）。
             b['imgn'] = len(_own) if _own else 0
+            # 旧取り込みに残る media（旧・写真数）も、値がある場合は実件数に合わせる。
+            # バッジ表示（blog.js photoN）は media || imgn の順で見るため、media が
+            # 実件数とずれると imgn が正しくても誤表示になる（実際に1件発生した）。
+            # media が 0/不在なら imgn が使われるので不整合にはならない。
+            if b.get('media'):
+                b['media'] = b['imgn']
             if _own:
                 b['thumb'] = _own[0]
             elif not b.get('imgn'):
