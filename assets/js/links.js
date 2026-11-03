@@ -40,7 +40,7 @@ function lkBooksHtml() {
   if (!rows.length) return "";
   return `<h3 class="home-ghead">写真集の公式アカウント（${rows.length}件）</h3><div class="grid">${rows.map(b => `
     <div class="card">${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(b.member)}${b.year ? ` ・ ${esc(String(b.year))}年` : ""}</p>
-    <p>${b.x ? `<a class="btn sub" href="${esc(b.x)}" target="_blank" rel="noopener">X ↗</a> ` : ""}${b.instagram ? `<a class="btn sub" href="${esc(b.instagram)}" target="_blank" rel="noopener">Instagram ↗</a>` : ""}</p></div>`).join("")}</div>`;
+    <p>${b.x ? `<a class="btn sub" href="${esc(b.x)}" target="_blank" rel="noopener">X ↗</a> ` : ""}${b.instagram ? `<a class="btn sub" href="${esc(b.instagram)}" target="_blank" rel="noopener">Instagram ↗</a> ` : ""}${b.tiktok ? `<a class="btn sub" href="${esc(b.tiktok)}" target="_blank" rel="noopener">TikTok ↗</a>` : ""}</p></div>`).join("")}</div>`;
 }
 function render() {
   if (!LK) return;
