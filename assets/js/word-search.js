@@ -25,10 +25,13 @@ function wsBestKey(mode) { return mode === "challenge" ? "sakamichia-best-wordse
 function wsBest(mode) { try { return +localStorage.getItem(wsBestKey(mode)) || 0; } catch (e) { return 0; } }
 function wsBestSave(mode, sec) { try { const b = wsBest(mode); if (!b || sec < b) { localStorage.setItem(wsBestKey(mode), String(sec)); return true; } } catch (e) {} return false; }
 
+// 出題プールから除外するメンバー（ユーザー指定）：松井玲奈はSKE48からの交換留学生という特殊扱いのため、
+// 卒業生オンの場合も含めてワードサーチの対象外とする
+const WS_EXCLUDED_NAMES = new Set(["松井玲奈"]);
 // 出題プール：グループ（空 = すべて、OR条件）と卒業生の有無で絞り、読み4〜8文字・読み重複なし
 function buildPool(members, groups, includeGrad) {
   const seen = new Set();
-  return (members || []).filter(m => (!groups || !groups.length || groups.includes(m.group)) && (includeGrad || !m.graduated))
+  return (members || []).filter(m => !WS_EXCLUDED_NAMES.has(m.name) && (!groups || !groups.length || groups.includes(m.group)) && (includeGrad || !m.graduated))
     .filter(p => p.kana.length >= 4 && p.kana.length <= 8 && !seen.has(p.kana) && seen.add(p.kana));
 }
 // 条件どおりのプールが WS_WORDS 人に満たない場合は段階的に範囲を広げる（widened: 0=そのまま, 1=選択グループ内で卒業生も含めた, 2=全グループ＋卒業生）
@@ -40,6 +43,18 @@ function effectivePoolFor(members, groups, includeGrad) {
   return { pool: buildPool(members, [], true), widened: 2 };
 }
 function effectivePool() { return effectivePoolFor(MEMBERS, settings.groups, settings.grad); }
+
+// 発見ハイライトの色：出題メンバーごとに単語のインデックスで割り当てる6色（3グループの色＋緑・オレンジ・藍の中間トーン）
+// fg はその背景でカナが読める文字色（明るい背景には濃い文字色）
+const WS_COLORS = [
+  { bg: "#7e57c2", fg: "#ffffff" }, // 紫（乃木坂46）
+  { bg: "#e77a9b", fg: "#4d0f27" }, // ピンク（櫻坂46）
+  { bg: "#5aa9d6", fg: "#0b3049" }, // 空色（日向坂46）
+  { bg: "#5eba53", fg: "#0e3409" }, // 緑（欅坂46）
+  { bg: "#f0a13c", fg: "#4a2700" }, // オレンジ
+  { bg: "#4a6fa5", fg: "#ffffff" }  // 藍
+];
+function wordColor(idx) { return WS_COLORS[((idx % WS_COLORS.length) + WS_COLORS.length) % WS_COLORS.length]; }
 
 // 配置方向：全8方向（→ ← ↓ ↑ ↘ ↙ ↗ ↖）。逆向きに読む名前も盤面に現れる
 const WS_DIRS = [
@@ -147,7 +162,12 @@ function judge(cells) {
   paintSel(null);
   if (!hit) { setMsg("ちがうみたい…もう一度探してみてください"); return; }
   foundKana.add(hit.kana);
-  hit.cells.forEach(([r, c]) => { const el = cellEl(r, c); if (el) el.classList.add("found"); });
+  // ハイライトは単語ごとに割り当てた色で塗る（交差マスは後に見つけた単語の色で上書きされる）
+  const col = wordColor(puzzle.words.indexOf(hit));
+  hit.cells.forEach(([r, c]) => {
+    const el = cellEl(r, c);
+    if (el) { el.classList.add("found"); el.style.background = col.bg; el.style.borderColor = col.bg; el.style.color = col.fg; }
+  });
   // 通常モードでは li が最初から並んでいる。チャレンジではヒント表示済みの li があれば流用し、無ければ発見時に追加する
   let li = document.querySelector(`.ws-list li[data-kana="${hit.kana}"]`);
   if (!li) {
@@ -159,6 +179,7 @@ function judge(cells) {
   }
   li.classList.remove("hint");
   li.classList.add("done");
+  li.style.setProperty("--wc", col.bg); // 名前リスト側の発見表示にも、その単語の色のドットを付ける
   const lab = document.getElementById("wsFound");
   if (lab) lab.textContent = `見つけた ${foundKana.size}／${WS_WORDS}`;
   const rem = document.getElementById("wsRemain");
@@ -285,7 +306,7 @@ function finish() {
 function startPanel() {
   const main = document.getElementById("wsMain");
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `盤面に隠れたメンバー${WS_WORDS}人の名前（カタカナ）を全部探すゲームです。出題するグループや卒業生の有無、名前の表示は下で選べます。` : `10×10のカタカナの盤面に、メンバー${WS_WORDS}人の名前（読み）が横・縦・斜め（逆向きも）に隠れています。名前の最初から最後までをドラッグでなぞるか、始点と終点をタップして選んでください。全部見つけるまでのタイムが記録になります。出題するグループ（複数選択可）と卒業生の有無、名前の表示方法は下で選べます。チャレンジモードでは探す名前のリストが表示されません（ヒントボタンで1人ずつ表示できます）。`}</p>
+  <p style="color:var(--muted)">${document.documentElement.dataset.lite === "1" ? `盤面に隠れたメンバー${WS_WORDS}人の名前（カタカナ）を全部探すゲームです。名前は縦・横・斜め＋逆向きの8方向に隠れています。出題するグループや卒業生の有無、名前の表示は下で選べます。` : `10×10のカタカナの盤面に、メンバー${WS_WORDS}人の名前（読み）が隠れています。名前が並ぶ向きは、縦・横・斜めに逆向き（右から左、下から上など）を加えた全8方向のどれかです。名前の最初から最後までをドラッグでなぞるか、始点と終点をタップして選んでください。全部見つけるまでのタイムが記録になります。出題するグループ（複数選択可）と卒業生の有無、名前の表示方法は下で選べます。チャレンジモードでは探す名前のリストが表示されません（ヒントボタンで1人ずつ表示できます）。`}</p>
   <p style="margin:10px 0 6px"><b>グループ</b>（複数選択可）</p>
   <div class="ychips" id="wsGroups"><button type="button" class="ychip" data-g="">すべて</button>${GROUPS.map(g => `<button type="button" class="ychip" data-g="${esc(g)}">${esc(g)}</button>`).join("")}</div>
   <p style="margin:10px 0 0"><label style="cursor:pointer"><input type="checkbox" id="wsGrad"> 卒業生も含める</label></p>
