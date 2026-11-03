@@ -207,6 +207,316 @@
  ],
  "memberInstagram": [
   {
+   "name": "秋元真夏",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "あきもとまなつ",
+   "graduated": true,
+   "url": "https://www.instagram.com/manatsu.akimoto_official/",
+   "x": "https://x.com/manatsusanstaff"
+  },
+  {
+   "name": "生田絵梨花",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "いくたえりか",
+   "graduated": true,
+   "url": "https://www.instagram.com/ikutaerika.official/",
+   "x": "https://x.com/ikuta_staff",
+   "youtube": "https://www.youtube.com/@ikutaerikaofficial"
+  },
+  {
+   "name": "生駒里奈",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "いこまりな",
+   "graduated": true,
+   "url": "https://www.instagram.com/ikomarina_1229/",
+   "youtube": "https://www.youtube.com/channel/UCKfIRa0Zhs6HQ33a_L6Tc5Q"
+  },
+  {
+   "name": "伊藤寧々",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "いとうねね",
+   "graduated": true,
+   "url": "https://www.instagram.com/12neneito12/"
+  },
+  {
+   "name": "伊藤万理華",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "いとうまりか",
+   "graduated": true,
+   "url": "https://www.instagram.com/marikaito_official/",
+   "x": "https://x.com/marikaito_staff"
+  },
+  {
+   "name": "井上小百合",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "いのうえさゆり",
+   "graduated": true,
+   "url": "https://www.instagram.com/sayuri_inoue.official/",
+   "x": "https://x.com/syr_1214",
+   "youtube": "https://www.youtube.com/channel/UCmVJtdqSRFSsJb5hjHL4QKg"
+  },
+  {
+   "name": "衛藤美彩",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "えとうみさ",
+   "graduated": true,
+   "url": "https://www.instagram.com/misa_eto_official/",
+   "x": "https://x.com/etomisa_staff",
+   "youtube": "https://www.youtube.com/@ETOMISACHANNEL"
+  },
+  {
+   "name": "川後陽菜",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "かわごひな",
+   "graduated": true,
+   "url": "https://www.instagram.com/hina_kawago/",
+   "x": "https://x.com/kawagohina3",
+   "youtube": "https://www.youtube.com/channel/UCygUvA0j15FpHp6kv2IuQYA"
+  },
+  {
+   "name": "川村真洋",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "かわむらまひろ",
+   "graduated": true,
+   "url": "https://www.instagram.com/mahiro_kawamura_official/",
+   "x": "https://x.com/mahiro_chan0723"
+  },
+  {
+   "name": "齋藤飛鳥",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "さいとうあすか",
+   "graduated": true,
+   "url": "https://www.instagram.com/asuka.3110.official/",
+   "x": "https://x.com/asuka3110_staff"
+  },
+  {
+   "name": "斎藤ちはる",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "さいとうちはる",
+   "graduated": true,
+   "url": "https://www.instagram.com/chiharu_saito_ex/"
+  },
+  {
+   "name": "斉藤優里",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "さいとうゆうり",
+   "graduated": true,
+   "url": "https://www.instagram.com/yuuri_3ito/",
+   "youtube": "https://www.youtube.com/channel/UC53EN-GqqAIpuLbZOmLucuQ"
+  },
+  {
+   "name": "桜井玲香",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "さくらいれいか",
+   "graduated": true,
+   "url": "https://www.instagram.com/reika_s16/",
+   "x": "https://x.com/uninyan_rs",
+   "youtube": "https://www.youtube.com/@uninyan_ch"
+  },
+  {
+   "name": "白石麻衣",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "しらいしまい",
+   "graduated": true,
+   "url": "https://www.instagram.com/m.shiraishi.official/",
+   "x": "https://x.com/shiraishi_staff",
+   "youtube": "https://www.youtube.com/channel/UCUApURCve0BEqv6Sa9x_OJg"
+  },
+  {
+   "name": "高山一実",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "たかやまかずみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/takayama.kazumi.official/",
+   "x": "https://x.com/takayama_staff"
+  },
+  {
+   "name": "中元日芽香",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "なかもとひめか",
+   "graduated": true,
+   "url": "https://www.instagram.com/himekanakamoto/"
+  },
+  {
+   "name": "永島聖羅",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "ながしませいら",
+   "graduated": true,
+   "url": "https://www.instagram.com/seira_nagashima/",
+   "x": "https://x.com/seira_0519n"
+  },
+  {
+   "name": "西野七瀬",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "にしのななせ",
+   "graduated": true,
+   "url": "https://www.instagram.com/nishino.nanase.official/",
+   "x": "https://x.com/nanase_andstaff"
+  },
+  {
+   "name": "能條愛未",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "のうじょうあみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/noujoami_official/"
+  },
+  {
+   "name": "樋口日奈",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "ひぐちひな",
+   "graduated": true,
+   "url": "https://www.instagram.com/higuchi_hina_official/",
+   "x": "https://x.com/hina_and_staff"
+  },
+  {
+   "name": "深川麻衣",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "ふかがわまい",
+   "graduated": true,
+   "url": "https://www.instagram.com/maifukagawa_staff/"
+  },
+  {
+   "name": "松村沙友理",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "まつむらさゆり",
+   "graduated": true,
+   "url": "https://www.instagram.com/matsumura_sayuri_official/",
+   "x": "https://x.com/sayuringo_staff",
+   "youtube": "https://www.youtube.com/@sayuringo_official"
+  },
+  {
+   "name": "若月佑美",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "わかつきゆみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/yumi_wakatsuki_official/",
+   "x": "https://x.com/WAKA_Y_official",
+   "youtube": "https://www.youtube.com/channel/UCJwW_2WpiTlUrGeIpZauDgg"
+  },
+  {
+   "name": "和田まあや",
+   "group": "乃木坂46",
+   "gen": 1,
+   "reading": "わだまあや",
+   "graduated": true,
+   "url": "https://www.instagram.com/wada_maaya_official/"
+  },
+  {
+   "name": "伊藤かりん",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "いとうかりん",
+   "graduated": true,
+   "url": "https://www.instagram.com/karin___ito/",
+   "x": "https://x.com/karin___ito",
+   "youtube": "https://www.youtube.com/channel/UC9BihA2GY6ATFR__KvRWudA"
+  },
+  {
+   "name": "北野日奈子",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "きたのひなこ",
+   "graduated": true,
+   "url": "https://www.instagram.com/kitanohinako_official/",
+   "x": "https://x.com/kitanohinako___",
+   "youtube": "https://www.youtube.com/channel/UCokamkLpcxCYx97NR8en7rA"
+  },
+  {
+   "name": "相楽伊織",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "さがらいおり",
+   "graduated": true,
+   "url": "https://www.instagram.com/_iorisagara264_/",
+   "x": "https://x.com/1126iorisagara"
+  },
+  {
+   "name": "佐々木琴子",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "ささきことこ",
+   "graduated": true,
+   "url": "https://www.instagram.com/sasaki_kotoko828/",
+   "x": "https://x.com/ssk_ktk828",
+   "youtube": "https://www.youtube.com/@sasaki_kotoko"
+  },
+  {
+   "name": "新内眞衣",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "しんうちまい",
+   "graduated": true,
+   "url": "https://www.instagram.com/mai.shinuchi_official/"
+  },
+  {
+   "name": "鈴木絢音",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "すずきあやね",
+   "graduated": true,
+   "url": "https://www.instagram.com/ayane.suzuki_official/",
+   "x": "https://x.com/_ayane_suzuki"
+  },
+  {
+   "name": "寺田蘭世",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "てらだらんぜ",
+   "graduated": true,
+   "url": "https://www.instagram.com/terada.ranze.official/"
+  },
+  {
+   "name": "堀未央奈",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "ほりみおな",
+   "graduated": true,
+   "url": "https://www.instagram.com/horimiona_official/",
+   "x": "https://x.com/mionaaaaa15"
+  },
+  {
+   "name": "山崎怜奈",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "やまざきれな",
+   "graduated": true,
+   "url": "https://www.instagram.com/rena_yamazaki.official/",
+   "x": "https://x.com/ymzkofficial"
+  },
+  {
+   "name": "渡辺みり愛",
+   "group": "乃木坂46",
+   "gen": 2,
+   "reading": "わたなべみりあ",
+   "graduated": true,
+   "url": "https://www.instagram.com/miria.watanabe_official/",
+   "x": "https://x.com/watanabe_miria",
+   "youtube": "https://www.youtube.com/@miria.watanabe"
+  },
+  {
    "name": "伊藤理々杏",
    "group": "乃木坂46",
    "gen": 3,
@@ -219,6 +529,76 @@
    "gen": 3,
    "reading": "いわもとれんか",
    "url": "https://www.instagram.com/renka.i_official/"
+  },
+  {
+   "name": "梅澤美波",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "うめざわみなみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/ume_minami.official/",
+   "x": "https://x.com/teamume2026"
+  },
+  {
+   "name": "大園桃子",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "おおぞのももこ",
+   "graduated": true,
+   "url": "https://www.instagram.com/o.momoko_official/",
+   "youtube": "https://www.youtube.com/channel/UCibf_MVPbqh9RzsTytBseqA"
+  },
+  {
+   "name": "久保史緒里",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "くぼしおり",
+   "graduated": true,
+   "url": "https://www.instagram.com/kubo.shiori.official/",
+   "x": "https://x.com/kubo_staff"
+  },
+  {
+   "name": "阪口珠美",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "さかぐちたまみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/tamami__official/",
+   "x": "https://x.com/tamami_s1110"
+  },
+  {
+   "name": "中村麗乃",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "なかむられの",
+   "graduated": true,
+   "url": "https://www.instagram.com/n.reno_official/"
+  },
+  {
+   "name": "山下美月",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "やましたみづき",
+   "graduated": true,
+   "url": "https://www.instagram.com/mizuki.yamashita.official/",
+   "x": "https://x.com/mizuki_staff"
+  },
+  {
+   "name": "吉田綾乃クリスティー",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "よしだあやのくりすてぃー",
+   "graduated": true,
+   "url": "https://www.instagram.com/y.ayanochristie.official/"
+  },
+  {
+   "name": "与田祐希",
+   "group": "乃木坂46",
+   "gen": 3,
+   "reading": "よだゆうき",
+   "graduated": true,
+   "url": "https://www.instagram.com/yodayuuki_oimo/",
+   "x": "https://x.com/yoda_staff"
   },
   {
    "name": "賀喜遥香",
@@ -235,11 +615,35 @@
    "url": "https://www.instagram.com/saya.kanagawa_official/"
   },
   {
+   "name": "北川悠理",
+   "group": "乃木坂46",
+   "gen": 4,
+   "reading": "きたがわゆり",
+   "graduated": true,
+   "url": "https://www.instagram.com/yuri_kitagawa.official/"
+  },
+  {
    "name": "黒見明香",
    "group": "乃木坂46",
    "gen": 4,
    "reading": "くろみはるか",
    "url": "https://www.instagram.com/kuromi_haruka/"
+  },
+  {
+   "name": "佐藤璃果",
+   "group": "乃木坂46",
+   "gen": 4,
+   "reading": "さとうりか",
+   "graduated": true,
+   "url": "https://www.instagram.com/lica_sato_official/"
+  },
+  {
+   "name": "清宮レイ",
+   "group": "乃木坂46",
+   "gen": 4,
+   "reading": "せいみやれい",
+   "graduated": true,
+   "url": "https://www.instagram.com/seimiyarei_official/"
   },
   {
    "name": "田村真佑",
@@ -261,6 +665,15 @@
    "gen": 4,
    "reading": "はやしるな",
    "url": "https://www.instagram.com/hayashi.runa_honmonogram/"
+  },
+  {
+   "name": "矢久保美緒",
+   "group": "乃木坂46",
+   "gen": 4,
+   "reading": "やくぼみお",
+   "graduated": true,
+   "url": "https://www.instagram.com/mio.yakubo_official/",
+   "youtube": "https://www.youtube.com/@mio.yakubo_official"
   },
   {
    "name": "弓木奈於",
@@ -340,6 +753,94 @@
    "url": "https://www.instagram.com/nakanishi_aruno_official/"
   },
   {
+   "name": "松井玲奈",
+   "group": "乃木坂46",
+   "gen": 0,
+   "reading": "まついれな",
+   "graduated": true,
+   "url": "https://www.instagram.com/renamatui27/",
+   "x": "https://x.com/renampme",
+   "youtube": "https://www.youtube.com/channel/UCRQoWfwbu1dDf0XujaNQ-9A"
+  },
+  {
+   "name": "小池美波",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "こいけみなみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/miichan_official/",
+   "x": "https://x.com/mii1114st_off"
+  },
+  {
+   "name": "小林由依",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "こばやしゆい",
+   "graduated": true,
+   "url": "https://www.instagram.com/_yui_kobayashi/",
+   "x": "https://x.com/yui_and_staff"
+  },
+  {
+   "name": "菅井友香",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "すがいゆうか",
+   "graduated": true,
+   "url": "https://www.instagram.com/yuuka_sugai_official/"
+  },
+  {
+   "name": "土生瑞穂",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "はぶみづほ",
+   "graduated": true,
+   "url": "https://www.instagram.com/habuchaan/",
+   "x": "https://x.com/habuagoodtime",
+   "youtube": "https://www.youtube.com/@habumizuho_official"
+  },
+  {
+   "name": "原田葵",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "はらだあおい",
+   "graduated": true,
+   "url": "https://www.instagram.com/harada_aoi_/"
+  },
+  {
+   "name": "守屋茜",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "もりやあかね",
+   "graduated": true,
+   "url": "https://www.instagram.com/akane.moriya_official/",
+   "x": "https://x.com/moriya_staff",
+   "youtube": "https://www.youtube.com/@AkanensStyle"
+  },
+  {
+   "name": "渡辺梨加",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "わたなべりか",
+   "graduated": true,
+   "url": "https://www.instagram.com/watanabe.rika.official/"
+  },
+  {
+   "name": "渡邉理佐",
+   "group": "櫻坂46",
+   "gen": 1,
+   "reading": "わたなべりさ",
+   "graduated": true,
+   "url": "https://www.instagram.com/_risawatanabe_/"
+  },
+  {
+   "name": "井上梨名",
+   "group": "櫻坂46",
+   "gen": 2,
+   "reading": "いのうえりな",
+   "graduated": true,
+   "url": "https://www.instagram.com/rina_ino_/"
+  },
+  {
    "name": "遠藤光莉",
    "group": "櫻坂46",
    "gen": 2,
@@ -361,6 +862,23 @@
    "url": "https://www.instagram.com/akiho_onuma_official/"
   },
   {
+   "name": "関有美子",
+   "group": "櫻坂46",
+   "gen": 2,
+   "reading": "せきゆみこ",
+   "graduated": true,
+   "url": "https://www.instagram.com/seki_yumiko_official/"
+  },
+  {
+   "name": "武元唯衣",
+   "group": "櫻坂46",
+   "gen": 2,
+   "reading": "たけもとゆい",
+   "graduated": true,
+   "url": "https://www.instagram.com/takemotoyui_official/",
+   "x": "https://x.com/_takemoto_yui"
+  },
+  {
    "name": "田村保乃",
    "group": "櫻坂46",
    "gen": 2,
@@ -373,6 +891,14 @@
    "gen": 2,
    "reading": "ふじよしかりん",
    "url": "https://www.instagram.com/fujiyoshi.karin/"
+  },
+  {
+   "name": "松平璃子",
+   "group": "櫻坂46",
+   "gen": 2,
+   "reading": "まつだいらりこ",
+   "graduated": true,
+   "url": "https://www.instagram.com/riko_matsudaira_official/"
   },
   {
    "name": "松田里奈",
@@ -445,11 +971,159 @@
    "url": "https://www.instagram.com/miumurayama_official/"
   },
   {
+   "name": "井口眞緒",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "いぐちまお",
+   "graduated": true,
+   "url": "https://www.instagram.com/iguchi.mao/",
+   "x": "https://x.com/mao_iguchi_",
+   "youtube": "https://www.youtube.com/@iguchimao"
+  },
+  {
+   "name": "潮紗理菜",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "うしおさりな",
+   "graduated": true,
+   "url": "https://www.instagram.com/ushiosarina8_8/"
+  },
+  {
+   "name": "影山優佳",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "かげやまゆうか",
+   "graduated": true,
+   "url": "https://www.instagram.com/kageyamayuka_official/",
+   "x": "https://x.com/KageyamaStaff"
+  },
+  {
+   "name": "加藤史帆",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "かとうしほ",
+   "graduated": true,
+   "url": "https://www.instagram.com/katoshi.official/",
+   "x": "https://x.com/kato_staff"
+  },
+  {
+   "name": "齊藤京子",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "さいとうきょうこ",
+   "graduated": true,
+   "url": "https://www.instagram.com/saitokyoko_official/",
+   "x": "https://x.com/saito_kyoko95"
+  },
+  {
+   "name": "佐々木久美",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "ささきくみ",
+   "graduated": true,
+   "url": "https://www.instagram.com/kumisasaki_/",
+   "x": "https://x.com/kumi_staff"
+  },
+  {
+   "name": "佐々木美玲",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "ささきみれい",
+   "graduated": true,
+   "url": "https://www.instagram.com/mireisasaki_official/",
+   "x": "https://x.com/MireiSasaki_MG",
+   "youtube": "https://www.youtube.com/@みーぱんちゃんねる"
+  },
+  {
+   "name": "高本彩花",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "たかもとあやか",
+   "graduated": true,
+   "url": "https://www.instagram.com/ayacheri._.official/",
+   "x": "https://x.com/ayakatakamoto_"
+  },
+  {
+   "name": "東村芽依",
+   "group": "日向坂46",
+   "gen": 1,
+   "reading": "ひがしむらめい",
+   "graduated": true,
+   "url": "https://www.instagram.com/mei.higashimura/",
+   "x": "https://x.com/higashimura_mg",
+   "youtube": "https://www.youtube.com/@mei.higashimura"
+  },
+  {
    "name": "金村美玖",
    "group": "日向坂46",
    "gen": 2,
    "reading": "かねむらみく",
    "url": "https://www.instagram.com/miku_osushi/"
+  },
+  {
+   "name": "河田陽菜",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "かわたひな",
+   "graduated": true,
+   "url": "https://www.instagram.com/hina17_kawata/",
+   "x": "https://x.com/kawata_staff"
+  },
+  {
+   "name": "富田鈴花",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "とみたすずか",
+   "graduated": true,
+   "url": "https://www.instagram.com/suzy.tomita/",
+   "x": "https://x.com/suzy_staff"
+  },
+  {
+   "name": "丹生明里",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "にぶあかり",
+   "graduated": true,
+   "url": "https://www.instagram.com/nibuchan_akari/",
+   "x": "https://x.com/nibuchan_staff",
+   "youtube": "https://www.youtube.com/@nibuchannel"
+  },
+  {
+   "name": "濱岸ひより",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "はまぎしひより",
+   "graduated": true,
+   "url": "https://www.instagram.com/hiyotan928_official/",
+   "x": "https://x.com/hiyotan_staff"
+  },
+  {
+   "name": "松田好花",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "まつだこのか",
+   "graduated": true,
+   "url": "https://www.instagram.com/matsudakonoka.yahos/",
+   "x": "https://x.com/matsudako_staff"
+  },
+  {
+   "name": "宮田愛萌",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "みやたまなも",
+   "graduated": true,
+   "url": "https://www.instagram.com/manamomiyata_official/",
+   "x": "https://x.com/manamodesuga",
+   "youtube": "https://www.youtube.com/@manamo24"
+  },
+  {
+   "name": "渡邉美穂",
+   "group": "日向坂46",
+   "gen": 2,
+   "reading": "わたなべみほ",
+   "graduated": true,
+   "url": "https://www.instagram.com/mihowatanabe_/",
+   "x": "https://x.com/mihostaff"
   },
   {
    "name": "上村ひなの",
@@ -471,6 +1145,14 @@
    "gen": 3,
    "reading": "もりもとまりぃ",
    "url": "https://www.instagram.com/mariemorimoto_official/"
+  },
+  {
+   "name": "山口陽世",
+   "group": "日向坂46",
+   "gen": 3,
+   "reading": "やまぐちはるよ",
+   "graduated": true,
+   "url": "https://www.instagram.com/haruyoyamaguchi.official/"
   },
   {
    "name": "石塚瑶季",
@@ -541,6 +1223,42 @@
    "gen": 4,
    "reading": "やましたはるか",
    "url": "https://www.instagram.com/haruka.yamashita.official/"
+  },
+  {
+   "name": "今泉佑唯",
+   "group": "欅坂46",
+   "gen": 1,
+   "reading": "いまいずみゆい",
+   "graduated": true,
+   "url": "https://www.instagram.com/yui__imaizumi/",
+   "x": "https://x.com/yuuui_imaizumi"
+  },
+  {
+   "name": "佐藤詩織",
+   "group": "欅坂46",
+   "gen": 1,
+   "reading": "さとうしおり",
+   "graduated": true,
+   "url": "https://www.instagram.com/shiori_sato_artwork/"
+  },
+  {
+   "name": "長濱ねる",
+   "group": "欅坂46",
+   "gen": 1,
+   "reading": "ながはまねる",
+   "graduated": true,
+   "url": "https://www.instagram.com/nerunagahama_/",
+   "x": "https://x.com/nerustaff"
+  },
+  {
+   "name": "平手友梨奈",
+   "group": "欅坂46",
+   "gen": 1,
+   "reading": "ひらてゆりな",
+   "graduated": true,
+   "url": "https://www.instagram.com/im_yurinahirate/",
+   "x": "https://x.com/Im_YurinaHirate",
+   "youtube": "https://www.youtube.com/channel/UCSSTKnBtb17FFScT6q55iOw"
   }
  ],
  "photobooks": [
@@ -777,15 +1495,6 @@
    "reading": "なかだかな",
    "x": "https://x.com/nakadakana_1st",
    "instagram": null
-  },
-  {
-   "member": "与田祐希",
-   "group": "乃木坂46",
-   "title": "無口な時間",
-   "year": 2020,
-   "reading": "よだゆうき",
-   "x": null,
-   "instagram": "https://www.instagram.com/yodayuuki_oimo/"
   },
   {
    "member": "乃木坂46",

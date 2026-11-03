@@ -1,6 +1,7 @@
-// 公式リンク集：data/links.json（グループ公式／メンバーのInstagram／写真集アカウント）を描画する
+// 公式リンク集：data/links.json（グループ公式／メンバーのSNS／写真集アカウント）を描画する
 // 収録基準：各グループの公式サイトや公式の告知で案内されているリンクだけ
-let LK = null, lkGroup = "", lkQ = "";
+// メンバーのSNSは現役がInstagramのみ。卒業生はInstagramに加えてX・YouTubeもあり得る（graduated: true、x / youtube フィールド）
+let LK = null, lkGroup = "", lkQ = "", lkActiveOnly = false;
 const LK_VAR = { "乃木坂46": "var(--n)", "櫻坂46": "var(--s)", "日向坂46": "var(--h)", "欅坂46": "var(--k)", "けやき坂46": "var(--h)" };
 
 function lkHead(text, group) {
@@ -12,16 +13,25 @@ function lkOfficialHtml() {
     <div style="display:flex;flex-wrap:wrap;gap:8px">${b.links.map(l => `<a class="btn sub" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}</div></section>`).join("");
   return blocks ? `<h3 class="home-ghead">グループ公式</h3>${blocks}` : "";
 }
+function lkSnsBtn(label, url) {
+  if (!url) return "";
+  const seg = url.replace(/\/$/, "").split("/").pop();
+  const handle = label === "YouTube" && !url.includes("/@") ? "" : " @" + seg.replace(/^@/, "");
+  return `<a class="btn sub" href="${esc(url)}" target="_blank" rel="noopener">${esc(label + handle)} ↗</a> `;
+}
 function lkIgHtml() {
   const q = kanaNorm(lkQ.trim());
   const rows = (LK.memberInstagram || []).filter(m => (!lkGroup || m.group === lkGroup) &&
-    (!q || kanaNorm(m.name).includes(q) || kanaNorm(m.reading || "").includes(q) || kanaNorm(m.url).includes(q)));
+    (!lkActiveOnly || !m.graduated) &&
+    (!q || kanaNorm(m.name).includes(q) || kanaNorm(m.reading || "").includes(q) ||
+      [m.url, m.x, m.youtube].some(u => u && kanaNorm(u).includes(q))));
   if (!rows.length) return "";
   const byGroup = {};
   rows.forEach(m => { (byGroup[m.group] = byGroup[m.group] || []).push(m); });
   const body = Object.keys(byGroup).map(g => `${lkHead(g, g)}<div class="grid">${byGroup[g].map(m => `
-    <a class="card" href="${esc(m.url)}" target="_blank" rel="noopener">${groupChip(m.group)}<h3>${esc(m.name)}</h3><p>Instagram ${esc("@" + m.url.replace(/\/$/, "").split("/").pop())}</p></a>`).join("")}</div>`).join("");
-  return `<h3 class="home-ghead">メンバーのInstagram（${rows.length}人）</h3>${body}`;
+    <div class="card">${groupChip(m.group)}<h3>${esc(m.name)}${m.graduated ? `<span class="badge">卒業生</span>` : ""}</h3>
+    <p>${lkSnsBtn("Instagram", m.url)}${lkSnsBtn("X", m.x)}${lkSnsBtn("YouTube", m.youtube)}</p></div>`).join("")}</div>`).join("");
+  return `<h3 class="home-ghead">メンバーのSNS（${rows.length}人）</h3>${body}`;
 }
 function lkBooksHtml() {
   const q = kanaNorm(lkQ.trim());
@@ -38,7 +48,7 @@ function render() {
   document.getElementById("lkIg").innerHTML = lkIgHtml();
   document.getElementById("lkBooks").innerHTML = lkBooksHtml();
   const ig = (LK.memberInstagram || []).length, bk = (LK.photobooks || []).length;
-  document.getElementById("lkCount").textContent = `メンバーのInstagram ${ig}人 ・ 写真集アカウント ${bk}件を収録`;
+  document.getElementById("lkCount").textContent = `メンバーのSNS ${ig}人 ・ 写真集アカウント ${bk}件を収録`;
   if (!lkOfficialHtml() && !lkIgHtml() && !lkBooksHtml())
     document.getElementById("lkOfficial").innerHTML = `<div class="empty">条件に合うリンクがありません。</div>`;
 }
@@ -49,9 +59,13 @@ async function init() {
   box.innerHTML = chips.map(([v, t]) => `<button type="button" class="ychip${v === lkGroup ? " on" : ""}" data-g="${esc(v)}">${esc(t)}</button>`).join("");
   box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     lkGroup = b.dataset.g;
-    box.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    box.querySelectorAll("button[data-g]").forEach(x => x.classList.toggle("on", x === b));
     render();
   }));
+  const gt = document.createElement("button");
+  gt.type = "button"; gt.className = "ychip"; gt.id = "lkActiveOnly"; gt.textContent = "現役のみ";
+  gt.addEventListener("click", () => { lkActiveOnly = !lkActiveOnly; gt.classList.toggle("on", lkActiveOnly); render(); });
+  box.appendChild(gt);
   document.getElementById("lkQ").addEventListener("input", e => { lkQ = e.target.value; render(); });
   render();
 }
