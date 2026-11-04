@@ -292,3 +292,18 @@ document.querySelectorAll(".q-chip").forEach(b => b.addEventListener("click", ()
   const f = document.getElementById("searchForm");
   if (f) f.dispatchEvent(new Event("submit", { cancelable: true }));
 }));
+
+// プレビュー8：常設共有ボタン（ヒーロー右上）。共有シートが無い環境ではリンクをコピーして色で知らせる。
+(function(){
+  const sb = document.getElementById("p8Share");
+  if(!sb) return;
+  sb.addEventListener("click", async () => {
+    const payload = { title: document.title, text: withShareTag(""), url: location.href };
+    if (navigator.share) { try { await navigator.share(payload); } catch(e){} return; }
+    try {
+      await navigator.clipboard.writeText(payload.text + " " + payload.url);
+      sb.classList.add("copied");
+      setTimeout(() => sb.classList.remove("copied"), 1800);
+    } catch(e){}
+  });
+})();
