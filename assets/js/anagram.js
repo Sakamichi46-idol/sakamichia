@@ -12,6 +12,40 @@ const AG_MODES = [
 let AG = { members: [], songs: [] };
 let AG_DICT = new Map(); // 読み（カタカナ）-> [{kind, label}]（別解判定用）
 let selMode = "member";
+let gameTotal = AG_TOTAL; // そのゲームの出題数（プールが10件未満なら min(10, プール数)）
+// 絞り込み設定：グループは複数選択（空 = すべて、OR条件）。status はメンバー素材にのみ効く
+// （"all" = 両方 / "active" = 現役のみ / "grad" = 卒業生のみ、既定は "all"）
+const AG_GROUP_ORDER = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
+let AG_GROUPS = []; // プールに実在するグループ（表示順に整列済み）
+let agSettings = { groups: [], status: "all" };
+function agLoadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem("sakamichia-anagram-settings") || "null");
+    if (s) agSettings = {
+      groups: Array.isArray(s.groups) ? s.groups.filter(g => AG_GROUPS.includes(g)) : [],
+      status: s.status === "active" || s.status === "grad" ? s.status : "all",
+    };
+  } catch (e) {}
+}
+function agSaveSettings() { try { localStorage.setItem("sakamichia-anagram-settings", JSON.stringify(agSettings)); } catch (e) {} }
+// 設定で1素材が出題対象になるか（グループは両モード共通、現役・卒業はメンバー素材のみ）
+function agEntryOk(e, kind) {
+  if (agSettings.groups.length && !agSettings.groups.includes(e.group)) return false;
+  if (kind === "member" && agSettings.status !== "all") {
+    if (agSettings.status === "active" && e.graduated) return false;
+    if (agSettings.status === "grad" && !e.graduated) return false;
+  }
+  return true;
+}
+// モード＋現在の設定で出題対象になる素材一覧（{e, kind}）
+function agFilteredSources(mode) {
+  let src = [];
+  if (mode === "member" || mode === "mix") src = src.concat(AG.members.filter(e => agEntryOk(e, "member")).map(e => ({ e, kind: "member" })));
+  if (mode === "song" || mode === "mix") src = src.concat(AG.songs.filter(e => agEntryOk(e, "song")).map(e => ({ e, kind: "song" })));
+  return src;
+}
+// 出題できる数（同じ読みは1問までなので、読みの種類数で数える）
+function agPoolCount(mode) { return new Set(agFilteredSources(mode).map(it => it.e.kata)).size; }
 let questions = [], qIdx = 0, score = 0, results = [];
 let cur = null; // {entry, kind, kata, label, tiles:Map(id->ch), slots:[id|null], pool:[id], locked:Set(slotIdx), hints, judged, built}
 
@@ -44,10 +78,19 @@ function agPools() {
   };
 }
 window.__agPools = agPools;
+// テスト用：絞り込み設定の操作とプール数の確認
+window.__agFilters = {
+  poolCount: agPoolCount,
+  groups: () => [...AG_GROUPS],
+  set(groups, status) { agSettings = { groups: [...(groups || [])], status: status || "all" }; agSaveSettings(); },
+  get() { return { groups: [...agSettings.groups], status: agSettings.status }; },
+};
 
 function __agState() {
   return {
-    mode: selMode, idx: qIdx, score,
+    mode: selMode, total: gameTotal, pool: agPoolCount(selMode),
+    settings: { groups: [...agSettings.groups], status: agSettings.status },
+    idx: qIdx, score,
     questions: questions.map(q => ({ kata: q.kata, kind: q.kind, text: q.text })),
     built: cur ? cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join("") : "",
     judged: !!(cur && cur.judged), hints: cur ? cur.hints : 0,
@@ -57,9 +100,7 @@ function __agState() {
 window.__agState = __agState;
 
 function pickQuestions(mode) {
-  let src = [];
-  if (mode === "member" || mode === "mix") src = src.concat(AG.members.map(e => ({ e, kind: "member" })));
-  if (mode === "song" || mode === "mix") src = src.concat(AG.songs.map(e => ({ e, kind: "song" })));
+  const src = agFilteredSources(mode);
   agShuffle(src);
   const seen = new Set(), out = [];
   for (const it of src) {
@@ -91,7 +132,7 @@ function renderQuestion(msg) {
   const main = document.getElementById("agMain");
   const q = cur.q;
   const full = cur.pool.length === 0;
-  main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${AG_TOTAL}問</span><span>スコア ${score}点</span></div>
+  main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${gameTotal}問</span><span>スコア ${score}点</span></div>
   <p class="ag-clue">${q.kind === "member" ? "メンバー名" : "楽曲タイトル"}（${q.kata.length}文字）・ ${esc(agClue(q.entry, q.kind))}</p>
   <p class="ag-rowlabel">解答欄（タップで戻す）</p>
   <div class="ag-answer" id="agAnswer">${cur.slots.map((id, i) => id == null
@@ -183,7 +224,7 @@ function judge() {
   results.push({ mine: built, label, kata: cur.kata, ok: res.ok, pts, alt: res.alt ? res.alt.label : null });
   renderQuestion("");
   const v = document.getElementById("agVerdict");
-  const last = qIdx >= AG_TOTAL - 1;
+  const last = qIdx >= gameTotal - 1;
   let html;
   if (res.ok) {
     html = `<p class="ok">⭕ 正解！ ${pts}点</p>
@@ -201,21 +242,22 @@ function finish() {
   const isNew = quizBestSave("anagram", total);
   const best = quizBest("anagram");
   const main = document.getElementById("agMain");
-  main.innerHTML = `<div class="card"><h3>結果：${total}点 ／ ${AG_TOTAL * 100}点</h3>
+  main.innerHTML = `<div class="card"><h3>結果：${total}点 ／ ${gameTotal * 100}点</h3>
   ${best ? `<p style="color:var(--muted)">${isNew ? "🎉 自己ベスト更新！" : `自己ベスト：${best}点`}</p>` : ""}
   <div class="ag-lines">${results.map((r, i) => `<p style="margin:4px 0">${i + 1}問目 ${esc(r.mine)}：${r.ok ? r.pts + "点" : `不正解（正解は${esc(r.label)}）`}</p>`).join("")}</div>
   <p><button type="button" class="btn" id="agRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="agSettings">条件を変える</button> <button type="button" class="btn sub" id="agShare">結果を共有する</button></p></div>`;
   document.getElementById("agRetry").addEventListener("click", startGame);
   document.getElementById("agSettings").addEventListener("click", startPanel);
   document.getElementById("agShare").addEventListener("click", e => shareScoreImage({
-    game: "アナグラム", score: `${total}点／${AG_TOTAL * 100}点`,
+    game: "アナグラム", score: `${total}点／${gameTotal * 100}点`,
     lines: results.map((r, i) => `${i + 1}問目 ${r.mine}：${r.ok ? r.pts + "点" : "不正解（正解は" + r.label + "）"}`),
   }, e.target));
 }
 
 function startGame() {
   questions = pickQuestions(selMode);
-  if (questions.length < AG_TOTAL) { document.getElementById("agMain").innerHTML = `<p style="color:var(--muted)">出題データが足りません。</p>`; return; }
+  if (!questions.length) { document.getElementById("agMain").innerHTML = `<p style="color:var(--muted)">選んだ条件では出題できる対象がありません。条件を変えてください。</p>`; return; }
+  gameTotal = questions.length; // min(10, プール数)
   qIdx = 0; score = 0; results = [];
   startQuestion();
 }
@@ -225,18 +267,52 @@ function startPanel() {
   const lite = document.documentElement.dataset.lite === "1";
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   <p style="color:var(--muted)">${lite
-    ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全${AG_TOTAL}問、1問100点。ヒントは1回−${AG_HINT_COST}点です。`
-    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。出てくる並びは、実在する日本語の単語に分けられる並びだけです。全${AG_TOTAL}問・1問100点。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。`}</p>
+    ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全<span id="agHowN">${AG_TOTAL}</span>問、1問100点。ヒントは1回−${AG_HINT_COST}点です。出題するグループや現役・卒業は下で選べます。`
+    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。出てくる並びは、実在する日本語の単語に分けられる並びだけです。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。出題するグループ（複数選択可）と、メンバーの現役・卒業は下で選べます。`}</p>
   <p style="margin:10px 0 6px"><b>出題モード</b></p>
   <div class="ychips" id="agModes">${AG_MODES.map(m => `<button type="button" class="ychip" data-m="${m.id}">${m.label}</button>`).join("")}</div>
+  <p style="margin:10px 0 6px"><b>グループ</b>（複数選択可）</p>
+  <div class="ychips" id="agGroups"><button type="button" class="ychip" data-g="">すべて</button>${AG_GROUPS.map(g => `<button type="button" class="ychip" data-g="${esc(g)}">${esc(g)}</button>`).join("")}</div>
+  <div id="agStatusWrap">
+  <p style="margin:10px 0 6px"><b>現役・卒業</b>（メンバー名のみ）</p>
+  <div class="ychips" id="agStatus"><button type="button" class="ychip" data-s="all">両方</button><button type="button" class="ychip" data-s="active">現役のみ</button><button type="button" class="ychip" data-s="grad">卒業生のみ</button></div>
+  </div>
+  <p style="color:var(--muted);font-size:13px" id="agPoolNote"></p>
   <p style="color:var(--muted)" id="agBestLine"></p>
   <p><button type="button" class="primary" id="agStart">スタート</button></p></div>`;
   const paint = () => {
     document.querySelectorAll("#agModes .ychip").forEach(ch => ch.classList.toggle("on", ch.dataset.m === selMode));
+    document.querySelectorAll("#agGroups .ychip").forEach(ch => {
+      const g = ch.dataset.g;
+      ch.classList.toggle("on", g === "" ? agSettings.groups.length === 0 : agSettings.groups.includes(g));
+    });
+    document.querySelectorAll("#agStatus .ychip").forEach(ch => ch.classList.toggle("on", ch.dataset.s === agSettings.status));
+    // 現役・卒業の選択はメンバー素材にのみ効くので、楽曲モードでは隠す
+    document.getElementById("agStatusWrap").style.display = selMode === "song" ? "none" : "";
+    const pool = agPoolCount(selMode);
+    const n = Math.min(AG_TOTAL, pool);
+    document.getElementById("agHowN").textContent = String(n);
+    document.getElementById("agPoolNote").textContent = pool === 0
+      ? "選んだ条件では出題できる対象が0件です。条件を変えてください。"
+      : `対象は${pool}件です。全${n}問が出題されます。`;
+    document.getElementById("agStart").disabled = pool === 0;
     const b = quizBest("anagram");
     document.getElementById("agBestLine").textContent = b > 0 ? `自己ベスト：${b}点` : "";
   };
   document.querySelectorAll("#agModes .ychip").forEach(ch => ch.addEventListener("click", () => { selMode = ch.dataset.m; paint(); }));
+  document.querySelectorAll("#agGroups .ychip").forEach(ch => ch.addEventListener("click", () => {
+    const g = ch.dataset.g;
+    if (g === "") agSettings.groups = [];
+    else if (agSettings.groups.includes(g)) agSettings.groups = agSettings.groups.filter(x => x !== g);
+    else agSettings.groups = [...agSettings.groups, g];
+    agSaveSettings();
+    paint();
+  }));
+  document.querySelectorAll("#agStatus .ychip").forEach(ch => ch.addEventListener("click", () => {
+    agSettings.status = ch.dataset.s;
+    agSaveSettings();
+    paint();
+  }));
   paint();
   document.getElementById("agStart").addEventListener("click", startGame);
 }
@@ -248,6 +324,13 @@ async function init() {
     return;
   }
   AG = { members: d.members, songs: d.songs };
+  // 卒業生かどうかは members.json（名前は一意で、グループも最終所属で一致）を突き合わせて付ける。
+  // data/anagram.json は再生成せず、検証済みシャッフルには一切触れない
+  const memberMaster = await loadJSON("members.json");
+  const gradByName = new Map((Array.isArray(memberMaster) ? memberMaster : []).map(m => [m.name, !!m.graduated]));
+  AG.members.forEach(e => { e.graduated = gradByName.get(e.name) || false; });
+  AG_GROUPS = AG_GROUP_ORDER.filter(g => AG.members.some(e => e.group === g) || AG.songs.some(e => e.group === g));
+  agLoadSettings();
   AG.members.forEach(e => { if (!AG_DICT.has(e.kata)) AG_DICT.set(e.kata, []); AG_DICT.get(e.kata).push({ kind: "member", label: e.name }); });
   AG.songs.forEach(e => { if (!AG_DICT.has(e.kata)) AG_DICT.set(e.kata, []); AG_DICT.get(e.kata).push({ kind: "song", label: e.title }); });
   startPanel();
