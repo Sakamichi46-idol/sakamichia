@@ -273,3 +273,10 @@ function hideSuggest(){ const box=document.getElementById("suggest"); if(box){ b
 // ブラウザのタブ復元（スナップショット表示）では古い件数が残るため、復元時は最新データで描き直す
 window.addEventListener("pageshow", e=>{ if(e.persisted) init(); });
 init();
+// 例チップ：押すとその語でトップ検索する（プレビュー専用）
+document.querySelectorAll(".q-chip").forEach(b => b.addEventListener("click", () => {
+  const q = document.getElementById("q");
+  if (q) q.value = b.dataset.q;
+  const f = document.getElementById("searchForm");
+  if (f) f.dispatchEvent(new Event("submit", { cancelable: true }));
+}));
