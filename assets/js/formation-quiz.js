@@ -74,7 +74,21 @@ function fqMakeQuestion(e) {
   const cells = [];
   e.rows.forEach((row, ri) => row.forEach((name, ci) => cells.push({ ri, ci, name })));
   const n = Math.min(FQ.diff.blanks, cells.length);
-  const picks = fqShuffle(cells).slice(0, n).sort((a, b) => a.ri - b.ri || a.ci - b.ci);
+  // 同じ曲が再び出題されても、前回と違う位置の組み合わせを訊く（端末に曲ごとに記録）。
+  // 位置の組み合わせが尽きた曲では、従来どおりランダムに出す。
+  const key = e.group + "|" + e.title;
+  let used = {};
+  try { used = JSON.parse(localStorage.getItem("sakamichia-seen-fqpos") || "{}") || {}; } catch (err) { used = {}; }
+  const usedSet = new Set(Array.isArray(used[key]) ? used[key] : []);
+  let picks = null;
+  for (let t = 0; t < 30; t++) {
+    const cand = fqShuffle(cells).slice(0, n).sort((a, b) => a.ri - b.ri || a.ci - b.ci);
+    if (!picks) picks = cand;
+    if (!usedSet.has(cand.map(p => p.ri + "," + p.ci).join(";"))) { picks = cand; break; }
+  }
+  usedSet.add(picks.map(p => p.ri + "," + p.ci).join(";"));
+  used[key] = [...usedSet].slice(-80);
+  try { localStorage.setItem("sakamichia-seen-fqpos", JSON.stringify(used)); } catch (err) {}
   return { ...e, blanks: picks.map(p => ({ ri: p.ri, ci: p.ci, answer: p.name })) };
 }
 // リリース日にそのグループに在籍していたか（在籍期間データ draft-timeline と同じ判定）。
@@ -287,7 +301,7 @@ function fqStartPanel(pool) {
   }));
   document.getElementById("fqStart").addEventListener("click", () => {
     const src = mode === "all" ? all : pool.filter(e => e.lineage === mode);
-    FQ.list = fqShuffle(src).slice(0, FQ_MAX).map(fqMakeQuestion);
+    FQ.list = quizPick("formation", src, FQ_MAX, e => e.group + "|" + e.title).map(fqMakeQuestion);
     FQ.mode = mode; FQ.i = 0; FQ.score = 0; FQ.done = false; FQ.filled = {}; FQ.active = 0;
     FQ.choiceSets = fqSetupChoices(FQ.list[0]);
     fqRender();

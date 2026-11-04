@@ -203,23 +203,25 @@ window.__agState = __agState;
 
 function pickQuestions(mode) {
   if (agSettings.count === 1) {
-    const src = agFilteredSources(mode);
-    agShuffle(src);
-    const seen = new Set(), out = [];
-    for (const it of src) {
-      if (seen.has(it.e.kata)) continue; // 同じ読みは1ゲームに1問まで
-      seen.add(it.e.kata);
+    // 同じ読みは1ゲームに1問まで（素材を読みで一意化してから、出題済みを避けて引く）
+    const byKata = new Map();
+    for (const it of agShuffle(agFilteredSources(mode))) if (!byKata.has(it.e.kata)) byKata.set(it.e.kata, it);
+    const picks = quizPick("anagram", [...byKata.values()], Math.min(AG_TOTAL, byKata.size), it => "1:" + it.e.kata);
+    return picks.map(it => {
       const q = buildAnagramQuestion(it.e);
-      out.push({ items: [agSingleItem(it.e, it.kind)], kind: it.kind, kata: it.e.kata, text: q.text, parts: q.parts });
-      if (out.length >= AG_TOTAL) break;
-    }
-    return out;
+      return { items: [agSingleItem(it.e, it.kind)], kind: it.kind, kata: it.e.kata, text: q.text, parts: q.parts };
+    });
   }
   const count = agSettings.count;
   const combos = agFilteredCombos(mode, count);
-  agShuffle(combos);
+  // 出題済みの組み合わせを避ける：未出題の組み合わせを先に並べ、
+  // 出題済みしか残らない場合は最も昔に出たものから並べる
+  const cKey = c => count + ":" + c.items.map(it => it.kata).sort().join("+");
+  const seenArr = quizSeenGet("anagram"), seenSet = new Set(seenArr);
+  const ordered = [...agShuffle(combos.filter(c => !seenSet.has(cKey(c)))),
+    ...combos.filter(c => seenSet.has(cKey(c))).sort((a, b) => seenArr.indexOf(cKey(a)) - seenArr.indexOf(cKey(b)))];
   const usedKatas = new Set(), picked = [], rest = [];
-  for (const c of combos) {
+  for (const c of ordered) {
     const itemKatas = c.items.map(it => it.kata);
     if (itemKatas.some(k => usedKatas.has(k))) { rest.push(c); continue; }
     itemKatas.forEach(k => usedKatas.add(k));
@@ -231,6 +233,7 @@ function pickQuestions(mode) {
     if (picked.length >= Math.min(AG_TOTAL, combos.length)) break;
     if (!picked.includes(c)) picked.push(c);
   }
+  quizSeenTouch("anagram", picked.map(cKey));
   return picked.map(c => {
     const s = c.shuffles[Math.floor(Math.random() * c.shuffles.length)];
     const items = c.items.map(agComboItem);

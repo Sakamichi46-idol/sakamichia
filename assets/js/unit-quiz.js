@@ -130,7 +130,7 @@ function uqStartPanel(pool) {
   }));
   document.getElementById("uqStart").addEventListener("click", () => {
     const src = mode === "all" ? all : pool.filter(e => e.lineage === mode);
-    UQ.list = uqShuffle(src).slice(0, UQ_MAX).map(uqMakeQuestion);
+    UQ.list = quizPick("unit", src, UQ_MAX, e => e.sig).map(uqMakeQuestion);
     UQ.mode = mode; UQ.i = 0; UQ.score = 0; UQ.done = false; UQ.picked = null;
     UQ.choices = uqChoices(UQ.list[0]);
     uqRender();

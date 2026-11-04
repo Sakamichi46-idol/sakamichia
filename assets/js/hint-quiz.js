@@ -31,7 +31,7 @@ function hintsOf(s) {
 function pickQuestions() {
   const pool = SONGS.filter(s => s.group !== "その他" && participantsOf(s).length >= 3);
   hqPool = pool;
-  const picks = shuffle([...pool]).slice(0, HQ_N);
+  const picks = quizPick("hint", pool, HQ_N, s => s.group + "|" + s.title);
   return picks.map(s => {
     const same = shuffle(pool.filter(x => x.title !== s.title && x.group === s.group)).slice(0, 3);
     return { s, hints: hintsOf(s), choices: shuffle([s.title, ...same.map(x => x.title)]) };

@@ -12,7 +12,7 @@ function galLatestURL(name) {
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function pickQuestions() {
-  const names = shuffle([...POOL]).slice(0, MZ_N);
+  const names = quizPick("mosaic", POOL, MZ_N, n => n);
   return names.map(name => {
     const m = MEMBERS.find(x => x.name === name);
     const fam = FAMILY[m.group] || "";

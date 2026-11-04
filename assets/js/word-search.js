@@ -80,8 +80,9 @@ const WS_DIRS = [
 // 純粋関数：pool から盤面を生成する。2語目以降は、既配置の単語と文字が一致するマスで
 // 交差する配置を優先的に試し、無理なら通常のランダム配置にフォールバックする。
 // 配置できない場合はメンバーを引き直して再挑戦する（上限付き）。count は出題人数（省略時は6人）
+// prefer は優先して出題するメンバー名の集合（出題の重複回避用。省略時は従来どおり全員から引く）
 // 戻り値 {grid: string[10][10], words: [{name, kana, dir, cells:[[r,c],...]}]}、失敗時 null
-function buildPuzzle(pool, rng, count) {
+function buildPuzzle(pool, rng, count, prefer) {
   const rand = rng || Math.random;
   const n = count || WS_DEFAULT_COUNT;
   const alpha = [...new Set(pool.flatMap(p => [...p.kana]))];
@@ -100,7 +101,12 @@ function buildPuzzle(pool, rng, count) {
   };
   for (let attempt = 0; attempt < 100; attempt++) {
     // 引き直すたびにメンバーも選び直す。配置は長い名前から行うと、後半の詰まりが減って安定する
-    const picks = shuffleR([...pool], rand).slice(0, n).sort((a, b) => b.kana.length - a.kana.length);
+    // prefer があれば未出題メンバーから優先的に選び、足りない分だけ出題済みから補う
+    const freshP = prefer ? pool.filter(p => prefer.has(p.name)) : pool;
+    const picks = (freshP.length >= n
+      ? shuffleR([...freshP], rand).slice(0, n)
+      : [...freshP, ...shuffleR(pool.filter(p => !freshP.includes(p)), rand).slice(0, n - freshP.length)]
+    ).sort((a, b) => b.kana.length - a.kana.length);
     const grid = Array.from({ length: WS_SIZE }, () => Array(WS_SIZE).fill(""));
     const placed = [];
     let ok = true;
@@ -276,9 +282,13 @@ function useHint() {
 
 function start() {
   const eff = effectivePool();
-  puzzle = buildPuzzle(eff.pool, undefined, settings.count);
+  // 直近に出題したメンバーは避け、未出題のメンバーを優先する（端末に記録）
+  const seenNames = new Set(quizSeenGet("wordsearch"));
+  const prefer = new Set(eff.pool.filter(p => !seenNames.has(p.name)).map(p => p.name));
+  puzzle = buildPuzzle(eff.pool, undefined, settings.count, prefer);
   const main = document.getElementById("wsMain");
   if (!puzzle) { main.innerHTML = `<p style="color:var(--muted)">盤面を作れませんでした。もう一度お試しください。</p>`; return; }
+  quizSeenTouch("wordsearch", puzzle.words.map(w => w.name));
   foundKana = new Set(); downCell = null; curCell = null; anchorCell = null;
   gameMode = settings.mode;
   gameCount = puzzle.words.length;

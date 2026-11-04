@@ -41,7 +41,7 @@ function tick(){
 function quiz(kind){
   if(Q.timer) clearInterval(Q.timer);
   const pool = kind==="center" ? SONGS.filter(s=>s.center && String(s.center).trim()) : SONGS.filter(s=>s.group!=="その他");
-  Q={kind, i:0, score:0, list:shuffle(pool).slice(0,10), t0:performance.now(), timer:null, history:[]};
+  Q={kind, i:0, score:0, list:quizPick(kind, pool, 10, s=>s.group+"|"+s.title), t0:performance.now(), timer:null, history:[]};
   Q.timer=setInterval(tick, 10);
   showQ();
 }

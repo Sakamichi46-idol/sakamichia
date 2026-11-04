@@ -107,7 +107,7 @@ function kqStartPanel(data, songs) {
   }));
   document.getElementById("kqStart").addEventListener("click", () => {
     const pool = mode === "all" ? data : data.filter(e => e.group === mode);
-    KQ = { list: kqShuffle(pool).slice(0, KQ_MAX), songs, mode,
+    KQ = { list: quizPick("lyrics", pool, KQ_MAX, e => e.group + "|" + e.title), songs, mode,
            i: 0, score: 0, revealed: KQ_FIRST, answering: false, done: false, picked: null, gained: 0, choices: [] };
     KQ.choices = kqChoices(KQ.list[0]);
     kqRender();

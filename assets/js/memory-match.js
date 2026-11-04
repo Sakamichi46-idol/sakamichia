@@ -22,10 +22,14 @@ function galLatestURL(name) { return galURL(name, (GAL[name] || []).length - 1);
 function profileURL(name) { return PHOTOS[name] ? BASE + "assets/member-photos/" + PHOTOS[name] : ""; }
 
 // デッキ生成（テストから検証できるよう公開する）：pairCount 人を抽選し、各2枚ずつをシャッフルして返す
+// prefer は優先して出すメンバー名の集合（出題の重複回避用。省略時は従来どおり全員から引く）
 // 戻り値 [{name, url}, ...]（同じ name がちょうど2枚ずつ、url は最新アー写）
-function buildDeck(pairCount, rng) {
+function buildDeck(pairCount, rng, prefer) {
   const rand = rng || Math.random;
-  const names = shuffleR([...POOL], rand).slice(0, pairCount);
+  const fresh = prefer ? POOL.filter(n => prefer.has(n)) : [...POOL];
+  const names = fresh.length >= pairCount
+    ? shuffleR([...fresh], rand).slice(0, pairCount)
+    : [...fresh, ...shuffleR(POOL.filter(n => !fresh.includes(n)), rand).slice(0, pairCount - fresh.length)];
   const cards = [];
   names.forEach(name => { cards.push({ name, url: galLatestURL(name) }); cards.push({ name, url: galLatestURL(name) }); });
   return shuffleR(cards, rand);
@@ -111,7 +115,11 @@ function onCardClick(i) {
 }
 
 function start() {
-  deck = buildDeck(selPairs).map(c => ({ ...c, state: "down" }));
+  // 直近に出たメンバーは避け、未登場のメンバーを優先する（端末に記録）
+  const seenNames = new Set(quizSeenGet("memory"));
+  const prefer = new Set(POOL.filter(n => !seenNames.has(n)));
+  deck = buildDeck(selPairs, undefined, prefer).map(c => ({ ...c, state: "down" }));
+  quizSeenTouch("memory", [...new Set(deck.map(c => c.name))]);
   openIdx = []; matchedPairs = 0; moves = 0; lock = false;
   imgStage = {};
   deck.forEach(c => { if (imgStage[c.name] === undefined) imgStage[c.name] = (GAL[c.name] || []).length - 1; });

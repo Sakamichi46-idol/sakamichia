@@ -110,6 +110,40 @@ function omikujiSave(res) { try { localStorage.setItem(OMIKUJI_KEY, JSON.stringi
 function quizBest(key) { try { return +localStorage.getItem("sakamichia-best-" + key) || 0; } catch (e) { return 0; } }
 function quizBestSave(key, score) { try { if (score > quizBest(key)) { localStorage.setItem("sakamichia-best-" + key, String(score)); return true; } } catch (e) {} return false; }
 
+// 出題の重複回避（端末ごとの記録）：出題済みのIDを古い順に localStorage へ持ち、
+// 未出題のものを優先して引く。未出題が足りない場合は、最も昔に出たものから補う
+// （直近に出たものは最後まで避ける）。サーバーは使わず端末内だけで完結する。
+function quizSeenGet(key) { try { const v = JSON.parse(localStorage.getItem("sakamichia-seen-" + key) || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function quizSeenSave(key, arr) { try { localStorage.setItem("sakamichia-seen-" + key, JSON.stringify(arr.slice(-3000))); } catch (e) {} }
+function quizSeenTouch(key, ids) {
+  if (!ids || !ids.length) return;
+  const uniq = [...new Set(ids)];
+  quizSeenSave(key, quizSeenGet(key).filter(id => !uniq.includes(id)).concat(uniq));
+}
+// pool から n 件を重複回避つきで引く。idFn(item) が各 item の一意なIDを返す。
+// 戻り値はランダム順で、引いた item は出題済みとして記録される。
+function quizPick(key, pool, n, idFn) {
+  const seen = quizSeenGet(key), seenSet = new Set(seen);
+  const fresh = pool.filter(it => !seenSet.has(idFn(it)));
+  const shuf = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let picks;
+  if (fresh.length >= n) {
+    picks = shuf(fresh).slice(0, n);
+  } else {
+    picks = [...fresh];
+    const byId = new Map(pool.map(it => [idFn(it), it]));
+    for (const id of seen) { // 記録は古い順：最も昔に出たものから補う
+      if (picks.length >= n) break;
+      const it = byId.get(id);
+      if (it && !picks.includes(it)) picks.push(it);
+    }
+    if (picks.length < n) picks = picks.concat(shuf(pool.filter(it => !picks.includes(it))).slice(0, n - picks.length));
+    picks = shuf(picks);
+  }
+  quizSeenTouch(key, picks.map(idFn));
+  return picks;
+}
+
 // ゲーム結果の画像共有（共通）：結果カード画像（1200x630）を作って共有/保存する
 async function shareScoreImage(opts, btn) {
   const cv = document.createElement("canvas"); cv.width = 1200; cv.height = 630;
