@@ -316,6 +316,7 @@ async function buildImage(pids) {
 async function init() {
   SONGS = await loadJSON("songs.json");
   BYID = new Map(SONGS.map(s => [s.id, s]));
+  document.querySelectorAll(".sd-pool-n").forEach(el => el.textContent = SONGS.filter(s => GORDER.includes(s.group)).length);
   $("smCount").addEventListener("input", renderSetup);
   $("smRounds").addEventListener("input", probe);
   $("smStart").addEventListener("click", startGame);

@@ -268,6 +268,7 @@ async function buildImage() {
 async function init() {
   SONGS = await loadJSON("songs.json");
   BYID = new Map(SONGS.map(s => [s.id, s]));
+  document.querySelectorAll(".sd-pool-n").forEach(el => el.textContent = SONGS.filter(s => GORDER.includes(s.group)).length);
   state = load();
   $("ssDataStatus").textContent = `対象 ${SONGS.length}曲`;
   $("ssMode").addEventListener("input", e => { state.settings.mode = e.target.value; save(); renderSettings(); });
