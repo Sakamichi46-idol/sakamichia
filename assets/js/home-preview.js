@@ -91,7 +91,7 @@ function renderToday(meta, photos, otd){
   // ◯年前の今日：サムネ有りを優先し、毎回表示が変わるよう候補からランダムに最大6件
   const pastAll=(otd && otd[md]) || [];
   const shuffled=a=>{ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; };
-  const past=shuffled(pastAll.filter(b=>b.thumb)).concat(shuffled(pastAll.filter(b=>!b.thumb))).slice(0,6);
+  const past=shuffled(pastAll.filter(b=>b.thumb)).concat(shuffled(pastAll.filter(b=>!b.thumb))).slice(0,6).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
   // 今日の1曲：MVリンクのある曲から日替わりで1曲（同じ日は誰の画面でも同じ曲）
   const mvSongs=(DB.songs||[]).filter(s=>s.mv);
   let songCard="";
