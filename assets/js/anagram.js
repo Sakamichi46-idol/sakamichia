@@ -76,7 +76,7 @@ function agPoolCount(mode) {
   return agFilteredCombos(mode, agSettings.count).length;
 }
 let questions = [], qIdx = 0, score = 0, results = [];
-let cur = null; // {q, kata, base, tiles:Map(id->ch), slots:[id|null], pool:[id], locked:Set(slotIdx), hints, judged, built}
+let cur = null; // {q, kata, base, tiles:Map(id->ch), slots:[id|null], pool:[id], initialPool:[id], locked:Set(slotIdx), hints, judged, built}
 
 function agShuffle(a, rng) { const r = rng || Math.random; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function agLabel(e, kind) { return kind === "member" ? e.name : e.title; }
@@ -189,6 +189,7 @@ function __agState() {
       items: q.items.map(it => ({ label: it.label, kata: it.kata, kind: it.kind })),
     })),
     pool: cur ? cur.pool.map(id => cur.tiles.get(id)).join("") : "",
+    initialPool: cur ? cur.initialPool.map(id => cur.tiles.get(id)).join("") : "",
     built: cur ? cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join("") : "",
     judged: !!(cur && cur.judged), hints: cur ? cur.hints : 0,
     maxPts: cur ? agCurMax() : 0,
@@ -243,10 +244,12 @@ function startQuestion() {
   q.text.split("").forEach((ch, i) => { const id = "t" + i; tiles.set(id, ch); pool.push(id); });
   // タイルの初期表示順はランダムにする。検証済み文字列（q.text）は辞書の単語を
   // 連結した並びなので、そのまま並べると単語の塊が読めてしまうため、表示順だけを
-  // 並べ替える（q.text 自体はデータとして保持する）
+  // 並べ替える（q.text 自体はデータとして保持する）。この初期順序は問題ごとに
+  // 保持し、タイルを戻したとき・リセットしたときの復元先になる
   agShuffle(pool);
   cur = {
     q, kata: q.kata, base: 100 * q.items.length, tiles, pool,
+    initialPool: [...pool],
     slots: new Array(q.kata.length).fill(null),
     locked: new Set(), hints: 0, judged: false, built: "",
   };
@@ -318,12 +321,24 @@ function placeTile(id) {
   renderQuestion("");
 }
 
+// タイルをプールに戻す。戻す先は末尾ではなく、出題時の初期順序
+// （cur.initialPool）どおりの位置。プールの並びは常に初期順序を保つ
+function agPoolReturn(id) {
+  const order = cur.initialPool;
+  const pos = order.indexOf(id);
+  let at = cur.pool.length;
+  for (let i = 0; i < cur.pool.length; i++) {
+    if (order.indexOf(cur.pool[i]) > pos) { at = i; break; }
+  }
+  cur.pool.splice(at, 0, id);
+}
+
 function unplaceTile(slot) {
   if (!cur || cur.judged || cur.locked.has(slot)) return;
   const id = cur.slots[slot];
   if (id == null) return;
   cur.slots[slot] = null;
-  cur.pool.push(id);
+  agPoolReturn(id);
   renderQuestion("");
 }
 
@@ -338,10 +353,12 @@ function eraseOne() {
 
 function resetTiles() {
   if (!cur || cur.judged) return;
-  // ヒントで固定された以外のタイルをすべて戻す
-  cur.slots.forEach((id, i) => {
-    if (id != null && !cur.locked.has(i)) { cur.pool.push(id); cur.slots[i] = null; }
-  });
+  // 出題直後の最初の状態に完全に戻す：全タイルを初期順序でプールに戻し、
+  // ヒントで固定されたタイルも含めて解答欄を空にする。ただしヒント使用による
+  // 減点（hints）は戻さない（リセットで上限点が回復してしまわないように）
+  cur.pool = [...cur.initialPool];
+  cur.slots = new Array(cur.kata.length).fill(null);
+  cur.locked.clear();
   renderQuestion("");
 }
 
@@ -356,8 +373,8 @@ function useHint() {
   }
   if (i >= target.length) return; // すでに正しい並び
   const need = target[i];
-  // スロット i にあるタイル（不正解のもの）はプールへ戻す
-  if (cur.slots[i] != null) { cur.pool.push(cur.slots[i]); cur.slots[i] = null; }
+  // スロット i にあるタイル（不正解のもの）はプールへ戻す（初期順序どおりの位置へ）
+  if (cur.slots[i] != null) { agPoolReturn(cur.slots[i]); cur.slots[i] = null; }
   // 必要な文字をプールから探す。無ければ「間違ったスロット」から持ってくる
   let srcId = cur.pool.find(id => cur.tiles.get(id) === need);
   if (srcId == null) {
