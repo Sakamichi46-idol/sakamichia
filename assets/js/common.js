@@ -394,13 +394,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.body.classList.add("has-bnav");
   // トップへ戻るボタン（長くスクロールしたときだけ出す）
   const toTop = document.createElement("button");
-  toTop.type = "button"; toTop.className = "toTop"; toTop.textContent = "↑"; toTop.setAttribute("aria-label", "トップへ戻る");
+  toTop.type = "button"; toTop.className = "toTop"; toTop.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>'; toTop.setAttribute("aria-label", "トップへ戻る");
   toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: document.documentElement.dataset.lite === "1" ? "auto" : "smooth" }));
   document.body.appendChild(toTop);
   let ticking = false;
   window.addEventListener("scroll", () => {
     if (ticking) return; ticking = true;
-    requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 700); ticking = false; });
+    requestAnimationFrame(() => { toTop.classList.toggle("show", window.scrollY > 300); ticking = false; });
   }, { passive: true });
 });
 
@@ -557,9 +557,11 @@ document.addEventListener("DOMContentLoaded",()=>{
       if(fadeTimer){ clearTimeout(fadeTimer); fadeTimer=null; }
       if(enterTimer){ clearTimeout(enterTimer); enterTimer=null; }
       wrap.remove();
+      document.body.classList.remove("has-favfloat");
       try{ sessionStorage.setItem(DISMISS_KEY,"1"); }catch(e){}
     });
     document.body.appendChild(wrap);
+    document.body.classList.add("has-favfloat");
     // 登場アニメーション：約1秒後に表示クラスを付けて下からぴょこっと弾ませる（アニメ自体はCSS側）
     enterTimer=setTimeout(()=>{ if(!closed) wrap.classList.add("favfloat-in"); },1000);
   }).catch(()=>{});
