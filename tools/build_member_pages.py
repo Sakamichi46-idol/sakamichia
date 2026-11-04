@@ -279,7 +279,7 @@ def main():
 </div>
 </div>{gal_html}<div id="favPhotoRow"></div>
 </section></main>
-<footer><div class="wrap">坂道ファンによる非公式サイトです。公式運営とは関係ありません。</div></footer>
+<footer><div class="wrap">サカミチアは個人運営の非公式ファンサイトです。公式運営とは関係ありません。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
 <script type="application/json" id="memberData">{member_json}</script>
 <script src="../../assets/js/common.js"></script><script src="../../assets/js/member-page.js"></script>
 </body></html>
