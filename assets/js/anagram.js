@@ -76,7 +76,7 @@ function agPoolCount(mode) {
   return agFilteredCombos(mode, agSettings.count).length;
 }
 let questions = [], qIdx = 0, score = 0, results = [];
-let cur = null; // {q, kata, base, tiles:Map(id->ch), slots:[id|null], pool:[id], initialPool:[id], locked:Set(slotIdx), hints, judged, built}
+let cur = null; // {q, kata, base, tiles:Map(id->ch), rows:[[id]...](素材ごとの行), pool:[id], initialPool:[id], locked:Set(tileId), hints, judged, built, clueStages, clueUsed, activeRow}
 
 function agShuffle(a, rng) { const r = rng || Math.random; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function agLabel(e, kind) { return kind === "member" ? e.name : e.title; }
@@ -240,10 +240,11 @@ function __agState() {
     })),
     pool: cur ? cur.pool.map(id => cur.tiles.get(id)).join("") : "",
     initialPool: cur ? cur.initialPool.map(id => cur.tiles.get(id)).join("") : "",
-    built: cur ? cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join("") : "",
+    built: cur ? slotStr() : "",
     judged: !!(cur && cur.judged), hints: cur ? cur.hints : 0,
     clueUsed: cur ? cur.clueUsed : 0, clueStages: cur ? [...cur.clueStages] : [],
-    activeRow: cur ? cur.activeRow : 0, rowMode: rowModeActive(),
+    activeRow: cur ? cur.activeRow : 0, rowMode: rowsFixed(),
+    rows: cur ? cur.rows.map(r => r.length) : [],
     maxPts: cur ? agCurMax() : 0,
     results: results.map(r => ({ ...r })),
   };
@@ -305,14 +306,14 @@ function startQuestion() {
   cur = {
     q, kata: q.kata, base: 100 * q.items.length, tiles, pool,
     initialPool: [...pool],
-    slots: new Array(q.kata.length).fill(null),
+    rows: q.items.map(() => []),
     locked: new Set(), hints: 0, judged: false, built: "",
     clueStages: agClueStagesFor(q, agSettings.groups.length === 1), clueUsed: 0, activeRow: 0,
   };
   renderQuestion("");
 }
 
-function slotStr() { return cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join(""); }
+function slotStr() { return cur.rows.flat().map(id => cur.tiles.get(id)).join(""); }
 
 // タイルの一辺（px）：n 個が1行に収まるよう、文字数と画面幅から決める。
 // 最大44px、間隔6px、コンテナ幅は最大430px（画面幅から余白24pxを引いた値）として計算する
@@ -327,38 +328,46 @@ function renderQuestion(msg) {
   const q = cur.q;
   const full = cur.pool.length === 0;
   const show = agClueShow();
-  // 行モード：複数素材の問題で「文字数」の段階まで手がかりを開くと、解答欄が素材ごとの
-  // 行（番号付き）に分かれ、タップで選んだ行へタイルが入る。文字数が分かるまでは従来
-  // どおり全体で1本の列にする（行の長さから文字数が漏れないように）
-  const rowMode = q.items.length > 1 && show.l;
-  const ranges = [];
-  { let off = 0; for (const it of q.items) { ranges.push([off, off + it.kata.length]); off += it.kata.length; } }
+  const multi = q.items.length > 1;
+  // 行のマス数が分かる状態か：単体は最初から（従来どおり全マス表示）、複数個は
+  // 「文字数」の段階を開いてから。それまでは各行に何文字でも入れられ、マス数は不明
+  const fixed = !multi || show.l;
   // 解答欄に動かせるタイル（ヒント固定以外）があるか。「1文字消す」の有効判定に使う。
-  // 行モードでは選択中の行の範囲だけを見る
-  const remRange = rowMode ? ranges[cur.activeRow] : [0, cur.slots.length];
-  const hasRemovable = cur.slots.slice(remRange[0], remRange[1]).some((id, j) => id != null && !cur.locked.has(remRange[0] + j));
+  // 複数個では選択中の行だけを見る
+  const actRow = multi ? cur.activeRow : 0;
+  const hasRemovable = cur.rows[actRow].some(id => !cur.locked.has(id));
   // タイルサイズは合計文字数基準で決める：合計が10文字以下なら1行に収まる大きさ、
   // それより長い場合は1行に10個が収まる大きさにして均等に折り返す。解答欄と
-  // タイル置き場で同じサイズを使う。行モードでは最長の行が1行に収まる大きさにする
-  const tw = rowMode
+  // タイル置き場で同じサイズを使う。マス数が分かった後は最長の行が1行に収まる大きさ
+  const tw = fixed && multi
     ? agTileSize(Math.min(10, Math.max(...q.items.map(it => it.kata.length))), window.innerWidth)
     : agTileSize(Math.min(10, q.kata.length), window.innerWidth);
-  const slotHtml = (id, i) => {
-    if (id == null) return `<span class="ag-tile ag-slot" data-slot="${i}"></span>`;
+  const tileBtn = (id, r, p, flat) => {
     const cls = ["ag-tile", "placed"];
-    if (cur.locked.has(i)) cls.push("locked");
+    if (cur.locked.has(id)) cls.push("locked");
     // ヒントで固定されたタイルは押せない
-    const dis = cur.judged || cur.locked.has(i);
-    return `<button type="button" class="${cls.join(" ")}" data-slot="${i}" ${dis ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`;
+    const dis = cur.judged || cur.locked.has(id);
+    return `<button type="button" class="${cls.join(" ")}" data-row="${r}" data-pos="${p}" data-slot="${flat}" ${dis ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`;
   };
-  const answerHtml = rowMode
-    ? `<div class="ag-rows" id="agAnswer" style="--agtw:${tw}px">${ranges.map(([a, b], r) => `<div class="ag-row${r === cur.activeRow && !cur.judged ? " on" : ""}" data-row="${r}"><span class="ag-rownum">${r + 1}</span>${cur.slots.slice(a, b).map((id, j) => slotHtml(id, a + j)).join("")}</div>`).join("")}</div>`
-    : `<div class="ag-answer" id="agAnswer" style="--agtw:${tw}px">${cur.slots.map((id, i) => slotHtml(id, i)).join("")}</div>`;
+  let answerHtml;
+  if (!multi) {
+    const pad = Array.from({ length: q.kata.length - cur.rows[0].length }, (_, k) => `<span class="ag-tile ag-slot" data-slot="${cur.rows[0].length + k}"></span>`).join("");
+    answerHtml = `<div class="ag-answer" id="agAnswer" style="--agtw:${tw}px">${cur.rows[0].map((id, p) => tileBtn(id, 0, p, p)).join("")}${pad}</div>`;
+  } else {
+    let flatBase = 0;
+    answerHtml = `<div class="ag-rows" id="agAnswer" style="--agtw:${tw}px">${cur.rows.map((rowIds, r) => {
+      let cells = rowIds.map((id, p) => tileBtn(id, r, p, flatBase + p)).join("");
+      flatBase += rowIds.length;
+      if (fixed) { for (let k = rowIds.length; k < q.items[r].kata.length; k++) cells += `<span class="ag-tile ag-slot" data-slot="${flatBase + k - rowIds.length}"></span>`; }
+      else if (!cur.judged && cur.pool.length > 0) cells += `<span class="ag-tile ag-slot"></span>`;
+      return `<div class="ag-row${r === cur.activeRow && !cur.judged ? " on" : ""}" data-row="${r}"><span class="ag-rownum">${r + 1}</span>${cells}</div>`;
+    }).join("")}</div>`;
+  }
   const stageDef = cur.clueUsed < cur.clueStages.length ? AG_CLUE_STAGE_DEFS.find(d => d.key === cur.clueStages[cur.clueUsed]) : null;
   main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${gameTotal}問</span><span>スコア ${score}点</span></div>
   <p class="ag-clue">${esc(agClueText(q, show))}</p>
   ${stageDef && !cur.judged ? `<p style="margin:2px 0 10px"><button type="button" class="btn sub" id="agClueBtn">手がかり${cur.clueUsed + 1}：${stageDef.name}を見る（−${AG_HINT_COST}点）</button></p>` : ""}
-  <p class="ag-rowlabel">${rowMode ? "解答欄（行をタップで選択・タイルは選択中の行へ）" : "解答欄（タップで戻す）"}</p>
+  <p class="ag-rowlabel">${multi ? "解答欄（行をタップで選択・タイルは選択中の行へ）" : "解答欄（タップで戻す）"}</p>
   ${answerHtml}
   <p class="ag-rowlabel">タイル（タップで解答欄へ）</p>
   <div class="ag-pool" id="agPool" style="--agtw:${tw}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
@@ -371,7 +380,7 @@ function renderQuestion(msg) {
   <p class="ag-msg" id="agMsg">${esc(msg || "")}</p>
   <div class="ag-verdict" id="agVerdict"></div>`;
   main.querySelectorAll("#agPool .ag-tile").forEach(el => el.addEventListener("click", () => placeTile(el.dataset.tile)));
-  main.querySelectorAll("#agAnswer .ag-tile.placed").forEach(el => el.addEventListener("click", () => unplaceTile(+el.dataset.slot)));
+  main.querySelectorAll("#agAnswer .ag-tile.placed").forEach(el => el.addEventListener("click", () => unplaceTile(+el.dataset.row, +el.dataset.pos)));
   main.querySelectorAll("#agAnswer .ag-row").forEach(el => el.addEventListener("click", () => selectRow(+el.dataset.row)));
   const clueBtn = document.getElementById("agClueBtn");
   if (clueBtn) clueBtn.addEventListener("click", openClue);
@@ -385,46 +394,35 @@ function renderQuestion(msg) {
   if (checkBtn) checkBtn.addEventListener("click", judge);
 }
 
-// 行モードかどうか（複数素材＋「文字数」の段階を表示済み）
-function rowModeActive() {
-  return !!cur && cur.q.items.length > 1 && agClueShow().l;
-}
-// 素材 r の行が占めるスロット範囲 [開始, 終了)
-function rowRange(r) {
-  let a = 0;
-  for (let k = 0; k < r; k++) a += cur.q.items[k].kata.length;
-  return [a, a + cur.q.items[r].kata.length];
+// 行のマス数が分かる状態か（複数個で「文字数」の段階を表示済み。単体は常時）
+function rowsFixed() {
+  return !!cur && (cur.q.items.length <= 1 || agClueShow().l);
 }
 function selectRow(r) {
   if (!cur || cur.judged) return;
   cur.activeRow = r;
   renderQuestion("");
 }
-// アクティブな行が満杯になったら、空きのある次の行へ自動で移る
+// マス数が分かる状態でアクティブな行が満杯になったら、空きのある次の行へ自動で移る
 function advanceActiveRow() {
-  if (!rowModeActive()) return;
+  if (!cur || cur.q.items.length <= 1 || !rowsFixed()) return;
   const n = cur.q.items.length;
   for (let step = 0; step < n; step++) {
     const r = (cur.activeRow + step) % n;
-    const [a, b] = rowRange(r);
-    if (cur.slots.slice(a, b).includes(null)) { cur.activeRow = r; return; }
+    if (cur.rows[r].length < cur.q.items[r].kata.length) { cur.activeRow = r; return; }
   }
 }
 
 function placeTile(id) {
   if (!cur || cur.judged) return;
-  let i;
-  if (rowModeActive()) {
-    const [a, b] = rowRange(cur.activeRow);
-    i = cur.slots.slice(a, b).indexOf(null);
-    if (i < 0) { renderQuestion(`${cur.activeRow + 1}行目は満杯です。別の行をタップしてください`); return; }
-    i += a;
-  } else {
-    i = cur.slots.indexOf(null);
-    if (i < 0) return;
+  const r = cur.q.items.length > 1 ? cur.activeRow : 0;
+  // マス数が分かる状態では、その行のマス数までしか入れられない
+  if (rowsFixed() && cur.rows[r].length >= cur.q.items[r].kata.length) {
+    renderQuestion(`${r + 1}行目は満杯です。別の行をタップしてください`);
+    return;
   }
   cur.pool = cur.pool.filter(x => x !== id);
-  cur.slots[i] = id;
+  cur.rows[r].push(id);
   advanceActiveRow();
   renderQuestion("");
 }
@@ -441,27 +439,24 @@ function agPoolReturn(id) {
   cur.pool.splice(at, 0, id);
 }
 
-function unplaceTile(slot) {
-  if (!cur || cur.judged || cur.locked.has(slot)) return;
-  const id = cur.slots[slot];
-  if (id == null) return;
-  cur.slots[slot] = null;
+function unplaceTile(r, p) {
+  if (!cur || cur.judged) return;
+  const id = cur.rows[r] && cur.rows[r][p];
+  if (id == null || cur.locked.has(id)) return;
+  cur.rows[r].splice(p, 1);
   agPoolReturn(id);
-  // 行モードでは、戻したタイルの行を選択中にする（その行を直している最中のはずなので）
-  if (rowModeActive()) {
-    for (let r = 0; r < cur.q.items.length; r++) { const [a, b] = rowRange(r); if (slot >= a && slot < b) { cur.activeRow = r; break; } }
-  }
+  // 複数個では、戻したタイルの行を選択中にする（その行を直している最中のはずなので）
+  if (cur.q.items.length > 1) cur.activeRow = r;
   renderQuestion("");
 }
 
 // 1文字消す：末尾側にある動かせるタイルを1つだけプールに戻す。
-// ヒントで固定されたタイルは飛ばす。行モードでは選択中の行の範囲だけが対象
+// ヒントで固定されたタイルは飛ばす。複数個では選択中の行だけが対象
 function eraseOne() {
   if (!cur || cur.judged) return;
-  let from = 0, to = cur.slots.length;
-  if (rowModeActive()) { [from, to] = rowRange(cur.activeRow); }
-  for (let i = to - 1; i >= from; i--) {
-    if (cur.slots[i] != null && !cur.locked.has(i)) { unplaceTile(i); return; }
+  const r = cur.q.items.length > 1 ? cur.activeRow : 0;
+  for (let p = cur.rows[r].length - 1; p >= 0; p--) {
+    if (!cur.locked.has(cur.rows[r][p])) { unplaceTile(r, p); return; }
   }
 }
 
@@ -472,7 +467,7 @@ function resetTiles() {
   // 減点（hints・clueUsed）と開いた手がかりは戻さない（リセットで上限点が
   // 回復したり、手がかりを二重に課金したりしないように）
   cur.pool = [...cur.initialPool];
-  cur.slots = new Array(cur.kata.length).fill(null);
+  cur.rows = cur.q.items.map(() => []);
   cur.locked.clear();
   cur.activeRow = 0;
   renderQuestion("");
@@ -487,31 +482,58 @@ function openClue() {
   renderQuestion(`手がかり（${def.name}）を表示しました（この問題は最大 ${agCurMax()} 点）`);
 }
 
+// 行をまたいだフラット位置（全行を連結したときの位置）⇔ 行・行内位置の変換。
+// 文字を置くヒントは、行の割り当てに関係なく連結全体の位置で考える
+function flatPosToRow(i, insert) {
+  let acc = 0;
+  for (let r = 0; r < cur.rows.length; r++) {
+    const len = cur.rows[r].length;
+    // 挿入は行の境界では手前の行の末尾として扱う（空の行にも先頭へ入れられる）。
+    // 除去は実在するタイルの位置なので、厳密にその行の範囲内で探す
+    if (insert ? i <= acc + len : i < acc + len) return [r, i - acc];
+    acc += len;
+  }
+  return [cur.rows.length - 1, cur.rows[cur.rows.length - 1].length];
+}
+function removeFlat(i) {
+  const [r, p] = flatPosToRow(i, false);
+  const id = cur.rows[r][p];
+  cur.rows[r].splice(p, 1);
+  agPoolReturn(id);
+  return id;
+}
+function insertFlat(i, id) {
+  const [r, p] = flatPosToRow(i, true);
+  cur.rows[r].splice(p, 0, id);
+}
+
 function useHint() {
   if (!cur || cur.judged) return;
   const target = cur.kata;
+  const flat = cur.rows.flat();
   let i = 0;
   while (i < target.length) {
-    const id = cur.slots[i];
+    const id = flat[i];
     if (id != null && cur.tiles.get(id) === target[i]) { i++; continue; }
     break;
   }
   if (i >= target.length) return; // すでに正しい並び
   const need = target[i];
-  // スロット i にあるタイル（不正解のもの）はプールへ戻す（初期順序どおりの位置へ）
-  if (cur.slots[i] != null) { agPoolReturn(cur.slots[i]); cur.slots[i] = null; }
-  // 必要な文字をプールから探す。無ければ「間違ったスロット」から持ってくる
+  // 位置 i にあるタイル（不正解のもの）はプールへ戻す（初期順序どおりの位置へ）
+  if (flat[i] != null) removeFlat(i);
+  // 必要な文字をプールから探す。無ければ「間違った位置」にあるタイルから持ってくる
   let srcId = cur.pool.find(id => cur.tiles.get(id) === need);
   if (srcId == null) {
-    for (let j = 0; j < cur.slots.length; j++) {
-      const id = cur.slots[j];
-      if (id != null && !cur.locked.has(j) && cur.tiles.get(id) === need && cur.tiles.get(id) !== target[j]) { srcId = id; cur.slots[j] = null; break; }
+    const flat2 = cur.rows.flat();
+    for (let j = 0; j < flat2.length; j++) {
+      const id = flat2[j];
+      if (id != null && !cur.locked.has(id) && cur.tiles.get(id) === need && cur.tiles.get(id) !== target[j]) { removeFlat(j); srcId = id; break; }
     }
   }
   if (srcId == null) return; // 理論上は到達しない
   cur.pool = cur.pool.filter(x => x !== srcId);
-  cur.slots[i] = srcId;
-  cur.locked.add(i);
+  insertFlat(i, srcId);
+  cur.locked.add(srcId);
   cur.hints++;
   renderQuestion(`ヒント：${i + 1}文字目を確定しました（この問題は最大 ${agCurMax()} 点）`);
 }
@@ -582,7 +604,7 @@ function startPanel() {
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   <p style="color:var(--muted)">${lite
     ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全<span id="agHowN">${AG_TOTAL}</span>問。ヒントは1回−${AG_HINT_COST}点です。手がかりはボタンで段階表示（1段階−${AG_HINT_COST}点）。出題するグループや現役・卒業、個数は下で選べます。`
-    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。手がかりは最初は種別だけが表示され、ボタンで段階的に開けます（第1段階：グループ、第2段階：文字数、第3段階：楽曲はリリース年。1段階−${AG_HINT_COST}点で、文字を置くヒントとは別の勘定です）。複数個の問題では、文字数を表示すると解答欄が素材ごとの行に分かれ、行をタップして選んで入力できます。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
+    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。手がかりは最初は種別だけが表示され、ボタンで段階的に開けます（第1段階：グループ、第2段階：文字数、第3段階：楽曲はリリース年。1段階−${AG_HINT_COST}点で、文字を置くヒントとは別の勘定です）。複数個の問題では、解答欄が素材ごとの行に分かれていて、行をタップして選んで入力できます（各行は文字数自由で、文字数の手がかりを表示すると各行のマスの数が分かります）。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
   <p style="margin:10px 0 6px"><b>出題モード</b></p>
   <div class="ychips" id="agModes">${AG_MODES.map(m => `<button type="button" class="ychip" data-m="${m.id}">${m.label}</button>`).join("")}</div>
   <p style="margin:10px 0 6px"><b>混ぜる個数</b></p>
