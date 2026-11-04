@@ -1,4 +1,4 @@
-// メンバードラフト会議（2〜4人・同じ端末で交代）：旧『坂道日和』メンバードラフト会議の移植。
+// メンバードラフト会議（2〜50人）：旧『坂道日和』メンバードラフト会議の移植。
 // 競合判定・抽選・配置のルールは draft-engine.js（SakamichiDraftEngine）に委譲し、ここは画面と進行管理。
 const KEY = "sakamichia-draft-meeting-v1";
 const GLABEL = { nogi: "乃木坂46", keyaki: "欅坂46", sakura: "櫻坂46", hiragana: "けやき坂46", hinata: "日向坂46" };
