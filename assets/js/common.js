@@ -590,6 +590,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   contactLink.textContent="データの誤り・ご要望";
   contactLink.style.cssText="display:block;text-align:center;margin:10px 0 2px;font-size:.85em;color:var(--accent,#7e57c2)";
   drawer.appendChild(contactLink);
+  const xLink=document.createElement("a");
+  xLink.className="drawer-x";
+  xLink.href="https://x.com/sakamichia46";
+  xLink.target="_blank";xLink.rel="noopener";
+  xLink.textContent="X（お知らせ）";
+  xLink.style.cssText="display:block;text-align:center;margin:2px 0 2px;font-size:.85em;color:var(--accent,#7e57c2)";
+  drawer.appendChild(xLink);
   const themeBtn=document.createElement("button");
   themeBtn.type="button";themeBtn.className="btn sub drawer-share";
   const syncThemeBtn=()=>{ themeBtn.textContent=document.documentElement.dataset.theme==="dark"?"☀️ ライトモードに切り替え":"🌙 ダークモードに切り替え"; };
