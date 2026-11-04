@@ -561,10 +561,10 @@ function judge() {
   const last = qIdx >= gameTotal - 1;
   let html;
   if (res.ok) {
-    html = `<p class="ok">⭕ 正解！ ${pts}点</p>
+    html = `<p class="ok">正解！ ${pts}点</p>
     <p>${esc(ownLabels)}${res.altLabel ? `<br>※並べた「${esc(built)}」は ${esc(res.altLabel)} の読みとしても成立するので正解です` : ""}</p>`;
   } else {
-    html = `<p class="ng">❌ 不正解</p><p>正解は ${esc(ownLabels)} でした</p>`;
+    html = `<p class="ng">不正解</p><p>正解は ${esc(ownLabels)} でした</p>`;
   }
   html += `<p><button type="button" class="primary" id="agNext">${last ? "結果を見る" : "次の問題へ"}</button></p>`;
   v.innerHTML = html;
@@ -579,7 +579,7 @@ function finish() {
   const best = quizBest(agBestKey());
   const main = document.getElementById("agMain");
   main.innerHTML = `<div class="card"><h3>結果：${total}点 ／ ${maxTotal}点</h3>
-  ${best ? `<p style="color:var(--muted)">${isNew ? "🎉 自己ベスト更新！" : `自己ベスト：${best}点`}</p>` : ""}
+  ${best ? `<p style="color:var(--muted)">${isNew ? "自己ベスト更新！" : `自己ベスト：${best}点`}</p>` : ""}
   <div class="ag-lines">${results.map((r, i) => `<p style="margin:4px 0">${i + 1}問目 ${esc(r.mine)}：${r.ok ? r.pts + "点" : `不正解（正解は${esc(r.label)}）`}</p>`).join("")}</div>
   <p><button type="button" class="btn" id="agRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="agSettings">条件を変える</button> <button type="button" class="btn sub" id="agShare">結果を共有する</button></p></div>`;
   document.getElementById("agRetry").addEventListener("click", startGame);

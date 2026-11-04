@@ -34,7 +34,7 @@ async function draw() {
       cap.innerHTML = `${groupChip(b.group)} <b>${esc(b.member || "")}</b> ・ ${esc(b.date || "")}<br>${esc(b.title || "")}`;
       open.href = BASE + "blog/?open=" + encodeURIComponent(id);
       open.hidden = false;
-      btn.textContent = "🎲 もう1枚引く";
+      btn.textContent = "もう1枚引く";
       return;
     }
     msg.textContent = "うまく引けませんでした。もう一度お試しください。"; btn.disabled = false;

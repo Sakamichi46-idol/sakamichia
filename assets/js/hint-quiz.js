@@ -44,7 +44,7 @@ function render() {
     const bestIsNew = quizBestSave("hint", score);
     const bestNow = quizBest("hint");
     main.innerHTML = `<div class="mz-result"><h3>結果：${score}点 ／ ${max}点</h3>
-      ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
+      ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
       <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.mine)} ― ${r.ok ? `<b>${r.pts}点</b>（ヒント${r.stage + 1}段階目）` : `不正解（正解は${esc(r.title)}）`}</p>`).join("")}</div>
       <div class="gacha-btns"><button type="button" class="btn" id="hqRetry">もう一度遊ぶ</button><button type="button" class="btn sub" id="hqShare">結果を共有する</button></div></div>`;
     document.getElementById("hqRetry").addEventListener("click", start);

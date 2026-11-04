@@ -633,13 +633,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   drawer.appendChild(xLink);
   const themeBtn=document.createElement("button");
   themeBtn.type="button";themeBtn.className="btn sub drawer-share";
-  const syncThemeBtn=()=>{ themeBtn.textContent=document.documentElement.dataset.theme==="dark"?"☀️ ライトモードに切り替え":"🌙 ダークモードに切り替え"; };
+  const syncThemeBtn=()=>{ themeBtn.textContent=document.documentElement.dataset.theme==="dark"?"ライトモードに切り替え":"ダークモードに切り替え"; };
   themeBtn.addEventListener("click",()=>{ applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"); syncThemeBtn(); });
   syncThemeBtn();
   drawer.appendChild(themeBtn);
   const liteBtn=document.createElement("button");
   liteBtn.type="button";liteBtn.className="btn sub drawer-share";
-  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"🪶 簡易版（スタイリッシュ）：ON（タップで通常版）":"🪶 簡易版（スタイリッシュ）：OFF（タップでON）"; };
+  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"簡易版（スタイリッシュ）：ON（タップで通常版）":"簡易版（スタイリッシュ）：OFF（タップでON）"; };
   liteBtn.addEventListener("click",()=>{ applyLite(document.documentElement.dataset.lite!=="1"); location.reload(); });
   syncLiteBtn();
   drawer.appendChild(liteBtn);

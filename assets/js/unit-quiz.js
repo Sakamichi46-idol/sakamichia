@@ -98,7 +98,7 @@ function uqResult() {
   const bestNow = quizBest("unit");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${UQ.score} / ${max} 点</p>
-  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
+  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
   <h4 style="margin:18px 0 6px">出題されたユニット曲</h4>
   ${list}
   <p>${UQ.score >= max * 0.8 ? "すごい！ユニットの組み合わせまで完璧ですね。" : UQ.score >= max * 0.5 ? "なかなかのユニット通です。" : UQ.score >= max * 0.3 ? "定番ユニットは押さえていても、意外な組み合わせもありますよね。" : "ユニット曲は隠れた名曲の宝庫です。楽曲図鑑で探してみてください。"}</p>

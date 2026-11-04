@@ -321,10 +321,10 @@ function finish() {
   const isNew = wsBestSave(gameMode, gameCount, sec);
   const best = wsBest(gameMode, gameCount);
   const main = document.getElementById("wsMain");
-  main.innerHTML = `<div class="card"><h3>🎉 クリア！</h3>
+  main.innerHTML = `<div class="card"><h3>クリア！</h3>
     <p>タイム：<b>${fmtTime(sec)}</b></p>
     ${gameMode === "challenge" ? `<p>ヒント使用：${hintCount}回</p>` : ""}
-    ${best > 0 ? `<p style="color:var(--muted)">${isNew ? "🎉 ベストタイム更新！" : `ベストタイム：${fmtTime(best)}`}</p>` : ""}
+    ${best > 0 ? `<p style="color:var(--muted)">${isNew ? "ベストタイム更新！" : `ベストタイム：${fmtTime(best)}`}</p>` : ""}
     <p style="color:var(--muted)">${puzzle.words.map(w => esc(w.name)).join("・")}</p>
     <p><button type="button" class="btn" id="wsRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="wsSettings">条件を変える</button></p></div>`;
   document.getElementById("wsRetry").addEventListener("click", start);

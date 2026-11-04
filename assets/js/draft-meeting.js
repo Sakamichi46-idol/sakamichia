@@ -605,7 +605,7 @@ function netRenderLobby() {
   $("dmLobbyPhase").textContent = `${st.players.length} / ${st.config.maxPlayers} 人`;
   $("dmLobbyInfo").textContent = st.config.label || "";
   $("dmLobbyPlayers").innerHTML = st.players.map(p =>
-    `<p class="df-hist">${p.id === NET.you ? "👉 " : ""}<b>${esc(p.name)}</b>${p.host ? "（主催者）" : ""} ・ ${p.connected ? "接続中" : "切断（再接続待ち）"}</p>`).join("");
+    `<p class="df-hist"><b>${esc(p.name)}</b>${p.id === NET.you ? "（あなた）" : ""}${p.host ? "（主催者）" : ""} ・ ${p.connected ? "接続中" : "切断（再接続待ち）"}</p>`).join("");
   const start = $("dmNetStart");
   start.disabled = !(netIsHost() && st.players.length >= 2);
   start.textContent = netIsHost()

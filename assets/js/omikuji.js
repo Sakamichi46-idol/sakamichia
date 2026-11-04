@@ -22,7 +22,7 @@ async function init() {
   const saved = omikujiLoad();
   if (saved) { render(saved, true); return; }
   const main = document.getElementById("omMain");
-  main.innerHTML = `<div class="om-card"><p style="font-size:44px;margin:6px 0">🎴</p><p>今日の運勢を引いてみましょう。</p><p><button type="button" class="btn" id="omDraw">おみくじを引く</button></p></div>`;
+  main.innerHTML = `<div class="om-card"><p>今日の運勢を引いてみましょう。</p><p><button type="button" class="btn" id="omDraw">おみくじを引く</button></p></div>`;
   document.getElementById("omDraw").addEventListener("click", () => {
     const res = omikujiDraw(MEMBERS);
     if (!res) return;

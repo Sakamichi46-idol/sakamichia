@@ -80,7 +80,7 @@ function kqResult() {
   const bestNow = quizBest("lyrics");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${KQ.score} / ${max} 点</p>
-  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
+  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
   <h4 style="margin:18px 0 6px">出題された曲の歌詞を確認する（歌ネット）</h4>
   ${songList}
   <p>${KQ.score >= max * 0.8 ? "すごい！かなりの早さで分かりましたね。" : KQ.score >= max * 0.5 ? "なかなかの勘の良さです。" : KQ.score >= max * 0.3 ? "もう少し早く当てられるようになると、さらに楽しいですよ。" : "漢字の並びから曲を当てるのは意外と難しいですよね。"}</p>

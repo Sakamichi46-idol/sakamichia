@@ -70,13 +70,13 @@ function renderToday(meta, photos, otd){
     const seed=`${now.getFullYear()}-${md}`;
     let h=0; for(const c of seed) h=(h*31 + c.charCodeAt(0))>>>0;
     const s=mvSongs[h % mvSongs.length];
-    songCard=`<h3 class="home-ghead">🎵 今日の1曲</h3><div class="grid"><a class="card" href="songs/?q=${encodeURIComponent(s.title)}">${groupChip(s.group)}<h3>${esc(s.title)}</h3><p>${s.year}年 ・ ${esc(s.type||"")}${s.center?` ・ センター：${esc(s.center)}`:""}</p></a>`
+    songCard=`<h3 class="home-ghead">今日の1曲</h3><div class="grid"><a class="card" href="songs/?q=${encodeURIComponent(s.title)}">${groupChip(s.group)}<h3>${esc(s.title)}</h3><p>${s.year}年 ・ ${esc(s.type||"")}${s.center?` ・ センター：${esc(s.center)}`:""}</p></a>`
       +`<a class="card" href="${esc(s.mv)}" target="_blank" rel="noopener"><h3>▶ 公式MVを見る</h3><p>YouTube（公式チャンネル）で『${esc(s.title)}』${s.mvKind==="short"?"（Short Ver.）":""}を再生します。</p></a></div>`;
   }
   if(!bdays.length && !past.length && !songCard){ box.innerHTML=""; return; }
   let html=`<h2 class="title" style="margin-top:26px">今日の坂道</h2>`;
   if(bdays.length){
-    html+=`<h3 class="home-ghead">🎂 今日が誕生日のメンバー</h3><div class="bday-row">`+bdays.map(m=>{
+    html+=`<h3 class="home-ghead">今日が誕生日のメンバー</h3><div class="bday-row">`+bdays.map(m=>{
       const f=photos && photos[m.name];
       return `<a class="bday-chip" href="members/?member=${encodeURIComponent(m.name)}" style="border-left-color:${GCOL[m.group]||"#2b2430"}">`
         +(f?`<img src="${BASE}assets/member-photos/${esc(f)}" alt="" loading="lazy">`:"")
@@ -140,7 +140,7 @@ function renderFavs(mLatest, meta){
       const days = Math.round((t - today0) / 86400000);
       if (!best || days < best.days) best = { name, days, mo: b[1], da: b[2] };
     });
-    if (best) bdayLine = `<p style="margin:2px 0 10px">🎂 推しの次の誕生日：<a href="members/?member=${encodeURIComponent(best.name)}"><b>${esc(best.name)}</b></a>（${best.mo}月${best.da}日）まで${best.days === 0 ? "<b>今日です！</b>" : `あと<b>${best.days}日</b>`}</p>`;
+    if (best) bdayLine = `<p style="margin:2px 0 10px">推しの次の誕生日：<a href="members/?member=${encodeURIComponent(best.name)}"><b>${esc(best.name)}</b></a>（${best.mo}月${best.da}日）まで${best.days === 0 ? "<b>今日です！</b>" : `あと<b>${best.days}日</b>`}</p>`;
   }
   box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2>` + bdayLine + `<div class="grid">` + rows.map(r => {
     const b = r.latest;
@@ -173,8 +173,7 @@ function renderOmikuji(photos){
     return;
   }
   box.innerHTML = `<h2 class="title" style="margin-top:10px">今日の推し運おみくじ</h2>${omNote}
-  <div class="om-home"><span style="font-size:34px">🎴</span>
-    <div class="om-home-main"><p style="margin:0">今日の運勢を引いてみましょう（1日1回）。</p></div>
+  <div class="om-home"><div class="om-home-main"><p style="margin:0">今日の運勢を引いてみましょう（1日1回）。</p></div>
     <button type="button" class="btn" id="homeOmikujiBtn">おみくじを引く</button></div>`;
   document.getElementById("homeOmikujiBtn").addEventListener("click", () => {
     const res = omikujiDraw(DB.members || []);

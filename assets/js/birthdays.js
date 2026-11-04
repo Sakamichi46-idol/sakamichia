@@ -27,7 +27,7 @@ function render() {
   const today = upcoming.filter(x => x.days === 0);
   const nextOnes = upcoming.filter(x => x.days > 0).slice(0, 5);
   document.getElementById("bdToday").innerHTML =
-    (today.length ? `<h3 class="home-ghead">🎂 今日が誕生日のメンバー</h3><div class="bd-list">${today.map(x => bdRow(x.m)).join("")}</div>` : "")
+    (today.length ? `<h3 class="home-ghead">今日が誕生日のメンバー</h3><div class="bd-list">${today.map(x => bdRow(x.m)).join("")}</div>` : "")
     + (nextOnes.length ? `<h3 class="home-ghead">もうすぐ誕生日</h3><div class="bd-list">${nextOnes.map(x => bdRow(x.m).replace("</a>", `<span class="bd-days">あと${x.days}日</span></a>`)).join("")}</div>` : "");
   let html = "";
   for (let mo = 1; mo <= 12; mo++) {

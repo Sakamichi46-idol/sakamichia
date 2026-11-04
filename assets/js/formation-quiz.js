@@ -249,7 +249,7 @@ function fqResult() {
   const bestNow = quizBest("formation");
   area.innerHTML = `<div class="card" style="margin-bottom:40px"><h3>結果</h3>
   <p class="score">${FQ.score} / ${max} 点</p>
-  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "🎉 自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
+  ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
   <h4 style="margin:18px 0 6px">出題されたフォーメーション</h4>
   ${list}
   <p>${FQ.score >= max * 0.8 ? "すごい！配置まで完璧に覚えていますね。" : FQ.score >= max * 0.5 ? "なかなかのフォーメーション通です。" : FQ.score >= max * 0.3 ? "前列は覚えていても、後列は意外と難しいですよね。" : "配置を当てるのは至難の業です。楽曲図鑑で眺めるのも楽しいですよ。"}</p>

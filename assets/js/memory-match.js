@@ -147,9 +147,9 @@ function finish() {
   const isNew = mmBestSave(pairs, moves, sec);
   const best = mmBest(pairs);
   const main = document.getElementById("mmMain");
-  main.innerHTML = `<div class="card"><h3>🎉 コンプリート！</h3>
+  main.innerHTML = `<div class="card"><h3>コンプリート！</h3>
     <p>タイム：<b>${fmtTime(sec)}</b> ／ 手数：<b>${moves}手</b>（${pairs}ペア）</p>
-    ${best ? `<p style="color:var(--muted)">${isNew ? "🎉 ベスト記録更新！" : `ベスト（${pairs}ペア）：${best.moves}手・${fmtTime(best.sec)}`}</p>` : ""}
+    ${best ? `<p style="color:var(--muted)">${isNew ? "ベスト記録更新！" : `ベスト（${pairs}ペア）：${best.moves}手・${fmtTime(best.sec)}`}</p>` : ""}
     <p><button type="button" class="btn" id="mmRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="mmSettings">条件を変える</button></p></div>`;
   document.getElementById("mmRetry").addEventListener("click", start);
   document.getElementById("mmSettings").addEventListener("click", startPanel);
