@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """「◯年前の今日のブログ」用データを事前生成する。
 
-data/blogs/y*.json を読み、月日（MM-DD）ごとに過去の同月日の記事を
-最大 MAX_PER_DAY 件まで選んで data/on-this-day.json に出力する。
-トップページ（assets/js/home.js）が今日の月日のエントリを引いて表示する。
+data/blogs/y*.json を読み、月日（MM-DD）ごとに過去の同月日の記事から
+候補プールを最大 POOL_PER_DAY 件まで選んで data/on-this-day.json に出力する。
+トップページ（assets/js/home.js）が今日の月日の候補を引き、サムネイル有りを
+優先しながら毎回ランダムに MAX_PER_DAY 件を表示する。
 
 選定ルール（決定的）:
 - 生成した年の記事は除外する（「◯年前」にならないため）
-- 新しい年から優先しつつ、年がバラけるように年ごとに1件ずつ round-robin で拾う
-- 同一年の中では、サムネイル有りを優先し、次に投稿時刻の遅いもの、同点なら id 順
+- 年ごとに候補を「サムネイル有り → 投稿時刻の遅い順 → id 順」で並べ、
+  新しい年から round-robin で拾う（年がバラけつつ、サムネ有りが先に集まる）
 """
 import glob
 import json
@@ -16,7 +17,8 @@ import os
 from datetime import date
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-MAX_PER_DAY = 6
+MAX_PER_DAY = 6   # 表示側（home.js）が1回に出す件数
+POOL_PER_DAY = 12  # データに持たせる候補数（表示側が毎回ランダムに選ぶ）
 
 
 def pick_key(a):
@@ -54,22 +56,29 @@ def main():
     out = {}
     for md, by_year in by_md.items():
         years = sorted(by_year, reverse=True)
-        best = {}
         for y in years:
-            best[y] = min(by_year[y], key=pick_key)
+            by_year[y].sort(key=pick_key)
         picked = []
-        for y in years:  # 新しい年から1件ずつ（=年がバラける）
-            if len(picked) >= MAX_PER_DAY:
+        depth = 0
+        while len(picked) < POOL_PER_DAY:
+            progressed = False
+            for y in years:  # 新しい年から round-robin（年がバラける）
+                if depth < len(by_year[y]):
+                    a = by_year[y][depth]
+                    picked.append({
+                        "id": a["id"],
+                        "date": a["date"],
+                        "member": a.get("member") or "",
+                        "group": a.get("group") or "",
+                        "title": a.get("title") or "",
+                        "thumb": a.get("thumb") or "",
+                    })
+                    progressed = True
+                    if len(picked) >= POOL_PER_DAY:
+                        break
+            if not progressed:
                 break
-            a = best[y]
-            picked.append({
-                "id": a["id"],
-                "date": a["date"],
-                "member": a.get("member") or "",
-                "group": a.get("group") or "",
-                "title": a.get("title") or "",
-                "thumb": a.get("thumb") or "",
-            })
+            depth += 1
         if picked:
             out[md] = picked
 
