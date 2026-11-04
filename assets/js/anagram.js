@@ -128,6 +128,14 @@ function startQuestion() {
 
 function slotStr() { return cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join(""); }
 
+// タイルの一辺（px）：解答欄・タイル置き場とも常時1行に収まるよう、文字数と画面幅から決める。
+// 最大44px、間隔6px、コンテナ幅は最大430px（画面幅から余白24pxを引いた値）として計算する
+function agTileSize(n, vw) {
+  const avail = Math.min(430, (vw || 430) - 24);
+  return Math.max(24, Math.min(44, Math.floor((avail - 6 * (n - 1)) / n)));
+}
+window.agTileSize = agTileSize;
+
 function renderQuestion(msg) {
   const main = document.getElementById("agMain");
   const q = cur.q;
@@ -135,11 +143,11 @@ function renderQuestion(msg) {
   main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${gameTotal}問</span><span>スコア ${score}点</span></div>
   <p class="ag-clue">${q.kind === "member" ? "メンバー名" : "楽曲タイトル"}（${q.kata.length}文字）・ ${esc(agClue(q.entry, q.kind))}</p>
   <p class="ag-rowlabel">解答欄（タップで戻す）</p>
-  <div class="ag-answer" id="agAnswer">${cur.slots.map((id, i) => id == null
+  <div class="ag-answer" id="agAnswer" style="--agtw:${agTileSize(q.kata.length, window.innerWidth)}px">${cur.slots.map((id, i) => id == null
     ? `<span class="ag-tile ag-slot" data-slot="${i}"></span>`
     : `<button type="button" class="ag-tile placed${cur.locked.has(i) ? " locked" : ""}" data-slot="${i}" ${cur.locked.has(i) || cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
   <p class="ag-rowlabel">タイル（タップで解答欄へ）</p>
-  <div class="ag-pool" id="agPool">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
+  <div class="ag-pool" id="agPool" style="--agtw:${agTileSize(q.kata.length, window.innerWidth)}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
   <div class="ag-btns">
     <button type="button" class="btn sub" id="agHint" ${cur.judged ? "disabled" : ""}>ヒント（−${AG_HINT_COST}点）</button>
     <button type="button" class="btn sub" id="agReset" ${cur.judged ? "disabled" : ""}>リセット</button>
