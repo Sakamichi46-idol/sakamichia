@@ -7,6 +7,7 @@
 // 同じ個数の別の素材の組み合わせに分割できる並びを正解とする。
 const AG_TOTAL = 10;
 const AG_HINT_COST = 20;
+const AG_PROV_COST = 10;
 const AG_MODES = [
   { id: "member", label: "メンバー名" },
   { id: "song", label: "楽曲タイトル" },
@@ -76,7 +77,7 @@ function agPoolCount(mode) {
   return agFilteredCombos(mode, agSettings.count).length;
 }
 let questions = [], qIdx = 0, score = 0, results = [];
-let cur = null; // {q, kata, base, tiles:Map(id->ch), slots:[id|null], pool:[id], locked:Set(slotIdx), hints, judged, built}
+let cur = null; // {q, kata, base, tiles:Map(id->ch), slots:[id|null], pool:[id], locked:Set(slotIdx), hints, judged, built, provMode, provSel, prov:[], provLocked:Set, provFails}
 
 function agShuffle(a, rng) { const r = rng || Math.random; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function agLabel(e, kind) { return kind === "member" ? e.name : e.title; }
@@ -152,6 +153,76 @@ function anagramJudgeCombo(built, count, ownKatas) {
 }
 window.anagramJudgeCombo = anagramJudgeCombo;
 
+// 文字列のマルチセット（文字 -> 個数）
+function agCountsOf(str) {
+  const m = new Map();
+  for (const ch of str) m.set(ch, (m.get(ch) || 0) + 1);
+  return m;
+}
+let AG_KATA_COUNTS = null;
+function agKataCounts() {
+  if (!AG_KATA_COUNTS) AG_KATA_COUNTS = AG_KATAS.map(k => agCountsOf(k));
+  return AG_KATA_COUNTS;
+}
+// 残りの文字（マルチセット）が count 個の素材の読みに分割できるか。
+// タイルは自由に動かせるので、文字列としての並びではなくマルチセットで判定する
+function agSegmentableCounts(counts, count) {
+  let total = 0;
+  for (const n of counts.values()) total += n;
+  if (count === 0) return total === 0;
+  if (total === 0) return false;
+  const kcs = agKataCounts();
+  for (let idx = 0; idx < AG_KATAS.length; idx++) {
+    const kc = kcs[idx];
+    let ok = true;
+    for (const [ch, n] of kc) { if ((counts.get(ch) || 0) < n) { ok = false; break; } }
+    if (!ok) continue;
+    const next = new Map(counts);
+    for (const [ch, n] of kc) { const v = next.get(ch) - n; if (v > 0) next.set(ch, v); else next.delete(ch); }
+    if (agSegmentableCounts(next, count - 1)) return true;
+  }
+  return false;
+}
+window.agSegmentableCounts = agSegmentableCounts;
+
+// 仮確定の判定：rangeStr が「あと1素材分」として確定できるか。
+// ownKatas = その問題の全構成素材の読み、confirmedKatas = 仮確定済みの読みの一覧。
+// 成立条件は (1) 未確定の構成素材そのもの、または (2) 実在する素材の読みで、
+// 残りの文字が残りの個数の素材に分割できること（別解）
+function agProvCheck(ownKatas, confirmedKatas, rangeStr) {
+  const rest = [...ownKatas];
+  for (const k of confirmedKatas) {
+    const i = rest.indexOf(k);
+    if (i >= 0) rest.splice(i, 1);
+  }
+  if (rest.includes(rangeStr)) return { ok: true, own: true };
+  if (!AG_DICT.has(rangeStr)) return { ok: false, own: false };
+  const counts = agCountsOf(ownKatas.join(""));
+  for (const k of confirmedKatas) for (const ch of k) counts.set(ch, counts.get(ch) - 1);
+  for (const ch of rangeStr) counts.set(ch, counts.get(ch) - 1);
+  for (const [ch, n] of counts) if (n <= 0) counts.delete(ch);
+  // 残りの個数は、別解で確定した分も含めて「全体 − 確定済み − 今回」で数える
+  return agSegmentableCounts(counts, ownKatas.length - confirmedKatas.length - 1) ? { ok: true, own: false } : { ok: false, own: false };
+}
+window.agProvCheck = agProvCheck;
+
+// 現在の問題に対する仮確定判定（構成素材のインデックスも返す）
+function agProvJudgeCurrent(rangeStr) {
+  const q = cur.q;
+  const confirmedKatas = cur.prov.map(p => p.kata);
+  const r = agProvCheck(q.items.map(it => it.kata), confirmedKatas, rangeStr);
+  if (!r.ok) return { ok: false, itemIdx: -1, own: false };
+  if (!r.own) return { ok: true, itemIdx: -1, own: false };
+  const usedIdx = new Set(cur.prov.map(p => p.itemIdx).filter(i => i >= 0));
+  const itemIdx = q.items.findIndex((it, i) => !usedIdx.has(i) && it.kata === rangeStr);
+  return { ok: true, itemIdx, own: true };
+}
+
+// この問題の現時点での最高点（ヒントと仮確定の失敗を差し引く）
+function agCurMax() {
+  return Math.max(10, cur.base - AG_HINT_COST * cur.hints - AG_PROV_COST * cur.provFails);
+}
+
 function agPools() {
   return {
     member: AG.members.length, song: AG.songs.length,
@@ -186,6 +257,11 @@ function __agState() {
     pool: cur ? cur.pool.map(id => cur.tiles.get(id)).join("") : "",
     built: cur ? cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join("") : "",
     judged: !!(cur && cur.judged), hints: cur ? cur.hints : 0,
+    provMode: !!(cur && cur.provMode),
+    provSel: cur && cur.provSel ? [cur.provSel.start, cur.provSel.end] : null,
+    provFixed: cur ? cur.prov.map(p => ({ start: p.start, end: p.end, kata: p.kata, itemIdx: p.itemIdx })) : [],
+    provFails: cur ? cur.provFails : 0,
+    maxPts: cur ? agCurMax() : 0,
     results: results.map(r => ({ ...r })),
   };
 }
@@ -243,6 +319,7 @@ function startQuestion() {
     q, kata: q.kata, base: 100 * q.items.length, tiles, pool,
     slots: new Array(q.kata.length).fill(null),
     locked: new Set(), hints: 0, judged: false, built: "",
+    provMode: false, provSel: null, prov: [], provLocked: new Set(), provFails: 0,
   };
   renderQuestion("");
 }
@@ -267,26 +344,43 @@ function renderQuestion(msg) {
   const tw = agTileSize(Math.min(10, q.kata.length), window.innerWidth);
   // 解答欄は素材ごとの区切りを持たず、全体で1本のスロット列にする。区切りの
   // 情報は手がかりの内訳表示で伝え、プレイヤーが解いた順番と表示がずれないようにする
-  const slotsHtml = cur.slots.map((id, i) => id == null
-    ? `<span class="ag-tile ag-slot" data-slot="${i}"></span>`
-    : `<button type="button" class="ag-tile placed${cur.locked.has(i) ? " locked" : ""}" data-slot="${i}" ${cur.locked.has(i) || cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("");
+  const inProvSel = i => cur.provSel != null && i >= cur.provSel.start && i <= (cur.provSel.end != null ? cur.provSel.end : cur.provSel.start);
+  const slotsHtml = cur.slots.map((id, i) => {
+    if (id == null) return `<span class="ag-tile ag-slot" data-slot="${i}"></span>`;
+    const cls = ["ag-tile", "placed"];
+    if (cur.locked.has(i)) cls.push("locked");
+    if (cur.provLocked.has(i)) cls.push("prov");
+    if (cur.provMode && inProvSel(i)) cls.push("provsel");
+    // 通常時はヒント固定・仮確定済みのタイルは押せない。仮確定モード中は
+    // 範囲選択や固定解除のために、置かれたタイルはすべて押せるようにする
+    const dis = cur.judged || (!cur.provMode && (cur.locked.has(i) || cur.provLocked.has(i)));
+    return `<button type="button" class="${cls.join(" ")}" data-slot="${i}" ${dis ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`;
+  }).join("");
+  const multi = q.items.length >= 2;
   main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${gameTotal}問</span><span>スコア ${score}点</span></div>
   <p class="ag-clue">${esc(agQuestionClue(q))}</p>
+  ${multi ? `<p class="ag-clue" id="agProvProg">仮確定 ${cur.prov.length}／${q.items.length}</p>` : ""}
   <p class="ag-rowlabel">解答欄（タップで戻す）</p>
   <div class="ag-answer" id="agAnswer" style="--agtw:${tw}px">${slotsHtml}</div>
   <p class="ag-rowlabel">タイル（タップで解答欄へ）</p>
   <div class="ag-pool" id="agPool" style="--agtw:${tw}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
   <div class="ag-btns">
-    <button type="button" class="btn sub" id="agHint" ${cur.judged ? "disabled" : ""}>ヒント（−${AG_HINT_COST}点）</button>
+    <button type="button" class="btn sub" id="agHint" ${cur.judged || cur.provMode ? "disabled" : ""}>ヒント（−${AG_HINT_COST}点）</button>
+    ${multi ? `<button type="button" class="btn sub${cur.provMode ? " on" : ""}" id="agProv" ${cur.judged ? "disabled" : ""}>仮確定</button>` : ""}
     <button type="button" class="btn sub" id="agReset" ${cur.judged ? "disabled" : ""}>リセット</button>
-    <button type="button" class="primary" id="agCheck" ${cur.judged || !full ? "disabled" : ""}>答え合わせ</button>
+    ${cur.provMode && cur.provSel && cur.provSel.end != null ? `<button type="button" class="primary" id="agProvJudge">この範囲で仮確定</button>` : ""}
+    <button type="button" class="primary" id="agCheck" ${cur.judged || !full || cur.provMode ? "disabled" : ""}>答え合わせ</button>
   </div>
   <p class="ag-msg" id="agMsg">${esc(msg || "")}</p>
   <div class="ag-verdict" id="agVerdict"></div>`;
   main.querySelectorAll("#agPool .ag-tile").forEach(el => el.addEventListener("click", () => placeTile(el.dataset.tile)));
-  main.querySelectorAll("#agAnswer .ag-tile.placed").forEach(el => el.addEventListener("click", () => unplaceTile(+el.dataset.slot)));
+  main.querySelectorAll("#agAnswer .ag-tile.placed").forEach(el => el.addEventListener("click", () => { if (cur.provMode) provTapSlot(+el.dataset.slot); else unplaceTile(+el.dataset.slot); }));
   const hintBtn = document.getElementById("agHint");
   if (hintBtn) hintBtn.addEventListener("click", useHint);
+  const provBtn = document.getElementById("agProv");
+  if (provBtn) provBtn.addEventListener("click", toggleProvMode);
+  const provJudgeBtn = document.getElementById("agProvJudge");
+  if (provJudgeBtn) provJudgeBtn.addEventListener("click", provJudge);
   const resetBtn = document.getElementById("agReset");
   if (resetBtn) resetBtn.addEventListener("click", resetTiles);
   const checkBtn = document.getElementById("agCheck");
@@ -294,7 +388,7 @@ function renderQuestion(msg) {
 }
 
 function placeTile(id) {
-  if (!cur || cur.judged) return;
+  if (!cur || cur.judged || cur.provMode) return;
   const i = cur.slots.indexOf(null);
   if (i < 0) return;
   cur.pool = cur.pool.filter(x => x !== id);
@@ -303,7 +397,7 @@ function placeTile(id) {
 }
 
 function unplaceTile(slot) {
-  if (!cur || cur.judged || cur.locked.has(slot)) return;
+  if (!cur || cur.judged || cur.locked.has(slot) || cur.provLocked.has(slot)) return;
   const id = cur.slots[slot];
   if (id == null) return;
   cur.slots[slot] = null;
@@ -313,6 +407,11 @@ function unplaceTile(slot) {
 
 function resetTiles() {
   if (!cur || cur.judged) return;
+  // 仮確定の固定もすべて解除し、ヒントで固定された以外のタイルを戻す
+  cur.prov = [];
+  cur.provLocked = new Set();
+  cur.provMode = false;
+  cur.provSel = null;
   cur.slots.forEach((id, i) => {
     if (id != null && !cur.locked.has(i)) { cur.pool.push(id); cur.slots[i] = null; }
   });
@@ -320,10 +419,12 @@ function resetTiles() {
 }
 
 function useHint() {
-  if (!cur || cur.judged) return;
+  if (!cur || cur.judged || cur.provMode) return;
   const target = cur.kata;
   let i = 0;
   while (i < target.length) {
+    // 仮確定済みの位置は動かさない（並び順が構成素材の連結と違う場合があるため読み飛ばす）
+    if (cur.provLocked.has(i)) { i++; continue; }
     const id = cur.slots[i];
     if (id != null && cur.tiles.get(id) === target[i]) { i++; continue; }
     break;
@@ -337,7 +438,7 @@ function useHint() {
   if (srcId == null) {
     for (let j = 0; j < cur.slots.length; j++) {
       const id = cur.slots[j];
-      if (id != null && !cur.locked.has(j) && cur.tiles.get(id) === need && cur.tiles.get(id) !== target[j]) { srcId = id; cur.slots[j] = null; break; }
+      if (id != null && !cur.locked.has(j) && !cur.provLocked.has(j) && cur.tiles.get(id) === need && cur.tiles.get(id) !== target[j]) { srcId = id; cur.slots[j] = null; break; }
     }
   }
   if (srcId == null) return; // 理論上は到達しない
@@ -345,7 +446,83 @@ function useHint() {
   cur.slots[i] = srcId;
   cur.locked.add(i);
   cur.hints++;
-  renderQuestion(`ヒント：${i + 1}文字目を確定しました（この問題は最大 ${Math.max(10, cur.base - AG_HINT_COST * cur.hints)} 点）`);
+  renderQuestion(`ヒント：${i + 1}文字目を確定しました（この問題は最大 ${agCurMax()} 点）`);
+}
+
+// 仮確定モードの開始・終了（個数2以上のときだけ）
+function toggleProvMode() {
+  if (!cur || cur.judged || cur.q.items.length < 2) return;
+  cur.provMode = !cur.provMode;
+  cur.provSel = null;
+  renderQuestion(cur.provMode
+    ? "仮確定モード：分かった部分の最初と最後のタイルをタップしてください（仮確定済みの部分をタップすると解除できます）"
+    : "");
+}
+
+// 仮確定モード中の解答欄タイルのタップ：固定済みなら解除、それ以外は範囲選択
+function provTapSlot(slot) {
+  if (!cur || cur.judged) return;
+  const pi = cur.prov.findIndex(p => slot >= p.start && slot <= p.end);
+  if (pi >= 0) {
+    const [gone] = cur.prov.splice(pi, 1);
+    for (let i = gone.start; i <= gone.end; i++) cur.provLocked.delete(i);
+    cur.provSel = null;
+    renderQuestion(`「${gone.kata}」の仮確定を解除しました（仮確定 ${cur.prov.length}／${cur.q.items.length}）`);
+    return;
+  }
+  if (cur.slots[slot] == null) return; // 空きスロットはタイルが無いので選べない
+  if (!cur.provSel) {
+    cur.provSel = { start: slot, end: null };
+    renderQuestion("範囲の最後のタイルをタップしてください");
+    return;
+  }
+  if (cur.provSel.end == null) {
+    if (slot === cur.provSel.start) {
+      cur.provSel = null;
+      renderQuestion("選択を取り消しました");
+      return;
+    }
+    const a = cur.provSel.start, b = slot;
+    cur.provSel = { start: Math.min(a, b), end: Math.max(a, b) };
+    renderQuestion("よければ「この範囲で仮確定」を押してください");
+    return;
+  }
+  // 範囲が決まっている状態で別のタイルを押したら、選び直しにする
+  cur.provSel = { start: slot, end: null };
+  renderQuestion("範囲の最後のタイルをタップしてください");
+}
+
+// 選択した範囲を仮確定として判定する
+function provJudge() {
+  if (!cur || cur.judged || !cur.provMode || !cur.provSel || cur.provSel.end == null) return;
+  const { start, end } = cur.provSel;
+  if (cur.prov.some(p => start <= p.end && p.start <= end)) {
+    cur.provSel = null;
+    renderQuestion("すでに仮確定した部分とは重ねられません");
+    return;
+  }
+  let hasEmpty = false, str = "";
+  for (let i = start; i <= end; i++) {
+    const id = cur.slots[i];
+    if (id == null) { hasEmpty = true; break; }
+    str += cur.tiles.get(id);
+  }
+  if (hasEmpty) {
+    cur.provSel = null;
+    renderQuestion("範囲内に空きがあります。タイルをすべて置いてから仮確定してください");
+    return;
+  }
+  const r = agProvJudgeCurrent(str);
+  cur.provSel = null;
+  cur.provMode = false;
+  if (r.ok) {
+    cur.prov.push({ start, end, kata: str, itemIdx: r.itemIdx });
+    for (let i = start; i <= end; i++) cur.provLocked.add(i);
+    renderQuestion(`「${str}」を仮確定しました（仮確定 ${cur.prov.length}／${cur.q.items.length}）`);
+  } else {
+    cur.provFails++;
+    renderQuestion(`その部分は違うようです（仮確定の失敗で−${AG_PROV_COST}点。この問題は最大 ${agCurMax()} 点）`);
+  }
 }
 
 function judge() {
@@ -362,7 +539,7 @@ function judge() {
     const r = anagramJudgeCombo(built, q.items.length, q.items.map(it => it.kata));
     res = { ok: r.ok, altLabel: r.alt ? r.alt.join("／") : null };
   }
-  const pts = res.ok ? Math.max(10, cur.base - AG_HINT_COST * cur.hints) : 0;
+  const pts = res.ok ? agCurMax() : 0;
   cur.judged = true;
   score += pts;
   results.push({ mine: built, label: ownLabels, kata: cur.kata, ok: res.ok, pts, alt: res.altLabel });
@@ -413,8 +590,8 @@ function startPanel() {
   const lite = document.documentElement.dataset.lite === "1";
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   <p style="color:var(--muted)">${lite
-    ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全<span id="agHowN">${AG_TOTAL}</span>問。ヒントは1回−${AG_HINT_COST}点です。個数を増やすと、混ぜた長い問題になります。出題するグループや現役・卒業、個数は下で選べます。`
-    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。出てくる並びは、実在する日本語の単語に分けられる並びだけです。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。個数を2つ・3つにすると、複数の名前・曲名の読みを混ぜた長い問題になります（素材の内訳は手がかりに表示されます）。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
+    ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全<span id="agHowN">${AG_TOTAL}</span>問。ヒントは1回−${AG_HINT_COST}点です。個数を増やすと、混ぜた長い問題になります。個数2・3では、分かった部分を「仮確定」で固定できます（失敗は−${AG_PROV_COST}点）。出題するグループや現役・卒業、個数は下で選べます。`
+    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。出てくる並びは、実在する日本語の単語に分けられる並びだけです。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。個数を2つ・3つにすると、複数の名前・曲名の読みを混ぜた長い問題になります（素材の内訳は手がかりに表示されます）。個数が2つ・3つのときは、分かった部分だけを「仮確定」で部分チェックして固定することもできます（仮確定の失敗は1回−${AG_PROV_COST}点）。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
   <p style="margin:10px 0 6px"><b>出題モード</b></p>
   <div class="ychips" id="agModes">${AG_MODES.map(m => `<button type="button" class="ychip" data-m="${m.id}">${m.label}</button>`).join("")}</div>
   <p style="margin:10px 0 6px"><b>混ぜる個数</b></p>
