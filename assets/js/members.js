@@ -15,26 +15,9 @@ function loadFavs() {
 }
 let FAVS = loadFavs();
 function saveFavs() { try { localStorage.setItem(FAV_KEY, JSON.stringify([...FAVS])); } catch (e) {} }
-function favBtnLabel(name) { return FAVS.has(name) ? "★ 推し登録済み（タップで解除）" : "☆ 推しに登録"; }
-// 推し写真：歴代アー写から選んだ1枚を localStorage の "sakamichia-fav-photos"（{名前: ギャラリーのファイル名}）に保存し、
-// 推しフローティングボタン（common.js）などの個人用表示にだけ使う。
-// メンバーページのメイン写真はサイト共通ルールどおり常に最新の歴代アー写のままで、ここでは変更しない。
-const FAVPHOTO_KEY = "sakamichia-fav-photos";
-function loadFavPhotos() {
-  try {
-    const v = JSON.parse(localStorage.getItem(FAVPHOTO_KEY) || "{}");
-    if (v && typeof v === "object" && !Array.isArray(v)) {
-      const o = {};
-      for (const [k, val] of Object.entries(v)) if (typeof val === "string" && val) o[k] = val;
-      return o;
-    }
-  } catch (e) {}
-  return {};
-}
-let FAVPHOTOS = loadFavPhotos();
-function saveFavPhotos() { try { localStorage.setItem(FAVPHOTO_KEY, JSON.stringify(FAVPHOTOS)); } catch (e) {} }
-
 function photoURL(name) { const f = PHOTOS[name]; return f ? BASE + "assets/member-photos/" + f : ""; }
+// メンバー個別ページのスラッグ（写真ファイル名が正）
+function slugOf(name) { const f = PHOTOS[name]; return f ? f.replace(/\.jpg$/, "").replace(/_/g, "-") : ""; }
 function galURL(name, f) { const p = PHOTOS[name]; if (!p) return ""; return BASE + "assets/member-gallery/" + p.replace(/\.jpg$/, "") + "/" + f; }
 // メイン表示は常に最新の歴代アー写（ギャラリーの最後の1枚）。ギャラリーが無い人はプロフィール写真
 function latestGal(name) { const g = GAL[name] || []; return g.length ? g[g.length - 1] : null; }
@@ -59,37 +42,6 @@ function centerSongsOf(name, titleOnly = false) {
   // Wセンターは「A・B」形式なので分割して判定し、時系列順（発売日→収録順）で返す
   return SONGS.filter(s => s.center && s.center.split("・").includes(name) && (!titleOnly || s.type === "表題曲"))
     .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.ord || 0) - (b.ord || 0));
-}
-function formCountOf(name) {
-  let n = 0;
-  for (const k in FORMS) {
-    const f = FORMS[k];
-    if (f.external) continue;   // 「その他」（外部参加・MV出演）はフォーメーション参加曲数に数えない
-    if ((f.rows && f.rows.flat().includes(name)) || (f.vocal && f.vocal.includes(name))) n++;
-  }
-  return n;
-}
-// フォーメーション統計：登場曲数・フロント（最終列＝1列目）回数・左右の隣に来た回数
-function formationStatsOf(name) {
-  let songs = 0, front = 0; const nb = {};
-  for (const k in FORMS) {
-    const f = FORMS[k];
-    if (f.external || !f.rows) continue;
-    for (let r = 0; r < f.rows.length; r++) {
-      const row = f.rows[r], p = row.indexOf(name);
-      if (p < 0) continue;
-      songs++;
-      if (r === f.rows.length - 1) front++;
-      [row[p - 1], row[p + 1]].forEach(x => { if (x) nb[x] = (nb[x] || 0) + 1; });
-    }
-  }
-  const top = Object.entries(nb).sort((a, b) => b[1] - a[1]).slice(0, 3);
-  return { songs, front, top };
-}
-function liveStatsOf(name) {
-  // data/member-live.json（全員歌唱曲のある公演は当日在籍メンバー全員を参加として集計済み）
-  const s = MEMBERLIVE[name] || {};
-  return { shows: s.shows || 0, centers: s.centers || 0 };
 }
 function cardHTML(m) {
   const url = mainPhotoURL(m.name);
@@ -132,112 +84,7 @@ function render() {
   } else {
     grid.innerHTML = list.map(cardHTML).join("");
   }
-  grid.querySelectorAll(".mb-card").forEach(c => c.addEventListener("click", () => openMember(c.dataset.name)));
-}
-// 学年（4月2日〜翌年4月1日生まれ）を誕生日から割り出す。学年一覧ページと同じ規則
-function cohortOf(name) {
-  const b = META[name] && META[name].b;
-  if (!Array.isArray(b)) return null;
-  const [y, mo, d] = b;
-  return (mo > 4 || (mo === 4 && d >= 2)) ? y : y - 1;
-}
-function openMember(name) {
-  const m = MEMBERS.find(x => x.name === name); if (!m) return;
-  const url = mainPhotoURL(name);
-  const cs = centerSongsOf(name);
-  const cst = centerSongsOf(name, true);
-  const ls = liveStatsOf(name);
-  const fc = formCountOf(name);
-  const lg = lastGroup(m);
-  const others = (m.groups || []).filter(g => g !== lg);
-  const dlg = document.getElementById("dlg");
-  dlg.style.setProperty("--page", GCOL[lg] || "#2b2430");
-  const gal = GAL[name] || [];
-  const latest = gal.length ? gal[gal.length - 1] : null;
-  const mainCapTxt = latest ? galCap(latest, true) : "現在のアー写";
-  const galHTML = gal.length >= 2 ? `
-    <div class="mb-gal">
-      <h4 style="margin:14px 0 6px">歴代アー写など（${gal.length}枚）</h4>
-      <div class="mb-gal-strip">${gal.map((g, i) => {
-        const isLatest = i === gal.length - 1;
-        const cap = galCap(g, isLatest);
-        const lab = g.y ? String(g.y) : (g.t ? g.t.slice(0, 6) : `${i + 1}枚目`);
-        return `<button type="button" class="mb-gal-th${isLatest ? " on" : ""}" data-src="${esc(galURL(name, g.f))}" data-cap="${esc(cap)}" data-f="${esc(g.f)}"><img loading="lazy" src="${esc(galURL(name, g.f))}" alt=""><span>${esc(lab)}</span></button>`;
-      }).join("")}</div>
-      <p class="mb-gal-note">タップすると上の写真が切り替わります。上の写真をタップすると最新のアー写に戻ります。</p>
-    </div>` : "";
-  document.getElementById("dlgBody").innerHTML = `
-    <div class="mb-detail">
-      <div class="mb-dphoto">${url ? `<img id="mbMainImg" src="${esc(url)}" alt="">` : `<span class="fm-initial" style="background:${GCOL[lg] || "#999"}">${esc(name.slice(0, 1))}</span>`}<p class="mb-cap" id="mbMainCap">${esc(mainCapTxt)}</p></div>
-      <div class="mb-dinfo">
-        <h3 style="margin:0 0 4px">${esc(name)}</h3>
-        <p style="margin:0 0 2px;color:var(--muted)">${esc(m.reading || "")}</p>
-        <p>${groupChip(lg)}${isExchange(m) ? " 交換留学生（SKE48から）" : (m.gen ? ` ${m.gen}期生` : "")}${m.graduated ? ` ・ <b>卒業・活動終了</b>` : " ・ 現役"}${others.length ? `<br>所属歴：${others.map(esc).join("、")}` : ""}</p>
-        <p>センター曲：<b>${cs.length}曲</b>（シングル表題曲センター：<b>${cst.length}曲</b>）　フォーメーション/歌唱参加：<b>${fc}曲</b><br>ライブ記録：センター <b>${ls.centers}公演</b>・出演記録のある公演 <b>${ls.shows}公演</b><br>ブログ記事：<b>${BLOGS[name] || 0}件</b></p>
-        ${(() => { const c = cohortOf(name); if (c == null) return ""; const n = MEMBERS.filter(x => cohortOf(x.name) === c).length; return `<p>学年：<b>${c}年度</b>（<a href="../school-years/#y${c}">同級生 全${n}人を見る</a>）</p>`; })()}
-        ${(() => { const fs2 = formationStatsOf(name); return fs2.songs ? `<p>フォーメーション統計：登場 <b>${fs2.songs}曲</b>・フロント（1列目）<b>${fs2.front}曲</b>${fs2.top.length ? `<br>よく隣になるメンバー：${fs2.top.map(([n, c]) => `<button type="button" class="mb-nb" data-goto="${esc(n)}">${esc(n)}</button>（${c}回）`).join("、")}` : ""}</p>` : ""; })()}
-        ${cs.length ? `<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">${cs.map(s => esc(s.title)).join("、")}</p>` : ""}
-        <p class="mb-links"><a class="btn" href="../blog/?member=${encodeURIComponent(name)}">この人のブログを見る</a> <a class="btn" href="../live/?member=${encodeURIComponent(name)}">ライブ記録で見る</a> <button type="button" class="btn" id="favBtn" aria-pressed="${FAVS.has(name)}">${favBtnLabel(name)}</button></p>
-        <p style="color:var(--muted);font-size:12px;margin:2px 0 0">推しに登録すると、トップページに「推しの新着」（最新のブログ）が出ます。</p>
-      </div>
-    </div>${galHTML}<div id="favPhotoRow"></div>`;
-  // 推し写真コントロール：いま大きく表示している歴代アー写（curF）を推し写真として設定／変更／解除する。
-  // 推し登録済みで、ギャラリーがあり写真ファイル名が解決できるメンバーだけに出す。
-  let curF = latest ? latest.f : null;
-  const favPhotoRow = document.getElementById("favPhotoRow");
-  const capOfF = f => { const g = gal.find(x => x.f === f); return g ? galCap(g, g === latest) : f; };
-  function renderFavPhotoCtl() {
-    if (!favPhotoRow) return;
-    if (!FAVS.has(name) || !gal.length || !PHOTOS[name]) { favPhotoRow.innerHTML = ""; return; }
-    const setF = FAVPHOTOS[name] || null;
-    let inner;
-    if (setF && setF === curF) {
-      inner = `<span>推し写真：<b>この写真</b>に設定済みです。</span> <button type="button" class="btn" id="favPhotoClear">推し写真を最新に戻す</button>`;
-    } else if (setF) {
-      inner = `<span>推し写真：<b>${esc(capOfF(setF))}</b>に設定済みです。</span> <button type="button" class="btn" id="favPhotoSet">表示中の写真に変更する</button> <button type="button" class="btn" id="favPhotoClear">推し写真を最新に戻す</button>`;
-    } else {
-      inner = `<span>推し写真は未設定です（推しボタンなどでは最新の写真が出ます）。</span> <button type="button" class="btn" id="favPhotoSet">この写真を推し写真にする</button>`;
-    }
-    favPhotoRow.innerHTML = `<p style="margin:10px 0 0">${inner}</p>`;
-    const setBtn = document.getElementById("favPhotoSet");
-    if (setBtn) setBtn.addEventListener("click", () => {
-      if (!curF) return;
-      FAVPHOTOS[name] = curF; saveFavPhotos(); renderFavPhotoCtl();
-    });
-    const clrBtn = document.getElementById("favPhotoClear");
-    if (clrBtn) clrBtn.addEventListener("click", () => {
-      delete FAVPHOTOS[name]; saveFavPhotos(); renderFavPhotoCtl();
-    });
-  }
-  renderFavPhotoCtl();
-  dlg.querySelectorAll(".mb-nb").forEach(b => b.addEventListener("click", () => openMember(b.dataset.goto)));
-  const favBtn = document.getElementById("favBtn");
-  if (favBtn) favBtn.addEventListener("click", () => {
-    if (FAVS.has(name)) FAVS.delete(name); else FAVS.add(name);
-    saveFavs();
-    favBtn.textContent = favBtnLabel(name);
-    favBtn.setAttribute("aria-pressed", String(FAVS.has(name)));
-    renderFavPhotoCtl();   // 推し写真コントロールの出し分けも追随させる
-    render();   // カード側の ★ バッジも追随させる
-  });
-  const mainImg = document.getElementById("mbMainImg"), mainCap = document.getElementById("mbMainCap");
-  if (mainImg) {
-    document.querySelectorAll(".mb-gal-th").forEach(th => th.addEventListener("click", () => {
-      mainImg.src = th.dataset.src;
-      curF = th.dataset.f || null;
-      if (mainCap) mainCap.textContent = th.dataset.cap;
-      document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", x === th));
-      renderFavPhotoCtl();
-    }));
-    mainImg.addEventListener("click", () => {
-      mainImg.src = url;
-      curF = latest ? latest.f : null;
-      if (mainCap) mainCap.textContent = mainCapTxt;
-      document.querySelectorAll(".mb-gal-th").forEach(x => x.classList.toggle("on", x.dataset.src === url));
-      renderFavPhotoCtl();
-    });
-  }
-  dlg.showModal();
+  grid.querySelectorAll(".mb-card").forEach(c => c.addEventListener("click", () => { const sl = slugOf(c.dataset.name); if (sl) location.href = sl + "/"; }));
 }
 function syncGenOptions() {
   // 選択肢は表示中グループに実在する期だけにし、無くなった期の選択は自動で外す（MS 側で剪定される）
@@ -304,9 +151,9 @@ async function init() {
     syncGenOptions();
     render();
   });
-  // ?member= で直接詳細を開く
+  // ?member= の旧ディープリンクは個別ページへ引き継ぐ
   const q = new URLSearchParams(location.search).get("member");
+  if (q && MEMBERS.some(m => m.name === q)) { location.replace(slugOf(q) + "/"); return; }
   render();
-  if (q && MEMBERS.some(m => m.name === q)) openMember(q);
 }
 init();

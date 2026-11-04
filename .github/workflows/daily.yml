@@ -55,6 +55,11 @@ jobs:
       - name: Build member latest blog index (favorites)
         run: python3 tools/build_member_latest.py
 
+      - name: Build member pages and OGP images
+        run: |
+          pip install --quiet pillow
+          python3 tools/build_member_pages.py
+
       - name: Build song-to-live performance index
         run: python3 tools/build_song_live.py
 
