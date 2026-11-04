@@ -249,7 +249,7 @@ function startQuestion() {
 
 function slotStr() { return cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join(""); }
 
-// タイルの一辺（px）：解答欄・タイル置き場とも常時1行に収まるよう、文字数と画面幅から決める。
+// タイルの一辺（px）：n 個が1行に収まるよう、文字数と画面幅から決める。
 // 最大44px、間隔6px、コンテナ幅は最大430px（画面幅から余白24pxを引いた値）として計算する
 function agTileSize(n, vw) {
   const avail = Math.min(430, (vw || 430) - 24);
@@ -257,40 +257,23 @@ function agTileSize(n, vw) {
 }
 window.agTileSize = agTileSize;
 
-// グループがタイルサイズ tw のときに1行へ収まるか（収まらない長いグループは
-// 解答欄で左寄せにして折り返しを整然と並べる）
-function agGroupWraps(len, tw, vw) {
-  const avail = Math.min(430, (vw || 430) - 24);
-  return len * tw + (len - 1) * 6 > avail;
-}
-window.agGroupWraps = agGroupWraps;
-
 function renderQuestion(msg) {
   const main = document.getElementById("agMain");
   const q = cur.q;
   const full = cur.pool.length === 0;
-  // タイルサイズは問題単位で統一する：最長グループが1行に収まる大きさにし、
-  // 解答欄全体とタイル置き場で同じサイズを使う
-  const maxLen = Math.max(...q.items.map(it => it.kata.length));
-  const tw = agTileSize(maxLen, window.innerWidth);
-  // 解答欄は構成素材ごとにグループを区切って縦に並べる。1グループ自体が長くて
-  // 1行に収まらない場合だけ、そのグループ内での折り返しを左寄せで許容する
-  let slotBase = 0;
-  const groupsHtml = q.items.map(it => {
-    const start = slotBase;
-    slotBase += it.kata.length;
-    const wide = agGroupWraps(it.kata.length, tw, window.innerWidth) ? " ag-group-wide" : "";
-    return `<div class="ag-group${wide}">${cur.slots.slice(start, start + it.kata.length).map((id, j) => {
-      const i = start + j;
-      return id == null
-        ? `<span class="ag-tile ag-slot" data-slot="${i}"></span>`
-        : `<button type="button" class="ag-tile placed${cur.locked.has(i) ? " locked" : ""}" data-slot="${i}" ${cur.locked.has(i) || cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`;
-    }).join("")}</div>`;
-  }).join("");
+  // タイルサイズは合計文字数基準で決める：合計が10文字以下なら1行に収まる大きさ、
+  // それより長い場合は1行に10個が収まる大きさにして均等に折り返す。解答欄と
+  // タイル置き場で同じサイズを使う
+  const tw = agTileSize(Math.min(10, q.kata.length), window.innerWidth);
+  // 解答欄は素材ごとの区切りを持たず、全体で1本のスロット列にする。区切りの
+  // 情報は手がかりの内訳表示で伝え、プレイヤーが解いた順番と表示がずれないようにする
+  const slotsHtml = cur.slots.map((id, i) => id == null
+    ? `<span class="ag-tile ag-slot" data-slot="${i}"></span>`
+    : `<button type="button" class="ag-tile placed${cur.locked.has(i) ? " locked" : ""}" data-slot="${i}" ${cur.locked.has(i) || cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("");
   main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${gameTotal}問</span><span>スコア ${score}点</span></div>
   <p class="ag-clue">${esc(agQuestionClue(q))}</p>
   <p class="ag-rowlabel">解答欄（タップで戻す）</p>
-  <div class="ag-answer" id="agAnswer" style="--agtw:${tw}px">${groupsHtml}</div>
+  <div class="ag-answer" id="agAnswer" style="--agtw:${tw}px">${slotsHtml}</div>
   <p class="ag-rowlabel">タイル（タップで解答欄へ）</p>
   <div class="ag-pool" id="agPool" style="--agtw:${tw}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
   <div class="ag-btns">
@@ -370,14 +353,14 @@ function judge() {
   const built = slotStr();
   cur.built = built;
   const q = cur.q;
-  const ownLabels = q.items.map(it => `${it.label}（${it.kata}）`).join("＋");
+  const ownLabels = q.items.map(it => `${it.label}（${it.kata}）`).join("／");
   let res;
   if (q.items.length === 1) {
     const r = anagramJudge(cur.kata, built);
     res = { ok: r.ok, altLabel: r.alt ? r.alt.label : null };
   } else {
     const r = anagramJudgeCombo(built, q.items.length, q.items.map(it => it.kata));
-    res = { ok: r.ok, altLabel: r.alt ? r.alt.join("＋") : null };
+    res = { ok: r.ok, altLabel: r.alt ? r.alt.join("／") : null };
   }
   const pts = res.ok ? Math.max(10, cur.base - AG_HINT_COST * cur.hints) : 0;
   cur.judged = true;
@@ -431,7 +414,7 @@ function startPanel() {
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   <p style="color:var(--muted)">${lite
     ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全<span id="agHowN">${AG_TOTAL}</span>問。ヒントは1回−${AG_HINT_COST}点です。個数を増やすと、混ぜた長い問題になります。出題するグループや現役・卒業、個数は下で選べます。`
-    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。出てくる並びは、実在する日本語の単語に分けられる並びだけです。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。個数を2つ・3つにすると、複数の名前・曲名の読みを混ぜた長い問題になり、解答欄は素材ごとに区切られます。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
+    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。出てくる並びは、実在する日本語の単語に分けられる並びだけです。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。個数を2つ・3つにすると、複数の名前・曲名の読みを混ぜた長い問題になります（素材の内訳は手がかりに表示されます）。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
   <p style="margin:10px 0 6px"><b>出題モード</b></p>
   <div class="ychips" id="agModes">${AG_MODES.map(m => `<button type="button" class="ychip" data-m="${m.id}">${m.label}</button>`).join("")}</div>
   <p style="margin:10px 0 6px"><b>混ぜる個数</b></p>
