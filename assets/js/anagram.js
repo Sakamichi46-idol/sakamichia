@@ -338,6 +338,8 @@ function renderQuestion(msg) {
   const main = document.getElementById("agMain");
   const q = cur.q;
   const full = cur.pool.length === 0;
+  // 解答欄に動かせるタイル（ヒント固定・仮確定済み以外）があるか。「1文字消す」の有効判定に使う
+  const hasRemovable = cur.slots.some((id, i) => id != null && !cur.locked.has(i) && !cur.provLocked.has(i));
   // タイルサイズは合計文字数基準で決める：合計が10文字以下なら1行に収まる大きさ、
   // それより長い場合は1行に10個が収まる大きさにして均等に折り返す。解答欄と
   // タイル置き場で同じサイズを使う
@@ -368,6 +370,7 @@ function renderQuestion(msg) {
     <button type="button" class="btn sub" id="agHint" ${cur.judged || cur.provMode ? "disabled" : ""}>ヒント（−${AG_HINT_COST}点）</button>
     ${multi ? `<button type="button" class="btn sub${cur.provMode ? " on" : ""}" id="agProv" ${cur.judged ? "disabled" : ""}>仮確定</button>` : ""}
     <button type="button" class="btn sub" id="agReset" ${cur.judged ? "disabled" : ""}>リセット</button>
+    <button type="button" class="btn sub" id="agErase" ${cur.judged || cur.provMode || !hasRemovable ? "disabled" : ""}>1文字消す</button>
     ${cur.provMode && cur.provSel && cur.provSel.end != null ? `<button type="button" class="primary" id="agProvJudge">この範囲で仮確定</button>` : ""}
     <button type="button" class="primary" id="agCheck" ${cur.judged || !full || cur.provMode ? "disabled" : ""}>答え合わせ</button>
   </div>
@@ -383,6 +386,8 @@ function renderQuestion(msg) {
   if (provJudgeBtn) provJudgeBtn.addEventListener("click", provJudge);
   const resetBtn = document.getElementById("agReset");
   if (resetBtn) resetBtn.addEventListener("click", resetTiles);
+  const eraseBtn = document.getElementById("agErase");
+  if (eraseBtn) eraseBtn.addEventListener("click", eraseOne);
   const checkBtn = document.getElementById("agCheck");
   if (checkBtn) checkBtn.addEventListener("click", judge);
 }
@@ -403,6 +408,15 @@ function unplaceTile(slot) {
   cur.slots[slot] = null;
   cur.pool.push(id);
   renderQuestion("");
+}
+
+// 1文字消す：並びの末尾側にある動かせるタイルを1つだけプールに戻す。
+// ヒント固定・仮確定済みのタイルは飛ばし、仮確定モード中は使えない
+function eraseOne() {
+  if (!cur || cur.judged || cur.provMode) return;
+  for (let i = cur.slots.length - 1; i >= 0; i--) {
+    if (cur.slots[i] != null && !cur.locked.has(i) && !cur.provLocked.has(i)) { unplaceTile(i); return; }
+  }
 }
 
 function resetTiles() {
