@@ -86,7 +86,7 @@ function agClue(e, kind) { return kind === "member" ? `所属：${e.group}` : `$
 function agSingleItem(e, kind) {
   return { kind, label: agLabel(e, kind), group: e.group, year: kind === "song" ? e.year : null, kata: e.kata };
 }
-// 質問の見出し（手がかり）。組み合わせは個数と内訳（文字数・グループ等）を明示する
+// 質問の見出し（手がかり）。組み合わせは個数と内訳を、素材ごとに「文字数・グループ（年）」の組で明示する
 function agQuestionClue(q) {
   if (q.items.length === 1) {
     const it = q.items[0];
@@ -95,10 +95,13 @@ function agQuestionClue(q) {
   const allM = q.items.every(it => it.kind === "member");
   const allS = q.items.every(it => it.kind === "song");
   const head = allM ? `メンバー名 ${q.items.length}人分` : allS ? `楽曲タイトル ${q.items.length}曲分` : `ミックス ${q.items.length}個分`;
-  const lens = q.items.map(it => it.kata.length).join("文字＋");
-  const meta = q.items.map(it => it.kind === "member" ? it.group : `${it.group} ${it.year}年`).join("＋");
-  return `${head}（${lens}文字）・ ${meta}`;
+  const parts = q.items.map(it => {
+    if (it.kind === "member") return allM ? `${it.kata.length}文字・${it.group}` : `${it.kata.length}文字・メンバー ${it.group}`;
+    return allS ? `${it.kata.length}文字・${it.group}（${it.year}年）` : `${it.kata.length}文字・楽曲 ${it.group}（${it.year}年）`;
+  });
+  return `${head}：${parts.join("／")}`;
 }
+window.agQuestionClue = agQuestionClue;
 
 // 1問分の出題を作る（テストから検証できるよう公開する）
 // entry.shuffles から rng で1つ選ぶ。戻り値 {kata, text, parts}
