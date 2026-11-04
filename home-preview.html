@@ -29,6 +29,13 @@ html:not([data-theme="dark"]) #todaySection{background:#f4effc;border-radius:24p
 .updates li{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #f4eef8;font-size:14px}
 .updates li:last-child{border-bottom:0}
 .updates .u-date{font-weight:700;white-space:nowrap;color:var(--muted)}
+/* 統一感の試作：要所で3色を同時に見せる */
+@keyframes groupcycle-bg{0%,30%{background-color:var(--n)}36%,63%{background-color:var(--s)}69%,96%{background-color:var(--h)}100%{background-color:var(--n)}}
+.hero .searchbox button,#omikujiSection .btn{animation:groupcycle-bg 9s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.hero .searchbox button,#omikujiSection .btn{animation:none}}
+html:not([data-lite="1"]) main h2.title{border-left:none;padding-left:0;display:flex;align-items:center}
+html:not([data-lite="1"]) main h2.title::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--n);box-shadow:13px 0 0 var(--s),26px 0 0 var(--h);margin-right:32px}
+html:not([data-theme="dark"]) #todaySection{background:#faf8fb;border:1px solid #f1e8f6}
 </style></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
