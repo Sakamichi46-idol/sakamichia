@@ -74,8 +74,8 @@ function showQ(){
     pool=shuffle(["乃木坂46","櫻坂46","日向坂46","欅坂46"].filter(g=>g!==answer)).slice(0,3); }
   const opts=shuffle([answer,...pool]);
   const best=loadBest(Q.kind);
-  area.innerHTML=`<div class="card" style="margin-bottom:40px"><h3>${Q.kind==="center"?"センター当て":"グループ当て"}クイズ ${Q.i+1} / ${Q.list.length}問目（現在 ${Q.score}点）</h3>
-  <p style="color:var(--muted);margin:4px 0">⏱ 経過時間 <b id="qTime">${fmtTime(performance.now()-Q.t0)}</b>${best?` ・ ベスト ${best.score}問正解／${fmtTime(best.ms)}`:""}</p>
+  area.innerHTML=`<div class="card" style="margin-bottom:40px"><h3>${Q.kind==="center"?"センター当て":"グループ当て"}クイズ ${Q.i+1} / ${Q.list.length}問目（現在 ${Q.score}問正解）</h3>
+  <p style="color:var(--muted);margin:4px 0">経過時間 <b id="qTime">${fmtTime(performance.now()-Q.t0)}</b>${best?` ・ ベスト ${best.score}問正解／${fmtTime(best.ms)}`:""}</p>
   <p style="font-size:18px;font-weight:700">${esc(question)}</p>
   ${opts.map(o=>`<button class="quiz-opt" data-opt="${esc(o)}">${esc(o)}</button>`).join("")}<p id="fb"></p></div>`;
   area.querySelectorAll("[data-opt]").forEach(b=>b.addEventListener("click",()=>{

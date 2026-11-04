@@ -73,7 +73,7 @@ function includesAll(hay, q){
 function itemText(parts){return parts.flat(Infinity).filter(Boolean).join(" ");}
 
 // おみくじ（共通ロジック）：トップページとおみくじページで同じ結果になるよう共通化。
-// 1日1回・結果は日付シードで決まり、localStorage に保存して両ページで共有する。
+// 1日1回・結果は端末ごとの抽選で決まり、localStorage に保存して両ページで共有する。
 const OMIKUJI_RANKS = ["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"];
 // 出現ウェイト（合計100）：凶はたまに、大凶は滅多に出ない
 const OMIKUJI_WEIGHTS = [16, 24, 24, 20, 10, 5, 1];

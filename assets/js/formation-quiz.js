@@ -165,7 +165,7 @@ function fqRender() {
   }).join("")}</div>`).join("");
   const remaining = q.blanks.length - Object.keys(FQ.filled).length;
   let html = `<div class="card" style="margin-bottom:40px"><h3>第${FQ.i + 1}問 / ${FQ.list.length}問（現在 ${FQ.score}点）</h3>
-  <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}『${esc(q.title)}』${q.year ? `（${q.year}年）` : ""} のフォーメーションです。空欄は${q.blanks.length}人います。${FQ.done ? "" : "空欄をタップして対象を切り替え、下の4択から選んでください。"}</p>
+  <p style="color:var(--muted);margin:4px 0">${esc(q.lineage)}『${esc(q.title)}』${q.year ? `（${q.year}年）` : ""} のフォーメーションです。空欄は${q.blanks.length}人います。${FQ.done ? "" : (FQ.style === "input" ? "空欄をタップして対象を切り替え、下の入力欄に名前を入力してください。" : "空欄をタップして対象を切り替え、下の4択から選んでください。")}</p>
   <div class="fq-board${maxn >= 10 ? " wide" : ""}" style="--maxn:${maxn}">${board}</div>`;
   if (!FQ.done) {
     if (remaining > 0) {

@@ -116,7 +116,7 @@ function renderFavs(mLatest, meta){
   const favs = loadFavNames();
   if(!favs.length){
     box.innerHTML = `<h2 class="title" style="margin-top:26px">推しの新着</h2>
-    <p style="color:var(--muted)">推しを登録すると、ここに推しの最新のブログが並びます。登録は<a href="members/">メンバーページ</a>の各メンバーの詳細からできます。</p>`;
+    <p style="color:var(--muted)">推しを登録すると、ここに推しの最新のブログが並びます。登録は<a href="members/">メンバー一覧</a>から各メンバーのページでできます。</p>`;
     return;
   }
   const rows = favs
