@@ -47,6 +47,23 @@ html:not([data-theme="dark"]) #todaySection{background:#faf8fb;border:1px solid 
 /* 推しの新着（未登録時の圧縮表示） */
 .fav-hint{font-size:13.5px;color:var(--muted);margin:0}
 html:not([data-theme="dark"]) #favSection.fav-compact{background:transparent;border-radius:0;padding:0 4px}
+/* クリア感の試作：すりガラスの白＋色面をさらに淡く＋影は薄く輪郭は細い線（グラデーションは不使用） */
+html:not([data-theme="dark"]):not([data-lite="1"]) .card,
+html:not([data-theme="dark"]):not([data-lite="1"]) .nw-row,
+html:not([data-theme="dark"]):not([data-lite="1"]) .om-home,
+html:not([data-theme="dark"]):not([data-lite="1"]) .updates{
+  background:rgba(255,255,255,.78);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-color:rgba(43,36,48,.08);
+  box-shadow:0 2px 12px rgba(90,110,160,.05);
+}
+html:not([data-theme="dark"]) .band-h{background:#f2fafe}
+html:not([data-theme="dark"]) .hero{background:#f8f5fe}
+html:not([data-theme="dark"]) .pick-n{background:rgba(244,239,252,.8)}
+html:not([data-theme="dark"]) .pick-s{background:rgba(253,240,244,.8)}
+html:not([data-theme="dark"]) .pick-h{background:rgba(237,246,251,.8)}
+html:not([data-theme="dark"]) #favSection{background:#fef5f8}
+html:not([data-theme="dark"]) #todaySection{background:#fcfafc}
 </style></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
