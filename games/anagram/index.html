@@ -2,8 +2,9 @@
 <title>アナグラム | サカミチア</title><meta name="description" content="バラバラになったカタカナのタイルを並べ替えて、メンバー名や楽曲タイトルを当てるアナグラムクイズ。最大10問。2つ・3つを混ぜた長い問題も選べます。出てくる並びは、実在する日本語の単語に分けられるものだけです。"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="アナグラム | サカミチア"><meta property="og:description" content="カタカナのタイルを並べ替えてメンバー名・曲名を当てるクイズ。最大10問。混ぜた長い問題も選べます。"><meta property="og:url" content="https://sakamichia.pages.dev/games/anagram/"><link rel="canonical" href="https://sakamichia.pages.dev/games/anagram/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=61"><style>
 .ag-head{display:flex;justify-content:space-between;gap:8px;max-width:430px;margin:0 auto;color:var(--muted);font-size:14px}
 .ag-clue{max-width:430px;margin:6px auto 0;text-align:center;color:var(--muted);font-size:13px}
-.ag-answer{display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:center;max-width:430px;margin:14px auto 4px;min-height:46px}
+.ag-answer{display:flex;flex-direction:column;gap:14px;max-width:430px;margin:14px auto 4px;min-height:46px}
 .ag-group{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.ag-group.ag-group-wide{justify-content:flex-start}
 .ag-pool{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:430px;margin:10px auto;min-height:46px}
 .ag-tile{width:var(--agtw,clamp(34px,9.6vw,44px));height:var(--agtw,clamp(34px,9.6vw,44px));flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:calc(var(--agtw,40px)*.52);font-weight:700;padding:0;margin:0;cursor:pointer;line-height:1;box-shadow:none;-webkit-tap-highlight-color:transparent}
 .ag-tile:active{transform:scale(.94)}

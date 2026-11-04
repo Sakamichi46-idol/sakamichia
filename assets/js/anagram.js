@@ -180,9 +180,10 @@ function __agState() {
     settings: { groups: [...agSettings.groups], status: agSettings.status, count: agSettings.count },
     idx: qIdx, score,
     questions: questions.map(q => ({
-      kata: q.kata, kind: q.kind, text: q.text,
+      kata: q.kata, kind: q.kind, text: q.text, parts: q.parts ? [...q.parts] : [],
       items: q.items.map(it => ({ label: it.label, kata: it.kata, kind: it.kind })),
     })),
+    pool: cur ? cur.pool.map(id => cur.tiles.get(id)).join("") : "",
     built: cur ? cur.slots.map(id => (id == null ? "" : cur.tiles.get(id))).join("") : "",
     judged: !!(cur && cur.judged), hints: cur ? cur.hints : 0,
     results: results.map(r => ({ ...r })),
@@ -234,6 +235,10 @@ function startQuestion() {
   const tiles = new Map();
   const pool = [];
   q.text.split("").forEach((ch, i) => { const id = "t" + i; tiles.set(id, ch); pool.push(id); });
+  // タイルの初期表示順はランダムにする。検証済み文字列（q.text）は辞書の単語を
+  // 連結した並びなので、そのまま並べると単語の塊が読めてしまうため、表示順だけを
+  // 並べ替える（q.text 自体はデータとして保持する）
+  agShuffle(pool);
   cur = {
     q, kata: q.kata, base: 100 * q.items.length, tiles, pool,
     slots: new Array(q.kata.length).fill(null),
@@ -252,29 +257,42 @@ function agTileSize(n, vw) {
 }
 window.agTileSize = agTileSize;
 
+// グループがタイルサイズ tw のときに1行へ収まるか（収まらない長いグループは
+// 解答欄で左寄せにして折り返しを整然と並べる）
+function agGroupWraps(len, tw, vw) {
+  const avail = Math.min(430, (vw || 430) - 24);
+  return len * tw + (len - 1) * 6 > avail;
+}
+window.agGroupWraps = agGroupWraps;
+
 function renderQuestion(msg) {
   const main = document.getElementById("agMain");
   const q = cur.q;
   const full = cur.pool.length === 0;
-  // 解答欄は構成素材ごとにスロットを区切り、各グループの文字数でタイルサイズを決める
+  // タイルサイズは問題単位で統一する：最長グループが1行に収まる大きさにし、
+  // 解答欄全体とタイル置き場で同じサイズを使う
+  const maxLen = Math.max(...q.items.map(it => it.kata.length));
+  const tw = agTileSize(maxLen, window.innerWidth);
+  // 解答欄は構成素材ごとにグループを区切って縦に並べる。1グループ自体が長くて
+  // 1行に収まらない場合だけ、そのグループ内での折り返しを左寄せで許容する
   let slotBase = 0;
   const groupsHtml = q.items.map(it => {
     const start = slotBase;
     slotBase += it.kata.length;
-    return `<div class="ag-group" style="--agtw:${agTileSize(it.kata.length, window.innerWidth)}px">${cur.slots.slice(start, start + it.kata.length).map((id, j) => {
+    const wide = agGroupWraps(it.kata.length, tw, window.innerWidth) ? " ag-group-wide" : "";
+    return `<div class="ag-group${wide}">${cur.slots.slice(start, start + it.kata.length).map((id, j) => {
       const i = start + j;
       return id == null
         ? `<span class="ag-tile ag-slot" data-slot="${i}"></span>`
         : `<button type="button" class="ag-tile placed${cur.locked.has(i) ? " locked" : ""}" data-slot="${i}" ${cur.locked.has(i) || cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`;
     }).join("")}</div>`;
   }).join("");
-  const poolN = Math.max(...q.items.map(it => it.kata.length));
   main.innerHTML = `<div class="ag-head"><span>第${qIdx + 1}問／${gameTotal}問</span><span>スコア ${score}点</span></div>
   <p class="ag-clue">${esc(agQuestionClue(q))}</p>
   <p class="ag-rowlabel">解答欄（タップで戻す）</p>
-  <div class="ag-answer" id="agAnswer">${groupsHtml}</div>
+  <div class="ag-answer" id="agAnswer" style="--agtw:${tw}px">${groupsHtml}</div>
   <p class="ag-rowlabel">タイル（タップで解答欄へ）</p>
-  <div class="ag-pool" id="agPool" style="--agtw:${agTileSize(poolN, window.innerWidth)}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
+  <div class="ag-pool" id="agPool" style="--agtw:${tw}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
   <div class="ag-btns">
     <button type="button" class="btn sub" id="agHint" ${cur.judged ? "disabled" : ""}>ヒント（−${AG_HINT_COST}点）</button>
     <button type="button" class="btn sub" id="agReset" ${cur.judged ? "disabled" : ""}>リセット</button>
