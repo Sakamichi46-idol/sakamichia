@@ -1,9 +1,13 @@
 // トッププレビュー専用：ピックアップの描画。
-// 新着は newUntil まで「新ゲーム」表記になり、過ぎたら自動で通常表記に切り替わる。
-// 3枠目は週替わりで定番をローテーションする（古い特集が残り続けないための仕組み）。
-const PICKUPS_NEW = [
-  { href: "games/anagram/", tint: "n", title: "アナグラム", desc: "バラバラになったカタカナのタイルを並べ替えて、メンバー名や楽曲タイトルを当てるクイズです。", lite: "タイルを並べ替えて名前・曲名を当てる。", newUntil: "2026-12-19" },
-  { href: "games/memory-match/", tint: "s", title: "神経衰弱", desc: "メンバーの最新アー写を使ったペア合わせゲーム。6・8・12ペアから選べます。", lite: "最新アー写のペア合わせゲーム。", newUntil: "2026-12-19" },
+// 上位2枠は「新着プール」から新しい順に入る（新ゲーム・新機能・改善のどれでも入れる）。
+// 各項目は until（鮮度の期限）までラベル付きで残り、過ぎると自動でプールから外れる。
+// プールは新しい順に並べておくこと。残りの枠は定番の週替わりローテーションで埋めて合計3枚にする
+// （古い特集が残り続けないための仕組み）。
+const PICKUPS_FRESH = [
+  { href: "members/", tint: "n", label: "新機能", title: "メンバー個別ページ", desc: "メンバー一人ひとりの個別ページができました。センター曲・ライブ記録・歴代アー写などをまとめて見られます。", lite: "メンバーごとの個別ページ。", until: "2026-12-20" },
+  { href: "games/anagram/", tint: "s", label: "新ゲーム", title: "アナグラム", desc: "バラバラになったカタカナのタイルを並べ替えて、メンバー名や楽曲タイトルを当てるクイズです。", lite: "タイルを並べ替えて名前・曲名を当てる。", until: "2026-12-19" },
+  { href: "games/memory-match/", tint: "h", label: "新ゲーム", title: "神経衰弱", desc: "メンバーの最新アー写を使ったペア合わせゲーム。6・8・12ペアから選べます。", lite: "最新アー写のペア合わせゲーム。", until: "2026-12-19" },
+  { href: "contact/", tint: "n", label: "新機能", title: "お問い合わせページ", desc: "データの誤りやご要望を送れる、お問い合わせページを開設しました。", lite: "誤りの報告・ご要望はこちらから。", until: "2026-12-19" },
 ];
 const PICKUPS_EVERGREEN = [
   { href: "formation/", tint: "h", title: "マイフォーメーション", desc: "列の形を決めて、好きなメンバーを自由に配置。画像として保存もできます。", lite: "好きなメンバーを自由に配置する。" },
@@ -15,11 +19,13 @@ const PICKUPS_EVERGREEN = [
   if (!grid) return;
   const now = new Date();
   const ymd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  const items = PICKUPS_NEW.map(p => ({ ...p, isNew: ymd <= p.newUntil }));
+  const items = PICKUPS_FRESH.filter(p => ymd <= p.until).slice(0, 2).map(p => ({ ...p, isNew: true }));
   const week = Math.floor(Date.now() / (7 * 86400000));
-  items.push({ ...PICKUPS_EVERGREEN[week % PICKUPS_EVERGREEN.length], isNew: false });
+  for (let k = 0; items.length < 3 && k < PICKUPS_EVERGREEN.length; k++) {
+    items.push({ ...PICKUPS_EVERGREEN[(week + k) % PICKUPS_EVERGREEN.length], isNew: false });
+  }
   grid.innerHTML = items.map((p, i) =>
-    `<a class="pick pick-${p.tint}" href="${p.href}"><span class="pick-no">${String(i + 1).padStart(2, "0")}</span><div><h3>${p.isNew ? `新ゲーム「${esc(p.title)}」` : esc(p.title)}</h3><p data-lite-text="${esc(p.lite)}">${esc(p.desc)}</p></div></a>`
+    `<a class="pick pick-${p.tint}" href="${p.href}"><span class="pick-no">${String(i + 1).padStart(2, "0")}</span><div><h3>${p.isNew ? `${esc(p.label)}「${esc(p.title)}」` : esc(p.title)}</h3><p data-lite-text="${esc(p.lite)}">${esc(p.desc)}</p></div></a>`
   ).join("");
 })();
 // トップ：横断検索
