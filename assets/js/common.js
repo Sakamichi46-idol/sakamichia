@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     {key:"blog", label:"ブログ", href:BASE+"blog/"},
     {key:"members", label:"メンバー", href:BASE+"members/"},
     {key:"live", label:"ライブ", href:BASE+"live/"},
-    {key:"games", label:"遊ぶ・作る", href:BASE+"games/"}
+    {key:"games", label:"遊ぶ", href:BASE+"games/"}
   ];
   const nav=document.createElement("nav");
   nav.className="bottomnav";nav.setAttribute("aria-label","メインナビゲーション");
@@ -588,10 +588,11 @@ document.addEventListener("DOMContentLoaded",()=>{
   close.type="button";close.className="drawer-close";close.textContent="×";close.setAttribute("aria-label","メニューを閉じる");
   head.appendChild(close);drawer.appendChild(head);
   const list=document.createElement("nav");list.className="drawer-links";
-  // 案A（3カテゴリ型）の階層でドロワーを構成する：ホーム／調べる／遊ぶ・作る／お知らせ
+  // 4カテゴリ型の階層でドロワーを構成する：ホーム／調べる／遊ぶ／作る／お知らせ（2026-11-05決定）
   const NAV_GROUPS=[
     {label:"調べる", keys:["songs/","live/","blog/","members/"]},
-    {label:"遊ぶ・作る", keys:["games/","formation/","setlist/"]},
+    {label:"遊ぶ", keys:["games/"]},
+    {label:"作る", keys:["formation/","setlist/"]},
   ];
   const items=links.map(a=>{
     let path="/";
