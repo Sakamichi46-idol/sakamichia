@@ -58,6 +58,7 @@ async function init(){
   renderOmikuji(photos);
   renderTicker(meta);
   renderSchedule();
+  renderKv();
   renderDisco();
   renderBlogRail();
   renderMv();
@@ -91,6 +92,75 @@ async function init(){
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639"};
 // プレビュー9（公式サイト寄せ）：TODAY バー／ジャケット・ブログ・MV のレール
 function p9fmt(d){ return d ? String(d).replaceAll("-", ".") : ""; }
+function renderKv(){
+  const box = document.getElementById("kv"), track = document.getElementById("kvTrack");
+  if(!box || !track) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const titles = (DB.songs || []).filter(x => x.type === "表題曲" && x.date);
+  const byDate = (a, b) => String(a.date).localeCompare(String(b.date));
+  const relName = c => String(c || "").replace(/^(?:HK|K|S)(?=\d|Digital|BestAL|Unreleased)/, "");
+  const slides = [];
+  const up = titles.filter(x => x.date > today).sort(byDate)[0];
+  if (up) slides.push({href: `songs/${String(up.id).toLowerCase()}/`, bg: GCOL[up.group] || "#2b2430",
+    kicker: "NEW RELEASE", title: `『${up.title}』`, sub: `${up.group} ${relName(up.release)} ・ ${p9fmt(up.date)} 発売予定`});
+  const cur = titles.filter(x => x.date <= today).sort(byDate).slice(-1)[0];
+  if (cur){
+    const jk = (DB.jackets || {})[`${cur.release}|${cur.date}`];
+    if (jk && jk.img) slides.push({href: `songs/${String(cur.id).toLowerCase()}/`, img: jk.img,
+      kicker: "NOW ON SALE", title: `『${cur.title}』`, sub: `${cur.group} ・ ${p9fmt(cur.date)} 発売${cur.center ? " ・ センター " + cur.center : ""}`});
+  }
+  const days = Object.keys((DB.sched || {}).days || {}).filter(d => d >= today).sort();
+  let live = null;
+  for (const d of days){
+    const cand = (DB.sched.days[d] || []).filter(it => (it.kind || "").includes("ライブ"));
+    if (cand.length){ live = {d, it: cand.find(x => !x.title.includes("前夜祭")) || cand[0]}; break; }
+  }
+  if (live){
+    const dt = new Date(live.d + "T00:00:00");
+    const WD2 = ["日", "月", "火", "水", "木", "金", "土"];
+    slides.push({href: live.it.url, ext: true, bg: "#2b2430", kicker: "UPCOMING LIVE",
+      title: live.it.title, sub: `${dt.getMonth() + 1}月${dt.getDate()}日（${WD2[dt.getDay()]}） ・ ${live.it.g}`});
+  }
+  const mv = (DB.songs || []).filter(x => x.mv).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
+  if (mv){
+    const m = String(mv.mv).match(/(?:v=|youtu\.be\/)([\w-]{6,})/);
+    if (m) slides.push({href: `songs/${String(mv.id).toLowerCase()}/`, img: `https://i.ytimg.com/vi/${m[1]}/maxresdefault.jpg`,
+      kicker: "MOVIE", title: `『${mv.title}』`, sub: `${mv.group} ・ 公式MV`});
+  }
+  if(!slides.length) return;
+  track.innerHTML = slides.map(sl => sl.img
+    ? `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""}><img class="kv-bg" src="${esc(sl.img)}" alt="" loading="lazy"><span class="kv-cap"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span></a>`
+    : `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""} style="background:${esc(sl.bg)}"><span class="kv-type"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span></a>`).join("");
+  const dots = document.getElementById("kvDots"), count = document.getElementById("kvCount");
+  dots.innerHTML = slides.map((_, i) => `<button type="button" class="kv-dot" data-i="${i}" aria-label="スライド${i + 1}"></button>`).join("");
+  const els = [...track.children], dotEls = [...dots.children];
+  let idx = 0, timer = null, resume = null;
+  const lite = document.documentElement.dataset.lite === "1";
+  const calm = lite || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  function show(i){
+    idx = (i + els.length) % els.length;
+    els.forEach((e, j) => e.classList.toggle("on", j === idx));
+    dotEls.forEach((e, j) => e.classList.toggle("on", j === idx));
+    count.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(els.length).padStart(2, "0")}`;
+  }
+  function start(){ if (!calm && els.length > 1 && !timer) timer = setInterval(() => show(idx + 1), 6000); }
+  function stop(){ if (timer){ clearInterval(timer); timer = null; } }
+  function hold(){ stop(); if (resume) clearTimeout(resume); resume = setTimeout(start, 12000); }
+  document.getElementById("kvPrev").addEventListener("click", () => { show(idx - 1); hold(); });
+  document.getElementById("kvNext").addEventListener("click", () => { show(idx + 1); hold(); });
+  dotEls.forEach(d => d.addEventListener("click", () => { show(+d.dataset.i); hold(); }));
+  let sx = null;
+  box.addEventListener("touchstart", e => { sx = e.touches[0].clientX; hold(); }, {passive: true});
+  box.addEventListener("touchend", e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) > 42) show(idx + (dx < 0 ? 1 : -1));
+    sx = null;
+  }, {passive: true});
+  show(0);
+  box.hidden = false;
+  start();
+}
 function todaySchedule(){
   const now = new Date();
   const tstr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;

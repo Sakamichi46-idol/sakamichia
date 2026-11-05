@@ -201,6 +201,27 @@ a.tk-item:active{opacity:.6}
 .sch-title{font-weight:700;font-size:14px;line-height:1.45}
 .sch-mem{color:var(--muted);font-size:12.5px;margin-top:1px;line-height:1.5}
 .sch-kind{flex:none;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
+
+/* プレビュー9：キービジュアル・スライダー（時間で切り替わる大きな見出し） */
+.kv{position:relative;border-radius:20px;overflow:hidden;margin-top:18px;aspect-ratio:16/10.5;background:#241f2e;box-shadow:0 10px 26px rgba(30,20,50,.16)}
+.kv-slide{position:absolute;inset:0;opacity:0;transition:opacity .65s ease;pointer-events:none;text-decoration:none;color:#fff}
+.kv-slide.on{opacity:1;pointer-events:auto}
+.kv-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kv-cap{position:absolute;left:14px;bottom:14px;max-width:84%;background:rgba(30,24,40,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:14px;padding:12px 15px}
+.kv-cap>span,.kv-type>span{display:block}
+.kv-type{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px}
+.kv-kicker{font-size:11px;font-weight:800;letter-spacing:.16em;opacity:.85}
+.kv-title{font-size:clamp(21px,5.8vw,32px);font-weight:800;line-height:1.3;margin-top:3px}
+.kv-sub{font-size:12.5px;opacity:.92;margin-top:4px}
+.kv-ui{position:absolute;right:14px;bottom:16px;display:flex;align-items:center;gap:10px;z-index:3}
+.kv-dots{display:flex;gap:6px}
+.kv-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);border:none;padding:0;cursor:pointer}
+.kv-dot.on{background:#fff}
+.kv-count{font-size:12px;font-weight:700;color:#fff;letter-spacing:.08em;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+.kv-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(30,24,40,.4);color:#fff;font-size:25px;line-height:1;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:3;padding:0}
+@media(min-width:821px){.kv-arrow{display:flex}}
+.kv-prev{left:12px}
+.kv-next{right:12px}
 </style></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
@@ -213,6 +234,7 @@ a.tk-item:active{opacity:.6}
 <div class="q-chips"><span class="q-label">例：</span><button type="button" class="q-chip" data-q="小坂菜緒">小坂菜緒</button><button type="button" class="q-chip" data-q="横浜スタジアム">横浜スタジアム</button></div>
 <p class="count" id="counts"></p></div>
 <div id="results"></div>
+<div class="kv" id="kv" hidden><div id="kvTrack"></div><button type="button" class="kv-arrow kv-prev" id="kvPrev" aria-label="前のスライド">‹</button><button type="button" class="kv-arrow kv-next" id="kvNext" aria-label="次のスライド">›</button><div class="kv-ui"><div class="kv-dots" id="kvDots"></div><div class="kv-count" id="kvCount"></div></div></div>
 <div id="omikujiAnchor"></div>
 <div id="scheduleSection" hidden><div class="sec-head"><span class="sec-en">SCHEDULE</span><h2 class="sec-ja">今日の予定</h2></div><div class="sched-list" id="schedList"></div></div>
 <div id="discoSection"><div class="sec-head"><span class="sec-en">NEW RELEASE</span><h2 class="sec-ja">最新リリース</h2></div><div class="rail" id="discoRail"></div><p class="more-row"><a class="more-link" href="songs/">MORE</a></p></div>
