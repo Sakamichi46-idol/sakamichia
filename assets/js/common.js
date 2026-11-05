@@ -642,7 +642,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   drawer.appendChild(themeBtn);
   const liteBtn=document.createElement("button");
   liteBtn.type="button";liteBtn.className="btn sub drawer-share";
-  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"簡易版（スタイリッシュ）：ON（タップで通常版）":"簡易版（スタイリッシュ）：OFF（タップでON）"; };
+  const syncLiteBtn=()=>{ liteBtn.textContent=document.documentElement.dataset.lite==="1"?"簡易版：ON（タップで通常版）":"簡易版：OFF（タップでON）"; };
   liteBtn.addEventListener("click",()=>{ applyLite(document.documentElement.dataset.lite!=="1"); location.reload(); });
   syncLiteBtn();
   drawer.appendChild(liteBtn);
