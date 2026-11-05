@@ -363,27 +363,6 @@ document.querySelectorAll(".q-chip").forEach(b => b.addEventListener("click", ()
   if (f) f.dispatchEvent(new Event("submit", { cancelable: true }));
 }));
 
-// プレビュー8：ヒーロー右上の共有ボタン（公式サイト式）。押すと左にパネルが展開し、
-// X / LINE / コピー / 共有シート を選べる。もう一度押すと閉じる。
-(function(){
-  const wrap = document.getElementById("p8ShareWrap");
-  const fab = document.getElementById("p8Share");
-  if(!wrap || !fab) return;
-  const text = () => withShareTag(document.title.replace(/\s*\|\s*サカミチア\s*$/, "") || "サカミチア");
-  const openWin = (u) => window.open(u, "_blank", "noopener,width=640,height=560");
-  fab.addEventListener("click", () => wrap.classList.toggle("open"));
-  wrap.querySelectorAll("[data-sh]").forEach(b => b.addEventListener("click", async () => {
-    const k = b.dataset.sh;
-    if (k === "x") openWin("https://x.com/intent/post?text=" + encodeURIComponent(text()) + "&url=" + encodeURIComponent(location.href));
-    else if (k === "line") openWin("https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(location.href));
-    else if (k === "copy") {
-      try { await navigator.clipboard.writeText(text() + " " + location.href); b.classList.add("copied"); setTimeout(() => { b.classList.remove("copied"); wrap.classList.remove("open"); }, 900); return; } catch(e){}
-    }
-    else if (k === "sheet") shareContent({}, null);
-    wrap.classList.remove("open");
-  }));
-})();
-
 // プレビュー8：末尾の共有ボタン列（X / LINE / コピー / 共有シート）
 (function(){
   const text = () => withShareTag(document.title.replace(/\s*\|\s*サカミチア\s*$/, "") || "サカミチア");
