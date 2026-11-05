@@ -100,10 +100,12 @@ function renderKv(){
   const byDate = (a, b) => String(a.date).localeCompare(String(b.date));
   const relName = c => String(c || "").replace(/^(?:HK|K|S)(?=\d|Digital|BestAL|Unreleased)/, "");
   const slides = [];
-  for (const g of ["乃木坂46", "櫻坂46", "日向坂46"]){
+  const kvByGroup = ["乃木坂46", "櫻坂46", "日向坂46"].map(g => {
     const k = ((DB.kv || {}).items || {})[g];
-    if (k && k.img) slides.push({href: k.url, ext: true, img: k.img, chip: g});
-  }
+    const lst = Array.isArray(k) ? k : (k && k.img ? [k] : []);
+    return lst.filter(x => x && x.img).map(x => ({href: x.url, ext: true, img: x.img, chip: g}));
+  });
+  for (let i = 0; i < 3; i++) for (const lst of kvByGroup) if (lst[i]) slides.push(lst[i]);
   if (slides.length){
     const mv2 = (DB.songs || []).filter(x => x.mv).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
     if (mv2){

@@ -1,13 +1,33 @@
 {
  "updated": "2026-11-05",
  "items": {
-  "櫻坂46": {
-   "img": "https://www.sakurazaka46.com/images/14/eab/f52c1b0aa36c1443777002bf6bda8.jpg",
-   "url": "https://sakurazaka46.com/s/s46/page/6th_anniversary"
-  },
-  "日向坂46": {
-   "img": "https://cdn.hinatazaka46.com/images/14/b62/c5a49d8a8e420e1737781a4592f02.jpg",
-   "url": "https://www.hinatazaka46.com/18th_single/"
-  }
+  "櫻坂46": [
+   {
+    "img": "https://www.sakurazaka46.com/images/14/eab/f52c1b0aa36c1443777002bf6bda8.jpg",
+    "url": "https://sakurazaka46.com/s/s46/page/6th_anniversary"
+   },
+   {
+    "img": "https://www.sakurazaka46.com/images/14/b2a/3e46e7a17fb336f09a80d3ba76352.jpg",
+    "url": "https://sakurazaka46.com/s/s46/page/backslive_box"
+   },
+   {
+    "img": "https://www.sakurazaka46.com/images/14/8f2/1e0b9a6eaf76b2a0b166a94cc1eae.jpg",
+    "url": "https://sakurazaka46.com/backslive_16th"
+   }
+  ],
+  "日向坂46": [
+   {
+    "img": "https://cdn.hinatazaka46.com/images/14/b62/c5a49d8a8e420e1737781a4592f02.jpg",
+    "url": "https://www.hinatazaka46.com/18th_single/"
+   },
+   {
+    "img": "https://cdn.hinatazaka46.com/images/14/5b4/62a7b42bc900e58449d67808395a3.jpg",
+    "url": "https://www.hinatazaka46.com/hinachri2026/"
+   },
+   {
+    "img": "https://cdn.hinatazaka46.com/images/14/20f/78564d11e635fcd7f03811b746d4c.jpg",
+    "url": "https://www.youtube.com/@hinatazakachannel"
+   }
+  ]
  }
 }
