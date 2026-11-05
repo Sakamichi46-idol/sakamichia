@@ -297,8 +297,16 @@ function createMultiSelect(mount, cfg){
     MSEL_OPEN = api;
     // 画面右端ではみ出す場合はポップオーバーを右寄せに切り替える
     pop.classList.remove("right");
+    pop.style.left = "";
     const r = pop.getBoundingClientRect();
-    if(r.right > window.innerWidth - 8) pop.classList.add("right");
+    if(r.right > window.innerWidth - 8){
+      pop.classList.add("right");
+      // 右寄せで今度は左端がはみ出す場合は、画面の左端に合わせてずらす
+      if(pop.getBoundingClientRect().left < 8){
+        pop.classList.remove("right");
+        pop.style.left = Math.round(8 - mount.getBoundingClientRect().left) + "px";
+      }
+    }
   }
   btn.addEventListener("click", e => { e.stopPropagation(); if(pop.hidden) open(); else close(); });
   pop.addEventListener("click", e => e.stopPropagation());
