@@ -180,7 +180,20 @@ function renderKv(){
 function todaySchedule(){
   const now = new Date();
   const tstr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  return (((DB.sched || {}).days || {})[tstr] || []);
+  const items = (((DB.sched || {}).days || {})[tstr] || []).slice();
+  // 時系列順（グループ順にしない）：時刻なし（終日）は先頭、以降は開始時刻の昇順
+  const tmin = it => {
+    const m = /^(\d{1,2}):(\d{2})/.exec(it.time || "");
+    return m ? (+m[1]) * 60 + (+m[2]) : null;
+  };
+  items.sort((a, b) => {
+    const x = tmin(a), y = tmin(b);
+    if (x === null && y === null) return 0;
+    if (x === null) return -1;
+    if (y === null) return 1;
+    return x - y;
+  });
+  return items;
 }
 function renderSchedule(){
   const sec = document.getElementById("scheduleSection");
