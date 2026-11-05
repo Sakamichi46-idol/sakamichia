@@ -803,12 +803,7 @@ html[data-lite="1"] .sec-head{border-bottom:1px solid var(--line);margin-top:22p
 html[data-lite="1"] .sec-en{font-size:19px}
 html[data-lite="1"] .sec-lead{font-size:13px}
 
-/* 絞り込みUIの整理（2026-11-06）：スマホではグループチップを1行スクロールに */
-@media(max-width:768px){
-  .gchips,#mbGroups{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-  .gchips::-webkit-scrollbar,#mbGroups::-webkit-scrollbar{display:none}
-  .gchips .ychip,#mbGroups .ychip{flex:none}
-}
+/* グループチップは全グループが見える折り返し表示（2026-11-06ユーザー決定：スライド式は採らない） */
 
 /* ページャーを1行に収める（2026-11-06） */
 .pager{flex-wrap:nowrap;gap:4px}
