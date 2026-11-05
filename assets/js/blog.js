@@ -12,6 +12,8 @@ function syncGroupChips(){
 let MEDIA=""; const GENMAP={};
 // 期生の複数選択プルダウン（値は「グループ|期」文字列の Set、選択同士は OR）
 const GEN_SEL=new Set(); let genMS=null;
+// メンバーは複数選択可（メンバー名・リレーシリーズ名の Set、選択同士は OR、空＝すべてのメンバー）
+const MSEL=new Set(); let memberMS=null; let MEMBER_OPTION_VALUES=new Set();
 function photoN(b){ return (b.media||0)||(b.imgn||0); }
 // 一覧表示のサムネイルは画像プロキシ経由で小さく軽くする(原寸約250KB→約7KB)。
 // 通信制限中でも一覧が見られるようにするため(ユーザー要望)。タップ後の
@@ -102,7 +104,7 @@ function saveState(){
     q:document.getElementById("q").value,
     bq:document.getElementById("bq").value,
     groups:[...GSEL],
-    member:document.getElementById("member").value,
+    member:[...MSEL],
     from:dateVal("from"),
     to:dateVal("to"),
     sort:document.getElementById("sort").value,
@@ -113,14 +115,16 @@ function saveState(){
 function loadState(){ try{ return JSON.parse(localStorage.getItem(SKEY)||"null"); }catch(e){ return null; } }
 // 年チップの件数：メンバー（またはシリーズ）指定時は、その人の年別件数を出す
 function yearCounts(){
-  const mv=(document.getElementById("member")||{}).value||"";
-  if(mv && INDEX.memberYears && INDEX.memberYears[mv]) return INDEX.memberYears[mv];
+  if(MSEL.size && INDEX.memberYears){
+    const out={}; let any=false;
+    for(const mv of MSEL){ const my=INDEX.memberYears[mv]; if(my){ any=true; for(const y in my) out[y]=(out[y]||0)+my[y]; } }
+    if(any) return out;
+  }
   return INDEX.years;
 }
 function renderYearChips(){
-  const mv=(document.getElementById("member")||{}).value||"";
   const counts=yearCounts();
-  const years=Object.keys(INDEX.years).sort().reverse().filter(y=>!mv || (counts[y]||0)>0);
+  const years=Object.keys(INDEX.years).sort().reverse().filter(y=>!MSEL.size || (counts[y]||0)>0);
   const box=document.getElementById("years");
   box.innerHTML=`<button type="button" class="ychip" data-year="">全期間</button>`+years.map(y=>`<button type="button" class="ychip" data-year="${y}">${y}年（${counts[y]||0}件）</button>`).join("");
   box.querySelectorAll(".ychip").forEach(ch=>ch.addEventListener("click", async ()=>{
@@ -140,6 +144,10 @@ async function init(){
   ["from","to"].forEach(id=>{ const el=document.getElementById(id); el.min=`${years[years.length-1]}-01-01`; el.max=ymd(new Date()); });
   renderYearChips();
   MEMBERS=await loadJSON("members.json");
+  memberMS=createMultiSelect(document.getElementById("memberMS"),{
+    allLabel:"すべてのメンバー", selected:MSEL, ariaLabel:"メンバー", options:[],
+    onChange:()=>{ resetPages(); render(); renderYearChips(); syncAdvBtn(); saveState(); }
+  });
   buildMemberOptions();
   genMS=createMultiSelect(document.getElementById("genMS"),{
     allLabel:"すべての期生", selected:GEN_SEL, ariaLabel:"期生", options:[],
@@ -179,7 +187,7 @@ async function init(){
     const sg = Array.isArray(saved.groups) ? saved.groups : (saved.group ? [saved.group] : []);
     sg.forEach(g=>{ if(GORDER.includes(g)) GSEL.add(g); });
     if(GSEL.size){ syncGroupChips(); buildMemberOptions(); }
-    if(saved.member) document.getElementById("member").value=saved.member;
+    if(saved.member){ (Array.isArray(saved.member)?saved.member:[saved.member]).forEach(v=>MSEL.add(v)); if(memberMS) memberMS.refresh(); }
     if(saved.q) document.getElementById("q").value=saved.q;
     if(saved.bq) document.getElementById("bq").value=saved.bq;
     // 保存済みの日付は ISO（yyyy-mm-dd）と旧表示形式（yyyy/mm/dd）の両方を受ける
@@ -202,10 +210,7 @@ async function init(){
     if(+saved.pPage>=1) ppage=+saved.pPage;
   }
   const qMember=new URLSearchParams(location.search).get("member");
-  if(qMember){
-    const msel=document.getElementById("member");
-    if([...msel.options].some(o=>o.value===qMember)){ msel.value=qMember; resetPages(); }
-  }
+  if(qMember && MEMBER_OPTION_VALUES.has(qMember)){ MSEL.add(qMember); if(memberMS) memberMS.refresh(); resetPages(); }
   // ディープリンク（?year=YYYY）：ブログ統計の年別バーなどから、その年だけに絞って開く
   const qYear=new URLSearchParams(location.search).get("year");
   if(qYear && /^\d{4}$/.test(qYear)){ yearSel=qYear; }
@@ -234,8 +239,7 @@ async function init(){
     }
   }
   renderYearChips();
-  ["q","member","from","to","sort","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
-  document.getElementById("member").addEventListener("input",()=>renderYearChips());
+  ["q","from","to","sort","bq"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{resetPages();render();syncAdvBtn();saveState();}));
   // 検索サジェスト：メンバー名（漢字・読み）から候補を出す
   attachSuggest(document.getElementById("q"), q=>{
     const hits=t=>kanaNorm(String(t||"").toLowerCase()).includes(kanaNorm(q.toLowerCase()));
@@ -248,7 +252,7 @@ async function init(){
   // 条件をリセット：絞り込み・詳細検索の条件をすべて初期状態に戻し、保存状態も上書きする
   document.getElementById("resetAll").addEventListener("click",()=>{
     GSEL.clear(); syncGroupChips(); buildMemberOptions();
-    document.getElementById("member").value="";
+    MSEL.clear(); if(memberMS) memberMS.refresh();
     document.getElementById("q").value="";
     document.getElementById("bq").value="";
     document.getElementById("from").value="";
@@ -328,8 +332,12 @@ function syncAdvBtn(){
 function syncChips(){
   document.querySelectorAll("#years .ychip").forEach(ch=>ch.classList.toggle("on", (ch.dataset.year||null)===yearSel));
   syncAdvBtn();
-  const mv=(document.getElementById("member")||{}).value||"";
-  const effTotal=(mv && INDEX.memberYears && INDEX.memberYears[mv]) ? Object.values(INDEX.memberYears[mv]).reduce((a,b)=>a+b,0) : INDEX.total;
+  let effTotal=INDEX.total;
+  if(MSEL.size && INDEX.memberYears){
+    let s=0, any=false;
+    for(const mv of MSEL){ const my=INDEX.memberYears[mv]; if(my){ any=true; s+=Object.values(my).reduce((a,x)=>a+x,0); } }
+    if(any) effTotal=s;
+  }
   document.getElementById("yearHint").textContent = yearSel
     ? `${yearSel}年だけを表示中です。もう一度押すか「全期間」を押すと全期間に戻ります。`
     : (loadingYears ? `全期間が対象です（他の年を読み込み中…）。` : `全期間（${effTotal}件）が対象です。年を押すとその年だけに絞れます。`);
@@ -337,27 +345,20 @@ function syncChips(){
 const GORDER=["乃木坂46","櫻坂46","日向坂46","欅坂46","けやき坂46"];
 function buildMemberOptions(){
   const groups=GSEL.size?GORDER.filter(x=>GSEL.has(x)):GORDER;
-  const single=groups.length===1;
-  const sel=document.getElementById("member");
-  const prev=sel.value;
-  let html=`<option value="">すべてのメンバー</option>`;
   const MC=(INDEX&&INDEX.memberCounts)||null;
+  const opts=[];
   for(const gr of groups){
     const mem=MEMBERS.filter(m=>(m.groups||[m.group]).includes(gr) && (!MC || (MC[gr+"|"+m.name]||0)>0));
     const gens=[...new Set(mem.map(m=>m.gen))].sort((a,b)=>(a===0?99:a)-(b===0?99:b));
     for(const gen of gens){
-      const label=(single?"":gr+"・")+(gen>=1?gen+"期生":"その他");
-      const opts=mem.filter(m=>m.gen===gen).sort((a,b)=>String(a.reading).localeCompare(String(b.reading),"ja"))
-        .map(m=>`<option value="${esc(m.name)}">${esc(m.name)}</option>`).join("");
-      if(opts) html+=`<optgroup label="${label}">${opts}</optgroup>`;
+      mem.filter(m=>m.gen===gen).sort((a,b)=>String(a.reading).localeCompare(String(b.reading),"ja"))
+        .forEach(m=>opts.push({value:m.name, label:m.name}));
     }
     const RELAYS={"乃木坂46":["研究生リレーブログ","3期生リレーブログ","4期生リレーブログ","新4期生リレーブログ","5期生リレーブログ","6期生リレーブログ"],"櫻坂46":["櫻坂46三期生リレーブログ","櫻坂46四期生リレーブログ"],"欅坂46":["欅坂46新二期生リレーブログ"],"日向坂46":["日向坂46新三期生リレーブログ","日向坂46四期生リレーブログ","日向坂46五期生リレーブログ"]};
-    if(RELAYS[gr]){
-      html+=`<optgroup label="${single?"":gr+"・"}リレーブログ">${RELAYS[gr].map(r=>`<option value="${r}">${r}</option>`).join("")}</optgroup>`;
-    }
+    if(RELAYS[gr]) RELAYS[gr].forEach(r=>opts.push({value:r, label:r}));
   }
-  sel.innerHTML=html;
-  sel.value=[...sel.options].some(o=>o.value===prev)?prev:"";
+  MEMBER_OPTION_VALUES=new Set(opts.map(o=>String(o.value)));
+  if(memberMS) memberMS.setOptions(opts);
 }
 /* ===== ビュー切り替え時のDOM保持 =====
    記事一覧⇔写真一覧の切り替えでは、作ったDOMをフラグメントへ退避し、
@@ -682,12 +683,11 @@ async function attachSnippets(){
 }
 function filtered(){
   const q=document.getElementById("q").value;
-  const mv=document.getElementById("member").value;
   const from=dateVal("from"), to=dateVal("to");
   const sv=document.getElementById("sort").value;
   const arr=pool().filter(b=>{
-      const mHit=mv&&(b.member===mv||b.series===mv);
-      if(mv&&!mHit) return false;
+      const mHit=MSEL.has(b.member)||(b.series&&MSEL.has(b.series));
+      if(MSEL.size&&!mHit) return false;
       if(GSEL.size&&!GSEL.has(b.group)) return false;
       // 期生は複数選択可（選んだ「グループ・期」のいずれかに合えば通す＝OR）
       if(GEN_SEL.size){
@@ -714,7 +714,7 @@ let BYID=new Map();
 let bodyVersion=0;
 function inputSig(){
   return [document.getElementById("q").value,
-    document.getElementById("member").value,
+    [...MSEL].sort().join(","),
     [...GSEL].sort().join(","), [...GEN_SEL].sort().join(","),
     MEDIA, yearSel||"", document.getElementById("sort").value,
     dateVal("from"), dateVal("to"), bodyQuery, bodyVersion, bodyPending?"P":"", apage, ppage].join("|");
