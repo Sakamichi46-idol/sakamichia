@@ -2468,6 +2468,54 @@
   ],
   "2026-12-01": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「フニャフニャ伝説」",
+    "members": [
+     "愛宕心響"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107330"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "23:00〜23:27",
+    "title": "BAYFM「乃木坂46 柴田柚菜のDreaming time」",
+    "members": [
+     "柴田柚菜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105431"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:00〜24:30",
+    "title": "TOKYO MX「小峠英二のなんて美だ！」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105027"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "誕生日",
+    "time": "",
+    "title": "大越ひなの 誕生日",
+    "members": [
+     "大越ひなの"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/artist/63102"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ライブ/イベント",
+    "time": "",
+    "title": "「6期生全国ツアー2026 福岡公演」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107630"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
     "time": "",
@@ -2494,7 +2542,73 @@
     "url": "https://www.hinatazaka46.com/s/official/media/detail/11510"
    }
   ],
+  "2026-12-02": [
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "18:30〜23:18",
+    "title": "フジテレビ系「2026FNS歌謡祭 第1夜」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107684"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "19:00〜21:00",
+    "title": "SHOWROOM「猫舌SHOWROOM」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107117"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "24:00〜24:27",
+    "title": "BAYFM「乃木坂46 小川彩のbaby baby maybe」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "25:00〜27:00",
+    "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
+    "members": [
+     "井上和"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107638"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ライブ/イベント",
+    "time": "",
+    "title": "「6期生全国ツアー2026 福岡公演」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107630"
+   }
+  ],
   "2026-12-03": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜23:55",
+    "title": "TOKYO FM「SCHOOL OF LOCK!（ARTIST LOCKS!「乃木坂LOCKS!」）」",
+    "members": [
+     "賀喜遥香"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106859"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜22:54",
+    "title": "フジテレビ系「波うららかに、めおと日和」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107636"
+   },
    {
     "g": "櫻坂46",
     "kind": "テレビ",
@@ -2529,6 +2643,68 @@
    }
   ],
   "2026-12-04": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "17:45〜22:00",
+    "title": "AIR-G' FM北海道「IMAREAL（乃木坂46 金川紗耶のイマレコ！）」",
+    "members": [
+     "金川紗耶"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107518"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜20:56",
+    "title": "FM FUJI「～DJ KOO PRESENTS～ BEAT GOES ON」",
+    "members": [
+     "鈴木佑捺"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106410"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜22:00",
+    "title": "J-WAVE「SYNCREATE（THE REVERSE）」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106841"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:30〜20:55",
+    "title": "TOKYO FM「ベルク presents 乃木坂46の乃木坂に相談だ！」",
+    "members": [
+     "田村真佑",
+     "一ノ瀬美空"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106963"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「沈黙の金曜日」",
+    "members": [
+     "弓木奈於"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107331"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "26:00〜26:30",
+    "title": "テレビ東京系「東京パソコンクラブ」",
+    "members": [
+     "弓木奈於",
+     "大越ひなの"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107511"
+   },
    {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
@@ -2588,6 +2764,16 @@
   ],
   "2026-12-05": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "11:30〜12:00",
+    "title": "TOKAI RADIO「乃木坂46　岡本姫奈のおかひな時間」",
+    "members": [
+     "岡本姫奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107022"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ラジオ",
     "time": "22:00～",
@@ -2625,6 +2811,30 @@
    }
   ],
   "2026-12-06": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "18:00〜18:30",
+    "title": "文化放送「乃木坂46の「の」」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107515"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:05〜22:55",
+    "title": "NHK AM「らじらー！サンデー」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106124"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:15〜24:45",
+    "title": "テレビ東京系「乃木坂工事中」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107579"
+   },
    {
     "g": "櫻坂46",
     "kind": "ラジオ",
@@ -2722,6 +2932,36 @@
   ],
   "2026-12-07": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜25:00",
+    "title": "文化放送「レコメン！」",
+    "members": [
+     "長嶋凛桜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107517"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "25:29〜25:59",
+    "title": "日本テレビ「乃木坂スター誕生！SIX」",
+    "members": [
+     "6期生"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107519"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107491"
+   },
+   {
     "g": "日向坂46",
     "kind": "ラジオ",
     "time": "24:00～",
@@ -2740,6 +2980,46 @@
   ],
   "2026-12-08": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「フニャフニャ伝説」",
+    "members": [
+     "愛宕心響"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107330"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "23:00〜23:27",
+    "title": "BAYFM「乃木坂46 柴田柚菜のDreaming time」",
+    "members": [
+     "柴田柚菜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105431"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:00〜24:30",
+    "title": "TOKYO MX「小峠英二のなんて美だ！」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105027"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107491"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
     "time": "",
@@ -2750,6 +3030,44 @@
   ],
   "2026-12-09": [
    {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "19:00〜21:00",
+    "title": "SHOWROOM「猫舌SHOWROOM」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107117"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "24:00〜24:27",
+    "title": "BAYFM「乃木坂46 小川彩のbaby baby maybe」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "25:00〜27:00",
+    "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
+    "members": [
+     "井上和"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107638"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107491"
+   },
+   {
     "g": "日向坂46",
     "kind": "ライブ",
     "time": "18:30～",
@@ -2759,6 +3077,26 @@
    }
   ],
   "2026-12-10": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜23:55",
+    "title": "TOKYO FM「SCHOOL OF LOCK!（ARTIST LOCKS!「乃木坂LOCKS!」）」",
+    "members": [
+     "賀喜遥香"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106859"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜22:54",
+    "title": "フジテレビ系「波うららかに、めおと日和」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107636"
+   },
    {
     "g": "櫻坂46",
     "kind": "テレビ",
@@ -2811,6 +3149,68 @@
    }
   ],
   "2026-12-11": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜20:56",
+    "title": "FM FUJI「～DJ KOO PRESENTS～ BEAT GOES ON」",
+    "members": [
+     "鈴木佑捺"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106410"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜22:00",
+    "title": "J-WAVE「SYNCREATE（THE REVERSE）」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106841"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:30〜20:55",
+    "title": "TOKYO FM「ベルク presents 乃木坂46の乃木坂に相談だ！」",
+    "members": [
+     "田村真佑",
+     "一ノ瀬美空"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106963"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「沈黙の金曜日」",
+    "members": [
+     "弓木奈於"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107331"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "26:00〜26:30",
+    "title": "テレビ東京系「東京パソコンクラブ」",
+    "members": [
+     "弓木奈於",
+     "大越ひなの"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107511"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107492"
+   },
    {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
@@ -2870,6 +3270,26 @@
   ],
   "2026-12-12": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "11:30〜12:00",
+    "title": "TOKAI RADIO「乃木坂46　岡本姫奈のおかひな時間」",
+    "members": [
+     "岡本姫奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107022"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107492"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ラジオ",
     "time": "22:00～",
@@ -2887,6 +3307,40 @@
    }
   ],
   "2026-12-13": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "18:00〜18:30",
+    "title": "文化放送「乃木坂46の「の」」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107515"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:05〜22:55",
+    "title": "NHK AM「らじらー！サンデー」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106124"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:15〜24:45",
+    "title": "テレビ東京系「乃木坂工事中」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107579"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107492"
+   },
    {
     "g": "櫻坂46",
     "kind": "ラジオ",
@@ -2976,6 +3430,36 @@
   ],
   "2026-12-14": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜25:00",
+    "title": "文化放送「レコメン！」",
+    "members": [
+     "矢田萌華"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107516"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "25:29〜25:59",
+    "title": "日本テレビ「乃木坂スター誕生！SIX」",
+    "members": [
+     "6期生"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107519"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107492"
+   },
+   {
     "g": "日向坂46",
     "kind": "ラジオ",
     "time": "24:00～",
@@ -2985,6 +3469,46 @@
    }
   ],
   "2026-12-15": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「フニャフニャ伝説」",
+    "members": [
+     "愛宕心響"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107330"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "23:00〜23:27",
+    "title": "BAYFM「乃木坂46 柴田柚菜のDreaming time」",
+    "members": [
+     "柴田柚菜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105431"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:00〜24:30",
+    "title": "TOKYO MX「小峠英二のなんて美だ！」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105027"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107492"
+   },
    {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
@@ -3028,6 +3552,34 @@
   ],
   "2026-12-16": [
    {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "19:00〜21:00",
+    "title": "SHOWROOM「猫舌SHOWROOM」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107117"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "24:00〜24:27",
+    "title": "BAYFM「乃木坂46 小川彩のbaby baby maybe」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "25:00〜27:00",
+    "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
+    "members": [
+     "井上和"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107638"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ライブ",
     "time": "",
@@ -3053,6 +3605,54 @@
    }
   ],
   "2026-12-17": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜23:55",
+    "title": "TOKYO FM「SCHOOL OF LOCK!（ARTIST LOCKS!「乃木坂LOCKS!」）」",
+    "members": [
+     "賀喜遥香"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106859"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜22:54",
+    "title": "フジテレビ系「波うららかに、めおと日和」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107636"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "誕生日",
+    "time": "",
+    "title": "岡本姫奈 誕生日",
+    "members": [
+     "岡本姫奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/artist/55401"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107493"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ライブ/イベント",
+    "time": "",
+    "title": "「43rdSGアンダーライブ」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107665"
+   },
    {
     "g": "櫻坂46",
     "kind": "テレビ",
@@ -3097,6 +3697,86 @@
    }
   ],
   "2026-12-18": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "17:45〜22:00",
+    "title": "AIR-G' FM北海道「IMAREAL（乃木坂46 金川紗耶のイマレコ！）」",
+    "members": [
+     "金川紗耶"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107518"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜20:56",
+    "title": "FM FUJI「～DJ KOO PRESENTS～ BEAT GOES ON」",
+    "members": [
+     "鈴木佑捺"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106410"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜22:00",
+    "title": "J-WAVE「SYNCREATE（THE REVERSE）」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106841"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:30〜20:55",
+    "title": "TOKYO FM「ベルク presents 乃木坂46の乃木坂に相談だ！」",
+    "members": [
+     "田村真佑",
+     "一ノ瀬美空"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106963"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「沈黙の金曜日」",
+    "members": [
+     "弓木奈於"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107331"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "26:00〜26:30",
+    "title": "テレビ東京系「東京パソコンクラブ」",
+    "members": [
+     "弓木奈於",
+     "大越ひなの"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107511"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107493"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ライブ/イベント",
+    "time": "",
+    "title": "「43rdSGアンダーライブ」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107665"
+   },
    {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
@@ -3148,6 +3828,26 @@
   ],
   "2026-12-19": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "11:30〜12:00",
+    "title": "TOKAI RADIO「乃木坂46　岡本姫奈のおかひな時間」",
+    "members": [
+     "岡本姫奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107022"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107493"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ラジオ",
     "time": "22:00～",
@@ -3183,6 +3883,40 @@
    }
   ],
   "2026-12-20": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "18:00〜18:30",
+    "title": "文化放送「乃木坂46の「の」」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107515"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:05〜22:55",
+    "title": "NHK AM「らじらー！サンデー」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106124"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:15〜24:45",
+    "title": "テレビ東京系「乃木坂工事中」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107579"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107493"
+   },
    {
     "g": "櫻坂46",
     "kind": "ラジオ",
@@ -3290,6 +4024,26 @@
   ],
   "2026-12-21": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜25:00",
+    "title": "文化放送「レコメン！」",
+    "members": [
+     "長嶋凛桜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107517"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "25:29〜25:59",
+    "title": "日本テレビ「乃木坂スター誕生！SIX」",
+    "members": [
+     "6期生"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107519"
+   },
+   {
     "g": "日向坂46",
     "kind": "ラジオ",
     "time": "24:00～",
@@ -3299,6 +4053,46 @@
    }
   ],
   "2026-12-22": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「フニャフニャ伝説」",
+    "members": [
+     "愛宕心響"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107330"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "23:00〜23:27",
+    "title": "BAYFM「乃木坂46 柴田柚菜のDreaming time」",
+    "members": [
+     "柴田柚菜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105431"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:00〜24:30",
+    "title": "TOKYO MX「小峠英二のなんて美だ！」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105027"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
+   },
    {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
@@ -3328,6 +4122,54 @@
   ],
   "2026-12-23": [
    {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "19:00〜21:00",
+    "title": "SHOWROOM「猫舌SHOWROOM」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107117"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "24:00〜24:27",
+    "title": "BAYFM「乃木坂46 小川彩のbaby baby maybe」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "25:00〜27:00",
+    "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
+    "members": [
+     "井上和"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107638"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "CD/音楽配信/映像商品",
+    "time": "",
+    "title": "「「トイ・ストーリー５」ブルーレイ/DVD/4K UHD」",
+    "members": [
+     "井上和"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107529"
+   },
+   {
     "g": "日向坂46",
     "kind": "ライブ",
     "time": "18:30～",
@@ -3345,6 +4187,26 @@
    }
   ],
   "2026-12-24": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜23:55",
+    "title": "TOKYO FM「SCHOOL OF LOCK!（ARTIST LOCKS!「乃木坂LOCKS!」）」",
+    "members": [
+     "賀喜遥香"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106859"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
+   },
    {
     "g": "櫻坂46",
     "kind": "テレビ",
@@ -3387,6 +4249,68 @@
    }
   ],
   "2026-12-25": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜20:56",
+    "title": "FM FUJI「～DJ KOO PRESENTS～ BEAT GOES ON」",
+    "members": [
+     "鈴木佑捺"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106410"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:00〜22:00",
+    "title": "J-WAVE「SYNCREATE（THE REVERSE）」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106841"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:30〜20:55",
+    "title": "TOKYO FM「ベルク presents 乃木坂46の乃木坂に相談だ！」",
+    "members": [
+     "田村真佑",
+     "一ノ瀬美空"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106963"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「沈黙の金曜日」",
+    "members": [
+     "弓木奈於"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107331"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "26:00〜26:30",
+    "title": "テレビ東京系「東京パソコンクラブ」",
+    "members": [
+     "弓木奈於",
+     "大越ひなの"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107511"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
+   },
    {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
@@ -3438,6 +4362,26 @@
   ],
   "2026-12-26": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "11:30〜12:00",
+    "title": "TOKAI RADIO「乃木坂46　岡本姫奈のおかひな時間」",
+    "members": [
+     "岡本姫奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107022"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ラジオ",
     "time": "22:00～",
@@ -3487,6 +4431,50 @@
    }
   ],
   "2026-12-27": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "18:00〜18:30",
+    "title": "文化放送「乃木坂46の「の」」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107515"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "20:05〜22:55",
+    "title": "NHK AM「らじらー！サンデー」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106124"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:15〜24:45",
+    "title": "テレビ東京系「乃木坂工事中」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107579"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "",
+    "title": "「秋田魁新報電子版（さきがけ電子版）」",
+    "members": [
+     "矢田萌華"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107237"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "",
+    "title": "ミュージカル『FOUR MINUTES -4分間のピアニスト-』",
+    "members": [
+     "林瑠奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
+   },
    {
     "g": "櫻坂46",
     "kind": "ラジオ",
@@ -3576,6 +4564,26 @@
   ],
   "2026-12-28": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜25:00",
+    "title": "文化放送「レコメン！」",
+    "members": [
+     "矢田萌華"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107516"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "25:29〜25:59",
+    "title": "日本テレビ「乃木坂スター誕生！SIX」",
+    "members": [
+     "6期生"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107519"
+   },
+   {
     "g": "日向坂46",
     "kind": "ラジオ",
     "time": "24:00～",
@@ -3586,6 +4594,36 @@
   ],
   "2026-12-29": [
    {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "21:00〜23:00",
+    "title": "FM FUJI「フニャフニャ伝説」",
+    "members": [
+     "愛宕心響"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107330"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "23:00〜23:27",
+    "title": "BAYFM「乃木坂46 柴田柚菜のDreaming time」",
+    "members": [
+     "柴田柚菜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105431"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "24:00〜24:30",
+    "title": "TOKYO MX「小峠英二のなんて美だ！」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/105027"
+   },
+   {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
     "time": "",
@@ -3594,7 +4632,47 @@
     "url": "https://sakurazaka46.com/s/s46/media/list"
    }
   ],
+  "2026-12-30": [
+   {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "19:00〜21:00",
+    "title": "SHOWROOM「猫舌SHOWROOM」",
+    "members": [],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107117"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "24:00〜24:27",
+    "title": "BAYFM「乃木坂46 小川彩のbaby baby maybe」",
+    "members": [
+     "小川彩"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "25:00〜27:00",
+    "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
+    "members": [
+     "井上和"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107638"
+   }
+  ],
   "2026-12-31": [
+   {
+    "g": "乃木坂46",
+    "kind": "ラジオ",
+    "time": "22:00〜23:55",
+    "title": "TOKYO FM「SCHOOL OF LOCK!（ARTIST LOCKS!「乃木坂LOCKS!」）」",
+    "members": [
+     "賀喜遥香"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/106859"
+   },
    {
     "g": "櫻坂46",
     "kind": "テレビ",
