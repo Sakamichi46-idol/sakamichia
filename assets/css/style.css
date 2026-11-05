@@ -827,3 +827,6 @@ html[data-theme="dark"] .tabs button.on,html[data-theme="dark"] .pager button.on
   .years{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .years .ychip{text-align:center;white-space:nowrap}
 }
+
+/* 簡易版：トップの入口カードは絶対配置アイコン用パディングを維持する（2026-11-06） */
+html[data-lite="1"] .entries .card{padding:12px 30px 12px 60px}
