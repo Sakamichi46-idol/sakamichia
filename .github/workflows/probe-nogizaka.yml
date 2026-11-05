@@ -1,0 +1,35 @@
+name: probe-nogizaka
+
+# 一時的な診断用: 乃木坂スケジュールページの構造を GitHub 側から取得する
+on:
+  push:
+    paths:
+      - tools/probe_nogizaka.py
+      - .github/workflows/probe-nogizaka.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Probe Nogizaka media page structure
+        run: python3 tools/probe_nogizaka.py
+      - name: Commit probe output
+        run: |
+          git config user.name 'sakamichia-bot'
+          git config user.email 'actions@github.com'
+          git add probe-output
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m 'probe: nogizaka media structure'
+            git push
+          fi
