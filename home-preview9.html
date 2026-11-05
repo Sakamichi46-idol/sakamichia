@@ -180,17 +180,28 @@ html[data-theme="dark"]
 .mv-play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:rgba(35,28,44,.85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
 .more-row{text-align:right;margin:0}
 .more-link{font-weight:800;letter-spacing:.14em;font-size:13px;color:var(--ink);text-decoration:none;border-bottom:2px solid #e77a9b;padding-bottom:2px}
+
+/* プレビュー9：TOPICS ティッカー（上部にトピックが流れる） */
+.ticker{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 7px;margin-top:12px;box-shadow:0 3px 10px rgba(30,20,50,.05)}
+.ticker-label{background:var(--ink);color:#fff;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:800;letter-spacing:.14em;flex:none}
+.ticker-view{overflow:hidden;flex:1;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.ticker-track{display:inline-flex;align-items:center;gap:40px;white-space:nowrap;animation:p9tick 38s linear infinite;will-change:transform}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.tk-dot{width:7px;height:7px;border-radius:50%;background:#e77a9b;flex:none}
+.tk-item{font-size:13px}
+@keyframes p9tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.ticker-track{animation:none}}
 </style></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
 <main class="wrap">
 <div class="preview-note">これはトップページのプレビュー9（公式サイト寄せ版）です。公式3サイトの文法（英字見出し・今日のバー・ジャケットとMVのレール）を取り入れました。おみくじは現行のままです。<a href="./">本番のトップはこちら</a> ／ <a href="home-preview8">プレビュー8</a></div>
+<div class="ticker" id="ticker" hidden><span class="ticker-label">TOPICS</span><div class="ticker-view"><div class="ticker-track" id="tickerTrack"></div></div></div>
 <div class="hero"><h1>あの日の<span class="grad">坂道</span>を、<br>もう一度探そう。</h1>
 <p>歴代ライブ・ブログ・楽曲を、メンバー名や曲名から一度に検索できて、ミニゲームでも遊べる非公式ファンサイトです。</p>
 <form class="searchbox" id="searchForm"><input id="q" type="search" placeholder="メンバー名・曲名・会場で検索" autocomplete="off"><button type="submit" aria-label="検索"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5L16.7 16.7"/></svg></button><div class="suggest" id="suggest" hidden></div></form>
 <div class="q-chips"><span class="q-label">例：</span><button type="button" class="q-chip" data-q="小坂菜緒">小坂菜緒</button><button type="button" class="q-chip" data-q="横浜スタジアム">横浜スタジアム</button></div>
 <p class="count" id="counts"></p></div>
-<div class="today-bar" id="todayBar" hidden></div>
 <div id="results"></div>
 <div id="omikujiAnchor"></div>
 <div id="discoSection"><div class="sec-head"><span class="sec-en">NEW RELEASE</span><h2 class="sec-ja">最新リリース</h2></div><div class="rail" id="discoRail"></div><p class="more-row"><a class="more-link" href="songs/">MORE</a></p></div>

@@ -56,7 +56,7 @@ async function init(){
   renderToday(meta, photos, otdFull);
   renderFavs(mLatest, meta);
   renderOmikuji(photos);
-  renderTodayBar(meta, otdFull);
+  renderTicker(meta);
   renderDisco();
   renderBlogRail();
   renderMv();
@@ -90,24 +90,29 @@ async function init(){
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639"};
 // プレビュー9（公式サイト寄せ）：TODAY バー／ジャケット・ブログ・MV のレール
 function p9fmt(d){ return d ? String(d).replaceAll("-", ".") : ""; }
-function renderTodayBar(meta, otd){
-  const bar = document.getElementById("todayBar");
-  if(!bar) return;
+function renderTicker(meta){
+  const box = document.getElementById("ticker");
+  const track = document.getElementById("tickerTrack");
+  if(!box || !track) return;
   const now = new Date(), mo = now.getMonth() + 1, da = now.getDate();
   const tstr = `${now.getFullYear()}-${String(mo).padStart(2, "0")}-${String(da).padStart(2, "0")}`;
-  const bits = [];
+  const items = [];
   const bdays = (DB.members || []).filter(m => {
     const b = meta && meta[m.name] && meta[m.name].b;
     return Array.isArray(b) && b[1] === mo && b[2] === da;
   }).map(m => m.name);
-  if (bdays.length) bits.push(`今日が誕生日：<b>${bdays.map(esc).join("・")}</b>`);
+  if (bdays.length) items.push(`今日は${bdays.join("・")}の誕生日`);
   const rels = (DB.songs || []).filter(x => x.date === tstr && x.type === "表題曲");
-  if (rels.length) bits.push(`本日発売：<b>『${esc(rels[0].title)}』</b>（${esc(rels[0].group)}）`);
+  if (rels.length) items.push(`本日発売『${rels[0].title}』（${rels[0].group}）`);
   const livesToday = (DB.lives || []).filter(l => l.date === tstr);
-  if (livesToday.length) bits.push(`本日開催：<b>${esc(livesToday[0].title)}</b>`);
-  if(!bits.length) return;
-  bar.innerHTML = `<span class="tb-label">TODAY</span><span class="tb-body">${mo}月${da}日 ｜ ${bits.join(" ｜ ")}</span>`;
-  bar.hidden = false;
+  if (livesToday.length) items.push(`本日開催：${livesToday[0].title}`);
+  for (const n of (DB.news || []).slice(0, 3)) items.push(n.title);
+  const upd = document.querySelector(".site-updates-mini li");
+  if (upd) items.push("更新：" + upd.textContent.trim());
+  if(!items.length) return;
+  const seq = items.map(t => `<span class="tk-item">${esc(t)}</span>`).join('<span class="tk-dot"></span>');
+  track.innerHTML = seq + '<span class="tk-dot"></span>' + seq + '<span class="tk-dot"></span>';
+  box.hidden = false;
 }
 function renderDisco(){
   const rail = document.getElementById("discoRail");
