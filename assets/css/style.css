@@ -809,3 +809,15 @@ html[data-lite="1"] .sec-lead{font-size:13px}
   .gchips::-webkit-scrollbar,#mbGroups::-webkit-scrollbar{display:none}
   .gchips .ychip,#mbGroups .ychip{flex:none}
 }
+
+/* ページャーを1行に収める（2026-11-06） */
+.pager{flex-wrap:nowrap;gap:4px}
+.pager button{padding:7px 10px;font-size:14px;min-height:38px}
+.pager button[data-pg="prev"],.pager button[data-pg="next"]{white-space:nowrap}
+.pager button[data-pg]:not([data-pg="prev"]):not([data-pg="next"]){min-width:34px;padding-left:0;padding-right:0;text-align:center}
+@media(max-width:480px){
+  .pager{gap:3px}
+  .pager button{padding:6px 7px;font-size:13px;min-height:36px}
+  .pager button[data-pg]:not([data-pg="prev"]):not([data-pg="next"]){min-width:30px;padding-left:0;padding-right:0}
+  .pager .gap{padding:0}
+}
