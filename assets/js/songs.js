@@ -191,3 +191,5 @@ function cmpMembName(a,b){
   return String(a).localeCompare(String(b),"ja");
 }
 function sortedParticipants(names){ return [...names].sort(cmpMembName); }
+
+init();
