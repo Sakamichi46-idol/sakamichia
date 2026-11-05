@@ -49,7 +49,7 @@ async function init() {
   const now = new Date();
   if (!BD.some(m => m.b[1] === now.getMonth() + 1 && m.b[2] === now.getDate() && (!activeOnly || !m.graduated))) {
     const el = document.getElementById("bd-m" + (now.getMonth() + 1));
-    if (el) el.scrollIntoView({ block: "start" });
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: "start" });
   }
 }
 init();

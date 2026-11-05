@@ -830,3 +830,15 @@ html[data-theme="dark"] .tabs button.on,html[data-theme="dark"] .pager button.on
 
 /* 簡易版：トップの入口カードは絶対配置アイコン用パディングを維持する（2026-11-06） */
 html[data-lite="1"] .entries .card{padding:12px 30px 12px 60px}
+
+/* ダークモードで白地に残っていた部品（2026-11-06 全体精査） */
+html[data-theme="dark"] .msel-btn{background:#211b2b;color:#ede8f4;border-color:#3b3049}
+html[data-theme="dark"] .msel-pop{background:#211b2b;color:#ede8f4;border-color:#3b3049;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+html[data-theme="dark"] .msel-opt:hover{background:rgba(255,255,255,.08)}
+html[data-theme="dark"] .sort-card,html[data-theme="dark"] .sort-custom-panel,html[data-theme="dark"] .sort-pick{background:#211b2b}
+html[data-theme="dark"] .quiz-opt.wrong{background:#57282c;border-color:#a34e54}
+html[data-theme="dark"] .df-wheel,html[data-theme="dark"] .df-lot-name{background:#211b2b}
+html[data-theme="dark"] .bday-chip,html[data-theme="dark"] .fm-stepper,html[data-theme="dark"] .attend-ctl{background:#211b2b}
+html[data-theme="dark"] .ms-row.is-event{background:#2c2344}
+html[data-theme="dark"] .df-actionbar{background:rgba(23,18,29,.97)}
+html[data-theme="dark"] .favfloat-item{background:rgba(33,27,43,.97)}
