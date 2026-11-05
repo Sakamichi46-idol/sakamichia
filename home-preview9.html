@@ -192,6 +192,15 @@ a.tk-item{color:inherit;text-decoration:none}
 a.tk-item:active{opacity:.6}
 @keyframes p9tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media (prefers-reduced-motion: reduce){.ticker-track{animation:none}}
+
+/* プレビュー9：今日の予定（公式スケジュール） */
+.sched-list{margin-bottom:4px}
+.sch-row{display:flex;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:12px;padding:9px 12px;margin-bottom:8px;color:inherit;text-decoration:none}
+.sch-time{font-weight:800;flex:none;min-width:76px;font-size:13.5px}
+.sch-main{flex:1;min-width:0}
+.sch-title{font-weight:700;font-size:14px;line-height:1.45}
+.sch-mem{color:var(--muted);font-size:12.5px;margin-top:1px;line-height:1.5}
+.sch-kind{flex:none;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
 </style></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
@@ -205,6 +214,7 @@ a.tk-item:active{opacity:.6}
 <p class="count" id="counts"></p></div>
 <div id="results"></div>
 <div id="omikujiAnchor"></div>
+<div id="scheduleSection" hidden><div class="sec-head"><span class="sec-en">SCHEDULE</span><h2 class="sec-ja">今日の予定</h2></div><div class="sched-list" id="schedList"></div></div>
 <div id="discoSection"><div class="sec-head"><span class="sec-en">NEW RELEASE</span><h2 class="sec-ja">最新リリース</h2></div><div class="rail" id="discoRail"></div><p class="more-row"><a class="more-link" href="songs/">MORE</a></p></div>
 <div class="sec-head"><span class="sec-en">PICK UP</span><h2 class="sec-ja">ピックアップ</h2></div>
 <div class="pick-grid" id="pickGrid"></div>

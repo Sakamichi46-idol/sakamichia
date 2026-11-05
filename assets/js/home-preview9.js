@@ -41,15 +41,15 @@ function blogFontCls(b){
   return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata";
 }
 async function init(){
-  const [lives, bidx, songs, members, newsData, meta, photos, otd, mLatest, jackets] = await Promise.all([
+  const [lives, bidx, songs, members, newsData, meta, photos, otd, mLatest, jackets, sched] = await Promise.all([
     loadJSON("lives.json"), loadJSON("blogs/index.json"),
     loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news-recent.json"),
     loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON(`on-this-day/m${String(new Date().getMonth() + 1).padStart(2, "0")}.json`),
-    loadJSON("member-latest.json"), loadJSON("jackets.json")]);
+    loadJSON("member-latest.json"), loadJSON("jackets.json"), loadJSON("schedule.json")]);
   const latestYear = Math.max(...Object.keys(bidx.years).map(Number));
   const blogs = await loadJSON(`blogs/y${latestYear}.json`);
   const news = (newsData && newsData.items) || [];
-  DB = {lives, blogs, songs, members, news, jackets};
+  DB = {lives, blogs, songs, members, news, jackets, sched};
   // 月別ファイルが読めなかった場合（デプロイ直後など）は全期間版にフォールバック
   let otdFull = otd;
   if (Array.isArray(otdFull)) { const f = await loadJSON("on-this-day.json"); if (f && !Array.isArray(f)) otdFull = f; }
@@ -57,6 +57,7 @@ async function init(){
   renderFavs(mLatest, meta);
   renderOmikuji(photos);
   renderTicker(meta);
+  renderSchedule();
   renderDisco();
   renderBlogRail();
   renderMv();
@@ -90,6 +91,25 @@ async function init(){
 const GCOL={"乃木坂46":"#7e57c2","櫻坂46":"#e77a9b","日向坂46":"#5aa9d6","欅坂46":"#5eba53","けやき坂46":"#a4c639"};
 // プレビュー9（公式サイト寄せ）：TODAY バー／ジャケット・ブログ・MV のレール
 function p9fmt(d){ return d ? String(d).replaceAll("-", ".") : ""; }
+function todaySchedule(){
+  const now = new Date();
+  const tstr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  return (((DB.sched || {}).days || {})[tstr] || []);
+}
+function renderSchedule(){
+  const sec = document.getElementById("scheduleSection");
+  const list = document.getElementById("schedList");
+  if(!sec || !list) return;
+  const items = todaySchedule();
+  if(!items.length) return;
+  list.innerHTML = items.map(it =>
+    `<a class="sch-row" href="${esc(it.url)}" target="_blank" rel="noopener" style="border-left-color:${GCOL[it.g] || "#8a8296"}">`
+    + `<span class="sch-time">${esc(it.time || "終日")}</span>`
+    + `<span class="sch-main"><span class="sch-title">${esc(it.title)}</span>`
+    + (it.members && it.members.length ? `<span class="sch-mem">　${it.members.map(esc).join("・")}</span>` : "")
+    + `</span><span class="sch-kind">${esc(it.kind || "")}</span></a>`).join("");
+  sec.hidden = false;
+}
 function renderTicker(meta){
   const box = document.getElementById("ticker");
   const track = document.getElementById("tickerTrack");
@@ -106,6 +126,7 @@ function renderTicker(meta){
   if (rels.length) items.push({t: `本日発売『${rels[0].title}』（${rels[0].group}）`, href: `songs/${String(rels[0].id).toLowerCase()}/`});
   const livesToday = (DB.lives || []).filter(l => l.date === tstr);
   if (livesToday.length) items.push({t: `本日開催：${livesToday[0].title}`, href: "live/"});
+  for (const it of todaySchedule()) items.push({t: `${it.time ? it.time + " " : ""}${it.title}（${it.g}）`, href: it.url, ext: true});
   for (const n of (DB.news || []).slice(0, 3)) items.push({t: n.title, href: n.url || "news/", ext: !!n.url});
   const upd = document.querySelector(".site-updates-mini li");
   if (upd) items.push({t: "更新：" + upd.textContent.trim()});
