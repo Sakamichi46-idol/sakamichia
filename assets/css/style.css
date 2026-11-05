@@ -781,3 +781,11 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .fq-inputrow{display:flex;gap:8px;align-items:stretch}
 .fq-inputrow input{flex:1}
 .fq-inputrow input[aria-invalid="true"]{border-color:#d66;background:#fff5f5}
+
+/* ===== 共通部品：トップ完成版（2026-11-05）の見出し文法 ===== */
+.sec-head{display:flex;align-items:baseline;gap:12px;margin:32px 0 12px;padding-bottom:7px;border-bottom:2px solid var(--ink)}
+.sec-en{font-size:23px;font-weight:800;letter-spacing:.13em;line-height:1}
+.sec-ja{font-size:13.5px;color:var(--muted);font-weight:700}
+.sec-lead{margin:-4px 0 14px;font-size:13.5px;line-height:1.7;color:var(--muted)}
+.more-link{font-weight:800;letter-spacing:.14em;font-size:13px;color:var(--ink);text-decoration:none;border-bottom:2px solid #e77a9b;padding-bottom:2px}
+.page-head{margin-top:6px}
