@@ -203,7 +203,9 @@ a.tk-item:active{opacity:.6}
 .sch-kind{flex:none;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
 
 /* プレビュー9：キービジュアル・スライダー（時間で切り替わる大きな見出し） */
-.kv{position:relative;border-radius:20px;overflow:hidden;margin-top:18px;aspect-ratio:16/10.5;background:#241f2e;box-shadow:0 10px 26px rgba(30,20,50,.16)}
+.kv{position:relative;border-radius:20px;overflow:hidden;margin-top:18px;aspect-ratio:2/1;background:#241f2e;box-shadow:0 10px 26px rgba(30,20,50,.16)}
+@media(min-width:821px){.kv{aspect-ratio:21/10}}
+.kv-chip{position:absolute;top:12px;left:12px;background:rgba(30,24,40,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.06em;border-radius:999px;padding:5px 11px}
 .kv-slide{position:absolute;inset:0;opacity:0;transition:opacity .65s ease;pointer-events:none;text-decoration:none;color:#fff}
 .kv-slide.on{opacity:1;pointer-events:auto}
 .kv-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}

@@ -41,15 +41,15 @@ function blogFontCls(b){
   return g==="乃木坂46" ? "bf-nogi" : (g==="櫻坂46"||g==="欅坂46") ? "bf-sakura" : "bf-hinata";
 }
 async function init(){
-  const [lives, bidx, songs, members, newsData, meta, photos, otd, mLatest, jackets, sched] = await Promise.all([
+  const [lives, bidx, songs, members, newsData, meta, photos, otd, mLatest, jackets, sched, kv] = await Promise.all([
     loadJSON("lives.json"), loadJSON("blogs/index.json"),
     loadJSON("songs.json"), loadJSON("members.json"), loadJSON("news-recent.json"),
     loadJSON("member-meta.json"), loadJSON("member-photos.json"), loadJSON(`on-this-day/m${String(new Date().getMonth() + 1).padStart(2, "0")}.json`),
-    loadJSON("member-latest.json"), loadJSON("jackets.json"), loadJSON("schedule.json")]);
+    loadJSON("member-latest.json"), loadJSON("jackets.json"), loadJSON("schedule.json"), loadJSON("kv.json")]);
   const latestYear = Math.max(...Object.keys(bidx.years).map(Number));
   const blogs = await loadJSON(`blogs/y${latestYear}.json`);
   const news = (newsData && newsData.items) || [];
-  DB = {lives, blogs, songs, members, news, jackets, sched};
+  DB = {lives, blogs, songs, members, news, jackets, sched, kv};
   // 月別ファイルが読めなかった場合（デプロイ直後など）は全期間版にフォールバック
   let otdFull = otd;
   if (Array.isArray(otdFull)) { const f = await loadJSON("on-this-day.json"); if (f && !Array.isArray(f)) otdFull = f; }
@@ -100,11 +100,23 @@ function renderKv(){
   const byDate = (a, b) => String(a.date).localeCompare(String(b.date));
   const relName = c => String(c || "").replace(/^(?:HK|K|S)(?=\d|Digital|BestAL|Unreleased)/, "");
   const slides = [];
+  for (const g of ["乃木坂46", "櫻坂46", "日向坂46"]){
+    const k = ((DB.kv || {}).items || {})[g];
+    if (k && k.img) slides.push({href: k.url, ext: true, img: k.img, chip: g});
+  }
+  if (slides.length){
+    const mv2 = (DB.songs || []).filter(x => x.mv).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
+    if (mv2){
+      const mm = String(mv2.mv).match(/(?:v=|youtu\.be\/)([\w-]{6,})/);
+      if (mm) slides.push({href: `songs/${String(mv2.id).toLowerCase()}/`, img: `https://i.ytimg.com/vi/${mm[1]}/maxresdefault.jpg`,
+        kicker: "MOVIE", title: `『${mv2.title}』`, sub: `${mv2.group} ・ 公式MV`});
+    }
+  }
   const up = titles.filter(x => x.date > today).sort(byDate)[0];
-  if (up) slides.push({href: `songs/${String(up.id).toLowerCase()}/`, bg: GCOL[up.group] || "#2b2430",
+  if (!slides.length && up) slides.push({href: `songs/${String(up.id).toLowerCase()}/`, bg: GCOL[up.group] || "#2b2430",
     kicker: "NEW RELEASE", title: `『${up.title}』`, sub: `${up.group} ${relName(up.release)} ・ ${p9fmt(up.date)} 発売予定`});
   const cur = titles.filter(x => x.date <= today).sort(byDate).slice(-1)[0];
-  if (cur){
+  if (!slides.length && cur){
     const jk = (DB.jackets || {})[`${cur.release}|${cur.date}`];
     if (jk && jk.img) slides.push({href: `songs/${String(cur.id).toLowerCase()}/`, img: jk.img,
       kicker: "NOW ON SALE", title: `『${cur.title}』`, sub: `${cur.group} ・ ${p9fmt(cur.date)} 発売${cur.center ? " ・ センター " + cur.center : ""}`});
@@ -115,13 +127,14 @@ function renderKv(){
     const cand = (DB.sched.days[d] || []).filter(it => (it.kind || "").includes("ライブ"));
     if (cand.length){ live = {d, it: cand.find(x => !x.title.includes("前夜祭")) || cand[0]}; break; }
   }
-  if (live){
+  if (!slides.length && live){
     const dt = new Date(live.d + "T00:00:00");
     const WD2 = ["日", "月", "火", "水", "木", "金", "土"];
     slides.push({href: live.it.url, ext: true, bg: "#2b2430", kicker: "UPCOMING LIVE",
       title: live.it.title, sub: `${dt.getMonth() + 1}月${dt.getDate()}日（${WD2[dt.getDay()]}） ・ ${live.it.g}`});
   }
-  const mv = (DB.songs || []).filter(x => x.mv).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
+  const mv = slides.some(x => x.kicker === "MOVIE") ? null
+    : (DB.songs || []).filter(x => x.mv).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
   if (mv){
     const m = String(mv.mv).match(/(?:v=|youtu\.be\/)([\w-]{6,})/);
     if (m) slides.push({href: `songs/${String(mv.id).toLowerCase()}/`, img: `https://i.ytimg.com/vi/${m[1]}/maxresdefault.jpg`,
@@ -129,7 +142,7 @@ function renderKv(){
   }
   if(!slides.length) return;
   track.innerHTML = slides.map(sl => sl.img
-    ? `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""}><img class="kv-bg" src="${esc(sl.img)}" alt="" loading="lazy"><span class="kv-cap"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span></a>`
+    ? `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""}><img class="kv-bg" src="${esc(sl.img)}" alt="" loading="lazy">${sl.chip ? `<span class="kv-chip">${esc(sl.chip)}</span>` : `<span class="kv-cap"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span>`}</a>`
     : `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""} style="background:${esc(sl.bg)}"><span class="kv-type"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span></a>`).join("");
   const dots = document.getElementById("kvDots"), count = document.getElementById("kvCount");
   dots.innerHTML = slides.map((_, i) => `<button type="button" class="kv-dot" data-i="${i}" aria-label="スライド${i + 1}"></button>`).join("");
