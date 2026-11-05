@@ -107,7 +107,7 @@ def parse_nogizaka(html: str):
     # トップの slick スライダー（.bnritem）。特設ページ（/s/n46/page/）への
     # リンクを持つものをDOM順に最大3件。WAFが解けた場合に有効になる。
     items = []
-    for m in re.finditer(r'<div class="bnritem[^"]*">\s*<a href="([^"]+)"[^>]*>\s*<div class="img">\s*<span style="background-image:\s*url\("?([^")]+)"?\)', html):
+    for m in re.finditer(r'<div class="bnritem[^"]*"[^>]*>\s*<a href="([^"]+)"[^>]*>\s*<div class="img">\s*<span style="background-image:\s*url\("?([^")]+)"?\)', html):
         url, img = m.group(1), m.group(2)
         if url.startswith("/"):
             url = "https://www.nogizaka46.com" + url
