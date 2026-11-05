@@ -76,7 +76,9 @@ def rows(name):
         return list(csv.DictReader(f))
 
 def norm(s):
-    return (s or '').replace(' ', '').replace('　', '')
+    # 照合用正規化：空白除去＋アポストロフィの表記揺れ（’‘→'）を吸収する。
+    # 固有名詞の表記は公式優先のため、保存されるタイトル自体は変更しない（2026-11-06）。
+    return (s or '').replace(' ', '').replace('　', '').replace('’', "'").replace('‘', "'")
 
 def song_yomi(reading):
     """楽曲シートの reading（「本読み、略称」形式）から本読みだけを取り、ひらがなに統一する。"""
