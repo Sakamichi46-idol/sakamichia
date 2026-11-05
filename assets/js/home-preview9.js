@@ -96,22 +96,24 @@ function renderTicker(meta){
   if(!box || !track) return;
   const now = new Date(), mo = now.getMonth() + 1, da = now.getDate();
   const tstr = `${now.getFullYear()}-${String(mo).padStart(2, "0")}-${String(da).padStart(2, "0")}`;
-  const items = [];
+  const items = [];  // {t, href, ext}
   const bdays = (DB.members || []).filter(m => {
     const b = meta && meta[m.name] && meta[m.name].b;
     return Array.isArray(b) && b[1] === mo && b[2] === da;
   }).map(m => m.name);
-  if (bdays.length) items.push(`今日は${bdays.join("・")}の誕生日`);
+  if (bdays.length) items.push({t: `今日は${bdays.join("・")}の誕生日`, href: "members/"});
   const rels = (DB.songs || []).filter(x => x.date === tstr && x.type === "表題曲");
-  if (rels.length) items.push(`本日発売『${rels[0].title}』（${rels[0].group}）`);
+  if (rels.length) items.push({t: `本日発売『${rels[0].title}』（${rels[0].group}）`, href: `songs/${String(rels[0].id).toLowerCase()}/`});
   const livesToday = (DB.lives || []).filter(l => l.date === tstr);
-  if (livesToday.length) items.push(`本日開催：${livesToday[0].title}`);
-  for (const n of (DB.news || []).slice(0, 3)) items.push(n.title);
+  if (livesToday.length) items.push({t: `本日開催：${livesToday[0].title}`, href: "live/"});
+  for (const n of (DB.news || []).slice(0, 3)) items.push({t: n.title, href: n.url || "news/", ext: !!n.url});
   const upd = document.querySelector(".site-updates-mini li");
-  if (upd) items.push("更新：" + upd.textContent.trim());
+  if (upd) items.push({t: "更新：" + upd.textContent.trim()});
   if(!items.length) return;
-  const seq = items.map(t => `<span class="tk-item">${esc(t)}</span>`).join('<span class="tk-dot"></span>');
-  track.innerHTML = seq + '<span class="tk-dot"></span>' + seq + '<span class="tk-dot"></span>';
+  const one = items.map(it => it.href
+    ? `<a class="tk-item" href="${esc(it.href)}"${it.ext ? ' target="_blank" rel="noopener"' : ""}>${esc(it.t)}</a>`
+    : `<span class="tk-item">${esc(it.t)}</span>`).join('<span class="tk-dot"></span>');
+  track.innerHTML = one + '<span class="tk-dot"></span>' + one + '<span class="tk-dot"></span>';
   box.hidden = false;
 }
 function renderDisco(){
