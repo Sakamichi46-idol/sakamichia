@@ -1,0 +1,542 @@
+{
+ "10thSG|2014-10-08": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/10thsg-2014-10-08.jpg",
+  "name": "何度目の青空か? - Single"
+ },
+ "10thSG|2023-07-26": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/10thsg-2023-07-26.jpg",
+  "name": "Am I ready? - EP"
+ },
+ "11thSG|2015-03-18": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/11thsg-2015-03-18.jpg",
+  "name": "命は美しい コンプリートパック - EP"
+ },
+ "11thSG|2024-05-08": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/11thsg-2024-05-08.jpg",
+  "name": "君はハニーデュー - EP"
+ },
+ "12thSG|2015-07-22": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/12thsg-2015-07-22.jpg",
+  "name": "太陽ノック (Special Edition)"
+ },
+ "12thSG|2024-09-18": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/12thsg-2024-09-18.jpg",
+  "name": "絶対的第六感 (Special Edition)"
+ },
+ "13thSG|2015-10-28": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/13thsg-2015-10-28.jpg",
+  "name": "今、話したい誰かがいる (Special Edition) - EP"
+ },
+ "13thSG|2025-01-29": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/13thsg-2025-01-29.jpg",
+  "name": "UDAGAWA GENERATION - Single"
+ },
+ "14thSG|2016-03-23": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/14thsg-2016-03-23.jpg",
+  "name": "ハルジオンが咲く頃 (Special Edition)"
+ },
+ "14thSG|2025-05-21": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/14thsg-2025-05-21.jpg",
+  "name": "Love yourself! (Special Edition)"
+ },
+ "15thSG|2016-07-27": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/15thsg-2016-07-27.jpg",
+  "name": "裸足でSummer - EP"
+ },
+ "15thSG|2025-09-17": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/15thsg-2025-09-17.jpg",
+  "name": "お願いバッハ!(Special Edition)"
+ },
+ "16thSG|2016-11-09": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/16thsg-2016-11-09.jpg",
+  "name": "サヨナラの意味 - EP"
+ },
+ "16thSG|2026-01-28": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/16thsg-2026-01-28.jpg",
+  "name": "クリフハンガー(Special Edition)"
+ },
+ "17thSG|2017-03-22": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/17thsg-2017-03-22.jpg",
+  "name": "インフルエンサー - EP"
+ },
+ "17thSG|2026-05-20": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/17thsg-2026-05-20.jpg",
+  "name": "Lonesome rabbit - Single"
+ },
+ "18thSG|2017-08-09": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/18thsg-2017-08-09.jpg",
+  "name": "逃げ水 - EP"
+ },
+ "18thSG|2026-09-30": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/18thsg-2026-09-30.jpg",
+  "name": "イチャイチャ虫(Special Edition)"
+ },
+ "19thSG|2017-10-11": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/19thsg-2017-10-11.jpg",
+  "name": "いつかできるから今日できる - EP"
+ },
+ "1stAL|2015-01-07": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/1stal-2015-01-07.jpg",
+  "name": "透明な色"
+ },
+ "1stAL|2020-09-23": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/1stal-2020-09-23.jpg",
+  "name": "Hinatazaka (Complete Edition)"
+ },
+ "1stSG|2012-02-22": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/1stsg-2012-02-22.jpg",
+  "name": "ぐるぐるカーテン Type-A - EP"
+ },
+ "1stSG|2019-03-27": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/1stsg-2019-03-27.jpg",
+  "name": "キュン (Special Edition) - EP"
+ },
+ "20thSG|2018-04-25": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/20thsg-2018-04-25.jpg",
+  "name": "シンクロニシティ - EP"
+ },
+ "21stSG|2018-08-08": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/21stsg-2018-08-08.jpg",
+  "name": "ジコチューで行こう! - EP"
+ },
+ "22ndSG|2018-11-14": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/22ndsg-2018-11-14.jpg",
+  "name": "帰り道は遠回りしたくなる - EP"
+ },
+ "23rdSG|2019-05-29": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/23rdsg-2019-05-29.jpg",
+  "name": "Sing Out! - EP"
+ },
+ "24thSG|2019-09-04": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/24thsg-2019-09-04.jpg",
+  "name": "夜明けまで強がらなくてもいい - EP"
+ },
+ "25thSG|2020-03-25": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/25thsg-2020-03-25.jpg",
+  "name": "しあわせの保護色 - EP"
+ },
+ "26thSG|2021-01-27": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/26thsg-2021-01-27.jpg",
+  "name": "僕は僕を好きになる - EP"
+ },
+ "27thSG|2021-06-09": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/27thsg-2021-06-09.jpg",
+  "name": "ごめんねFingers crossed - EP"
+ },
+ "28thSG|2021-09-22": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/28thsg-2021-09-22.jpg",
+  "name": "君に叱られた - EP"
+ },
+ "29thSG|2022-03-23": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/29thsg-2022-03-23.jpg",
+  "name": "Actually... - EP"
+ },
+ "2ndAL|2016-05-25": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/2ndal-2016-05-25.jpg",
+  "name": "それぞれの椅子 (Special Edition)"
+ },
+ "2ndAL|2023-11-08": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/2ndal-2023-11-08.jpg",
+  "name": "脈打つ感情 (Complete Edition)"
+ },
+ "2ndSG|2012-05-02": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/2ndsg-2012-05-02.jpg",
+  "name": "おいでシャンプー TypeA - EP"
+ },
+ "2ndSG|2019-07-17": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/2ndsg-2019-07-17.jpg",
+  "name": "ドレミソラシド (Special Edition) - EP"
+ },
+ "30thSG|2022-08-31": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/30thsg-2022-08-31.jpg",
+  "name": "好きというのはロックだぜ! - EP"
+ },
+ "31stSG|2022-12-07": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/31stsg-2022-12-07.jpg",
+  "name": "ここにはないもの (Special Edition)"
+ },
+ "32ndSG|2023-02-17": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/32ndsg-2023-02-17.jpg",
+  "name": "僕たちのサヨナラ - Single"
+ },
+ "32ndSG|2023-03-29": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/32ndsg-2023-03-29.jpg",
+  "name": "人は夢を二度見る - EP"
+ },
+ "33rdSG|2023-08-23": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/33rdsg-2023-08-23.jpg",
+  "name": "おひとりさま天国 - EP"
+ },
+ "34thSG|2023-12-06": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/34thsg-2023-12-06.jpg",
+  "name": "Monopoly (Special Edition)"
+ },
+ "35thSG|2024-04-10": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/35thsg-2024-04-10.jpg",
+  "name": "チャンスは平等 (Special Edition)"
+ },
+ "36thSG|2024-08-21": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/36thsg-2024-08-21.jpg",
+  "name": "チートデイ (Special Edition)"
+ },
+ "37thSG|2024-12-11": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/37thsg-2024-12-11.jpg",
+  "name": "歩道橋 (Special Edition)"
+ },
+ "38thSG|2025-02-03": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/38thsg-2025-02-03.jpg",
+  "name": "懐かしさの先 - Single"
+ },
+ "38thSG|2025-02-23": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/38thsg-2025-02-23.jpg",
+  "name": "100日目 - Single"
+ },
+ "38thSG|2025-03-26": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/38thsg-2025-03-26.jpg",
+  "name": "ネーブルオレンジ (Special Edition)"
+ },
+ "39thSG|2025-07-30": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/39thsg-2025-07-30.jpg",
+  "name": "Same numbers (Special Edition)"
+ },
+ "3rdAL|2017-05-24": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/3rdal-2017-05-24.jpg",
+  "name": "生まれてから初めて見た夢 (Complete Edition)"
+ },
+ "3rdSG|2012-08-22": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/3rdsg-2012-08-22.jpg",
+  "name": "走れ!Bicycle  TypeD - EP"
+ },
+ "3rdSG|2019-10-02": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/3rdsg-2019-10-02.jpg",
+  "name": "こんなに好きになっちゃっていいの? (Special Edition) - EP"
+ },
+ "40thSG|2025-11-26": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/40thsg-2025-11-26.jpg",
+  "name": "ビリヤニ (Special Edition)"
+ },
+ "41stSG|2026-04-08": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/41stsg-2026-04-08.jpg",
+  "name": "最後に階段を駆け上がったのはいつだ? (Special Edition)"
+ },
+ "42ndSG|2026-07-22": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/42ndsg-2026-07-22.jpg",
+  "name": "是非に及ばず (Special Edition)"
+ },
+ "4thAL|2019-04-17": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/4thal-2019-04-17.jpg",
+  "name": "今が思い出になるまで (Complete Edition)"
+ },
+ "4thSG|2012-12-19": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/4thsg-2012-12-19.jpg",
+  "name": "制服のマネキン TypeA - EP"
+ },
+ "4thSG|2020-02-19": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/4thsg-2020-02-19.jpg",
+  "name": "ソンナコトナイヨ (Special Edition) - EP"
+ },
+ "5thAL|2026-01-14": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/5thal-2026-01-14.jpg",
+  "name": "My respect (Complete Edition)"
+ },
+ "5thSG|2013-03-13": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/5thsg-2013-03-13.jpg",
+  "name": "君の名は希望 TypeA - EP"
+ },
+ "5thSG|2021-05-26": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/5thsg-2021-05-26.jpg",
+  "name": "君しか勝たん (Special Edition)"
+ },
+ "6thSG|2013-07-03": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/6thsg-2013-07-03.jpg",
+  "name": "ガールズルール TypeA - EP"
+ },
+ "6thSG|2021-10-27": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/6thsg-2021-10-27.jpg",
+  "name": "ってか (Special Edition)"
+ },
+ "7thSG|2013-11-27": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/7thsg-2013-11-27.jpg",
+  "name": "バレッタ TypeA - EP"
+ },
+ "7thSG|2022-06-01": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/7thsg-2022-06-01.jpg",
+  "name": "僕なんか - EP"
+ },
+ "8thSG|2014-04-02": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/8thsg-2014-04-02.jpg",
+  "name": "気づいたら片想い TypeA - EP"
+ },
+ "8thSG|2022-10-26": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/8thsg-2022-10-26.jpg",
+  "name": "月と星が踊るMidnight - EP"
+ },
+ "9thSG|2014-07-09": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/9thsg-2014-07-09.jpg",
+  "name": "夏のFree&Easy Type-A - EP"
+ },
+ "9thSG|2023-04-19": {
+  "artist": "日向坂46",
+  "img": "assets/jackets/9thsg-2023-04-19.jpg",
+  "name": "One choice - EP"
+ },
+ "AKBSG|2017-03-15": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/akbsg-2017-03-15.jpg",
+  "name": "インフルエンサー(Special Edition)"
+ },
+ "AKBSG|2018-03-14": {
+  "artist": "AKB48",
+  "img": "assets/jackets/akbsg-2018-03-14.jpg",
+  "name": "ジャーバージャ (Type A) - EP"
+ },
+ "AKBSG|2019-03-13": {
+  "artist": "AKB48",
+  "img": "assets/jackets/akbsg-2019-03-13.jpg",
+  "name": "ジワるDAYS (Type A) - EP"
+ },
+ "BestAL|2021-12-15": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/bestal-2021-12-15.jpg",
+  "name": "Time flies (Complete Edition)"
+ },
+ "Digital|2020-06-17": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/digital-2020-06-17.jpg",
+  "name": "世界中の隣人よ - Single"
+ },
+ "Digital|2020-07-24": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/digital-2020-07-24.jpg",
+  "name": "Route 246 - Single"
+ },
+ "HK1stAL|2018-06-20": {
+  "artist": "けやき坂46",
+  "img": "assets/jackets/hk1stal-2018-06-20.jpg",
+  "name": "走り出す瞬間 (Complete Edition)"
+ },
+ "K1stAL|2017-07-19": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k1stal-2017-07-19.jpg",
+  "name": "真っ白なものは汚したくなる (Complete Edition)"
+ },
+ "K1stSG|2016-04-06": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k1stsg-2016-04-06.jpg",
+  "name": "サイレントマジョリティー - EP"
+ },
+ "K2ndSG|2016-08-10": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k2ndsg-2016-08-10.jpg",
+  "name": "世界には愛しかない (Special Edition)"
+ },
+ "K3rdSG|2016-11-30": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k3rdsg-2016-11-30.jpg",
+  "name": "二人セゾン - EP"
+ },
+ "K4thSG|2017-04-05": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k4thsg-2017-04-05.jpg",
+  "name": "不協和音 (Special Edition)"
+ },
+ "K5thSG|2017-10-25": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k5thsg-2017-10-25.jpg",
+  "name": "風に吹かれても - EP"
+ },
+ "K6thSG|2018-03-07": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k6thsg-2018-03-07.jpg",
+  "name": "ガラスを割れ! (Special Edition)"
+ },
+ "K7thSG|2018-08-15": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k7thsg-2018-08-15.jpg",
+  "name": "アンビバレント (Special Edition)"
+ },
+ "K8thSG|2019-02-27": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/k8thsg-2019-02-27.jpg",
+  "name": "黒い羊 (Special Edition)"
+ },
+ "KBestAL|2020-10-07": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/kbestal-2020-10-07.jpg",
+  "name": "Eienyori Nagai Isshun - Anokoro Tashikani Sonzaishita Watashitachi (Complete Edition)"
+ },
+ "KDigital|2020-08-21": {
+  "artist": "欅坂46",
+  "img": "assets/jackets/kdigital-2020-08-21.jpg",
+  "name": "Darega sonokanewo narasunoka? - Single"
+ },
+ "S10thSG|2024-10-23": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s10thsg-2024-10-23.jpg",
+  "name": "I want tomorrow to come (Special Edition)"
+ },
+ "S11thSG|2025-02-19": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s11thsg-2025-02-19.jpg",
+  "name": "UDAGAWA GENERATION (Special Edition)"
+ },
+ "S12thSG|2025-06-25": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s12thsg-2025-06-25.jpg",
+  "name": "Make or Break (Special Edition)"
+ },
+ "S13thSG|2025-10-29": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s13thsg-2025-10-29.jpg",
+  "name": "Unhappy birthday構文 (Special Edition)"
+ },
+ "S14thSG|2026-03-11": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s14thsg-2026-03-11.jpg",
+  "name": "The growing up train (Special Edition)"
+ },
+ "S15thSG|2026-06-10": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s15thsg-2026-06-10.jpg",
+  "name": "Lonesome rabbit / What's \"KAZOKU\"? (Special Edition)"
+ },
+ "S16thSG|2026-10-14": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s16thsg-2026-10-14.jpg",
+  "name": "愛MUST BE(Special Edition)"
+ },
+ "S1stAL|2022-08-03": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s1stal-2022-08-03.jpg",
+  "name": "As you know? (Complete Edition)"
+ },
+ "S1stSG|2020-12-09": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s1stsg-2020-12-09.jpg",
+  "name": "Nobody's fault (Special Edition)"
+ },
+ "S2ndAL|2025-04-30": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s2ndal-2025-04-30.jpg",
+  "name": "Addiction (Complete Edition)"
+ },
+ "S2ndSG|2021-04-14": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s2ndsg-2021-04-14.jpg",
+  "name": "BAN (Special Edition)"
+ },
+ "S3rdSG|2021-10-13": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s3rdsg-2021-10-13.jpg",
+  "name": "流れ弾 (Special Edition)"
+ },
+ "S4thSG|2022-04-06": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s4thsg-2022-04-06.jpg",
+  "name": "五月雨よ - EP"
+ },
+ "S5thSG|2023-02-15": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s5thsg-2023-02-15.jpg",
+  "name": "桜月 (Special Edition)"
+ },
+ "S6thSG|2023-06-28": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s6thsg-2023-06-28.jpg",
+  "name": "Start over! (Special Edition)"
+ },
+ "S7thSG|2023-10-18": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s7thsg-2023-10-18.jpg",
+  "name": "承認欲求 (Special Edition)"
+ },
+ "S7thSG|2023-12-25": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s7thsg-2023-12-25.jpg",
+  "name": "君がサヨナラ言えたって・・・ - Single"
+ },
+ "S8thSG|2024-02-21": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s8thsg-2024-02-21.jpg",
+  "name": "何歳の頃に戻りたいのか? (Special Edition)"
+ },
+ "S9thSG|2024-06-26": {
+  "artist": "櫻坂46",
+  "img": "assets/jackets/s9thsg-2024-06-26.jpg",
+  "name": "自業自得 (Special Edition)"
+ },
+ "UnderAL|2018-01-10": {
+  "artist": "乃木坂46",
+  "img": "assets/jackets/underal-2018-01-10.jpg",
+  "name": "僕だけの君 〜Under Super Best〜"
+ }
+}

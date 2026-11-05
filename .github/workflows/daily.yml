@@ -63,6 +63,9 @@ jobs:
       - name: Build song-to-live performance index
         run: python3 tools/build_song_live.py
 
+      - name: Build song pages and OGP images
+        run: python3 tools/build_song_pages.py
+
       - name: Commit data updates
         id: commit
         run: |

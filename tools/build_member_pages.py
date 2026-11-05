@@ -251,7 +251,7 @@ def main():
         cs_html = ""
         if cs:
             links = "、".join(
-                f'<a href="../../songs/?q={urllib.parse.quote(s["title"])}">{esc(s["title"])}</a>' for s in cs)
+                f'<a href="../../songs/{str(s["id"]).lower()}/">{esc(s["title"])}</a>' for s in cs)
             cs_html = f'<h4 style="margin:10px 0 4px">センター曲</h4><p style="line-height:2">{links}</p>'
 
         member_json = json.dumps({
@@ -262,7 +262,7 @@ def main():
         }, ensure_ascii=False)
 
         page = f"""<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="profile"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><link rel="canonical" href="{url}"><meta property="og:image" content="{ogp_url}"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=62"></head>
+<title>{esc(title)}</title><meta name="description" content="{esc(desc)}"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="profile"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><link rel="canonical" href="{url}"><meta property="og:image" content="{ogp_url}"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=63"></head>
 <body data-base="../../">
 <header class="site"><div class="wrap nav"><a class="logo" href="../../">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="../../">ホーム</a><a href="../" class="on">メンバー</a><a href="../../songs/">楽曲図鑑</a><a href="../../live/">歴代ライブ</a><a href="../../blog/">ブログ</a><a href="../../games/">ミニゲーム</a><a href="../../formation/">マイフォーメーション</a><a href="../../setlist/">マイセットリスト</a><a href="../../news/">お知らせ</a></nav></div></header>
 <main class="wrap"><section class="page">

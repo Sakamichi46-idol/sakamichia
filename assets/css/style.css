@@ -306,6 +306,12 @@ dialog{max-height:92dvh}
 .fm-sub{display:block;padding:0 2px 5px;color:var(--muted);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:400}
 .mb-photo{display:block}
 .mb-detail{display:flex;gap:18px}
+.sg-detail{display:flex;gap:18px}
+.sg-jacket{flex:none;width:200px}
+.sg-jacket img{width:100%;border-radius:14px;display:block;border:1px solid var(--line)}
+.sg-info{flex:1;min-width:0}
+.sg-nophoto{display:block;width:100%;aspect-ratio:4/5;background:var(--chipbg,#f3f0f6)}
+@media(max-width:640px){.sg-detail{flex-direction:column}.sg-jacket{width:170px}}
 .mb-dphoto{flex:none;width:180px}
 .mb-dphoto img{width:100%;border-radius:14px;display:block}
 .mb-dphoto .fm-initial{border-radius:14px}
