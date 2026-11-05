@@ -223,18 +223,19 @@ function renderTicker(meta){
   }).map(m => m.name);
   if (bdays.length) items.push({t: `今日は${bdays.join("・")}の誕生日`, href: "members/"});
   const rels = (DB.songs || []).filter(x => x.date === tstr && x.type === "表題曲");
-  if (rels.length) items.push({t: `本日発売『${rels[0].title}』（${rels[0].group}）`, href: `songs/${String(rels[0].id).toLowerCase()}/`});
+  if (rels.length) items.push({t: `本日発売『${rels[0].title}』（${rels[0].group}）`, href: `songs/${String(rels[0].id).toLowerCase()}/`, g: rels[0].group});
   const livesToday = (DB.lives || []).filter(l => l.date === tstr);
-  if (livesToday.length) items.push({t: `本日開催：${livesToday[0].title}`, href: "live/"});
-  for (const it of todaySchedule()) items.push({t: `${it.time ? it.time + " " : ""}${it.title}（${it.g}）`, href: it.url, ext: true});
-  for (const n of (DB.news || []).slice(0, 3)) items.push({t: n.title, href: n.url || "news/", ext: !!n.url});
+  if (livesToday.length) items.push({t: `本日開催：${livesToday[0].title}`, href: "live/", g: livesToday[0].group});
+  for (const it of todaySchedule()) items.push({t: `${it.time ? it.time + " " : ""}${it.title}（${it.g}）`, href: it.url, ext: true, g: it.g});
+  for (const n of (DB.news || []).slice(0, 3)) items.push({t: n.title, href: n.url || "news/", ext: !!n.url, g: n.g});
   const upd = document.querySelector(".site-updates-mini li");
   if (upd) items.push({t: "更新：" + upd.textContent.trim()});
   if(!items.length) return;
-  const one = items.map(it => it.href
+  const GCLS = {"乃木坂46": "g-n", "櫻坂46": "g-s", "日向坂46": "g-h", "欅坂46": "g-k", "けやき坂46": "g-hk"};
+  const one = items.map(it => (it.href
     ? `<a class="tk-item" href="${esc(it.href)}"${it.ext ? ' target="_blank" rel="noopener"' : ""}>${esc(it.t)}</a>`
-    : `<span class="tk-item">${esc(it.t)}</span>`).join('<span class="tk-dot"></span>');
-  track.innerHTML = one + '<span class="tk-dot"></span>' + one + '<span class="tk-dot"></span>';
+    : `<span class="tk-item">${esc(it.t)}</span>`) + `<span class="tk-dot ${GCLS[it.g] || ""}"></span>`).join("");
+  track.innerHTML = one + one;
   box.hidden = false;
 }
 function renderDisco(){

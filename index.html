@@ -182,7 +182,8 @@ html[data-theme="dark"]
 .ticker-label{background:var(--ink);color:#fff;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:800;letter-spacing:.14em;flex:none}
 .ticker-view{overflow:hidden;flex:1;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
 .ticker-track{display:inline-flex;align-items:center;gap:40px;white-space:nowrap;animation:p9tick 80s linear infinite;will-change:transform}
-.tk-dot{width:7px;height:7px;border-radius:50%;background:#e77a9b;flex:none}
+.tk-dot{width:7px;height:7px;border-radius:50%;background:#c9b8e8;flex:none}
+.tk-dot.g-n{background:#7e57c2}.tk-dot.g-s{background:#e77a9b}.tk-dot.g-h{background:#5aa9d6}.tk-dot.g-k{background:#5eba53}.tk-dot.g-hk{background:#a9bd4a}
 .tk-item{font-size:13px}
 a.tk-item{color:inherit;text-decoration:none}
 a.tk-item:active{opacity:.6}
@@ -224,9 +225,8 @@ a.tk-item:active{opacity:.6}
 .hero-kicker{margin:0 0 14px;font-size:11.5px;font-weight:800;letter-spacing:.22em;color:var(--muted)}
 .hero .tagline{margin:16px auto 4px;font-size:clamp(18px,4.6vw,24px);font-weight:800;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
 .sec-lead{margin:-4px 0 14px;font-size:13.5px;line-height:1.7;color:var(--muted)}
-html[data-lite="1"] .ticker-view{overflow-x:auto;-webkit-mask-image:none;mask-image:none;scrollbar-width:none}
-html[data-lite="1"] .ticker-view::-webkit-scrollbar{display:none}
-html[data-lite="1"] .ticker-track{animation:none}
+html[data-lite="1"] .ticker-track{animation:p9tick 80s linear infinite!important}
+@media(prefers-reduced-motion:reduce){html[data-lite="1"] .ticker-track{animation:none!important}}
 html[data-lite="1"] .kv-arrow,html[data-lite="1"] #kvDots,html[data-lite="1"] #kvCount{display:none}
 html[data-lite="1"] #omikujiSection .btn{background:#d9c8f5;color:#38304a;box-shadow:none}
 </style><link rel="canonical" href="https://sakamichia.pages.dev/"><meta name="google-site-verification" content="2GkWrRyH00XfUwiNhExFax3VdRItGX5SRUQjeHQvIP4"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索"><meta property="og:description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。"><meta property="og:url" content="https://sakamichia.pages.dev/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"></head>
