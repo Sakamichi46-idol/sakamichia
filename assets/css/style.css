@@ -101,7 +101,7 @@ body[data-group="坂道AKB"]{--page:#d24a43}
 .tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin:16px 0 2px;padding-bottom:6px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{background:#fff;color:var(--ink);border:2px solid var(--line);white-space:nowrap;padding:9px 14px}
-.tabs button.on{background:var(--page);border-color:var(--page);color:#fff}
+.tabs button.on{background:#ece5f5;border-color:#b9a8dd;color:var(--ink)}
 
 .fwrap{background:#f7f4fb;border-radius:14px;padding:14px 8px;overflow:hidden}
 .frow{display:flex;justify-content:center;gap:.45em;flex-wrap:nowrap;margin:6px 0;font-size:13px;overflow-x:auto;scrollbar-width:none}
@@ -151,12 +151,12 @@ body[data-group="坂道選抜"]{--page:#2f9e8f}
 .more-wrap{text-align:center;margin:6px 0 44px}
 .pager{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin:14px 0 44px}
 .pager button{background:#fff;color:var(--ink);border:2px solid var(--line)}
-.pager button.on{background:var(--page);color:#fff;border-color:var(--page)}
+.pager button.on{background:#ece5f5;color:var(--ink);border-color:#b9a8dd;font-weight:700}
 .pager button:disabled{opacity:.38}
 .pager .gap{color:var(--muted);padding:0 2px}
 .years{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 2px}
 .ychip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
-.ychip.on{background:var(--page);border-color:var(--page);color:#fff;font-weight:700}
+.ychip.on{background:#ece5f5;border-color:#b9a8dd;color:var(--ink);font-weight:700}
 .year-hint{color:var(--muted);font-size:12px;margin:4px 0 0}
 .bthumb .logo-img{object-fit:contain;background:#fff;padding:12px;box-sizing:border-box}
 .ychip{color:var(--ink)}
@@ -175,7 +175,7 @@ body[data-group="坂道選抜"]{--page:#2f9e8f}
 .count-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .vtoggle{display:flex;gap:6px}
 .vtoggle button{background:#fff;color:var(--ink);border:2px solid var(--line);padding:7px 13px;font-size:13px}
-.vtoggle button.on{background:var(--page);color:#fff;border-color:var(--page)}
+.vtoggle button.on{background:#ece5f5;color:var(--ink);border-color:#b9a8dd;font-weight:700}
 .legend{color:var(--muted);font-size:12px;margin:0 0 4px}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px;margin:14px 0 30px}
 .pcell{position:relative;margin:0;aspect-ratio:1;overflow:hidden;border-radius:10px;cursor:pointer;background:#eee}
@@ -802,3 +802,10 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 html[data-lite="1"] .sec-head{border-bottom:1px solid var(--line);margin-top:22px}
 html[data-lite="1"] .sec-en{font-size:19px}
 html[data-lite="1"] .sec-lead{font-size:13px}
+
+/* 絞り込みUIの整理（2026-11-06）：スマホではグループチップを1行スクロールに */
+@media(max-width:768px){
+  .gchips,#mbGroups{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .gchips::-webkit-scrollbar,#mbGroups::-webkit-scrollbar{display:none}
+  .gchips .ychip,#mbGroups .ychip{flex:none}
+}
