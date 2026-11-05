@@ -17,7 +17,7 @@ button.sub,.btn.sub{background:#fff;color:var(--ink);border:2px solid var(--line
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 4px 14px rgba(120,80,40,.05)}
 .card h3{margin:6px 0 8px;font-size:17px;line-height:1.5}.card p{color:var(--muted);font-size:14px;line-height:1.7;margin:6px 0}
 .chip{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;margin-right:5px}
-.g-乃木坂46{background:var(--n)}.g-櫻坂46{background:var(--s)}.g-日向坂46{background:var(--h)}.g-欅坂46{background:var(--k)}.g-けやき坂46{background:#a4c639}
+.g-乃木坂46{background:#efe9f8}.g-櫻坂46{background:#fce9ef}.g-日向坂46{background:#e7f2fa}.g-欅坂46{background:#eaf6e9}.g-けやき坂46{background:#f2f6e0}
 .tag{display:inline-block;background:#f1eafd;color:#6540a5;padding:2px 8px;border-radius:999px;font-size:12px;margin:2px 3px 2px 0}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.filters select,.filters input{padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:14px}
 section.page{padding:28px 0 8px}h2.title{font-size:28px;margin:0 0 6px}.lead{color:var(--muted);line-height:1.8}
@@ -95,7 +95,7 @@ h2.title{border-left:6px solid var(--page);padding-left:12px}
 @keyframes groupcycle{0%,30%{color:var(--n)}36%,63%{color:var(--s)}69%,96%{color:var(--h)}100%{color:var(--n)}}
 @media(prefers-reduced-motion:reduce){.grad{animation:none}}
 
-.g-坂道AKB{background:#d24a43}
+.g-坂道AKB{background:#fae9e8}
 body[data-group="坂道AKB"]{--page:#d24a43}
 .card:has(.g-坂道AKB){border-left-color:#d24a43}
 .tabs{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin:16px 0 2px;padding-bottom:6px;scrollbar-width:none}
@@ -108,8 +108,8 @@ body[data-group="坂道AKB"]{--page:#d24a43}
 .frow::-webkit-scrollbar{display:none}
 .fm{background:#fff;border:.15em solid var(--line);border-radius:999px;padding:.26em .62em;font-size:1em;white-space:nowrap;flex:none}
 .fm.ctr{background:var(--page);border-color:var(--page);color:#fff;font-weight:700}
-.g-坂道選抜{background:#2f9e8f}
-.g-その他{background:#607d8b}
+.g-坂道選抜{background:#e6f4f1}
+.g-その他{background:#edf1f3}
 body[data-group="坂道選抜"]{--page:#2f9e8f}
 .card:has(.g-坂道選抜){border-left-color:#2f9e8f}
 .card:has(.g-その他){border-left-color:#607d8b}
@@ -789,3 +789,8 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .sec-lead{margin:-4px 0 14px;font-size:13.5px;line-height:1.7;color:var(--muted)}
 .more-link{font-weight:800;letter-spacing:.14em;font-size:13px;color:var(--ink);text-decoration:none;border-bottom:2px solid #e77a9b;padding-bottom:2px}
 .page-head{margin-top:6px}
+
+/* グループチップは淡い色面＋濃いめの文字色（2026-11-05：色味は薄め基調） */
+.chip.g-乃木坂46{color:#6a45ad}.chip.g-櫻坂46{color:#b23a63}.chip.g-日向坂46{color:#25719f}
+.chip.g-欅坂46{color:#3d8a37}.chip.g-けやき坂46{color:#74901c}.chip.g-坂道AKB{color:#b23a34}
+.chip.g-坂道選抜{color:#1f7a6d}.chip.g-その他{color:#4c6572}
