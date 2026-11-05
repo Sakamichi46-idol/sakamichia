@@ -796,4 +796,4 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .chip.g-坂道選抜{color:#1f7a6d}.chip.g-その他{color:#4c6572}
 
 .logo-mark{width:28px;height:28px;border-radius:7px;flex:none;display:block}
-.logo{gap:9px}
+.logo-mark{margin-right:9px}
