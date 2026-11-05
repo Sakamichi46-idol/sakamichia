@@ -113,55 +113,99 @@ def parse_hinata(ym: str, detail_window: tuple[date, date]) -> list[dict]:
     return items
 
 
+NOGI_CATE = {
+    "birthday": "誕生日", "musical": "舞台/ミュージカル", "radio": "ラジオ",
+    "tv": "テレビ", "web": "WEB", "live": "ライブ/イベント", "book": "書籍",
+    "movie": "映画", "release": "CD/音楽配信/映像商品", "meetandgreet": "ミート&グリート",
+}
+
+
+def _jsonp(text: str):
+    m = re.search(r"^[^(]*\((.*)\)\s*;?\s*$", (text or "").strip(), re.S)
+    if not m:
+        return None
+    try:
+        return json.loads(m.group(1))
+    except Exception:
+        return None
+
+
+def _nogi_member_names() -> list[str]:
+    d = _jsonp(fetch("https://www.nogizaka46.com/s/n46/api/list/member"))
+    if not d:
+        return []
+    names = []
+    for it in d.get("data", []):
+        nm = name_norm(it.get("name", ""))
+        if nm and nm != "乃木坂46":
+            names.append(nm)
+    return sorted(set(names), key=len, reverse=True)
+
+
+def _nogi_split_title(title: str, cate: str, names: list[str]):
+    """APIの title は末尾に出演メンバー名が連結されている。メンバーはタイトル
+    由来のみで決める（arti_code は誤りがある実例を確認済みのため使わない）。"""
+    narration = None
+    m = re.search(r"\s*※ナレーション：(\S+)$", title)
+    if m:
+        narration = m.group(1)
+        title = title[:m.start()]
+    if cate == "birthday":
+        nm = re.sub(r"\s+", "", title)
+        return nm + " 誕生日", [nm], narration
+    gm = re.search(r"([1-9])期生$", title)
+    if gm:
+        return title[:gm.start()], [gm.group(0)], narration
+    out = []
+    t = title
+    while True:
+        hit = None
+        for nm in names:
+            if t.endswith(nm):
+                pre = t[:-len(nm)]
+                if pre == "" or pre[-1] in "、」』）) 　・" or pre.endswith("公開"):
+                    hit = (nm, pre)
+                    break
+        if not hit:
+            break
+        nm, pre = hit
+        out.insert(0, nm)
+        t = pre[:-1] if pre and pre[-1] == "、" else pre
+        if pre == "":
+            break
+    return t.rstrip(" 　"), out, narration
+
+
 def parse_nogizaka(ym: str) -> list[dict]:
-    """乃木坂は現在どの経路も WAF チャレンジ（HTTP 202・空応答）で取得できない。
-    応答が返るようになった場合に備え、他グループと同型の2パターンを厳密に試す。
-    全要素が揃った項目だけを採用し、部分一致は捨てる。"""
-    h = fetch(f"https://www.nogizaka46.com/s/n46/media/list?dy={ym}")
-    if not h:
+    """公式JSON API（/s/n46/api/list/schedule、JSONP）から取得する。
+    現在はWAFでスクリプト取得が遮断され [] を返す（前回分を保持）。
+    遮断が解ければ自動でこの経路が生きる。"""
+    d = _jsonp(fetch(f"https://www.nogizaka46.com/s/n46/api/list/schedule?dy={ym}"))
+    if not d:
+        return []
+    names = _nogi_member_names()
+    if not names:
         return []
     items = []
-    # パターンA: 櫻坂型（モーダル埋め込み）
-    for b in re.split(r"js-schedule-detail", h)[1:]:
-        md = re.search(r'class="date wf-a">([^<]+)</p>', b)
-        mt = re.search(r'<p class="type">([^<]+)</p>', b)
-        mti = re.search(r'<h2 class="title">([^<]+)</h2>', b)
-        if not (md and mt and mti):
-            continue
-        m = re.match(r"(\d{4})\.(\d{2})\.(\d{2})\s*(.*)", clean(md.group(1)))
-        if not m:
-            continue
-        mem = re.findall(r'<ul class="members[^"]*">(.*?)</ul>', b, re.S)
-        names = []
-        if mem:
-            names = [name_norm(x) for x in re.findall(r"<li>(.*?)</li>", mem[0], re.S)]
+    for it in d.get("data", []):
+        cate = it.get("cate", "")
+        title, members, narration = _nogi_split_title(it.get("title", ""), cate, names)
+        if narration and narration not in members:
+            members.append(narration)
+        start, end = it.get("start_time", ""), it.get("end_time", "")
+        time_s = f"{start}〜{end}" if start and end else (f"{start}〜" if start else "")
+        if cate == "birthday":
+            ac = (it.get("arti_code") or [[""]])[0]
+            code0 = ac[0] if ac else ""
+            url = (f"https://www.nogizaka46.com/s/n46/artist/{code0}" if code0
+                   else "https://www.nogizaka46.com/s/n46/media/list")
+        else:
+            url = f"https://www.nogizaka46.com/s/n46/media/detail/{it.get('code', '')}"
         items.append({
-            "_date": f"{m.group(1)}-{m.group(2)}-{m.group(3)}",
-            "g": "乃木坂46", "kind": clean(mt.group(1)), "time": m.group(4).strip(),
-            "title": clean(mti.group(1)), "members": [n for n in names if n],
-            "url": "https://www.nogizaka46.com/s/n46/media/list",
+            "_date": (it.get("date", "")).replace("/", "-"),
+            "g": "乃木坂46", "kind": NOGI_CATE.get(cate, cate), "time": time_s,
+            "title": title, "members": members, "url": url,
         })
-    if items:
-        return items
-    # パターンB: 日向坂型（日別グループ＋行）
-    year, month = int(ym[:4]), int(ym[4:])
-    for g in re.split(r"c-schedule__date--list", h)[1:]:
-        md = re.search(r"<span>(\d+)</span>", g)
-        if not md:
-            continue
-        dstr = f"{year:04d}-{month:02d}-{int(md.group(1)):02d}"
-        for li in re.findall(r'p-schedule__item">(.*?)</li>', g, re.S):
-            cat = re.search(r'c-schedule__category[^>]*>\s*([^<]+?)\s*</div>', li)
-            tim = re.search(r'c-schedule__time--list">\s*([^<]+?)\s*</div>', li)
-            txt = re.search(r'c-schedule__text">\s*(.*?)\s*</p>', li, re.S)
-            if not (cat and txt):
-                continue
-            items.append({
-                "_date": dstr, "g": "乃木坂46", "kind": clean(cat.group(1)),
-                "time": clean(tim.group(1)) if tim else "",
-                "title": clean(txt.group(1)), "members": [],
-                "url": "https://www.nogizaka46.com/s/n46/media/list",
-            })
     return items
 
 
