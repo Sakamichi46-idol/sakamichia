@@ -144,6 +144,7 @@ function renderKv(){
       kicker: "MOVIE", title: `『${mv.title}』`, sub: `${mv.group} ・ 公式MV`});
   }
   if(!slides.length) return;
+  if (document.documentElement.dataset.lite === "1" && slides.length > 1) slides.splice(1); // 簡易版：KVは1枚だけ（通信量削減）
   track.innerHTML = slides.map(sl => sl.img
     ? `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""}><img class="kv-bg" src="${esc(sl.img)}" alt="" loading="lazy">${sl.chip ? `<span class="kv-chip">${esc(sl.chip)}</span>` : `<span class="kv-cap"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span>`}</a>`
     : `<a class="kv-slide" href="${esc(sl.href)}"${sl.ext ? ' target="_blank" rel="noopener"' : ""} style="background:${esc(sl.bg)}"><span class="kv-type"><span class="kv-kicker">${esc(sl.kicker)}</span><span class="kv-title">${esc(sl.title)}</span><span class="kv-sub">${esc(sl.sub)}</span></span></a>`).join("");

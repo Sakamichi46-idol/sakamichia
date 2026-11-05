@@ -797,3 +797,8 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 
 .logo-mark{width:28px;height:28px;border-radius:7px;flex:none;display:block}
 .logo-mark{margin-right:9px}
+
+/* 簡易版：新しい見出し文法への追随（2026-11-05） */
+html[data-lite="1"] .sec-head{border-bottom:1px solid var(--line);margin-top:22px}
+html[data-lite="1"] .sec-en{font-size:19px}
+html[data-lite="1"] .sec-lead{font-size:13px}
