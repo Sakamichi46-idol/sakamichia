@@ -113,6 +113,58 @@ def parse_hinata(ym: str, detail_window: tuple[date, date]) -> list[dict]:
     return items
 
 
+def parse_nogizaka(ym: str) -> list[dict]:
+    """乃木坂は現在どの経路も WAF チャレンジ（HTTP 202・空応答）で取得できない。
+    応答が返るようになった場合に備え、他グループと同型の2パターンを厳密に試す。
+    全要素が揃った項目だけを採用し、部分一致は捨てる。"""
+    h = fetch(f"https://www.nogizaka46.com/s/n46/media/list?dy={ym}")
+    if not h:
+        return []
+    items = []
+    # パターンA: 櫻坂型（モーダル埋め込み）
+    for b in re.split(r"js-schedule-detail", h)[1:]:
+        md = re.search(r'class="date wf-a">([^<]+)</p>', b)
+        mt = re.search(r'<p class="type">([^<]+)</p>', b)
+        mti = re.search(r'<h2 class="title">([^<]+)</h2>', b)
+        if not (md and mt and mti):
+            continue
+        m = re.match(r"(\d{4})\.(\d{2})\.(\d{2})\s*(.*)", clean(md.group(1)))
+        if not m:
+            continue
+        mem = re.findall(r'<ul class="members[^"]*">(.*?)</ul>', b, re.S)
+        names = []
+        if mem:
+            names = [name_norm(x) for x in re.findall(r"<li>(.*?)</li>", mem[0], re.S)]
+        items.append({
+            "_date": f"{m.group(1)}-{m.group(2)}-{m.group(3)}",
+            "g": "乃木坂46", "kind": clean(mt.group(1)), "time": m.group(4).strip(),
+            "title": clean(mti.group(1)), "members": [n for n in names if n],
+            "url": "https://www.nogizaka46.com/s/n46/media/list",
+        })
+    if items:
+        return items
+    # パターンB: 日向坂型（日別グループ＋行）
+    year, month = int(ym[:4]), int(ym[4:])
+    for g in re.split(r"c-schedule__date--list", h)[1:]:
+        md = re.search(r"<span>(\d+)</span>", g)
+        if not md:
+            continue
+        dstr = f"{year:04d}-{month:02d}-{int(md.group(1)):02d}"
+        for li in re.findall(r'p-schedule__item">(.*?)</li>', g, re.S):
+            cat = re.search(r'c-schedule__category[^>]*>\s*([^<]+?)\s*</div>', li)
+            tim = re.search(r'c-schedule__time--list">\s*([^<]+?)\s*</div>', li)
+            txt = re.search(r'c-schedule__text">\s*(.*?)\s*</p>', li, re.S)
+            if not (cat and txt):
+                continue
+            items.append({
+                "_date": dstr, "g": "乃木坂46", "kind": clean(cat.group(1)),
+                "time": clean(tim.group(1)) if tim else "",
+                "title": clean(txt.group(1)), "members": [],
+                "url": "https://www.nogizaka46.com/s/n46/media/list",
+            })
+    return items
+
+
 def start_key(it: dict) -> tuple:
     m = re.search(r"(\d{1,2}):(\d{2})", it.get("time") or "")
     t = (int(m.group(1)) * 60 + int(m.group(2))) if m else 9999
@@ -133,6 +185,9 @@ def main() -> int:
     fetched: dict[str, list[dict]] = {}
     got = {}
     for ym in months():
+        n = parse_nogizaka(ym)
+        if n:
+            got.setdefault("乃木坂46", []).extend(n)
         s = parse_sakura(ym)
         if s:
             got.setdefault("櫻坂46", []).extend(s)
