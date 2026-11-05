@@ -1,47 +1,300 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="google-site-verification" content="2GkWrRyH00XfUwiNhExFax3VdRItGX5SRUQjeHQvIP4"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索"><meta property="og:description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。"><meta property="og:url" content="https://sakamichia.pages.dev/"><link rel="canonical" href="https://sakamichia.pages.dev/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><meta name="description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。">
-<link rel="stylesheet" href="assets/css/style.css?v=63"><style>
-/* 入口カードの線画アイコン（絵文字を使わない） */
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta name="description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。">
+<link rel="stylesheet" href="assets/css/style.css?v=63">
+<style>
+/* プレビュー専用：明るく柔らかい方向の試作（本番トップには未適用） */
+html:not([data-theme="dark"]) .hero{background:#f4effc;border-radius:24px;margin-top:18px;padding:40px 16px 26px}
+html:not([data-theme="dark"]) .card{border-radius:22px;border-color:#f1e8f6;box-shadow:0 6px 18px rgba(126,87,194,.05)}
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0 4px}
+.pick{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:22px}
+.pick-no{font-size:30px;font-weight:900;line-height:1.1}
+.pick h3{margin:2px 0 6px;font-size:18px}
+.pick p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
+html:not([data-theme="dark"]) .pick-n{background:#f4effc}
+html:not([data-theme="dark"]) .pick-s{background:#fdf0f4}
+html:not([data-theme="dark"]) .pick-h{background:#edf6fb}
+.pick-n .pick-no{color:var(--n)}
+.pick-s .pick-no{color:var(--s)}
+.pick-h .pick-no{color:var(--h)}
+.band{border-radius:24px;padding:20px 18px;margin:26px 0}
+.band>h2.title{margin-top:0!important}
+html:not([data-theme="dark"]) .band-h{background:#eef7fc}
+html:not([data-theme="dark"]) #favSection{background:#fdf0f4;border-radius:24px;padding:4px 18px 18px;margin-top:26px}
+html:not([data-theme="dark"]) #todaySection{background:#f4effc;border-radius:24px;padding:4px 18px 18px;margin-top:26px}
+#favSection>h2.title,#todaySection>h2.title{margin-top:12px!important}
+.updates{background:#fff;border:1px solid var(--line);border-radius:22px;padding:8px 18px;margin-top:12px}
+.updates ul{list-style:none;margin:0;padding:0}
+.updates li{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #f4eef8;font-size:14px}
+.updates li:last-child{border-bottom:0}
+.updates .u-date{font-weight:700;white-space:nowrap;color:var(--muted)}
+/* 統一感の試作：要所で3色を同時に見せる */
+@keyframes groupcycle-bg{0%,30%{background-color:var(--n)}36%,63%{background-color:var(--s)}69%,96%{background-color:var(--h)}100%{background-color:var(--n)}}
+.hero .searchbox button,#omikujiSection .btn{animation:groupcycle-bg 9s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.hero .searchbox button,#omikujiSection .btn{animation:none}}
+html:not([data-lite="1"]) main h2.title{border-left:none;padding-left:0;display:flex;align-items:center}
+html:not([data-lite="1"]) main h2.title::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--n);box-shadow:13px 0 0 var(--s),26px 0 0 var(--h);margin-right:32px}
+html:not([data-theme="dark"]) #todaySection{background:#faf8fb;border:1px solid #f1e8f6}
+/* 入口を選ぶの磨き上げ：アイコンチップ＋色ローテーション、ピル型リンク、スマホ2列 */
 .e-ico{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:11px;margin-right:9px;vertical-align:-11px;background:#f1eafd;color:var(--n)}
 .e-ico svg{width:19px;height:19px;flex:none}
 .entries .card:nth-child(3n+2) .e-ico{background:#fdeef3;color:var(--s)}
 .entries .card:nth-child(3n) .e-ico{background:#e9f5fb;color:var(--h)}
 html[data-theme="dark"] .e-ico{background:rgba(255,255,255,.09)}
-@media(max-width:640px){.entries{gap:10px}.e-ico{width:29px;height:29px;border-radius:9px;margin-right:6px;vertical-align:-9px}.e-ico svg{width:16px;height:16px}}
-</style>
-</head>
+.more-links a{display:inline-block;background:#f4effc;border-radius:999px;padding:3px 12px;margin:2px 0;font-weight:700}
+.more-links a:nth-of-type(3n+2){background:#fdf0f4}
+.more-links a:nth-of-type(3n){background:#edf6fb}
+@media(max-width:640px){.entries{grid-template-columns:1fr 1fr;gap:10px}.entries .card{padding:12px}.entries .card p{font-size:12.5px;line-height:1.6}.entries .card h3{font-size:15px}.e-ico{width:29px;height:29px;border-radius:9px;margin-right:6px;vertical-align:-9px}.e-ico svg{width:16px;height:16px}}
+/* 推しの新着（未登録時の圧縮表示） */
+.fav-hint{font-size:13.5px;color:var(--muted);margin:0}
+html:not([data-theme="dark"]) #favSection.fav-compact{background:transparent;border-radius:0;padding:0 4px}
+/* 改訂ミックス：リキッド要素は全廃。すりガラスは色の帯の中だけ（輪郭の線は残す） */
+html:not([data-theme="dark"]):not([data-lite="1"]) .band .nw-row,
+html:not([data-theme="dark"]):not([data-lite="1"]) #favSection .card,
+html:not([data-theme="dark"]):not([data-lite="1"]) #todaySection .card{
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-color:rgba(43,36,48,.13);
+  box-shadow:0 2px 10px rgba(90,110,160,.06);
+}
+/* 狭い画面で検索ボタンが潰れないようにする */
+.searchbox button{flex:none}
+.searchbox input{min-width:0}
+/* 一体化した検索フィールド＋例チップ＋ヒーローの淡いグラデーション */
+.searchbox{background:#fff;border:2px solid var(--line);border-radius:999px;padding:5px;gap:6px;align-items:center;box-shadow:0 4px 16px rgba(126,87,194,.07)}
+.searchbox input{border:none;background:transparent;padding:10px 14px}
+.searchbox input:focus{outline:none}
+.searchbox .suggest{top:calc(100% + 8px)}
+.hero .searchbox button{width:46px;height:46px;border-radius:50%;padding:0;font-size:14px}
+.q-chips{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:12px;flex-wrap:wrap}
+.q-label{font-size:12.5px;color:var(--muted)}
+.q-chip{background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer}
+html:not([data-theme="dark"]) .hero{background:linear-gradient(120deg,#f4effc 0%,#fdf0f4 52%,#edf6fb 100%)}
+/* 色サイクルのペースを落とす（9秒→18秒、1色あたり約6秒） */
+.grad{animation-duration:18s}
+.hero .searchbox button,#omikujiSection .btn{animation-duration:18s}
+/* 構成見直し版：サイトの更新は最下部に小さく */
+.site-updates-mini{margin-top:36px}
+.site-updates-mini h2.title{font-size:17px}
+.site-updates-mini .updates{margin-top:8px}
+.site-updates-mini .updates li{font-size:13px;padding:7px 0}
+
+/* === プレビュー7：ボタン刷新（濃色半透明＋すりガラス＋白文字。トップへ戻るボタンと同じ文法） === */
+.hero .searchbox button,#omikujiSection .btn{animation:none;background:rgba(35,28,44,.88);color:#fff;border:1px solid rgba(255,255,255,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(30,20,50,.25);transition:transform .2s,background .2s}
+.hero .searchbox button:hover,#omikujiSection .btn:hover{background:rgba(35,28,44,.97);transform:translateY(-2px)}
+#omikujiSection .btn{border-radius:999px;padding:10px 22px;font-weight:700}
+.q-chip{background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-color:rgba(43,36,48,.18);box-shadow:0 2px 8px rgba(30,20,50,.06);transition:transform .2s,background .2s,color .2s}
+.q-chip:hover{background:rgba(35,28,44,.88);color:#fff;transform:translateY(-1px)}
+.more-links a{background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(43,36,48,.14);color:var(--ink)}
+.more-links a:nth-of-type(3n+2),.more-links a:nth-of-type(3n){background:rgba(255,255,255,.65)}
+.more-links a::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--n);margin-right:6px;vertical-align:1px}
+.more-links a:nth-of-type(3n+2)::before{background:var(--s)}
+.more-links a:nth-of-type(3n)::before{background:var(--h)}
+#results p a{display:inline-block;border:1.5px solid rgba(35,28,44,.55);border-radius:999px;padding:5px 16px;font-weight:700;color:var(--ink);text-decoration:none;transition:background .2s,color .2s}
+#results p a:hover{background:rgba(35,28,44,.9);color:#fff}
+.card,.pick{transition:transform .2s,box-shadow .2s}
+.card:hover,.pick:hover{transform:translateY(-2px)}
+html[data-theme="dark"] .q-chip,html[data-theme="dark"] .more-links a{background:rgba(24,20,32,.55);border-color:rgba(255,255,255,.22);color:#f2eef7}
+html[data-theme="dark"] #results p a{border-color:rgba(255,255,255,.5);color:#f2eef7}
+html[data-theme="dark"] #results p a:hover{background:rgba(255,255,255,.92);color:#241f2e}
+
+/* === プレビュー8：おみくじ以外を刷新 === */
+body{background:#f7f5fa}
+/* ヒーロー：タイポを大きく、余白を広く */
+html:not([data-theme="dark"]) .hero{border-radius:28px;padding:46px 18px 30px;margin-top:14px}
+.hero h1{font-size:clamp(30px,7.4vw,46px);line-height:1.32;letter-spacing:.01em}
+.hero .searchbox{padding:7px;border-radius:999px}
+.hero .searchbox button{width:48px;height:48px}
+/* おみくじは現行仕様に戻す（色サイクルのボタン・浮き上がりなし） */
+#omikujiSection .btn{animation:groupcycle-bg 18s ease-in-out infinite;-webkit-backdrop-filter:none;backdrop-filter:none;border:none;box-shadow:0 4px 14px rgba(60,30,80,.16)}
+#omikujiSection .btn:hover{transform:none}
+@media(prefers-reduced-motion:reduce){#omikujiSection .btn{animation:none}}
+/* 見出し：少し大きく、字間を整える */
+h2.title{font-size:21px;letter-spacing:.03em;margin-bottom:12px}
+/* 入口：カード型から行型リストへ（左にアイコン、右端にシェブロン） */
+.grid.entries{grid-template-columns:1fr;gap:10px}
+@media(min-width:820px){.grid.entries{grid-template-columns:1fr 1fr}}
+.entries .card{position:relative;padding:13px 34px 13px 64px;border-radius:18px;box-shadow:0 3px 12px rgba(126,87,194,.05)}
+.entries .card h3{font-size:16.5px;margin:0}
+.entries .card p{margin:2px 0 0;font-size:13.5px}
+.entries .e-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:12px;margin:0;vertical-align:baseline}
+.entries .e-ico svg{width:20px;height:20px}
+.entries .card::after{content:"";position:absolute;right:17px;top:50%;width:8px;height:8px;border-top:2px solid #bcaecb;border-right:2px solid #bcaecb;transform:translateY(-50%) rotate(45deg)}
+@media(max-width:640px){.grid.entries{grid-template-columns:1fr}.entries .card{padding:12px 32px 12px 60px}.entries .e-ico{width:38px;height:38px;left:12px}.entries .e-ico svg{width:19px;height:19px}}
+/* ピックアップ：番号を大きく薄く */
+.pick{border-radius:20px}
+.pick-no{font-size:27px;font-weight:800;opacity:.17;letter-spacing:.02em}
+/* お知らせ：帯の角を丸く、行は白カードに */
+.band{border-radius:24px;padding:20px 16px 10px;margin-left:-6px;margin-right:-6px}
+.band .nw-row{background:rgba(255,255,255,.85);border-radius:14px;padding:10px 12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(30,20,50,.05)}
+html[data-theme="dark"] .band .nw-row{background:rgba(255,255,255,.06)}
+/* 今日の坂道：カードの角と写真の角をそろえる */
+#todaySection .card{border-radius:20px}
+#todaySection .bthumb{border-radius:14px;overflow:hidden}
+/* サイトの更新は格下げのまま（小さく静かに） */
+.site-updates-mini .title{font-size:17px}
+
+/* プレビュー8追補：「もっと調べる」も行型に統一（少しコンパクトな小行） */
+.entries-sub .card{padding-top:10px;padding-bottom:10px}
+.entries-sub .e-ico{width:34px;height:34px;border-radius:10px}
+.entries-sub .e-ico svg{width:17px;height:17px}
+.entries-sub .card h3{font-size:15.5px}
+
+/* プレビュー8追補：ヒーロー右上に常設の共有ボタン（ドロワーを開かなくても共有できる） */
+.hero{position:relative}
+html[data-theme="dark"] 
+/* プレビュー8追補：ページ末尾の共有ボタン列（プラットフォーム別の丸ボタン） */
+
+.share-wrap.open .share-row{margin:34px 0 6px;text-align:center}
+.share-row-label{font-size:13px;color:var(--muted);margin:0 0 10px;font-weight:700;letter-spacing:.06em}
+.share-row-btns{display:flex;gap:12px;justify-content:center}
+.share-circle{width:52px;height:52px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 3px 10px rgba(30,20,50,.06);transition:transform .2s,background .2s,color .2s}
+.share-circle:hover{background:rgba(35,28,44,.9);color:#fff;transform:translateY(-2px)}
+.share-circle.copied{background:#2e9e5b;border-color:#2e9e5b;color:#fff}
+
+/* === プレビュー9：公式サイト寄せ（英字見出し・レール・今日バー） === */
+.sec-head{display:flex;align-items:baseline;gap:12px;margin:32px 0 12px;padding-bottom:7px;border-bottom:2px solid var(--ink)}
+.sec-head .sec-en{font-size:23px;font-weight:800;letter-spacing:.13em;line-height:1}
+.sec-head .sec-ja{font-size:13.5px;color:var(--muted);font-weight:700}
+.sec-head h2{margin:0}
+.today-bar{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-top:14px;font-size:13px;box-shadow:0 3px 10px rgba(30,20,50,.05)}
+.today-bar .tb-label{font-weight:800;letter-spacing:.14em;flex:none}
+.today-bar .tb-body{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.today-bar .tb-body b{color:var(--ink)}
+.rail{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail > a{color:inherit;text-decoration:none;scroll-snap-align:start}
+.jk-card{flex:none;width:148px}
+.jk-card img{width:148px;height:148px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block;background:var(--card)}
+.jk-ph{width:148px;height:148px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;color:var(--muted);padding:10px;font-size:15px;line-height:1.5}
+.jk-t{font-weight:700;font-size:13.5px;margin-top:6px;line-height:1.45}
+.jk-d{font-size:12px;color:var(--muted);margin-top:2px}
+.bl-card{flex:none;width:212px}
+.bl-card img{width:212px;height:118px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block;background:var(--card)}
+.bl-t{font-weight:700;font-size:13px;margin-top:6px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bl-d{font-size:12px;color:var(--muted);margin-top:2px}
+.mv-card{flex:none;width:232px}
+.mv-thumb{position:relative}
+.mv-thumb img{width:232px;height:130px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block;background:var(--card)}
+.mv-play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:rgba(35,28,44,.85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+.more-row{text-align:right;margin:0}
+.more-link{font-weight:800;letter-spacing:.14em;font-size:13px;color:var(--ink);text-decoration:none;border-bottom:2px solid #e77a9b;padding-bottom:2px}
+
+/* プレビュー9：TOPICS ティッカー（上部にトピックが流れる） */
+.ticker{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 7px;margin-top:12px;box-shadow:0 3px 10px rgba(30,20,50,.05)}
+.ticker-label{background:var(--ink);color:#fff;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:800;letter-spacing:.14em;flex:none}
+.ticker-view{overflow:hidden;flex:1;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.ticker-track{display:inline-flex;align-items:center;gap:40px;white-space:nowrap;animation:p9tick 80s linear infinite;will-change:transform}
+.tk-dot{width:7px;height:7px;border-radius:50%;background:#e77a9b;flex:none}
+.tk-item{font-size:13px}
+a.tk-item{color:inherit;text-decoration:none}
+a.tk-item:active{opacity:.6}
+@keyframes p9tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.ticker-track{animation:none}}
+
+/* プレビュー9：今日の予定（公式スケジュール） */
+.sched-list{margin-bottom:4px}
+.sch-row{display:flex;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:12px;padding:9px 12px;margin-bottom:8px;color:inherit;text-decoration:none}
+.sch-time{font-weight:800;flex:none;min-width:76px;font-size:13.5px}
+.sch-main{flex:1;min-width:0}
+.sch-title{font-weight:700;font-size:14px;line-height:1.45}
+.sch-mem{color:var(--muted);font-size:12.5px;margin-top:1px;line-height:1.5}
+.sch-kind{flex:none;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
+
+/* プレビュー9：キービジュアル・スライダー（時間で切り替わる大きな見出し） */
+.kv{position:relative;border-radius:20px;overflow:hidden;margin-top:18px;aspect-ratio:2/1;background:#241f2e;box-shadow:0 10px 26px rgba(30,20,50,.16)}
+@media(min-width:821px){.kv{aspect-ratio:21/10}}
+.kv-chip{position:absolute;top:12px;left:12px;background:rgba(30,24,40,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.06em;border-radius:999px;padding:5px 11px}
+.kv-slide{position:absolute;inset:0;opacity:0;transition:opacity .65s ease;pointer-events:none;text-decoration:none;color:#fff}
+.kv-slide.on{opacity:1;pointer-events:auto}
+.kv-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kv-cap{position:absolute;left:14px;bottom:14px;max-width:84%;background:rgba(30,24,40,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:14px;padding:12px 15px}
+.kv-cap>span,.kv-type>span{display:block}
+.kv-type{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px}
+.kv-kicker{font-size:11px;font-weight:800;letter-spacing:.16em;opacity:.85}
+.kv-title{font-size:clamp(21px,5.8vw,32px);font-weight:800;line-height:1.3;margin-top:3px}
+.kv-sub{font-size:12.5px;opacity:.92;margin-top:4px}
+.kv-ui{position:absolute;right:14px;bottom:16px;display:flex;align-items:center;gap:10px;z-index:3}
+.kv-dots{display:flex;gap:6px}
+.kv-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.45);border:none;padding:0;cursor:pointer}
+.kv-dot.on{background:#fff}
+.kv-count{font-size:12px;font-weight:700;color:#fff;letter-spacing:.08em;text-shadow:0 1px 4px rgba(0,0,0,.45)}
+.kv-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(30,24,40,.4);color:#fff;font-size:25px;line-height:1;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:3;padding:0}
+@media(min-width:821px){.kv-arrow{display:flex}}
+.kv-prev{left:12px}
+.kv-next{right:12px}
+/* プレビュー10：合体版の追加分 */
+.hero-kicker{margin:0 0 14px;font-size:11.5px;font-weight:800;letter-spacing:.22em;color:var(--muted)}
+.hero .tagline{margin:16px auto 4px;font-size:clamp(18px,4.6vw,24px);font-weight:800;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.sec-lead{margin:-4px 0 14px;font-size:13.5px;line-height:1.7;color:var(--muted)}
+</style><link rel="canonical" href="https://sakamichia.pages.dev/"><meta name="google-site-verification" content="2GkWrRyH00XfUwiNhExFax3VdRItGX5SRUQjeHQvIP4"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索"><meta property="og:description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。"><meta property="og:url" content="https://sakamichia.pages.dev/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"></head>
 <body data-base="./">
 <header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
 <main class="wrap">
-<div class="hero"><h1>あの日の<span class="grad">坂道</span>を、<br>もう一度探そう。</h1>
+
+<div class="ticker" id="ticker" hidden><span class="ticker-label">TOPICS</span><div class="ticker-view"><div class="ticker-track" id="tickerTrack"></div></div></div>
+<div class="kv" id="kv" hidden><div id="kvTrack"></div><button type="button" class="kv-arrow kv-prev" id="kvPrev" aria-label="前のスライド">‹</button><button type="button" class="kv-arrow kv-next" id="kvNext" aria-label="次のスライド">›</button><div class="kv-ui"><div class="kv-dots" id="kvDots"></div><div class="kv-count" id="kvCount"></div></div></div>
+<div class="hero"><p class="hero-kicker">NOGIZAKA46 · SAKURAZAKA46 · HINATAZAKA46</p><h1>あの日の<span class="grad">坂道</span>を、<br>もう一度探そう。</h1>
+<p class="tagline">調べる・作る・遊ぶ、坂道ファンのための場所。</p>
 <p>歴代ライブ・ブログ・楽曲を、メンバー名や曲名から一度に検索できて、ミニゲームでも遊べる非公式ファンサイトです。</p>
-<form class="searchbox" id="searchForm"><input id="q" type="search" placeholder="メンバー・曲名・会場・番組名で検索（例：小坂菜緒、横浜スタジアム）" autocomplete="off"><button type="submit">検索</button><div class="suggest" id="suggest" hidden></div></form>
+<form class="searchbox" id="searchForm"><input id="q" type="search" placeholder="メンバー名・曲名・会場で検索" autocomplete="off"><button type="submit" aria-label="検索"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5L16.7 16.7"/></svg></button><div class="suggest" id="suggest" hidden></div></form>
+<div class="q-chips"><span class="q-label">例：</span><button type="button" class="q-chip" data-q="小坂菜緒">小坂菜緒</button><button type="button" class="q-chip" data-q="横浜スタジアム">横浜スタジアム</button></div>
 <p class="count" id="counts"></p></div>
 <div id="results"></div>
 <div id="omikujiAnchor"></div>
-<h2 class="title" style="margin-top:26px">入口を選ぶ</h2>
+<div id="scheduleSection" hidden><div class="sec-head"><span class="sec-en">SCHEDULE</span><h2 class="sec-ja">今日の予定</h2></div><p class="sec-lead">3グループと卒業生の、今日の出演予定です。</p><div class="sched-list" id="schedList"></div></div>
+<div id="discoSection"><div class="sec-head"><span class="sec-en">NEW RELEASE</span><h2 class="sec-ja">最新リリース</h2></div><p class="sec-lead">いちばん新しいリリースから、順に並べています。</p><div class="rail" id="discoRail"></div><p class="more-row"><a class="more-link" href="songs/">MORE</a></p></div>
+<div class="sec-head"><span class="sec-en">PICK UP</span><h2 class="sec-ja">ピックアップ</h2></div>
+<p class="sec-lead">新しく増えたものと、今のおすすめです。</p>
+<div class="pick-grid" id="pickGrid"></div>
+<div class="sec-head"><span class="sec-en">CONTENTS</span><h2 class="sec-ja">調べる・作る・遊ぶ</h2></div>
+<p class="sec-lead">やりたいことから、入口を選べます。</p>
 <h3 class="home-ghead">調べる</h3>
 <div class="grid entries">
 <a class="card" href="songs/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 18V5l12-2v13"/></svg></span> 楽曲図鑑</h3><p>表題曲のセンターと年から楽曲を探す。</p></a>
 <a class="card" href="live/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"/><path d="M13 5v14" stroke-dasharray="2.5 3.5"/></svg></span> 歴代ライブ</h3><p data-lite-text="公演や会場から探してセトリを見る。">公演・ツアー・会場・年から探して、セットリストを見る。</p></a>
 <a class="card" href="blog/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.5H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8H20"/><path d="M8.5 13h7M8.5 17h7"/></svg></span> ブログアーカイブ</h3><p data-lite-text="過去のブログを検索。本文も読める。">グループ・メンバー・期間から過去のブログ記事情報を検索。</p></a>
-<a class="card" href="members/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c.8-3.9 3.8-6 7.5-6s6.7 2.1 7.5 6"/></svg></span> メンバー</h3><p data-lite-text="206人のプロフィールと記録を見る。">206人のプロフィール、歴代アー写など、センター曲やブログ記事数を見る。</p></a>
+<a class="card" href="members/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c.8-3.9 3.8-6 7.5-6s6.7 2.1 7.5 6"/></svg></span> メンバー</h3><p id="memberCardText" data-lite-text="206人のプロフィールと記録を見る。">206人のプロフィール、歴代アー写など、センター曲やブログ記事数を見る。</p></a>
 <a class="card" href="birthdays/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span> 誕生日カレンダー</h3><p data-lite-text="全員の誕生日を月別に一覧。">全メンバーの誕生日を月別に一覧。今日と次の誕生日もすぐ分かる。</p></a>
 <a class="card" href="timeline/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3v18"/><circle cx="6.5" cy="6" r="2.1"/><circle cx="6.5" cy="12" r="2.1"/><circle cx="6.5" cy="18" r="2.1"/><path d="M11.5 6H20M11.5 12h7M11.5 18h8.5"/></svg></span> 坂道年表</h3><p data-lite-text="リリースとライブの時系列年表。">リリースと歴代ライブをグループ横断の時系列でたどる。</p></a>
 </div>
-<p class="more-links">もっと調べる：<a href="school-years/">学年一覧</a> ・ <a href="live/venues/">会場一覧</a> ・ <a href="live/ranking/">セトリ登場回数ランキング</a> ・ <a href="members/compare/">メンバー比較</a> ・ <a href="blog/stats/">ブログ統計</a></p>
-<h3 class="home-ghead">遊ぶ・作る</h3>
+<h3 class="home-ghead">もっと調べる</h3>
+<div class="grid entries entries-sub">
+<a class="card" href="school-years/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-4.8 5.5-4.8s4.9 1.6 5.5 4.8"/><circle cx="17" cy="9" r="2.6"/><path d="M16.8 14.8c2.1.3 3.3 1.7 3.7 4"/></svg></span> 学年一覧</h3><p>生まれ年度の学年ごとにメンバーを一覧。</p></a><a class="card" href="live/venues/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.2-6.5-10.1A6.5 6.5 0 0 1 12 4.4a6.5 6.5 0 0 1 6.5 6.5C18.5 15.8 12 21 12 21z"/><circle cx="12" cy="10.7" r="2.3"/></svg></span> 会場一覧</h3><p>会場ごとに公演数と開催履歴を見る。</p></a><a class="card" href="live/ranking/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-6M11 20V5M17 20v-9"/><path d="M3 20h18"/></svg></span> セトリ登場回数ランキング</h3><p>セットリストに多く登場した曲のランキング。</p></a><a class="card" href="members/compare/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13M13.5 4.5L17 8l-3.5 3.5M20 16H7M10.5 12.5L7 16l3.5 3.5"/></svg></span> メンバー比較</h3><p>2人の記録を並べて比べる。</p></a><a class="card" href="blog/stats/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v15.5h16"/><path d="M8 15l3.5-4 3 2.5L18.5 8"/></svg></span> ブログ統計</h3><p>投稿数ランキングや年ごとの集計を見る。</p></a>
+</div>
+<h3 class="home-ghead">遊ぶ</h3>
 <div class="grid entries">
-<a class="card" href="games/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5"/><circle cx="8.6" cy="8.6" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.4" cy="8.6" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.6" cy="15.4" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.4" cy="15.4" r="1.5" fill="currentColor" stroke="none"/></svg></span> ミニゲーム</h3><p>クイズやソート、ドラフト会議で遊ぶ。</p></a>
-<a class="card" href="games/draft/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 17.5L2.5 8l5.7 3.2L12 5l3.8 6.2L21.5 8l-1 9.5z"/><path d="M4 21h16"/></svg></span> メンバードラフト</h3><p data-lite-text="指名して理想の選抜を作るドラフト。">条件ドラフト（1人用）とメンバードラフト会議（2〜50人）。指名して理想の選抜を作る。</p></a>
+<a class="card" href="games/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5"/><circle cx="8.6" cy="8.6" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.4" cy="8.6" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.6" cy="15.4" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.4" cy="15.4" r="1.5" fill="currentColor" stroke="none"/></svg></span> ミニゲーム</h3><p>クイズやパズル、ソートなどのゲームで遊ぶ。</p></a>
+</div>
+<h3 class="home-ghead">作る</h3>
+<div class="grid entries">
 <a class="card" href="formation/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="8" cy="5.5" r="1.7"/><circle cx="12" cy="5.5" r="1.7"/><circle cx="16" cy="5.5" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="10" cy="12" r="1.7"/><circle cx="14" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/><circle cx="4" cy="18.5" r="1.7"/><circle cx="8" cy="18.5" r="1.7"/><circle cx="12" cy="18.5" r="1.7"/><circle cx="16" cy="18.5" r="1.7"/><circle cx="20" cy="18.5" r="1.7"/></svg></span> マイフォーメーション</h3><p data-lite-text="好きなメンバーを自由に配置する。">列の形を決めて、好きなメンバーを自由に配置する。</p></a>
 <a class="card" href="setlist/"><h3><span class="e-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h11M4 10h11M4 14h7"/><path d="M15.5 15.2l6 3.3-6 3.3z" fill="currentColor" stroke="none"/></svg></span> マイセットリスト</h3><p data-lite-text="曲とMCを並べてセトリを作る。">好きな曲とMC・アンコールを並べて自分だけのセトリを作る。</p></a>
 </div>
-<h2 class="title" style="margin-top:26px">最新のお知らせ</h2>
+<div class="band band-h">
+<div class="sec-head"><span class="sec-en">NEWS</span><h2 class="sec-ja">最新のお知らせ</h2></div>
+<p class="sec-lead">公式サイトのお知らせを、新しい順に。</p>
 <div class="nw-list" id="homeNews"></div>
-<p style="margin-top:10px"><a href="news/">お知らせをもっと見る →</a></p>
+<p class="more-row"><a class="more-link" href="news/">MORE</a></p>
+</div>
+<div class="sec-head"><span class="sec-en">BLOG</span><h2 class="sec-ja">最新のブログ</h2></div><p class="sec-lead">メンバーが書いた、いまの言葉。</p><div class="rail" id="blogRail"></div><p class="more-row"><a class="more-link" href="blog/">MORE</a></p><div class="sec-head"><span class="sec-en">MOVIE</span><h2 class="sec-ja">公式MV</h2></div><p class="sec-lead">公式MVを、新しい順に。</p><div class="rail" id="mvRail"></div><p class="more-row"><a class="more-link" href="songs/">MORE</a></p>
 <div id="todaySection"></div>
+<div class="site-updates-mini">
+<div class="sec-head"><span class="sec-en">UPDATES</span><h2 class="sec-ja">サイトの更新</h2></div>
+<p class="sec-lead">サカミチアの更新履歴です。</p>
+<div class="updates"><ul>
+<li><span class="u-date">11/4</span><span>新ゲーム「<a href="games/anagram/">アナグラム</a>」を公開しました</span></li>
+<li><span class="u-date">11/4</span><span>新ゲーム「<a href="games/memory-match/">神経衰弱</a>」を公開しました</span></li>
+<li><span class="u-date">11/4</span><span><a href="contact/">お問い合わせページ</a>と公式X（@sakamichia46）を開設しました</span></li>
+</ul></div>
+</div>
+
+<div class="share-row"><p class="share-row-label">このページを共有する</p><div class="share-row-btns">
+<button type="button" class="share-circle" id="p8ShareX" aria-label="Xでシェア" title="Xでシェア"><svg viewBox="0 0 16 16" width="25" height="25" fill="currentColor" aria-hidden="true"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/></svg></button>
+<button type="button" class="share-circle" id="p8ShareLine" aria-label="LINEでシェア" title="LINEでシェア"><svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.2 0-2.4-.25-3.4-.7L3 20l.75-3.4A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.2 10.6h.01M12 10.6h.01M15.8 10.6h.01" stroke-width="2.6"/></svg></button>
+<button type="button" class="share-circle" id="p8ShareCopy" aria-label="リンクをコピー" title="リンクをコピー"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 10a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+<button type="button" class="share-circle" id="p8ShareSheet" aria-label="共有シートを開く" title="共有シートを開く"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="3.6"/><circle cx="18.5" cy="5.5" r="3.6"/><circle cx="18.5" cy="18.5" r="3.6"/><path d="M8.9 10.4l6.2-3.4M8.9 13.6l6.2 3.4"/></svg></button>
+</div></div>
 </main>
-<footer><div class="wrap">サカミチアは個人運営の非公式ファンサイトです。公式運営とは関係ありません。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
+<footer><div class="wrap">サカミチアは個人運営の非公式ファンサイトです。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
 <script src="assets/js/common.js"></script><script src="assets/js/home.js"></script>
 </body></html>
