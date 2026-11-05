@@ -1,6 +1,20 @@
 {
  "updated": "2026-11-05",
  "items": {
+  "乃木坂46": [
+   {
+    "img": "https://www.nogizaka46.com/images/46/227/669167966f88fdbead893961f4411.jpg",
+    "url": "https://www.nogizaka46.com/s/n46/page/43rd_single"
+   },
+   {
+    "img": "https://www.nogizaka46.com/images/46/8b1/9e70179aa941ad97bb26b92a8716f.jpg",
+    "url": "https://www.nogizaka46.com/s/n46/page/underlive"
+   },
+   {
+    "img": "https://www.nogizaka46.com/images/46/1e4/c3eb93e7263f9acae1feb03a56904.jpg",
+    "url": "https://www.nogizaka46.com/s/n46/page/6thgen_tour2026"
+   }
+  ],
   "櫻坂46": [
    {
     "img": "https://www.sakurazaka46.com/images/14/eab/f52c1b0aa36c1443777002bf6bda8.jpg",

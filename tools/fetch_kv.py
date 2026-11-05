@@ -104,15 +104,16 @@ def parse_hinata(html: str):
 
 
 def parse_nogizaka(html: str):
-    # WAFが解けて取得できるようになった場合の汎用抽出。
-    # サイズ指定サフィックス（_102400等）のない /images/ 画像を包むリンクを最大3件採る。
+    # トップの slick スライダー（.bnritem）。特設ページ（/s/n46/page/）への
+    # リンクを持つものをDOM順に最大3件。WAFが解けた場合に有効になる。
     items = []
-    seen = set()
-    for m in re.finditer(r'<a href="([^"]+)"[^>]*>\s*<img[^>]+src="(https://www\.nogizaka46\.com/images/[^"]+)"', html):
-        if "_102400" in m.group(2) or m.group(2) in seen:
+    for m in re.finditer(r'<div class="bnritem[^"]*">\s*<a href="([^"]+)"[^>]*>\s*<div class="img">\s*<span style="background-image:\s*url\("?([^")]+)"?\)', html):
+        url, img = m.group(1), m.group(2)
+        if url.startswith("/"):
+            url = "https://www.nogizaka46.com" + url
+        if "/s/n46/page/" not in url:
             continue
-        seen.add(m.group(2))
-        items.append({"img": m.group(2), "url": m.group(1)})
+        items.append({"img": img, "url": url})
         if len(items) >= MAX_PER_GROUP:
             break
     return items
