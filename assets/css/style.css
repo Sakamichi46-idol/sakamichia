@@ -794,3 +794,6 @@ html[data-lite="1"] .grid:not(.entries) .card p{display:-webkit-box;-webkit-line
 .chip.g-乃木坂46{color:#6a45ad}.chip.g-櫻坂46{color:#b23a63}.chip.g-日向坂46{color:#25719f}
 .chip.g-欅坂46{color:#3d8a37}.chip.g-けやき坂46{color:#74901c}.chip.g-坂道AKB{color:#b23a34}
 .chip.g-坂道選抜{color:#1f7a6d}.chip.g-その他{color:#4c6572}
+
+.logo-mark{width:28px;height:28px;border-radius:7px;flex:none;display:block}
+.logo{gap:9px}

@@ -1,6 +1,6 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta name="description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。">
-<link rel="stylesheet" href="assets/css/style.css?v=65">
+<link rel="stylesheet" href="assets/css/style.css?v=66">
 <style>
 /* プレビュー専用：明るく柔らかい方向の試作（本番トップには未適用） */
 html:not([data-theme="dark"]) .hero{background:#f4effc;border-radius:24px;margin-top:18px;padding:40px 16px 26px}
@@ -28,7 +28,7 @@ html:not([data-theme="dark"]) #todaySection{background:#f4effc;border-radius:24p
 .updates li:last-child{border-bottom:0}
 .updates .u-date{font-weight:700;white-space:nowrap;color:var(--muted)}
 /* 統一感の試作：要所で3色を同時に見せる */
-@keyframes groupcycle-bg{0%,30%{background-color:var(--n)}36%,63%{background-color:var(--s)}69%,96%{background-color:var(--h)}100%{background-color:var(--n)}}
+@keyframes groupcycle-bg{0%,30%{background-color:#d9c8f5}36%,63%{background-color:#f8c8d8}69%,96%{background-color:#bfe0f2}100%{background-color:#d9c8f5}}
 .hero .searchbox button,#omikujiSection .btn{animation:groupcycle-bg 9s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){.hero .searchbox button,#omikujiSection .btn{animation:none}}
 html:not([data-lite="1"]) main h2.title{border-left:none;padding-left:0;display:flex;align-items:center}
@@ -105,7 +105,7 @@ html:not([data-theme="dark"]) .hero{border-radius:28px;padding:46px 18px 30px;ma
 .hero .searchbox{padding:7px;border-radius:999px}
 .hero .searchbox button{width:48px;height:48px}
 /* おみくじは現行仕様に戻す（色サイクルのボタン・浮き上がりなし） */
-#omikujiSection .btn{animation:groupcycle-bg 18s ease-in-out infinite;-webkit-backdrop-filter:none;backdrop-filter:none;border:none;box-shadow:0 4px 14px rgba(60,30,80,.16)}
+#omikujiSection .btn{animation:groupcycle-bg 18s ease-in-out infinite;-webkit-backdrop-filter:none;backdrop-filter:none;border:none;box-shadow:0 4px 14px rgba(60,30,80,.16);color:#38304a}
 #omikujiSection .btn:hover{transform:none}
 @media(prefers-reduced-motion:reduce){#omikujiSection .btn{animation:none}}
 /* 見出し：少し大きく、字間を整える */
@@ -228,7 +228,7 @@ a.tk-item:active{opacity:.6}
 .sec-lead{margin:-4px 0 14px;font-size:13.5px;line-height:1.7;color:var(--muted)}
 </style><link rel="canonical" href="https://sakamichia.pages.dev/"><meta name="google-site-verification" content="2GkWrRyH00XfUwiNhExFax3VdRItGX5SRUQjeHQvIP4"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="サカミチア | ミニゲーム・歴代ライブ・ブログを横断検索"><meta property="og:description" content="調べる・作る・遊ぶ、坂道ファンのための場所。乃木坂46・櫻坂46・日向坂46の楽曲、歴代ライブ、ブログ、メンバーを横断検索できて、フォーメーションやセットリスト作りでも遊べる非公式ファンサイト。"><meta property="og:url" content="https://sakamichia.pages.dev/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"></head>
 <body data-base="./">
-<header class="site"><div class="wrap nav"><a class="logo" href="./">サカミチ<span class="grad">ア</span><span class="dots"><i></i><i></i><i></i></span></a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
+<header class="site"><div class="wrap nav"><a class="logo" href="./"><img class="logo-mark" src="favicon.svg" alt="">サカミチア</a><nav><a href="./" class="on">ホーム</a><a href="songs/">楽曲図鑑</a><a href="live/">歴代ライブ</a><a href="blog/">ブログ</a><a href="members/">メンバー</a><a href="games/">ミニゲーム</a><a href="formation/">マイフォーメーション</a><a href="setlist/">マイセットリスト</a><a href="news/">お知らせ</a></nav></div></header>
 <main class="wrap">
 
 <div class="ticker" id="ticker" hidden><span class="ticker-label">TOPICS</span><div class="ticker-view"><div class="ticker-track" id="tickerTrack"></div></div></div>
