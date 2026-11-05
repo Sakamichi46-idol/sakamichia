@@ -115,7 +115,7 @@ async function init() {
   if (!MEMBERLIVE || Array.isArray(MEMBERLIVE)) MEMBERLIVE = {};
   const chips = document.getElementById("mbGroups");
   chips.innerHTML = ["all", ...GROUPS].map(g =>
-    `<button type="button" class="ychip${fGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "すべてのグループ" : g}</button>`).join("");
+    `<button type="button" class="ychip${fGroup === g ? " on" : ""}" data-g="${g}">${g === "all" ? "すべて" : g}</button>`).join("");
   chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     fGroup = b.dataset.g; fGenSet.clear(); syncGenOptions();
     chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
