@@ -94,18 +94,17 @@ function renderTodayBar(meta, otd){
   const bar = document.getElementById("todayBar");
   if(!bar) return;
   const now = new Date(), mo = now.getMonth() + 1, da = now.getDate();
-  const md = `${String(mo).padStart(2, "0")}-${String(da).padStart(2, "0")}`;
+  const tstr = `${now.getFullYear()}-${String(mo).padStart(2, "0")}-${String(da).padStart(2, "0")}`;
+  const bits = [];
   const bdays = (DB.members || []).filter(m => {
     const b = meta && meta[m.name] && meta[m.name].b;
     return Array.isArray(b) && b[1] === mo && b[2] === da;
   }).map(m => m.name);
-  const past = ((otd && otd[md]) || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  const bits = [];
   if (bdays.length) bits.push(`今日が誕生日：<b>${bdays.map(esc).join("・")}</b>`);
-  if (past.length){
-    const yrs = now.getFullYear() - (+String(past[0].date).slice(0, 4));
-    bits.push(`${yrs}年前の今日のブログ：<b>${esc(past[0].member)}</b>`);
-  }
+  const rels = (DB.songs || []).filter(x => x.date === tstr && x.type === "表題曲");
+  if (rels.length) bits.push(`本日発売：<b>『${esc(rels[0].title)}』</b>（${esc(rels[0].group)}）`);
+  const livesToday = (DB.lives || []).filter(l => l.date === tstr);
+  if (livesToday.length) bits.push(`本日開催：<b>${esc(livesToday[0].title)}</b>`);
   if(!bits.length) return;
   bar.innerHTML = `<span class="tb-label">TODAY</span><span class="tb-body">${mo}月${da}日 ｜ ${bits.join(" ｜ ")}</span>`;
   bar.hidden = false;
