@@ -93,4 +93,31 @@
     });
   }
   renderFavPhotoCtl();
+
+  // 今後の予定（公式スケジュール：グループ出演分＋卒業生のソロ分）
+  const schedBox = document.getElementById("memberSched");
+  if (schedBox) {
+    const now = new Date(), pad = n => String(n).padStart(2, "0");
+    const tstr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    fetch("../../data/schedule.json").then(r => (r.ok ? r.json() : null)).then(data => {
+      if (!data || !data.days) return;
+      const rows = [];
+      for (const [date, items] of Object.entries(data.days)) {
+        if (date < tstr) continue;
+        for (const it of items) if ((it.members || []).includes(name)) rows.push({ date, ...it });
+      }
+      rows.sort((a, b) => (a.date === b.date ? String(a.time || "").localeCompare(String(b.time || "")) : (a.date < b.date ? -1 : 1)));
+      if (!rows.length) return;
+      const wd = "日月火水木金土";
+      const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const rowHtml = rows.slice(0, 10).map(r => {
+        const dt = new Date(r.date + "T00:00:00");
+        const dl = `${dt.getMonth() + 1}/${dt.getDate()}（${wd[dt.getDay()]}）`;
+        return `<a href="${esc(r.url)}" target="_blank" rel="noopener" style="display:flex;gap:10px;align-items:baseline;padding:9px 2px;border-bottom:1px solid var(--line,#e7e2ef);text-decoration:none;color:inherit"><span style="font-weight:700;white-space:nowrap">${dl}</span><span style="white-space:nowrap;color:var(--muted)">${esc(r.time || "")}</span><span style="white-space:nowrap;font-size:12px;border:1px solid var(--line,#e7e2ef);border-radius:999px;padding:1px 8px">${esc(r.kind || "")}</span><span>${esc(r.title)}</span></a>`;
+      }).join("");
+      schedBox.innerHTML = `<h3 class="home-ghead">今後の予定</h3><div>${rowHtml}</div>` +
+        (rows.length > 10 ? `<p style="color:var(--muted);font-size:12px;margin:6px 0 0">ほか${rows.length - 10}件</p>` : "") +
+        `<p style="color:var(--muted);font-size:12px;margin:6px 0 0">公式サイトのスケジュールから、出演予定を表示しています。</p>`;
+    }).catch(() => {});
+  }
 })();

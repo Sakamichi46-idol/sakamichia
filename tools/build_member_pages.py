@@ -277,7 +277,7 @@ def main():
 <p class="mb-links"><a class="btn" href="../../blog/?member={urllib.parse.quote(name)}">この人のブログを見る</a> <a class="btn" href="../../live/?member={urllib.parse.quote(name)}">ライブ記録で見る</a> <button type="button" class="btn" id="favBtn" aria-pressed="false">☆ 推しに登録</button></p>
 <p style="color:var(--muted);font-size:12px;margin:2px 0 0">推しに登録すると、トップページに「推しの新着」（最新のブログ）が出ます。</p>
 </div>
-</div>{gal_html}<div id="favPhotoRow"></div>
+</div><div id="memberSched"></div>{gal_html}<div id="favPhotoRow"></div>
 </section></main>
 <footer><div class="wrap">サカミチアは個人運営の非公式ファンサイトです。公式運営とは関係ありません。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
 <script type="application/json" id="memberData">{member_json}</script>
