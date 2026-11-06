@@ -46,6 +46,14 @@ function syncTabs(){
     clr.hidden = !(SEL.size||YSEL.size||TSEL.size||NSEL.size||MFILTER||(qEl&&qEl.value)||(sEl&&sEl.value!=="old"));
   }
 }
+
+// 絞り込み条件の保存・復元（ブログと同じ方式：一覧へ戻ったときに条件を保つ）
+const SKEY="sakamichia-filters-songs";
+function saveState(){
+  try{ localStorage.setItem(SKEY, JSON.stringify({sel:[...SEL], y:[...YSEL], t:[...TSEL], n:[...NSEL], mf:MFILTER,
+    q:document.getElementById("q").value, sort:document.getElementById("sort").value})); }catch(e){}
+}
+function loadState(){ try{ return JSON.parse(localStorage.getItem(SKEY)||"null"); }catch(e){ return null; } }
 async function init(){
   let members=[];
   [DATA, FORMS, members]=await Promise.all([loadJSON("songs.json"), loadJSON("formations.json"), loadJSON("members.json")]);
@@ -110,6 +118,21 @@ async function init(){
     [...new Set(DATA.filter(s=>s.artist&&hits(s.artist)).map(s=>s.artist))].slice(0,2).forEach(a=>items.push({kind:"アーティスト", cls:"live", label:a, sub:"その他"}));
     return items;
   }, (it,input)=>{ input.value=it.label; input.dispatchEvent(new Event("input",{bubbles:true})); input.focus(); });
+  // 保存済みの絞り込み条件を復元する（ディープリンク指定があればそちらが優先）
+  const saved=loadState();
+  if(saved){
+    (saved.sel||[]).forEach(v=>SEL.add(v));
+    (saved.y||[]).forEach(v=>YSEL.add(v));
+    (saved.t||[]).forEach(v=>TSEL.add(v));
+    (saved.n||[]).forEach(v=>NSEL.add(v));
+    MFILTER=saved.mf||"";
+    if(saved.q) document.getElementById("q").value=saved.q;
+    if(saved.sort) document.getElementById("sort").value=saved.sort;
+    if(SEL.size===1){
+      const only=[...document.querySelectorAll("#groupTabs button")].find(x=>x.dataset.g===[...SEL][0]);
+      document.body.dataset.group=only ? (only.dataset.acc||"") : "";
+    }
+  }
   // ディープリンク（?q=<検索語>）：トップのサジェストなどから曲名で絞り込んで開く
   const qParam=new URLSearchParams(location.search).get("q");
   if(qParam) document.getElementById("q").value=qParam;
@@ -139,6 +162,7 @@ function cardMembers(s,i){
   return `<br>${label}：${esc(txt)}`;
 }
 function render(){
+  saveState();
   const q=document.getElementById("q").value, sort=document.getElementById("sort").value;
   let rows=DATA.map((s,i)=>[s,i]).filter(([s],i)=>matchG(s)&&(YSEL.size===0||YSEL.has(String(s.year)))&&(TSEL.size===0||TSEL.has(s.type||""))&&(NSEL.size===0||NSEL.has(CBUCKET[i]))&&(!MFILTER||(PARTS[i]&&PARTS[i].has(MFILTER)))&&includesAll(itemText([s.title,s.yomi,s.center,s.group,s.year,s.special,s.artist,s.group==="その他"?[...PARTS[i]]:[]]),q));
   if(sort==="title"){

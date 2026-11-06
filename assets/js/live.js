@@ -154,6 +154,22 @@ function kindMatch(l, kind){
   if(kind.tag===null) return ts.length===1 && ts[0]==="単独主催公演";
   return ts.includes(kind.tag) || ts.some(t=>String(t).split("/").includes(kind.tag));
 }
+
+// 絞り込み条件の保存・復元（ブログと同じ方式：一覧へ戻ったときに条件を保つ）
+const SKEY="sakamichia-filters-live";
+let savedMember="";
+function saveState(){
+  try{
+    const prev=JSON.parse(localStorage.getItem(SKEY)||"null")||{};
+    const msel=document.getElementById("member");
+    const member=(msel && msel.options.length>1) ? msel.value : (prev.member||"");
+    localStorage.setItem(SKEY, JSON.stringify({k:[...KSEL], g:[...GSEL], y:[...YSEL], r:[...RSEL], af:[...attendFilter],
+      q:document.getElementById("q").value, sort:document.getElementById("sort").value,
+      from:document.getElementById("from").value, to:document.getElementById("to").value,
+      member, role:document.getElementById("role").value}));
+  }catch(e){}
+}
+function loadState(){ try{ return JSON.parse(localStorage.getItem(SKEY)||"null"); }catch(e){ return null; } }
 async function init(){
   loadAttended();
   const bindAttendChip=(el, state)=>{
@@ -243,6 +259,30 @@ async function init(){
     document.getElementById("to").value="";
     render();
   });
+  // 保存済みの絞り込み条件を復元する（メンバー選択肢は非同期に作られるため別途適用）
+  const saved=loadState();
+  if(saved){
+    (saved.k||[]).forEach(v=>KSEL.add(v));
+    (saved.g||[]).forEach(v=>GSEL.add(v));
+    (saved.y||[]).forEach(v=>YSEL.add(v));
+    (saved.r||[]).forEach(v=>RSEL.add(v));
+    (saved.af||[]).forEach(v=>attendFilter.add(v));
+    if(yearMS) yearMS.refresh();
+    if(kindMS) kindMS.refresh();
+    if(regionMS) regionMS.refresh();
+    syncGroupChips();
+    ["attendOnly","streamOnly"].forEach(cid=>{
+      const el=document.getElementById(cid);
+      const st=cid==="attendOnly"?"venue":"stream";
+      if(el){ el.classList.toggle("on", attendFilter.has(st)); el.setAttribute("aria-pressed", String(attendFilter.has(st))); }
+    });
+    savedMember=saved.member||"";
+    if(saved.q) document.getElementById("q").value=saved.q;
+    if(saved.sort) document.getElementById("sort").value=saved.sort;
+    if(saved.from) document.getElementById("from").value=saved.from;
+    if(saved.to) document.getElementById("to").value=saved.to;
+    if(saved.role) document.getElementById("role").value=saved.role;
+  }
   renderAttend();
   ["q","sort","from","to","member","role"].forEach(id=>document.getElementById(id).addEventListener("input",render));
   // 検索サジェスト：公演名と会場名から候補を出す（同じ名前は公演1件に集約）
@@ -273,7 +313,7 @@ async function init(){
     for(const [id,v] of Object.entries(idx)) SEXTRA[id]=(v.s||[]).join(" ");
     const members=await loadJSON("members.json");
     buildMemberOptions(Array.isArray(members)?members:[]);
-    const qMember=new URLSearchParams(location.search).get("member");
+    const qMember=new URLSearchParams(location.search).get("member")||savedMember;
     if(qMember){
       const msel=document.getElementById("member");
       if([...msel.options].some(o=>o.value===qMember)) msel.value=qMember;
@@ -289,6 +329,7 @@ async function init(){
   }
 }
 function render(){
+  saveState();
   const q=document.getElementById("q").value;
   document.body.dataset.group = GSEL.size===1 ? [...GSEL][0] : "";
   const srt=document.getElementById("sort").value;

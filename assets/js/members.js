@@ -53,6 +53,7 @@ function cardHTML(m) {
   return `<button type="button" class="mb-card" data-name="${esc(m.name)}">${FAVS.has(m.name) ? `<span class="mb-fav" title="推し登録済み">★</span>` : ""}<span class="mb-photo">${ph}</span><span class="fm-name">${esc(m.name)}</span><span class="fm-sub">${esc(lg)}${genTxt}${m.graduated ? "・卒業" : ""}</span><span class="fm-sub">ブログ ${BLOGS[m.name] || 0}件</span></button>`;
 }
 function render() {
+  saveState();
   let list = MEMBERS.filter(m =>
     (groupMatch(m))
     && (!fGenSet.size || fGenSet.has(String(m.gen)))
@@ -93,6 +94,13 @@ function syncGenOptions() {
   const gens = [...new Set(MEMBERS.filter(m => groupMatch(m)).map(m => m.gen).filter(g => g > 0))].sort((a, b) => a - b);
   if (genMS) genMS.setOptions(gens.map(g => ({ value: String(g), label: g + "期生" })));
 }
+
+// 絞り込み条件の保存・復元（ブログと同じ方式：一覧へ戻ったときに条件を保つ）
+const SKEY="sakamichia-filters-members";
+function saveState(){
+  try{ localStorage.setItem(SKEY, JSON.stringify({g:[...fGroupSet], gen:[...fGenSet], grad:fShowGrad, q:fQuery, sort:fSort})); }catch(e){}
+}
+function loadState(){ try{ return JSON.parse(localStorage.getItem(SKEY)||"null"); }catch(e){ return null; } }
 async function init() {
   document.getElementById("mbCount").textContent = "読み込み中…";
   document.getElementById("mbGrid").innerHTML = `<p style="color:var(--muted)">読み込み中…</p>`;
@@ -158,6 +166,21 @@ async function init() {
     syncGenOptions();
     render();
   });
+  // 保存済みの絞り込み条件を復元する
+  const saved=loadState();
+  if (saved) {
+    (saved.g||[]).forEach(v=>fGroupSet.add(v));
+    paintChips();
+    syncGenOptions();
+    (saved.gen||[]).forEach(v=>fGenSet.add(v));
+    if (genMS) genMS.refresh();
+    fShowGrad=!!saved.grad;
+    document.getElementById("mbShowGrad").checked=fShowGrad;
+    fQuery=saved.q||"";
+    document.getElementById("mbQuery").value=fQuery;
+    fSort=saved.sort||"group";
+    document.getElementById("mbSort").value=fSort;
+  }
   // ?member= の旧ディープリンクは個別ページへ引き継ぐ
   const q = new URLSearchParams(location.search).get("member");
   if (q && MEMBERS.some(m => m.name === q)) { location.replace(slugOf(q) + "/"); return; }
