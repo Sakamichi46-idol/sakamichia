@@ -274,8 +274,7 @@ async function init(){
   const dlg=document.getElementById("dlg");
   document.getElementById("dlgClose").addEventListener("click",()=>dlg.close());
   dlg.addEventListener("click",e=>{
-    const r=dlg.getBoundingClientRect();
-    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) dlg.close();
+    if(e.target===dlg) dlg.close();
   });
   syncAdvBtn();
   render();
