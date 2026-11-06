@@ -184,9 +184,13 @@ def save_store(idx, years, imgs, dirty_years):
     apply_relay_windows(years)
     # 装飾画像は写真リストから除外する（本文中の表示は本文データ側に残る）。
     _decor = _decor_urls()
+    def _broken(u):
+        return (not isinstance(u, str) or 'captcha' in u or 'cid:' in u or 'file:/' in u
+                or 'msohtmlclip' in u or '<' in u or '>' in u or '/photos/icon/' in u
+                or u.count('http') > 1 or 'https:/' in u[12:])
     for _m in imgs.values():
         for _aid, _lst in _m.items():
-            _nl = [u for u in _lst if u not in _decor and 'captcha' not in u]
+            _nl = [u for u in _lst if u not in _decor and not _broken(u)]
             if len(_nl) != len(_lst):
                 _m[_aid] = _nl
     for y in dirty_years:
