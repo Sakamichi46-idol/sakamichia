@@ -266,7 +266,7 @@ def main():
 <body data-base="../../">
 <header class="site"><div class="wrap nav"><a class="logo" href="../../"><img class="logo-mark" src="../../favicon.svg" alt="">サカミチ<span class="grad">ア</span></a><nav><a href="../../">ホーム</a><a href="../" class="on">メンバー</a><a href="../../songs/">楽曲図鑑</a><a href="../../live/">歴代ライブ</a><a href="../../blog/">ブログ</a><a href="../../games/">ミニゲーム</a><a href="../../formation/">マイフォーメーション</a><a href="../../setlist/">マイセットリスト</a><a href="../../news/">お知らせ</a></nav></div></header>
 <main class="wrap"><section class="page">
-<p style="margin:0 0 10px"><a href="../">← メンバー一覧に戻る</a></p>
+<p style="margin:0 0 10px"><a href="../" data-backlink>← メンバー一覧に戻る</a></p>
 <h2 class="title">{esc(name)}<span style="font-size:14px;color:var(--muted);margin-left:10px">{esc(m.get('reading') or '')}</span></h2>
 <div class="mb-detail">
 <div class="mb-dphoto"><img id="mbMainImg" src="{esc(main_url)}" alt="{esc(name)}"><p class="mb-cap" id="mbMainCap">{esc(main_cap)}</p></div>

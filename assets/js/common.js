@@ -331,6 +331,21 @@ function createMultiSelect(mount, cfg){
   return api;
 }
 
+// 個別ページの戻りリンク（data-backlink）：サイト内の別のページから来た場合は
+// 一覧固定ではなく「前のページに戻る」にする（一覧から来た場合と直接アクセスは
+// そのまま一覧へ）。来たページそのものへの再読み込み等は対象外。
+document.addEventListener("DOMContentLoaded",()=>{
+  const link=document.querySelector("a[data-backlink]");
+  if(!link) return;
+  let ref=null;
+  try{ ref=document.referrer?new URL(document.referrer):null; }catch(e){}
+  if(!ref||ref.origin!==location.origin) return;
+  const fallback=new URL(link.getAttribute("href"), location.href);
+  if(ref.pathname===fallback.pathname||ref.pathname===location.pathname) return;
+  link.textContent="← 前のページに戻る";
+  link.addEventListener("click",e=>{ e.preventDefault(); history.back(); });
+});
+
 // グループ絞り込みに連動して、ページの差し色をそのグループの色に切り替える
 document.addEventListener("DOMContentLoaded",()=>{
   const sel=document.getElementById("group");

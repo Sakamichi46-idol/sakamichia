@@ -322,11 +322,11 @@ def main():
                     else:
                         ph = '<span class="sg-nophoto"></span>'
                     tiles.append(f'<div class="fq-tile{" ctr" if ci in ctr_idx else ""}">{ph}{nm}</div>')
-                tiles_rows.append(f'<div class="fq-row" style="--maxn:{n}">' + "".join(tiles) + "</div>")
+                tiles_rows.append('<div class="fq-row">' + "".join(tiles) + "</div>")
             body.append('<h4 style="margin:16px 0 4px">フォーメーション</h4>'
                         '<p style="color:var(--muted);font-size:12px;margin:0 0 6px">上が後列、下が前列です。'
                         f'色付きがセンター。{"（公式発表に基づく）" if f.get("official") else "（参考データに基づく）"}</p>'
-                        f'<div class="fq-board{" wide" if max(len(r) for r in rows) >= 10 else ""}">'
+                        f'<div class="fq-board{" wide" if max(len(r) for r in rows) >= 10 else ""}" style="--maxn:{max(len(r) for r in rows)}">'
                         + "".join(tiles_rows) + "</div>")
             alln = sorted_parts(participants(s))
             body.append(f'<h4 style="margin:16px 0 4px">参加メンバー（{len(alln)}名）</h4>'
@@ -403,7 +403,7 @@ def main():
 <body data-base="../../">
 <header class="site"><div class="wrap nav"><a class="logo" href="../../"><img class="logo-mark" src="../../favicon.svg" alt="">サカミチ<span class="grad">ア</span></a><nav><a href="../../">ホーム</a><a href="../../members/">メンバー</a><a href="../" class="on">楽曲図鑑</a><a href="../../live/">歴代ライブ</a><a href="../../blog/">ブログ</a><a href="../../games/">ミニゲーム</a><a href="../../formation/">マイフォーメーション</a><a href="../../setlist/">マイセットリスト</a><a href="../../news/">お知らせ</a></nav></div></header>
 <main class="wrap"><section class="page">
-<p style="margin:0 0 10px"><a href="../">← 楽曲図鑑に戻る</a></p>
+<p style="margin:0 0 10px"><a href="../" data-backlink>← 楽曲図鑑に戻る</a></p>
 <h2 class="title">{esc(s['title'])}<span style="font-size:14px;color:var(--muted);margin-left:10px">{esc(s.get('yomi') or '')}</span></h2>
 <div class="sg-detail">{hero_img}<div class="sg-info">{''.join(info)}</div></div>
 {''.join(body)}{live_html}{sib_html}{nav_html}
