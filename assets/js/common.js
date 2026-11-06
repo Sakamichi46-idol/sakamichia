@@ -146,9 +146,11 @@ function quizPick(key, pool, n, idFn) {
 
 // ゲーム結果の画像共有（共通）：結果カード画像（1200x630）を作って共有/保存する
 async function shareScoreImage(opts, btn) {
-  const cv = document.createElement("canvas"); cv.width = 1200; cv.height = 630;
+  const lines = (opts.lines || []).slice(0, 12);
+  const H = Math.max(630, 392 + lines.length * 40 + 64);
+  const cv = document.createElement("canvas"); cv.width = 1200; cv.height = H;
   const ctx = cv.getContext("2d");
-  ctx.fillStyle = "#faf9fb"; ctx.fillRect(0, 0, 1200, 630);
+  ctx.fillStyle = "#faf9fb"; ctx.fillRect(0, 0, 1200, H);
   // ロゴの三色（縦分割・単色のみ、グラデーションなし）
   ["#7e57c2", "#e77a9b", "#5aa9d6"].forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(64 + i * 26, 56, 26, 74); });
   ctx.fillStyle = "#2b2430"; ctx.textBaseline = "alphabetic";
@@ -159,10 +161,16 @@ async function shareScoreImage(opts, btn) {
   ctx.font = "900 92px 'Hiragino Maru Gothic ProN','Hiragino Sans',sans-serif";
   ctx.fillStyle = "#7e57c2";
   ctx.fillText(opts.score || "", 64, 322);
-  ctx.fillStyle = "#2b2430"; ctx.font = "400 30px 'Hiragino Sans',sans-serif";
-  (opts.lines || []).slice(0, 6).forEach((ln, i) => ctx.fillText(String(ln), 64, 392 + i * 40));
+  ctx.fillStyle = "#2b2430";
+  lines.forEach((ln, i) => {
+    const s = String(ln);
+    ctx.font = "400 30px 'Hiragino Sans',sans-serif";
+    const w = ctx.measureText(s).width;
+    if (w > 1072) ctx.font = `400 ${Math.max(18, Math.floor(30 * 1072 / w))}px 'Hiragino Sans',sans-serif`;
+    ctx.fillText(s, 64, 392 + i * 40);
+  });
   ctx.fillStyle = "#7a7080"; ctx.font = "400 26px 'Hiragino Sans',sans-serif";
-  ctx.fillText("sakamichia.pages.dev", 64, 586);
+  ctx.fillText("sakamichia.pages.dev", 64, H - 44);
   const blob = await new Promise(r => cv.toBlob(r, "image/png"));
   const fileName = "sakamichia-result.png";
   if (blob && navigator.canShare) {
@@ -221,21 +229,25 @@ function attachSuggest(input, provider, onPick){
 }
 
 // 共有文には必ずハッシュタグ「#サカミチア」を末尾に付ける（既に含まれていれば二重に付けない）
-function withShareTag(text){
-  const t=(text||"").trim();
-  if(!t) return "#サカミチア";
-  return t.includes("#サカミチア") ? t : t+" #サカミチア";
+function withShareTag(text, url){
+  let t=(text||"").trim();
+  let link=url||"";
+  const m=t.match(/https:\/\/sakamichia\.pages\.dev[^\s]*/);
+  if(m){ if(!link) link=m[0]; t=t.replace(m[0],"").trim(); }
+  t=t.replace(/#サカミチア/g,"").replace(/[ \t]{2,}/g," ").trim();
+  if(!link){ try{ link=location.origin+location.pathname; }catch(e){ link="https://sakamichia.pages.dev/"; } }
+  return (t ? t+" " : "")+"#サカミチア "+link;
 }
 
 // 共有：対応環境では共有シートを開き、なければクリップボードへコピーする
 async function shareContent(data, btn){
-  const payload={title:data.title||document.title, text:withShareTag(data.text||""), url:data.url||location.href};
+  const payload={title:data.title||document.title, text:withShareTag(data.text||"", data.url)};
   if(navigator.share){
     try{ await navigator.share(payload); }catch(e){ /* キャンセル時は何もしない */ }
     return;
   }
   try{
-    await navigator.clipboard.writeText((payload.text?payload.text+" ":"")+payload.url);
+    await navigator.clipboard.writeText(payload.text);
     if(btn){ const t=btn.textContent; btn.textContent="コピーしました"; setTimeout(()=>{btn.textContent=t;},1800); }
   }catch(e){ if(btn){ const t=btn.textContent; btn.textContent="コピーできませんでした"; setTimeout(()=>{btn.textContent=t;},1800); } }
 }
