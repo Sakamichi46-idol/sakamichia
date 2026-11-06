@@ -497,12 +497,12 @@ document.querySelectorAll(".q-chip").forEach(b => b.addEventListener("click", ()
   const text = () => withShareTag(document.title.replace(/\s*\|\s*サカミチア\s*$/, "") || "サカミチア");
   const open = (u) => window.open(u, "_blank", "noopener,width=640,height=560");
   const x = document.getElementById("p8ShareX");
-  if (x) x.addEventListener("click", () => open("https://x.com/intent/post?text=" + encodeURIComponent(text()) + "&url=" + encodeURIComponent(location.href)));
+  if (x) x.addEventListener("click", () => open("https://x.com/intent/post?text=" + encodeURIComponent(text())));
   const ln = document.getElementById("p8ShareLine");
   if (ln) ln.addEventListener("click", () => open("https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(location.href)));
   const cp = document.getElementById("p8ShareCopy");
   if (cp) cp.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(text() + " " + location.href); cp.classList.add("copied"); setTimeout(() => cp.classList.remove("copied"), 1800); } catch(e){}
+    try { await navigator.clipboard.writeText(text()); cp.classList.add("copied"); setTimeout(() => cp.classList.remove("copied"), 1800); } catch(e){}
   });
   const sh = document.getElementById("p8ShareSheet");
   if (sh) sh.addEventListener("click", () => shareContent({}, null));
