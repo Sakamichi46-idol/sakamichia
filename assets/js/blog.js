@@ -48,7 +48,9 @@ function probeDims(u){
   if(!/^https?:\/\//.test(u||"")) return Promise.resolve(null);
   if(!DIMCACHE.has(u)){
     const purl="https://images.weserv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&output=json";
-    DIMCACHE.set(u, fetch(purl).then(r=>r.ok?r.json():null)
+    // 応答が返らない問い合わせで判定全体が止まらないよう、12秒で打ち切る
+    const sig=(typeof AbortSignal!=="undefined"&&AbortSignal.timeout)?AbortSignal.timeout(12000):undefined;
+    DIMCACHE.set(u, fetch(purl, sig?{signal:sig}:undefined).then(r=>r.ok?r.json():null)
       .then(j=>(j&&+j.width>0&&+j.height>0)?{w:+j.width,h:+j.height}:null)
       .catch(()=>null)
       .then(d=>{ if(d) stampMemSet(u, isStampDims(d)); return d; }));
@@ -881,8 +883,13 @@ function scheduleWallRedraw(){
 }
 function probeWallStamps(){
   if(wallPumpRunning) return;
-  const urls=[...new Set(WALL.map(p=>p.u))].filter(u=>!wallProbeTried.has(u)&&!stampMem().has(u));
-  if(!urls.length){ wallProbing=false; return; }
+  // 対象は表示中のページ分だけに絞る。全期間表示では写真が26万枚規模になり、
+  // 全件を裏で測ると終わらず「集計中」が消えなくなるため。絞り込みで件数が
+  // 少ない場合は全件でもすぐ終わるので、その場合は全件を対象にする。
+  const start=(ppage-1)*WPHOTO;
+  const scope=WALLVIEW.length<=WPHOTO*10?WALLVIEW:WALLVIEW.slice(start, start+WPHOTO);
+  const urls=[...new Set(scope.map(p=>p.u))].filter(u=>!wallProbeTried.has(u)&&!stampMem().has(u));
+  if(!urls.length){ wallProbing=false; if(VIEW==="photos") scheduleWallRedraw(); return; }
   wallPumpRunning=true; wallProbing=true;
   if(VIEW==="photos") scheduleWallRedraw();
   let i=0, active=0;
