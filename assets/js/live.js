@@ -527,7 +527,7 @@ async function attendedImageBlob(){
     if(y+34>BOTTOM-30) break;
     const st=ATTENDED.get(l.id);
     ctx.fillStyle=MUTED; ctx.fillText(l.date.replace(/-/g,"/"), M, y);
-    ctx.fillStyle= st==="stream" ? "#1f6fb2" : "#7e57c2";
+    ctx.fillStyle= st==="stream" ? "#5aa9d6" : "#7e57c2";
     ctx.fillText(st==="stream" ? "配信" : "参戦", M+168, y);
     ctx.fillStyle=INK; ctx.fillText(fit(l.title, W-2*M-240), M+240, y);
     y+=38; drawn++;

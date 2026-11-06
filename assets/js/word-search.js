@@ -54,19 +54,19 @@ function effectivePoolFor(members, groups, includeGrad, need) {
 function effectivePool() { return effectivePoolFor(MEMBERS, settings.groups, settings.grad, settings.count); }
 
 // 発見ハイライトの色：出題メンバーごとに単語のインデックスで割り当てる10色（最大10人ぶん）
-// 先頭6色は従来の色（3グループの色＋緑・オレンジ・藍の中間トーン）をそのまま維持し、7色目以降に判別しやすい色を足した
+// 色味はサイト全体の方針に合わせ、淡い面＋濃い文字の10色（色相は従来の割り当てを維持）
 // fg はその背景でカナが読める文字色（明るい背景には濃い文字色）
 const WS_COLORS = [
-  { bg: "#7e57c2", fg: "#ffffff" }, // 紫（乃木坂46）
-  { bg: "#e77a9b", fg: "#4d0f27" }, // ピンク（櫻坂46）
-  { bg: "#5aa9d6", fg: "#0b3049" }, // 空色（日向坂46）
-  { bg: "#5eba53", fg: "#0e3409" }, // 緑（欅坂46）
-  { bg: "#f0a13c", fg: "#4a2700" }, // オレンジ
-  { bg: "#4a6fa5", fg: "#ffffff" }, // 藍
-  { bg: "#cf5b3a", fg: "#ffffff" }, // テラコッタ
-  { bg: "#2f9e8f", fg: "#05302a" }, // ティール
-  { bg: "#eccd3a", fg: "#453600" }, // 黄
-  { bg: "#71808f", fg: "#ffffff" }  // スレートグレー
+  { bg: "#e3d7f5", fg: "#452a7d" }, // 紫（乃木坂46）
+  { bg: "#fadbe6", fg: "#8f2c4f" }, // ピンク（櫻坂46）
+  { bg: "#d8edf8", fg: "#175a7d" }, // 空色（日向坂46）
+  { bg: "#dcf2d9", fg: "#256b1e" }, // 緑（欅坂46）
+  { bg: "#fdeeda", fg: "#8a5410" }, // オレンジ
+  { bg: "#dde6f2", fg: "#2c4a73" }, // 藍
+  { bg: "#f9e0d6", fg: "#84371e" }, // テラコッタ
+  { bg: "#d7f0ec", fg: "#14584e" }, // ティール
+  { bg: "#faf3cd", fg: "#6b5903" }, // 黄
+  { bg: "#e3e8ec", fg: "#3c4753" }  // スレートグレー
 ];
 function wordColor(idx) { return WS_COLORS[((idx % WS_COLORS.length) + WS_COLORS.length) % WS_COLORS.length]; }
 
@@ -202,7 +202,7 @@ function judge(cells) {
   }
   li.classList.remove("hint");
   li.classList.add("done");
-  li.style.setProperty("--wc", col.bg); // 名前リスト側の発見表示にも、その単語の色のドットを付ける
+  li.style.setProperty("--wc", col.fg); // 名前リスト側の発見表示にも、その単語の色のドットを付ける
   const lab = document.getElementById("wsFound");
   if (lab) lab.textContent = `見つけた ${foundKana.size}／${puzzle.words.length}`;
   const rem = document.getElementById("wsRemain");

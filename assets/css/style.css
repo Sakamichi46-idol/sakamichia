@@ -108,7 +108,7 @@ body[data-group="坂道AKB"]{--page:#d24a43}
 .frow{display:flex;justify-content:center;gap:.45em;flex-wrap:nowrap;margin:6px 0;font-size:13px;overflow-x:auto;scrollbar-width:none}
 .frow::-webkit-scrollbar{display:none}
 .fm{background:#fff;border:.15em solid var(--line);border-radius:999px;padding:.26em .62em;font-size:1em;white-space:nowrap;flex:none}
-.fm.ctr{background:var(--page);border-color:var(--page);color:#fff;font-weight:700}
+.fm.ctr{background:#ece5f5;border-color:#b9a8dd;color:var(--ink);font-weight:700}
 .g-坂道選抜{background:#e6f4f1}
 .g-その他{background:#edf1f3}
 body[data-group="坂道選抜"]{--page:#2f9e8f}
@@ -120,7 +120,7 @@ body[data-group="坂道選抜"]{--page:#2f9e8f}
 .bthumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb-fallback{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;font-weight:700;font-size:19px;letter-spacing:.06em}
 .thumb-fallback small{font-weight:400;font-size:11px;opacity:.85;letter-spacing:.14em}
-.tf-乃木坂46{background:#7e57c2}.tf-櫻坂46{background:#e77a9b}.tf-日向坂46{background:#5aa9d6}.tf-欅坂46{background:#5eba53}.tf-けやき坂46{background:#a4c639}
+.tf-乃木坂46{background:#efe9f8;color:#6a45ad}.tf-櫻坂46{background:#fce9ef;color:#b23a63}.tf-日向坂46{background:#e7f2fa;color:#25719f}.tf-欅坂46{background:#eaf6e9;color:#3d8a37}.tf-けやき坂46{background:#f2f6e0;color:#74901c}
 .blog-card h3{cursor:pointer}
 .blog-card .snippet{font-size:13px;color:var(--muted);line-height:1.7;margin:6px 0 0}
 .blog-card .snippet mark{background:#ffe98a;color:inherit;padding:0 1px;border-radius:2px}
@@ -430,8 +430,8 @@ dialog{max-height:92dvh}
 .mz-stage canvas{width:min(78vw,360px);height:auto;border-radius:16px;border:1px solid var(--line);background:#f1eaf7}
 .mz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .mz-choice{padding:13px 10px;font-size:15.5px}
-.mz-choice.ok{background:var(--k,#5eba53)!important;color:#fff}
-.mz-choice.ng{background:#d9534f!important;color:#fff}
+.mz-choice.ok{background:#e5f7e8!important;border-color:#5cb85c;color:#256b2a}
+.mz-choice.ng{background:#fde8e8!important;border-color:#e57373;color:#a03a36}
 .mz-choice:disabled{opacity:.75}
 .mz-msg{min-height:1.7em;margin-top:10px}
 .mz-result{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
@@ -609,7 +609,7 @@ body.dfbar-on{padding-bottom:70px}
 .attend-ctl button+button{border-left:1px solid var(--line)}
 .attend-ctl button.on[data-attend=""]{background:#efeaf2;color:var(--ink);font-weight:700}
 .attend-ctl button.on[data-attend="venue"]{background:var(--n);border-color:var(--n);color:#fff;font-weight:700}
-.attend-ctl button.on[data-attend="stream"]{background:#2f7fc4;color:#fff;font-weight:700}
+.attend-ctl button.on[data-attend="stream"]{background:#d9ecfa;color:#17507e;font-weight:700}
 .stream-badge{background:#e1effa;color:#1f6fb2;font-weight:700}
 
 /* ===== 推しフローティングボタン（common.js が差し込む。推し登録がある場合だけ・スマホ幅のみ表示） ===== */
@@ -838,6 +838,10 @@ html[data-theme="dark"] .msel-pop{background:#211b2b;color:#ede8f4;border-color:
 html[data-theme="dark"] .msel-opt:hover{background:rgba(255,255,255,.08)}
 html[data-theme="dark"] .sort-card,html[data-theme="dark"] .sort-custom-panel,html[data-theme="dark"] .sort-pick{background:#211b2b}
 html[data-theme="dark"] .quiz-opt.wrong{background:#57282c;border-color:#a34e54}
+html[data-theme="dark"] .mz-choice.ok{background:#24402a;border-color:#4e7d54;color:#cde8d2}
+html[data-theme="dark"] .mz-choice.ng{background:#57282c;border-color:#a34e54;color:#f3d3d3}
+html[data-theme="dark"] .fm.ctr{background:#3a2d55;border-color:#6a5896;color:#f2edfa}
+html[data-theme="dark"] .attend-ctl button.on[data-attend="stream"]{background:#1d3a52;color:#bfe0f2}
 html[data-theme="dark"] .df-wheel,html[data-theme="dark"] .df-lot-name{background:#211b2b}
 html[data-theme="dark"] .bday-chip,html[data-theme="dark"] .fm-stepper,html[data-theme="dark"] .attend-ctl{background:#211b2b}
 html[data-theme="dark"] .ms-row.is-event{background:#2c2344}
