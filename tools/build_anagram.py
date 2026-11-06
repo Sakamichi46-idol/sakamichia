@@ -84,11 +84,11 @@ DIC_FILES = [
 ]
 NODE_CAP = 300_000
 RESULT_CAP = 600
-KEEP = 3
-KEEP_COMBO = 2
-COMBO_TARGET = 140          # カテゴリ×個数ごとの採用目標
-COMBO_MAX_ATTEMPTS = 600    # カテゴリ×個数ごとの試行上限
-COMBO_MAX_LEN = 48          # 組み合わせ全体の文字数上限（これを超える組合せは試行しない）
+KEEP = 20
+KEEP_COMBO = 20
+COMBO_TARGET = 300          # カテゴリ×個数ごとの採用目標
+COMBO_MAX_ATTEMPTS = 3000   # カテゴリ×個数ごとの試行上限
+COMBO_MAX_LEN = 10 ** 9     # 組み合わせ全体の文字数上限（ユーザー方針で実質無制限：長い組み合わせも採用する）
 COMBO_SEED = 20261104
 
 
@@ -340,7 +340,7 @@ def select_shuffles(word: str, results: dict, cost: dict):
     n = len(word)
     cands = []
     for text, words in results.items():
-        if text == word:
+        if text == word or text == word[::-1]:
             continue
         fx = fixed_pos(text, word)
         if quality_ok(n, words, fx):
@@ -355,7 +355,7 @@ def select_combo_shuffles(katas: list, results: dict, cost: dict):
     orders = {"".join(p) for p in itertools.permutations(katas)}
     cands = []
     for text, words in results.items():
-        if text in orders:
+        if text in orders or text == total[::-1]:
             continue
         fx = min(fixed_pos(text, o) for o in orders)
         if quality_ok(n, words, fx):
@@ -469,11 +469,11 @@ def main() -> int:
                 results, _cap = short_finder.covers(total)
             else:
                 results, _cap = long_finder.covers(
-                    total, node_budget=90_000, result_cap=150, time_budget=5.0)
+                    total, node_budget=90_000, result_cap=600, time_budget=10.0)
             shuffles = select_combo_shuffles(katas, results, cost)
             if not shuffles:
                 results2, _ = long_finder.covers(
-                    total, rng=rng, node_budget=90_000, result_cap=150,
+                    total, rng=rng, node_budget=90_000, result_cap=600,
                     time_budget=5.0)
                 shuffles = select_combo_shuffles(katas, results2, cost)
             if not shuffles:
