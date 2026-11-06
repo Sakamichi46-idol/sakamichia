@@ -14,6 +14,8 @@ const AG_MODES = [
 ];
 function agCondText() {
   const parts = ["モード：" + ((AG_MODES.find(m => m.id === selMode) || {}).label || "")];
+  const n = (typeof questions !== "undefined" && questions[0]) ? questions[0].items.length : agSettings.count;
+  if (n >= 2) parts.push(n + (selMode === "member" ? "人分" : selMode === "song" ? "曲分" : "個分"));
   if (agSettings.groups.length) parts.push(agSettings.groups.join("・") + "のみ");
   if (agSettings.status === "active") parts.push("現役のみ");
   else if (agSettings.status === "grad") parts.push("卒業生のみ");
