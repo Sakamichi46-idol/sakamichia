@@ -140,6 +140,18 @@ def _roster():
     return _roster_cache
 
 
+_decor_cache = None
+
+
+def _decor_urls():
+    """装飾画像（区切り線・柄バナー等）の URL 集合。写真リストには入れない。"""
+    global _decor_cache
+    if _decor_cache is None:
+        p = os.path.join(BASE, 'tools/decor_urls.json')
+        _decor_cache = set(json.load(open(p, encoding='utf-8'))) if os.path.exists(p) else set()
+    return _decor_cache
+
+
 def _gen_of(group, name):
     for m in _roster():
         if m['name'] == name and group in (m.get('groups') or [m.get('group')]):
@@ -170,6 +182,13 @@ def apply_relay_windows(years):
 
 def save_store(idx, years, imgs, dirty_years):
     apply_relay_windows(years)
+    # 装飾画像は写真リストから除外する（本文中の表示は本文データ側に残る）。
+    _decor = _decor_urls()
+    if _decor:
+        for _m in imgs.values():
+            for _aid, _lst in _m.items():
+                if any(u in _decor for u in _lst):
+                    _m[_aid] = [u for u in _lst if u not in _decor]
     for y in dirty_years:
         lst = sorted(years[y], key=lambda b: (b['date'], b.get('time') or '00:00'), reverse=True)
         years[y] = lst
