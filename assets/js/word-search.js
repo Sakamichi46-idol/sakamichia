@@ -333,8 +333,8 @@ function finish() {
     const parts = [];
     if (gameMode === "challenge") parts.push("チャレンジモード");
     parts.push(gameCount + "人");
-    if (settings.groups.length) parts.push(settings.groups.join("・") + "のみ");
-    if (!settings.grad) parts.push("現役のみ");
+    parts.push(settings.groups.length ? settings.groups.join("・") + "のみ" : "全グループ");
+    parts.push(settings.grad ? "卒業生含む" : "現役のみ");
     const cond = parts.join("・");
     shareScoreImage({ game: "ワードサーチ", score: fmtTime(sec) + "でクリア", cond,
       lines: puzzle.words.map(w => w.name),
