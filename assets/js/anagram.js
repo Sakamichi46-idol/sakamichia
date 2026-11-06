@@ -519,9 +519,32 @@ function useHint() {
   if (!cur || cur.judged) return;
   const multi = cur.q.items.length > 1;
   const r = multi ? cur.activeRow : 0;
-  const targetRow = cur.q.items[r].kata;
+  const items = cur.q.items;
+  const rowStr = rr => cur.rows[rr].map(id => cur.tiles.get(id)).join("");
+  // すでに完成している行は、その素材を「占有」したものとして扱う（判定が並び順フリーなのに合わせる）
+  if (multi && items.some(it => it.kata === rowStr(r))) {
+    renderQuestion(`${r + 1}行目は完成しています。別の行を選んでください`);
+    return;
+  }
+  const claimed = new Set();
+  if (multi) {
+    cur.rows.forEach((_, r2) => {
+      if (r2 === r) return;
+      const idx = items.findIndex((it, ii) => it.kata === rowStr(r2) && !claimed.has(ii));
+      if (idx >= 0) claimed.add(idx);
+    });
+  }
+  // この行の目標：占有されていない素材のうち、今置いてあるタイルと矛盾しないもの。
+  // 行に割り当てられた素材が候補に残っていればそれを優先し、無ければ候補の先頭を使う
+  const rowTilesStr = cur.rows[r].map(id => cur.tiles.get(id));
+  const consistent = ii => rowTilesStr.every((ch, p) => items[ii].kata[p] === ch);
+  const free = items.map((_, ii) => ii).filter(ii => !claimed.has(ii));
+  let targetIdx = free.includes(r) && consistent(r) ? r
+    : (free.find(ii => consistent(ii)) ?? (free.includes(r) ? r : free[0]));
+  if (targetIdx == null) targetIdx = r;
+  const targetRow = items[targetIdx].kata;
   const row = cur.rows[r];
-  // 選択中の行の中で、まだ正しくない最初の位置を探す
+  // 選択中の行の中で、目標に対してまだ正しくない最初の位置を探す
   let p = 0;
   while (p < targetRow.length) {
     const id = row[p];
