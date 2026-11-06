@@ -517,35 +517,49 @@ function insertFlat(i, id) {
 
 function useHint() {
   if (!cur || cur.judged) return;
-  const target = cur.kata;
-  const flat = cur.rows.flat();
-  let i = 0;
-  while (i < target.length) {
-    const id = flat[i];
-    if (id != null && cur.tiles.get(id) === target[i]) { i++; continue; }
+  const multi = cur.q.items.length > 1;
+  const r = multi ? cur.activeRow : 0;
+  const targetRow = cur.q.items[r].kata;
+  const row = cur.rows[r];
+  // 選択中の行の中で、まだ正しくない最初の位置を探す
+  let p = 0;
+  while (p < targetRow.length) {
+    const id = row[p];
+    if (id != null && cur.tiles.get(id) === targetRow[p]) { p++; continue; }
     break;
   }
-  if (i >= target.length) return; // すでに正しい並び
-  const need = target[i];
-  // 位置 i にあるタイル（不正解のもの）はプールへ戻す（初期順序どおりの位置へ）
-  if (flat[i] != null) removeFlat(i);
+  if (p >= targetRow.length) {
+    renderQuestion(multi ? `${r + 1}行目は完成しています。別の行を選んでください` : "すでに正しい並びです");
+    return;
+  }
+  const need = targetRow[p];
+  // 位置 p にあるタイル（不正解のもの）はプールへ戻す
+  if (row[p] != null) { const out = row[p]; row.splice(p, 1); agPoolReturn(out); }
   // 必要な文字をプールから探す。無ければ「間違った位置」にあるタイルから持ってくる
   let srcId = cur.pool.find(id => cur.tiles.get(id) === need);
   if (srcId == null) {
-    const flat2 = cur.rows.flat();
-    for (let j = 0; j < flat2.length; j++) {
-      const id = flat2[j];
-      if (id != null && !cur.locked.has(id) && cur.tiles.get(id) === need && cur.tiles.get(id) !== target[j]) { removeFlat(j); srcId = id; break; }
+    outer:
+    for (let r2 = 0; r2 < cur.rows.length; r2++) {
+      for (let q = 0; q < cur.rows[r2].length; q++) {
+        const id = cur.rows[r2][q];
+        if (id == null || cur.locked.has(id)) continue;
+        if (cur.tiles.get(id) !== need) continue;
+        if (cur.tiles.get(id) === cur.q.items[r2].kata[q]) continue; // その位置で正しいものは動かさない
+        cur.rows[r2].splice(q, 1); agPoolReturn(id);
+        srcId = id;
+        break outer;
+      }
     }
   }
   if (srcId == null) return; // 理論上は到達しない
   cur.pool = cur.pool.filter(x => x !== srcId);
-  insertFlat(i, srcId);
+  row.splice(p, 0, srcId);
   cur.locked.add(srcId);
   cur.hints++;
-  renderQuestion(`ヒント：${i + 1}文字目を確定しました（この問題は最大 ${agCurMax()} 点）`);
+  renderQuestion(multi
+    ? `ヒント：${r + 1}行目の${p + 1}文字目を確定しました（この問題は最大 ${agCurMax()} 点）`
+    : `ヒント：${p + 1}文字目を確定しました（この問題は最大 ${agCurMax()} 点）`);
 }
-
 function judge() {
   if (!cur || cur.judged || cur.pool.length > 0) return;
   const built = slotStr();
