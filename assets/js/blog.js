@@ -1318,7 +1318,7 @@ async function openBlog(id){
   const body=document.getElementById("dlgBody");
   const dlg=document.getElementById("dlg");
   body.innerHTML=`<div class="${fontCls(b)}">${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p><p>読み込んでいます…</p></div>`;
-  dlg.showModal();
+  if(!dlg.open) dlg.showModal();
   let html=`${groupChip(b.group)}<h3>${esc(b.title)}</h3><p>${esc(dateTime(b))} ・ ${esc(b.member)}${b.series&&b.series!==b.member?`（${esc(b.series)}）`:""}</p>`;
   let photos=[];
   if(b.body){
