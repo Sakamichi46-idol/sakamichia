@@ -184,6 +184,26 @@ def save_store(idx, years, imgs, dirty_years):
     apply_relay_windows(years)
     # 装飾画像は写真リストから除外する（本文中の表示は本文データ側に残る）。
     _decor = _decor_urls()
+    import re as _re
+    def _fam_key(u):
+        if not isinstance(u, str): return u
+        _m = _re.match(r'https?://([^/]+)(/.*)$', u)
+        if not _m: return u
+        _host, _path = _m.group(1), _m.group(2)
+        if _host.endswith('keyakizaka46.com') or _host == 'smccms.jp': _f = 'KEYA'
+        elif _host.endswith('nogizaka46.com'): _f = 'N46'
+        elif _host.endswith('sakurazaka46.com'): _f = 'S46'
+        elif _host.endswith('hinatazaka46.com'): _f = 'H46'
+        else: _f = _host
+        return _f + _path
+    for _m2 in imgs.values():
+        for _aid, _lst in _m2.items():
+            _seen = set(); _nl = []
+            for _u in _lst:
+                _k = _fam_key(_u)
+                if _k in _seen: continue
+                _seen.add(_k); _nl.append(_u)
+            if len(_nl) != len(_lst): _m2[_aid] = _nl
     def _broken(u):
         return (not isinstance(u, str) or 'captcha' in u or 'cid:' in u or 'file:/' in u
                 or 'msohtmlclip' in u or '<' in u or '>' in u or '/photos/icon/' in u
