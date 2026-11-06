@@ -318,7 +318,7 @@ async function init() {
     if (!imgBlob) return;
     const file = new File([imgBlob], "sakamichia-setlist-solo.png", { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], text: withShareTag("") }); } catch (e) {}
+      try { const sm = (document.getElementById("ssConfigSummary") || {}).textContent || ""; await navigator.share({ files: [file], text: withShareTag(`サカミチアでマイセットリストを作りました${sm ? `（${sm}）` : ""}。`) }); } catch (e) {}
     } else $("ssImgDl").click();
   });
   renderAll();

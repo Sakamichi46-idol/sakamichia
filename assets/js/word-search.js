@@ -326,9 +326,20 @@ function finish() {
     ${gameMode === "challenge" ? `<p>ヒント使用：${hintCount}回</p>` : ""}
     ${best > 0 ? `<p style="color:var(--muted)">${isNew ? "ベストタイム更新！" : `ベストタイム：${fmtTime(best)}`}</p>` : ""}
     <p style="color:var(--muted)">${puzzle.words.map(w => esc(w.name)).join("・")}</p>
-    <p><button type="button" class="btn" id="wsRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="wsSettings">条件を変える</button></p></div>`;
+    <p><button type="button" class="btn" id="wsRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="wsSettings">条件を変える</button> <button type="button" class="btn" id="wsShare">結果を共有</button></p></div>`;
   document.getElementById("wsRetry").addEventListener("click", start);
   document.getElementById("wsSettings").addEventListener("click", startPanel);
+  document.getElementById("wsShare").addEventListener("click", e => {
+    const parts = [];
+    if (gameMode === "challenge") parts.push("チャレンジモード");
+    parts.push(gameCount + "人");
+    if (settings.groups.length) parts.push(settings.groups.join("・") + "のみ");
+    if (!settings.grad) parts.push("現役のみ");
+    const cond = parts.join("・");
+    shareScoreImage({ game: "ワードサーチ", score: fmtTime(sec) + "でクリア", cond,
+      lines: puzzle.words.map(w => w.name),
+      text: `サカミチア「ワードサーチ」を${fmtTime(sec)}でクリアしました（${cond}）。` }, e.target);
+  });
 }
 
 function startPanel() {

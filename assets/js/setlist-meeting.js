@@ -374,7 +374,7 @@ async function init() {
     if (!imgBlob) return;
     const file = new File([imgBlob], "sakamichia-setlist-meeting.png", { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], text: withShareTag("") }); } catch (e) {}
+      try { await navigator.share({ files: [file], text: withShareTag("サカミチア「セトリ会議」の結果です。") }); } catch (e) {}
     } else $("smImgDl").click();
   });
   try {

@@ -146,7 +146,7 @@ function quizPick(key, pool, n, idFn) {
 
 // ゲーム結果の画像共有（共通）：結果カード画像（1200x630）を作って共有/保存する
 async function shareScoreImage(opts, btn) {
-  const lines = (opts.lines || []).slice(0, 12);
+  const lines = (opts.cond ? [opts.cond, ...(opts.lines || [])] : (opts.lines || [])).slice(0, 12);
   const H = Math.max(630, 392 + lines.length * 40 + 64);
   const cv = document.createElement("canvas"); cv.width = 1200; cv.height = H;
   const ctx = cv.getContext("2d");
@@ -173,7 +173,7 @@ async function shareScoreImage(opts, btn) {
   ctx.fillText("sakamichia.pages.dev", 64, H - 44);
   const blob = await new Promise(r => cv.toBlob(r, "image/png"));
   const fileName = "sakamichia-result.png";
-  const shareText = opts.text || `サカミチア「${opts.game || ""}」で${opts.score || ""}でした。`;
+  const shareText = opts.text || `サカミチア「${opts.game || ""}」で${opts.score || ""}でした${opts.cond ? `（${opts.cond}）` : ""}。`;
   if (blob && navigator.canShare) {
     const file = new File([blob], fileName, { type: "image/png" });
     if (navigator.canShare({ files: [file] })) {
@@ -242,7 +242,8 @@ function withShareTag(text, url){
 
 // 共有：対応環境では共有シートを開き、なければクリップボードへコピーする
 async function shareContent(data, btn){
-  const payload={title:data.title||document.title, text:withShareTag(data.text||"", data.url)};
+  const fallbackText=(data.text||"").trim() ? data.text : (document.title.split("|").map(s=>s.trim()).filter(p=>p && p!=="サカミチア")[0]||"");
+  const payload={title:data.title||document.title, text:withShareTag(fallbackText, data.url)};
   if(navigator.share){
     try{ await navigator.share(payload); }catch(e){ /* キャンセル時は何もしない */ }
     return;

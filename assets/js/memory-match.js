@@ -150,9 +150,14 @@ function finish() {
   main.innerHTML = `<div class="card"><h3>コンプリート！</h3>
     <p>タイム：<b>${fmtTime(sec)}</b> ／ 手数：<b>${moves}手</b>（${pairs}ペア）</p>
     ${best ? `<p style="color:var(--muted)">${isNew ? "ベスト記録更新！" : `ベスト（${pairs}ペア）：${best.moves}手・${fmtTime(best.sec)}`}</p>` : ""}
-    <p><button type="button" class="btn" id="mmRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="mmSettings">条件を変える</button></p></div>`;
+    <p><button type="button" class="btn" id="mmRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="mmSettings">条件を変える</button> <button type="button" class="btn" id="mmShare">結果を共有</button></p></div>`;
   document.getElementById("mmRetry").addEventListener("click", start);
   document.getElementById("mmSettings").addEventListener("click", startPanel);
+  document.getElementById("mmShare").addEventListener("click", e => {
+    shareScoreImage({ game: "神経衰弱", score: fmtTime(sec) + "でクリア",
+      lines: [`${pairs}ペア ・ ${moves}手`],
+      text: `サカミチア「神経衰弱」を${fmtTime(sec)}でクリアしました（${pairs}ペア・${moves}手）。` }, e.target);
+  });
 }
 
 function startPanel() {

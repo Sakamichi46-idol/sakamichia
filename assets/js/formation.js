@@ -310,7 +310,7 @@ async function init() {
     if (!exportBlob) return;
     const file = new File([exportBlob], "sakamichia-formation.png", { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], text: withShareTag("") }); } catch (e) { /* キャンセル時は何もしない */ }
+      try { await navigator.share({ files: [file], text: withShareTag("サカミチアでマイフォーメーションを作りました。") }); } catch (e) { /* キャンセル時は何もしない */ }
     } else download(exportBlob, "sakamichia-formation.png");
   });
   render();

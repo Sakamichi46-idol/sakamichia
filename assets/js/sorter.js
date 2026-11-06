@@ -481,7 +481,7 @@ async function shareImage(){
   try{
     const file = new File([shareBlob], "sakamichia-member-sort.png", {type: "image/png"});
     if(navigator.share && navigator.canShare && navigator.canShare({files: [file]})){
-      await navigator.share({files: [file], text: withShareTag("サカミチアのメンバーソート結果\nhttps://sakamichia.pages.dev/games/sorter/")});
+      await navigator.share({files: [file], text: withShareTag(`サカミチアのメンバーソート結果です（${scopeLabel()}）。\nhttps://sakamichia.pages.dev/games/sorter/`)});
       return;
     }
     const url = URL.createObjectURL(shareBlob), a = document.createElement("a");

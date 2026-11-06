@@ -12,6 +12,14 @@ const AG_MODES = [
   { id: "song", label: "楽曲タイトル" },
   { id: "mix", label: "ミックス" },
 ];
+function agCondText() {
+  const parts = ["モード：" + ((AG_MODES.find(m => m.id === selMode) || {}).label || "")];
+  if (agSettings.groups.length) parts.push(agSettings.groups.join("・") + "のみ");
+  if (agSettings.status === "active") parts.push("現役のみ");
+  else if (agSettings.status === "grad") parts.push("卒業生のみ");
+  return parts.join("・");
+}
+
 let AG = { members: [], songs: [], combos: [] };
 let AG_DICT = new Map(); // 読み（カタカナ）-> [{kind, label}]（別解判定用）
 let AG_KATAS = []; // 全素材の読み一覧（組み合わせ判定の分割用）
@@ -585,7 +593,7 @@ function finish() {
   document.getElementById("agRetry").addEventListener("click", startGame);
   document.getElementById("agSettings").addEventListener("click", startPanel);
   document.getElementById("agShare").addEventListener("click", e => shareScoreImage({
-    game: "アナグラム", score: `${total}点／${maxTotal}点`,
+    game: "アナグラム", score: `${total}点／${maxTotal}点`, cond: agCondText(),
     lines: results.map((r, i) => `${i + 1}問目 ${r.mine}：${r.ok ? r.pts + "点" : "不正解（正解は" + r.label + "）"}`),
   }, e.target));
 }

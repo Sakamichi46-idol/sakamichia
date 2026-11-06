@@ -586,7 +586,7 @@ async function shareAttendImage(){
     const blob=await attendedImageBlob();
     const file=new File([blob], "sakamichia-attended.png", {type:"image/png"});
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file], text:withShareTag("サカミチアのマイ参戦記録\nhttps://sakamichia.pages.dev/live/")});
+      await navigator.share({files:[file], text:withShareTag("サカミチアのマイ参戦記録です。\nhttps://sakamichia.pages.dev/live/")});
       return;
     }
     const url=URL.createObjectURL(blob), a=document.createElement("a");

@@ -255,7 +255,7 @@ function fqResult() {
   <p>${FQ.score >= max * 0.8 ? "すごい！配置まで完璧に覚えていますね。" : FQ.score >= max * 0.5 ? "なかなかのフォーメーション通です。" : FQ.score >= max * 0.3 ? "前列は覚えていても、後列は意外と難しいですよね。" : "配置を当てるのは至難の業です。楽曲図鑑で眺めるのも楽しいですよ。"}</p>
   <p><button type="button" class="primary" onclick="location.reload()">モード選択に戻る</button> <button type="button" id="fqShare">結果を共有</button></p></div>`;
   const sh = document.getElementById("fqShare");
-  if (sh) sh.addEventListener("click", () => shareScoreImage({ game: "フォーメーションクイズ", score: `${FQ.score}点／${max}点`, lines: [`難易度：${FQ.diff.label}（空欄${FQ.diff.blanks}人）／${FQ.style === "input" ? "打ち込み式" : "4択式"}／モード：${FQ.mode === "all" ? "すべて" : FQ.mode}`, ...FQ.list.map((e, i) => `${i + 1}. 『${e.title}』 ${e.blanks.map(b => b.answer).join("、")}`)] }, sh));
+  if (sh) sh.addEventListener("click", () => shareScoreImage({ game: "フォーメーションクイズ", score: `${FQ.score}点／${max}点`, cond: `難易度：${FQ.diff.label}（空欄${FQ.diff.blanks}人）／${FQ.style === "input" ? "打ち込み式" : "4択式"}／モード：${FQ.mode === "all" ? "すべて" : FQ.mode}`, lines: FQ.list.map((e, i) => `${i + 1}. 『${e.title}』 ${e.blanks.map(b => b.answer).join("、")}`) }, sh));
 }
 function fqStartPanel(pool) {
   const area = document.getElementById("fqArea");
