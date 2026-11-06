@@ -173,10 +173,11 @@ async function shareScoreImage(opts, btn) {
   ctx.fillText("sakamichia.pages.dev", 64, H - 44);
   const blob = await new Promise(r => cv.toBlob(r, "image/png"));
   const fileName = "sakamichia-result.png";
+  const shareText = opts.text || `サカミチア「${opts.game || ""}」で${opts.score || ""}でした。`;
   if (blob && navigator.canShare) {
     const file = new File([blob], fileName, { type: "image/png" });
     if (navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: "サカミチア", text: withShareTag("") }); return; } catch (e) { /* キャンセル時は何もしない */ return; }
+      try { await navigator.share({ files: [file], title: "サカミチア", text: withShareTag(shareText) }); return; } catch (e) { /* キャンセル時は何もしない */ return; }
     }
   }
   if (blob) {
@@ -186,7 +187,7 @@ async function shareScoreImage(opts, btn) {
     if (btn) { const t = btn.textContent; btn.textContent = "画像を保存しました"; setTimeout(() => { btn.textContent = t; }, 1800); }
     return;
   }
-  shareContent({ text: `${opts.game}：${opts.score}` }, btn);
+  shareContent({ text: shareText }, btn);
 }
 
 // 検索サジェスト共通部品：入力の下に候補ドロップダウンを出す（Google式）。
