@@ -1,353 +1,6 @@
 {
  "updated": "2026-11-07",
  "days": {
-  "2026-11-01": [
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "18:00〜18:30",
-    "title": "文化放送「乃木坂46の「の」」",
-    "members": [
-     "海邉朱莉",
-     "川﨑桜"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107647"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "20:05〜22:55",
-    "title": "NHK AM「らじらー！サンデー」",
-    "members": [
-     "川﨑桜",
-     "柴田柚菜",
-     "弓木奈於"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107617"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "24:15〜24:45",
-    "title": "テレビ東京系「乃木坂工事中」",
-    "members": [],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107579"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "誕生日",
-    "time": "",
-    "title": "増田三莉音 誕生日",
-    "members": [
-     "増田三莉音"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/artist/63109"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "舞台/ミュージカル",
-    "time": "",
-    "title": "ミュージカル『秘密の花園』",
-    "members": [
-     "奥田いろは"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107498"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "舞台/ミュージカル",
-    "time": "",
-    "title": "舞台「春よ来い、マジで来い」",
-    "members": [
-     "岩本蓮加"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107500"
-   }
-  ],
-  "2026-11-02": [
-   {
-    "g": "乃木坂46",
-    "kind": "WEB",
-    "time": "18:15〜",
-    "title": "SHOWROOM「のぎおび」",
-    "members": [
-     "増田三莉音"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107674"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "WEB",
-    "time": "19:00〜",
-    "title": "YouTube「週刊乃木坂ニュース 拡大版」",
-    "members": [
-     "菅原咲月",
-     "大越ひなの",
-     "田村真佑",
-     "矢田萌華"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107682"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "22:00〜25:00",
-    "title": "文化放送「レコメン！」",
-    "members": [
-     "矢田萌華"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107516"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "25:29〜25:59",
-    "title": "日本テレビ「乃木坂スター誕生！SIX」",
-    "members": [
-     "6期生"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107519"
-   }
-  ],
-  "2026-11-03": [
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "21:00〜23:00",
-    "title": "FM FUJI「フニャフニャ伝説」",
-    "members": [
-     "愛宕心響"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107330"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "23:00〜23:27",
-    "title": "BAYFM「乃木坂46 柴田柚菜のDreaming time」",
-    "members": [
-     "柴田柚菜"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/105431"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "24:00〜24:30",
-    "title": "TOKYO MX「小峠英二のなんて美だ！」",
-    "members": [
-     "池田瑛紗"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/105027"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "ライブ/イベント",
-    "time": "",
-    "title": "『大河ドラマ「豊臣兄弟！」トークライブ in 北近江・長浜～茶々とふるさと北近江～』",
-    "members": [
-     "井上和"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107488"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "舞台/ミュージカル",
-    "time": "",
-    "title": "「春よ来い、マジで来い」",
-    "members": [
-     "岩本蓮加"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107501"
-   }
-  ],
-  "2026-11-04": [
-   {
-    "g": "乃木坂46",
-    "kind": "WEB",
-    "time": "18:15〜",
-    "title": "SHOWROOM「のぎおび」",
-    "members": [
-     "弓木奈於"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107685"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "WEB",
-    "time": "19:00〜",
-    "title": "SHOWROOM「猫舌SHOWROOM」",
-    "members": [
-     "小津玲奈",
-     "海邉朱莉"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107686"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "19:00〜19:55",
-    "title": "KKB鹿児島放送「アオハルエール！乃木坂46瀬戸口心月が出会う鹿児島の青春」",
-    "members": [
-     "瀬戸口心月"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107602"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "19:00〜20:00",
-    "title": "フジテレビ系「世界の何だコレ！？ミステリー」",
-    "members": [
-     "中西アルノ"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107660"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "24:00〜24:27",
-    "title": "BAYFM「乃木坂46 小川彩のbaby baby maybe」",
-    "members": [
-     "小川彩"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "24:36〜25:05",
-    "title": "BSテレビ東京「漫画クリスタル」",
-    "members": [
-     "田村真佑"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107675"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "25:00〜27:00",
-    "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
-    "members": [
-     "井上和",
-     "冨里奈央"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107683"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "舞台/ミュージカル",
-    "time": "",
-    "title": "「春よ来い、マジで来い」",
-    "members": [
-     "岩本蓮加"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107501"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "書籍",
-    "time": "",
-    "title": "「anan」",
-    "members": [
-     "岩本蓮加"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107546"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "書籍",
-    "time": "",
-    "title": "「週刊SPA!」",
-    "members": [
-     "一ノ瀬美空",
-     "井上和",
-     "冨里奈央",
-     "中西アルノ",
-     "矢田萌華"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107650"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "CD/音楽配信/映像商品",
-    "time": "",
-    "title": "「『乃木坂スター誕生！SIX』Blu-ray BOX 第2巻」",
-    "members": [],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107679"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "WEB",
-    "time": "",
-    "title": "「FLYING POSTMAN PRESS」",
-    "members": [
-     "一ノ瀬美空",
-     "井上和",
-     "冨里奈央",
-     "中西アルノ"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107692"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "書籍",
-    "time": "",
-    "title": "「TVstation」",
-    "members": [
-     "一ノ瀬美空",
-     "井上和",
-     "冨里奈央",
-     "中西アルノ"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107693"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "書籍",
-    "time": "",
-    "title": "「TV LIFE」",
-    "members": [
-     "一ノ瀬美空",
-     "井上和",
-     "冨里奈央",
-     "中西アルノ"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107694"
-   }
-  ],
-  "2026-11-05": [
-   {
-    "g": "乃木坂46",
-    "kind": "ラジオ",
-    "time": "22:00〜23:55",
-    "title": "TOKYO FM「SCHOOL OF LOCK!（ARTIST LOCKS!「乃木坂LOCKS!」）」",
-    "members": [
-     "賀喜遥香"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/106859"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "テレビ",
-    "time": "22:00〜22:54",
-    "title": "フジテレビ系「波うららかに、めおと日和」",
-    "members": [
-     "小川彩"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107636"
-   },
-   {
-    "g": "乃木坂46",
-    "kind": "舞台/ミュージカル",
-    "time": "",
-    "title": "「春よ来い、マジで来い」",
-    "members": [
-     "岩本蓮加"
-    ],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107501"
-   }
-  ],
   "2026-11-06": [
    {
     "g": "乃木坂46",
@@ -387,7 +40,7 @@
     "members": [
      "山下美月"
     ],
-    "url": "https://mizukiyamashita.com/s/m16/media/detail/4699?ima=5858&year=2026&mont=11&day=06",
+    "url": "https://mizukiyamashita.com/s/m16/media/detail/4699?ima=1522&year=2026&mont=11&day=06",
     "solo": true
    },
    {
@@ -439,7 +92,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4634?ima=5856&year=2026&mont=11&day=06",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4634?ima=1519&year=2026&mont=11&day=06",
     "solo": true
    },
    {
@@ -627,7 +280,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4637?ima=5856&year=2026&mont=11&day=07",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4637?ima=1519&year=2026&mont=11&day=07",
     "solo": true
    },
    {
@@ -707,7 +360,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4424?ima=5856&year=2026&mont=11&day=08",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4424?ima=1519&year=2026&mont=11&day=08",
     "solo": true
    },
    {
@@ -718,7 +371,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4427?ima=5856&year=2026&mont=11&day=08",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4427?ima=1519&year=2026&mont=11&day=08",
     "solo": true
    },
    {
@@ -883,7 +536,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12135?ima=5845&year=2026&mont=11&day=09",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12135?ima=1507&year=2026&mont=11&day=09",
     "solo": true
    },
    {
@@ -952,7 +605,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5845&year=2026&mont=11&day=10",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1507&year=2026&mont=11&day=10",
     "solo": true
    }
   ],
@@ -1061,7 +714,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=5853&year=2026&mont=11&day=12",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1516&year=2026&mont=11&day=12",
     "solo": true
    },
    {
@@ -1159,7 +812,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4687?ima=5856&year=2026&mont=11&day=13",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4687?ima=1519&year=2026&mont=11&day=13",
     "solo": true
    },
    {
@@ -1191,7 +844,7 @@
     "members": [
      "山下美月"
     ],
-    "url": "https://mizukiyamashita.com/s/m16/media/detail/4643?ima=5858&year=2026&mont=11&day=13",
+    "url": "https://mizukiyamashita.com/s/m16/media/detail/4643?ima=1522&year=2026&mont=11&day=13",
     "solo": true
    },
    {
@@ -1533,7 +1186,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12136?ima=5845&year=2026&mont=11&day=16",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12136?ima=1507&year=2026&mont=11&day=16",
     "solo": true
    },
    {
@@ -1602,7 +1255,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5845&year=2026&mont=11&day=17",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1507&year=2026&mont=11&day=17",
     "solo": true
    }
   ],
@@ -1683,7 +1336,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=5853&year=2026&mont=11&day=19",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1516&year=2026&mont=11&day=19",
     "solo": true
    },
    {
@@ -1800,7 +1453,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4460?ima=5856&year=2026&mont=11&day=20",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4460?ima=1519&year=2026&mont=11&day=20",
     "solo": true
    },
    {
@@ -1811,7 +1464,7 @@
     "members": [
      "山下美月"
     ],
-    "url": "https://mizukiyamashita.com/s/m16/media/detail/4672?ima=5858&year=2026&mont=11&day=20",
+    "url": "https://mizukiyamashita.com/s/m16/media/detail/4672?ima=1522&year=2026&mont=11&day=20",
     "solo": true
    },
    {
@@ -2138,7 +1791,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12137?ima=5845&year=2026&mont=11&day=23",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12137?ima=1507&year=2026&mont=11&day=23",
     "solo": true
    },
    {
@@ -2225,7 +1878,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5845&year=2026&mont=11&day=24",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1507&year=2026&mont=11&day=24",
     "solo": true
    }
   ],
@@ -2306,7 +1959,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=5853&year=2026&mont=11&day=26",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1516&year=2026&mont=11&day=26",
     "solo": true
    },
    {
@@ -2508,7 +2161,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12313?ima=5845&year=2026&mont=11&day=28",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12313?ima=1507&year=2026&mont=11&day=28",
     "solo": true
    }
   ],
@@ -2647,7 +2300,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12321?ima=5845&year=2026&mont=11&day=29",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12321?ima=1507&year=2026&mont=11&day=29",
     "solo": true
    }
   ],
@@ -2694,7 +2347,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4425?ima=5856&year=2026&mont=11&day=30",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4425?ima=1519&year=2026&mont=11&day=30",
     "solo": true
    },
    {
@@ -2705,7 +2358,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4426?ima=5856&year=2026&mont=11&day=30",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4426?ima=1519&year=2026&mont=11&day=30",
     "solo": true
    },
    {
@@ -2716,7 +2369,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12138?ima=5845&year=2026&mont=11&day=30",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12138?ima=1507&year=2026&mont=11&day=30",
     "solo": true
    },
    {
@@ -2811,7 +2464,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5846&year=2026&mont=12&day=01",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1508&year=2026&mont=12&day=01",
     "solo": true
    }
   ],
@@ -2890,7 +2543,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=5854&year=2026&mont=12&day=03",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1518&year=2026&mont=12&day=03",
     "solo": true
    },
    {
@@ -3263,7 +2916,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12139?ima=5846&year=2026&mont=12&day=07",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12139?ima=1508&year=2026&mont=12&day=07",
     "solo": true
    },
    {
@@ -3340,7 +2993,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5846&year=2026&mont=12&day=08",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1508&year=2026&mont=12&day=08",
     "solo": true
    }
   ],
@@ -3432,7 +3085,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=5854&year=2026&mont=12&day=10",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1518&year=2026&mont=12&day=10",
     "solo": true
    },
    {
@@ -3815,7 +3468,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12140?ima=5846&year=2026&mont=12&day=14",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12140?ima=1508&year=2026&mont=12&day=14",
     "solo": true
    },
    {
@@ -3908,7 +3561,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5846&year=2026&mont=12&day=15",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1508&year=2026&mont=12&day=15",
     "solo": true
    },
    {
@@ -4421,7 +4074,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12141?ima=5846&year=2026&mont=12&day=21",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12141?ima=1508&year=2026&mont=12&day=21",
     "solo": true
    },
    {
@@ -4508,7 +4161,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5846&year=2026&mont=12&day=22",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1508&year=2026&mont=12&day=22",
     "solo": true
    }
   ],
@@ -4631,7 +4284,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12298?ima=5846&year=2026&mont=12&day=24",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12298?ima=1508&year=2026&mont=12&day=24",
     "solo": true
    },
    {
@@ -4762,7 +4415,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12299?ima=5846&year=2026&mont=12&day=25",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12299?ima=1508&year=2026&mont=12&day=25",
     "solo": true
    },
    {
@@ -5053,7 +4706,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=5846&year=2026&mont=12&day=29",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1508&year=2026&mont=12&day=29",
     "solo": true
    }
   ],
