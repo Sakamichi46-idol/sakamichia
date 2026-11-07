@@ -18,9 +18,7 @@ function agCondText() {
   if (n >= 2) parts.push(n + (selMode === "member" ? "人分" : selMode === "song" ? "曲分" : "個分"));
   parts.push(agSettings.groups.length ? agSettings.groups.join("・") + "のみ" : "全グループ");
   if (selMode !== "song") {
-    if (agSettings.status === "active") parts.push("現役のみ");
-    else if (agSettings.status === "grad") parts.push("卒業生のみ");
-    else parts.push("卒業生含む");
+    parts.push(agSettings.status === "active" ? "卒業生なし" : "卒業生あり");
   }
   return parts.join("・");
 }
@@ -32,7 +30,8 @@ let AG_GRAD = new Map(); // メンバー名 -> 卒業生かどうか（members.j
 let selMode = "member";
 let gameTotal = AG_TOTAL; // そのゲームの出題数（プールが1件以上なら常に10問。不足分は同じ対象を繰り返し出題する）
 // 絞り込み設定：グループは複数選択（空 = すべて、OR条件）。status はメンバー素材にのみ効く
-// （"all" = 両方 / "active" = 現役のみ / "grad" = 卒業生のみ、既定は "all"）。
+// （"all" = 卒業生あり / "active" = 卒業生なし（現役のみ）、既定は "all"。
+// 卒業生のみの選択肢は2026-11-07に廃止。旧設定の "grad" は "all" として読み替える）。
 // count は1問に混ぜる素材の個数（1 = 通常 / 2 / 3、既定は 1）
 const AG_GROUP_ORDER = ["乃木坂46", "櫻坂46", "日向坂46", "欅坂46", "けやき坂46"];
 let AG_GROUPS = []; // プールに実在するグループ（表示順に整列済み）
@@ -42,7 +41,7 @@ function agLoadSettings() {
     const s = JSON.parse(localStorage.getItem("sakamichia-anagram-settings") || "null");
     if (s) agSettings = {
       groups: Array.isArray(s.groups) ? s.groups.filter(g => AG_GROUPS.includes(g)) : [],
-      status: s.status === "active" || s.status === "grad" ? s.status : "all",
+      status: s.status === "active" ? "active" : "all",
       count: s.count === 2 || s.count === 3 ? s.count : 1,
     };
   } catch (e) {}
@@ -53,10 +52,9 @@ function agBestKey() { return agSettings.count === 1 ? "anagram" : "anagram" + a
 // e は単体エントリ（graduated 付与済み）でも組み合わせの構成素材 {k, name/title, group} でもよい
 function agEntryOk(e, kind) {
   if (agSettings.groups.length && !agSettings.groups.includes(e.group)) return false;
-  if (kind === "member" && agSettings.status !== "all") {
+  if (kind === "member" && agSettings.status === "active") {
     const grad = e.graduated !== undefined ? e.graduated : (AG_GRAD.get(e.name) || false);
-    if (agSettings.status === "active" && grad) return false;
-    if (agSettings.status === "grad" && !grad) return false;
+    if (grad) return false;
   }
   return true;
 }
@@ -95,27 +93,37 @@ function agShuffle(a, rng) { const r = rng || Math.random; for (let i = a.length
 function agLabel(e, kind) { return kind === "member" ? e.name : e.title; }
 function agClue(e, kind) { return kind === "member" ? `所属：${e.group}` : `${e.group} ・ ${e.year}年発売`; }
 
-// 単体素材1つ分の出題素材（統一形）
+// 単体素材1つ分の出題素材（統一形）。birth はメンバーの生まれ年（手がかり用、member-meta 由来）
 function agSingleItem(e, kind) {
-  return { kind, label: agLabel(e, kind), group: e.group, year: kind === "song" ? e.year : null, kata: e.kata };
+  return { kind, label: agLabel(e, kind), group: e.group, year: kind === "song" ? e.year : null, kata: e.kata, birth: kind === "member" ? (e.birthYear || null) : null };
 }
 // 質問の見出し（手がかり）。最初は種別と個数だけを出し、内訳（素材ごとの文字数・グループ・年）は
 // 独立した段階ヒントとして1段階ずつ表示する（2026-11-04ユーザー指定）：
 //   第1段階＝グループ（グループを1つだけ選んで解く設定のときは無し。既に分かっているため）
-//   第2段階＝それぞれの文字数
+//   第2段階＝それぞれの文字数（複数個のときだけ。単体はマス数で分かるため）
 //   第3段階＝楽曲はリリース年（メンバーだけの問題では無し）
+//   単体では文字数の代わりに、楽曲＝リリース年／メンバー＝生まれ年 が段階になる（2026-11-07）
 // 1段階ごとに −20点で、文字を置くヒント（hints）とは別の勘定（clueUsed）にする
 const AG_CLUE_STAGE_DEFS = [
   { key: "group", name: "グループ" },
   { key: "length", name: "文字数" },
-  { key: "year", name: "リリース年" }
+  { key: "year", name: "リリース年" },
+  { key: "birth", name: "生まれ年" }
 ];
 // この問題で使える手がかりの段階（key の配列、出す順）
+// 単体（個数1）では文字数は解答欄のマス数で分かってしまうため文字数の段階は出さない。
+// 代わりに、楽曲ならリリース年、メンバーなら生まれ年を手がかりにする（2026-11-07ユーザー提案）
 function agClueStagesFor(q, singleGroup) {
   const keys = [];
   if (!singleGroup) keys.push("group");
-  keys.push("length");
-  if (q.items.some(it => it.kind === "song")) keys.push("year");
+  if (q.items.length > 1) {
+    keys.push("length");
+    if (q.items.some(it => it.kind === "song")) keys.push("year");
+  } else if (q.items[0].kind === "song") {
+    keys.push("year");
+  } else if (q.items[0].birth) {
+    keys.push("birth");
+  }
   return keys;
 }
 // 素材1つ分の内訳文字列（組み合わせ用）。show = {g, l, y} の表示状態で組を組み立てる
@@ -139,6 +147,7 @@ function agClueText(q, show) {
     if (it.kind === "member") {
       if (show.l) s += `（${it.kata.length}文字）`;
       if (show.g) s += show.l ? `・ 所属：${it.group}` : ` ・ 所属：${it.group}`;
+      if (show.b && it.birth) s += ` ・ ${it.birth}年生まれ`;
     } else {
       if (show.l) s += `（${it.kata.length}文字）`;
       if (show.g) s += show.l ? `・ ${it.group}` : ` ・ ${it.group}`;
@@ -152,7 +161,7 @@ function agClueText(q, show) {
   if (!show.g && !show.l && !show.y) return head;
   return `${head}：${q.items.map(it => agItemPart(it, show, allM, allS)).join("／")}`;
 }
-function agQuestionClue(q) { return agClueText(q, { g: true, l: true, y: true }); }
+function agQuestionClue(q) { return agClueText(q, { g: true, l: true, y: true, b: true }); }
 window.agQuestionClue = agQuestionClue;
 window.agClueStagesFor = agClueStagesFor;
 window.agClueText = agClueText;
@@ -217,7 +226,7 @@ function agCurMax() {
 // 現在の手がかり表示状態（開いた段階までの要素を表示する）
 function agClueShow() {
   const open = new Set(cur.clueStages.slice(0, cur.clueUsed));
-  return { g: open.has("group"), l: open.has("length"), y: open.has("year") };
+  return { g: open.has("group"), l: open.has("length"), y: open.has("year"), b: open.has("birth") };
 }
 
 function agPools() {
@@ -234,7 +243,7 @@ window.__agFilters = {
   set(groups, status, count) {
     agSettings = {
       groups: [...(groups || [])],
-      status: status || "all",
+      status: status === "active" ? "active" : "all",
       count: count === 2 || count === 3 ? count : 1,
     };
     agSaveSettings();
@@ -673,7 +682,7 @@ function startPanel() {
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   <p style="color:var(--muted)">${lite
     ? `カタカナのタイルを並べ替えて、メンバー名か曲名を当てるクイズです。全<span id="agHowN">${AG_TOTAL}</span>問。ヒントは1回−${AG_HINT_COST}点です。手がかりはボタンで段階表示（1段階−${AG_HINT_COST}点）。出題するグループや現役・卒業、個数は下で選べます。`
-    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。手がかりは最初は種別と個数だけが表示され、ボタンで段階的に開けます（第1段階：グループ、第2段階：文字数、第3段階：楽曲はリリース年。1段階−${AG_HINT_COST}点で、文字を置くヒントとは別の勘定です）。複数個の問題では、解答欄が素材ごとの行に分かれていて、行をタップして選んで入力できます（各行は文字数自由で、文字数の手がかりを表示すると各行のマスの数が分かります）。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
+    : `並んでいるカタカナのタイルは、あるメンバー名（または楽曲タイトル）の読みをバラバラにしたものです。タイルをタップして解答欄に並べ、正しい読みを作ってください。解答欄のタイルをタップすると戻せます。全<span id="agHowN">${AG_TOTAL}</span>問・1問100点（混ぜる個数を増やすと1問200点・300点）。ヒントを使うと、その文字が正しい位置に固定される代わりに1回−${AG_HINT_COST}点（最低10点）になります。手がかりは最初は種別と個数だけが表示され、ボタンで段階的に開けます（グループ→文字数→リリース年の順。ただし1つだけの問題では、文字数は解答欄のマスの数で分かるので段階がなく、代わりに楽曲はリリース年、メンバーは生まれ年が手がかりになります。1段階−${AG_HINT_COST}点で、文字を置くヒントとは別の勘定です）。複数個の問題では、解答欄が素材ごとの行に分かれていて、行をタップして選んで入力できます（各行は文字数自由で、文字数の手がかりを表示すると各行のマスの数が分かります）。並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。出題するグループ（複数選択可）と、メンバーの現役・卒業、混ぜる個数は下で選べます。`}</p>
   <p style="margin:10px 0 6px"><b>出題モード</b></p>
   <div class="ychips" id="agModes">${AG_MODES.map(m => `<button type="button" class="ychip" data-m="${m.id}">${m.label}</button>`).join("")}</div>
   <p style="margin:10px 0 6px"><b>混ぜる個数</b></p>
@@ -681,8 +690,8 @@ function startPanel() {
   <p style="margin:10px 0 6px"><b>グループ</b>（複数選択可）</p>
   <div class="ychips" id="agGroups"><button type="button" class="ychip" data-g="">すべて</button>${AG_GROUPS.map(g => `<button type="button" class="ychip" data-g="${esc(g)}">${esc(g)}</button>`).join("")}</div>
   <div id="agStatusWrap">
-  <p style="margin:10px 0 6px"><b>現役・卒業</b>（メンバー名のみ）</p>
-  <div class="ychips" id="agStatus"><button type="button" class="ychip" data-s="all">両方</button><button type="button" class="ychip" data-s="active">現役のみ</button><button type="button" class="ychip" data-s="grad">卒業生のみ</button></div>
+  <p style="margin:10px 0 6px"><b>卒業生</b>（メンバー名のみ）</p>
+  <div class="ychips" id="agStatus"><button type="button" class="ychip" data-s="all">卒業生あり</button><button type="button" class="ychip" data-s="active">卒業生なし</button></div>
   </div>
   <p style="color:var(--muted);font-size:13px" id="agPoolNote"></p>
   <p style="color:var(--muted)" id="agBestLine"></p>
@@ -745,6 +754,11 @@ async function init() {
   const gradByName = new Map((Array.isArray(memberMaster) ? memberMaster : []).map(m => [m.name, !!m.graduated]));
   AG_GRAD = gradByName;
   AG.members.forEach(e => { e.graduated = gradByName.get(e.name) || false; });
+  // 生まれ年も member-meta.json（{"b":[年,月,日]}）から付ける。手がかり「生まれ年」用
+  const memberMeta = await loadJSON("member-meta.json");
+  const birthByName = new Map(Object.entries(memberMeta && typeof memberMeta === "object" ? memberMeta : {})
+    .map(([n, v]) => [n, v && Array.isArray(v.b) ? v.b[0] : null]));
+  AG.members.forEach(e => { e.birthYear = birthByName.get(e.name) || null; });
   AG_GROUPS = AG_GROUP_ORDER.filter(g => AG.members.some(e => e.group === g) || AG.songs.some(e => e.group === g));
   agLoadSettings();
   AG.members.forEach(e => { if (!AG_DICT.has(e.kata)) AG_DICT.set(e.kata, []); AG_DICT.get(e.kata).push({ kind: "member", label: e.name }); });
