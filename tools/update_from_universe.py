@@ -9,7 +9,8 @@
   既存公演は一切変更しない（坂道日和由来の検証済みセンター/出演者を保持するため）。
 - 楽曲: CSVに新規追加された曲を取り込む。センターはフォーメーションCSVの
   センターフラグから補完（既存値は上書きしない。手動上書き指定は最後に再適用）。
-- フォーメーション: 公式発表分（既存データで official=true）は保持し、それ以外は
+- フォーメーション: 公式発表分（既存データで official=true）と確認済み分
+  （verified=true。複数の資料と照合済みのもの）は保持し、それ以外は
   CSVの最新データで再構築する。行0のみの曲は歌唱メンバー一覧として取り込む。
 - メンバー: 差分があれば報告のみ（名簿は旧サイト由来データが正）。
 
@@ -351,7 +352,7 @@ def update_songs_and_formations(summary):
     newf = {}
     kept_official = 0
     for key, v in old.items():
-        if v.get('official') or v.get('external') or key in KEEP_FORMATIONS:
+        if v.get('official') or v.get('external') or v.get('verified') or key in KEEP_FORMATIONS:
             newf[key] = v
             kept_official += 1
     changed = 0

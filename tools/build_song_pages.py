@@ -325,7 +325,7 @@ def main():
                 tiles_rows.append('<div class="fq-row">' + "".join(tiles) + "</div>")
             body.append('<h4 style="margin:16px 0 4px">フォーメーション</h4>'
                         '<p style="color:var(--muted);font-size:12px;margin:0 0 6px">上が後列、下が前列です。'
-                        f'色付きがセンター。{"（公式発表に基づく）" if f.get("official") else "（参考データに基づく）"}</p>'
+                        f'色付きがセンター。{"（公式発表に基づく）" if f.get("official") else "（複数の資料で確認済み）" if f.get("verified") else "（参考データに基づく）"}</p>'
                         f'<div class="fq-board{" wide" if max(len(r) for r in rows) >= 10 else ""}" style="--maxn:{max(len(r) for r in rows)}">'
                         + "".join(tiles_rows) + "</div>")
             alln = sorted_parts(participants(s))
