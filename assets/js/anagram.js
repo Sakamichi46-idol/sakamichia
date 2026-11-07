@@ -47,7 +47,13 @@ function agLoadSettings() {
   } catch (e) {}
 }
 function agSaveSettings() { try { localStorage.setItem("sakamichia-anagram-settings", JSON.stringify(agSettings)); } catch (e) {} }
-function agBestKey() { return agSettings.count === 1 ? "anagram" : "anagram" + agSettings.count; }
+function agBestKey() {
+  // 自己ベストは条件（縛り）ごとに記録する（2026-11-07ユーザー要望）：
+  // モード・個数・グループ・卒業生の有無の組み合わせ別。楽曲モードでは卒業生の有無は無関係なのでキーに含めない
+  const g = agSettings.groups.length ? AG_GROUP_ORDER.filter(x => agSettings.groups.includes(x)).join("+") : "all";
+  const st = selMode === "song" ? "-" : agSettings.status;
+  return `anagram:${selMode}:${agSettings.count}:${g}:${st}`;
+}
 // 設定で1素材が出題対象になるか（グループは両モード共通、現役・卒業はメンバー素材のみ）。
 // e は単体エントリ（graduated 付与済み）でも組み合わせの構成素材 {k, name/title, group} でもよい
 function agEntryOk(e, kind) {
@@ -657,7 +663,7 @@ function finish() {
   const best = quizBest(agBestKey());
   const main = document.getElementById("agMain");
   main.innerHTML = `<div class="card"><h3>結果：${total}点 ／ ${maxTotal}点</h3>
-  ${best ? `<p style="color:var(--muted)">${isNew ? "自己ベスト更新！" : `自己ベスト：${best}点`}</p>` : ""}
+  ${best ? `<p style="color:var(--muted)">${isNew ? "この条件の自己ベスト更新！" : `この条件の自己ベスト：${best}点`}</p>` : ""}
   <div class="ag-lines">${results.map((r, i) => `<p style="margin:4px 0">${i + 1}問目 ${esc(r.mine)}：${r.ok ? r.pts + "点" : `不正解（正解は${esc(r.label)}）`}</p>`).join("")}</div>
   <p><button type="button" class="btn" id="agRetry">もう一度遊ぶ</button> <button type="button" class="btn" id="agSettings">条件を変える</button> <button type="button" class="btn sub" id="agShare">結果を共有する</button></p></div>`;
   document.getElementById("agRetry").addEventListener("click", startGame);
@@ -723,7 +729,7 @@ function startPanel() {
         : `対象は${pool}件です。全${n}問が出題されます。`;
     document.getElementById("agStart").disabled = pool === 0;
     const b = quizBest(agBestKey());
-    document.getElementById("agBestLine").textContent = b > 0 ? `自己ベスト：${b}点` : "";
+    document.getElementById("agBestLine").textContent = b > 0 ? `この条件の自己ベスト：${b}点` : "";
   };
   document.querySelectorAll("#agModes .ychip").forEach(ch => ch.addEventListener("click", () => { selMode = ch.dataset.m; paint(); }));
   document.querySelectorAll("#agCounts .ychip").forEach(ch => ch.addEventListener("click", () => {
