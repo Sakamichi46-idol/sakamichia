@@ -30,7 +30,7 @@ let AG_DICT = new Map(); // 読み（カタカナ）-> [{kind, label}]（別解�
 let AG_KATAS = []; // 全素材の読み一覧（組み合わせ判定の分割用）
 let AG_GRAD = new Map(); // メンバー名 -> 卒業生かどうか（members.json 由来）
 let selMode = "member";
-let gameTotal = AG_TOTAL; // そのゲームの出題数（プールが10件未満なら min(10, プール数)）
+let gameTotal = AG_TOTAL; // そのゲームの出題数（プールが1件以上なら常に10問。不足分は同じ対象を繰り返し出題する）
 // 絞り込み設定：グループは複数選択（空 = すべて、OR条件）。status はメンバー素材にのみ効く
 // （"all" = 両方 / "active" = 現役のみ / "grad" = 卒業生のみ、既定は "all"）。
 // count は1問に混ぜる素材の個数（1 = 通常 / 2 / 3、既定は 1）
@@ -270,6 +270,16 @@ function pickQuestions(mode) {
     const byKata = new Map();
     for (const it of agShuffle(agFilteredSources(mode))) if (!byKata.has(it.e.kata)) byKata.set(it.e.kata, it);
     const picks = quizPick("anagram", [...byKata.values()], Math.min(AG_TOTAL, byKata.size), it => "1:" + it.e.kata);
+    // プールが10件未満でも10問出す（2026-11-07ユーザー要望：グループ縛りでも10問）。
+    // 不足分はプールをシャッフルし直しながら繰り返し引く（同じ素材が連続しないようにする）
+    const uniq = [...byKata.values()];
+    while (picks.length < AG_TOTAL && uniq.length) {
+      for (const it of agShuffle([...uniq])) {
+        if (picks.length >= AG_TOTAL) break;
+        if (uniq.length > 1 && picks[picks.length - 1] === it) continue;
+        picks.push(it);
+      }
+    }
     return picks.map(it => {
       const q = buildAnagramQuestion(it.e);
       return { items: [agSingleItem(it.e, it.kind)], kind: it.kind, kata: it.e.kata, text: q.text, parts: q.parts };
@@ -295,6 +305,15 @@ function pickQuestions(mode) {
   for (const c of rest) {
     if (picked.length >= Math.min(AG_TOTAL, combos.length)) break;
     if (!picked.includes(c)) picked.push(c);
+  }
+  // それでも10問に届かない（プール自体が10件未満）場合は、組み合わせを繰り返し使って10問出す。
+  // 繰り返しのたびにシャッフルは選び直されるので、並びは毎回変わりうる
+  while (picked.length < AG_TOTAL && combos.length) {
+    for (const c of agShuffle([...combos])) {
+      if (picked.length >= AG_TOTAL) break;
+      if (combos.length > 1 && picked[picked.length - 1] === c) continue;
+      picked.push(c);
+    }
   }
   quizSeenTouch("anagram", picked.map(cKey));
   return picked.map(c => {
@@ -643,7 +662,7 @@ function finish() {
 function startGame() {
   questions = pickQuestions(selMode);
   if (!questions.length) { document.getElementById("agMain").innerHTML = `<p style="color:var(--muted)">選んだ条件では出題できる対象がありません。条件を変えてください。</p>`; return; }
-  gameTotal = questions.length; // min(10, プール数)
+  gameTotal = questions.length; // プールが1件以上なら10問（不足分は繰り返し出題）
   qIdx = 0; score = 0; results = [];
   startQuestion();
 }
@@ -679,11 +698,13 @@ function startPanel() {
     // 現役・卒業の選択はメンバー素材にのみ効くので、楽曲モードでは隠す
     document.getElementById("agStatusWrap").style.display = selMode === "song" ? "none" : "";
     const pool = agPoolCount(selMode);
-    const n = Math.min(AG_TOTAL, pool);
+    const n = pool === 0 ? 0 : AG_TOTAL;
     document.getElementById("agHowN").textContent = String(n);
     document.getElementById("agPoolNote").textContent = pool === 0
       ? "選んだ条件では出題できる対象が0件です。条件を変えてください。"
-      : `対象は${pool}件です。全${n}問が出題されます。`;
+      : pool < AG_TOTAL
+        ? `対象は${pool}件です。10問に届かない分は、同じ対象が繰り返し出題されます。全${n}問が出題されます。`
+        : `対象は${pool}件です。全${n}問が出題されます。`;
     document.getElementById("agStart").disabled = pool === 0;
     const b = quizBest(agBestKey());
     document.getElementById("agBestLine").textContent = b > 0 ? `自己ベスト：${b}点` : "";
