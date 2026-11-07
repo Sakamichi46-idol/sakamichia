@@ -243,7 +243,9 @@ def build_formations():
                     out[norm(title)] = {'rows': ordered, 'centers': centers}
     return out
 
-KEEP_FORMATIONS = {'坂道選抜|Audition', '坂道AKB|誰のことを一番 愛してる？', '坂道AKB|国境のない時代', '坂道AKB|初恋ドア'}
+# 乃木坂46|初恋の人を今でも: 市來玲奈は学業のため7thシングル不参加だがUniverse CSVに混入しているため、
+# 2026-11-07に手修正した13人の並びを保持する（entamedata・u-ff・Wikipediaで確認）。
+KEEP_FORMATIONS = {'坂道選抜|Audition', '坂道AKB|誰のことを一番 愛してる？', '坂道AKB|国境のない時代', '坂道AKB|初恋ドア', '乃木坂46|初恋の人を今でも'}
 
 def update_songs_and_formations(summary):
     sp = os.path.join(BASE, 'data/songs.json')
