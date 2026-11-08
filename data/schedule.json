@@ -14,6 +14,17 @@
    },
    {
     "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "13:00〜",
+    "title": "舞台『water』@京都劇場",
+    "members": [
+     "伊藤万理華"
+    ],
+    "url": "https://itomarika.com/s/m03/media/detail/4453?ima=2545&year=2026&mont=11&day=07",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
     "kind": "WEB",
     "time": "21:00〜",
     "title": "YouTube「乃木坂配信中5周年記念！SP生配信～ファンが選ぶ！乃木坂配信中 名作ランキングベスト20&チーム対抗！TVゲームバトル～」",
@@ -28,7 +39,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4637?ima=1347&year=2026&mont=11&day=07",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4637?ima=2541&year=2026&mont=11&day=07",
     "solo": true
    },
    {
@@ -59,6 +70,28 @@
    },
    {
     "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2607&year=2026&mont=11&day=07",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "21:00〜21:30",
+    "title": "再放送 BSよしもと「向井長田のくるま温泉ちゃんねる」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12324?ima=2607&year=2026&mont=11&day=07",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "イベント",
     "time": "",
     "title": "「サントリー オールフリー presents 氣志團万博2026 ～房総爆音リゾート～」",
@@ -67,6 +100,39 @@
    }
   ],
   "2026-11-08": [
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "9:54〜11:35",
+    "title": "TBSテレビ「サンデー・ジャポン」",
+    "members": [
+     "梅澤美波"
+    ],
+    "url": "https://minamiumezawa.jp/s/m20/media/detail/4700?ima=2603&year=2026&mont=11&day=08",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "11:00〜11:30",
+    "title": "テレビ東京「ぺこもぐキッチン」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4698?ima=2554&year=2026&mont=11&day=08",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "13:00〜",
+    "title": "舞台『water』@京都劇場",
+    "members": [
+     "伊藤万理華"
+    ],
+    "url": "https://itomarika.com/s/m03/media/detail/4455?ima=2545&year=2026&mont=11&day=08",
+    "solo": true
+   },
    {
     "g": "乃木坂46",
     "kind": "ラジオ",
@@ -106,7 +172,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4424?ima=1347&year=2026&mont=11&day=08",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4424?ima=2541&year=2026&mont=11&day=08",
     "solo": true
    },
    {
@@ -117,7 +183,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4427?ima=1347&year=2026&mont=11&day=08",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4427?ima=2541&year=2026&mont=11&day=08",
     "solo": true
    },
    {
@@ -187,6 +253,17 @@
    {
     "g": "日向坂46",
     "kind": "テレビ",
+    "time": "7:00〜7:30",
+    "title": "再放送 BSよしもと「向井長田のくるま温泉ちゃんねる」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12325?ima=2607&year=2026&mont=11&day=08",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
     "time": "07:30～",
     "title": "テレビ東京「ポケモンとどこいく！？」",
     "members": [
@@ -227,9 +304,31 @@
     "title": "Lemino「まだまだ！日向坂で会いましょう」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/11806"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2607&year=2026&mont=11&day=08",
+    "solo": true
    }
   ],
   "2026-11-09": [
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "13:00〜",
+    "title": "舞台『water』@京都劇場",
+    "members": [
+     "伊藤万理華"
+    ],
+    "url": "https://itomarika.com/s/m03/media/detail/4456?ima=2545&year=2026&mont=11&day=09",
+    "solo": true
+   },
    {
     "g": "乃木坂46",
     "kind": "ラジオ",
@@ -239,6 +338,17 @@
      "矢田萌華"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107687"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4601?ima=2601&year=2026&mont=11&day=09",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -282,7 +392,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12135?ima=1337&year=2026&mont=11&day=09",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12135?ima=2532&year=2026&mont=11&day=09",
     "solo": true
    },
    {
@@ -294,9 +404,31 @@
      "清水理央"
     ],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=09",
+    "solo": true
    }
   ],
   "2026-11-10": [
+   {
+    "g": "乃木坂46",
+    "kind": "舞台/ミュージカル",
+    "time": "13:00〜",
+    "title": "舞台『water』@京都劇場",
+    "members": [
+     "伊藤万理華"
+    ],
+    "url": "https://itomarika.com/s/m03/media/detail/4458?ima=2545&year=2026&mont=11&day=10",
+    "solo": true
+   },
    {
     "g": "乃木坂46",
     "kind": "ラジオ",
@@ -345,13 +477,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=10",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1337&year=2026&mont=11&day=10",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2532&year=2026&mont=11&day=10",
     "solo": true
    }
   ],
@@ -394,6 +537,17 @@
    },
    {
     "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2554&year=2026&mont=11&day=11",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
     "kind": "ラジオ",
     "time": "25:00〜27:00",
     "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
@@ -419,6 +573,17 @@
      "勝又春"
     ],
     "url": "https://sakurazaka46.com/s/s46/media/list"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=11",
+    "solo": true
    }
   ],
   "2026-11-12": [
@@ -460,7 +625,18 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1344&year=2026&mont=11&day=12",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=2539&year=2026&mont=11&day=12",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "雑誌",
+    "time": "",
+    "title": "雑誌ねこ",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4588?ima=2554&year=2026&mont=11&day=12",
     "solo": true
    },
    {
@@ -496,6 +672,17 @@
      "正源司陽子"
     ],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=12",
+    "solo": true
    }
   ],
   "2026-11-13": [
@@ -508,6 +695,17 @@
      "小川彩"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107690"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "19:25〜21:00",
+    "title": "テレビ東京「所さんの学校では教えてくれないそこんトコロ！」",
+    "members": [
+     "梅澤美波"
+    ],
+    "url": "https://minamiumezawa.jp/s/m20/media/detail/4701?ima=2603&year=2026&mont=11&day=13",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -558,7 +756,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4687?ima=1347&year=2026&mont=11&day=13",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4687?ima=2541&year=2026&mont=11&day=13",
     "solo": true
    },
    {
@@ -590,7 +788,7 @@
     "members": [
      "山下美月"
     ],
-    "url": "https://mizukiyamashita.com/s/m16/media/detail/4643?ima=1349&year=2026&mont=11&day=13",
+    "url": "https://mizukiyamashita.com/s/m16/media/detail/4643?ima=2543&year=2026&mont=11&day=13",
     "solo": true
    },
    {
@@ -652,6 +850,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=13",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「FRIDAY」",
@@ -699,7 +908,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4638?ima=1347&year=2026&mont=11&day=14",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4638?ima=2541&year=2026&mont=11&day=14",
     "solo": true
    },
    {
@@ -741,7 +950,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12347?ima=1337&year=2026&mont=11&day=14",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12347?ima=2532&year=2026&mont=11&day=14",
     "solo": true
    },
    {
@@ -753,6 +962,17 @@
      "平尾帆夏"
     ],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10118"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2607&year=2026&mont=11&day=14",
+    "solo": true
    }
   ],
   "2026-11-15": [
@@ -888,6 +1108,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2607&year=2026&mont=11&day=15",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「コマーシャル・フォト」連載",
@@ -907,6 +1138,17 @@
      "長嶋凛桜"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107688"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4602?ima=2601&year=2026&mont=11&day=16",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -955,7 +1197,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12136?ima=1337&year=2026&mont=11&day=16",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12136?ima=2532&year=2026&mont=11&day=16",
     "solo": true
    },
    {
@@ -967,6 +1209,17 @@
      "清水理央"
     ],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=16",
+    "solo": true
    }
   ],
   "2026-11-17": [
@@ -1018,13 +1271,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=17",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1337&year=2026&mont=11&day=17",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2532&year=2026&mont=11&day=17",
     "solo": true
    }
   ],
@@ -1059,6 +1323,17 @@
    },
    {
     "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2554&year=2026&mont=11&day=18",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
     "kind": "ラジオ",
     "time": "25:00〜27:00",
     "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
@@ -1074,6 +1349,17 @@
     "title": "「6期生全国ツアー2026 大阪公演」",
     "members": [],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107628"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=18",
+    "solo": true
    }
   ],
   "2026-11-19": [
@@ -1105,7 +1391,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1344&year=2026&mont=11&day=19",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=2539&year=2026&mont=11&day=19",
     "solo": true
    },
    {
@@ -1149,6 +1435,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=19",
+    "solo": true
    }
   ],
   "2026-11-20": [
@@ -1222,7 +1519,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4460?ima=1347&year=2026&mont=11&day=20",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4460?ima=2541&year=2026&mont=11&day=20",
     "solo": true
    },
    {
@@ -1233,7 +1530,7 @@
     "members": [
      "山下美月"
     ],
-    "url": "https://mizukiyamashita.com/s/m16/media/detail/4672?ima=1349&year=2026&mont=11&day=20",
+    "url": "https://mizukiyamashita.com/s/m16/media/detail/4672?ima=2543&year=2026&mont=11&day=20",
     "solo": true
    },
    {
@@ -1318,6 +1615,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=20",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「FRIDAY」",
@@ -1377,6 +1685,17 @@
     "title": "「ひなくり2026」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12341"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2607&year=2026&mont=11&day=21",
+    "solo": true
    }
   ],
   "2026-11-22": [
@@ -1497,6 +1816,17 @@
     "title": "Lemino「まだまだ！日向坂で会いましょう」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/11806"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2607&year=2026&mont=11&day=22",
+    "solo": true
    }
   ],
   "2026-11-23": [
@@ -1509,6 +1839,17 @@
      "長嶋凛桜"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107517"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4603?ima=2601&year=2026&mont=11&day=23",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -1560,7 +1901,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12137?ima=1337&year=2026&mont=11&day=23",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12137?ima=2532&year=2026&mont=11&day=23",
     "solo": true
    },
    {
@@ -1570,6 +1911,17 @@
     "title": "bayfm「清水理央のCheer up！」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=23",
+    "solo": true
    },
    {
     "g": "日向坂46",
@@ -1642,13 +1994,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=24",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1337&year=2026&mont=11&day=24",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2532&year=2026&mont=11&day=24",
     "solo": true
    }
   ],
@@ -1670,6 +2033,17 @@
      "小川彩"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2554&year=2026&mont=11&day=25",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -1698,6 +2072,17 @@
      "山田桃実"
     ],
     "url": "https://sakurazaka46.com/s/s46/media/list"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=25",
+    "solo": true
    }
   ],
   "2026-11-26": [
@@ -1729,7 +2114,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1344&year=2026&mont=11&day=26",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=2539&year=2026&mont=11&day=26",
     "solo": true
    },
    {
@@ -1763,6 +2148,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=26",
+    "solo": true
    }
   ],
   "2026-11-27": [
@@ -1870,6 +2266,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=27",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「FRIDAY」",
@@ -1917,6 +2324,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2607&year=2026&mont=11&day=28",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ライブ",
     "time": "",
     "title": "「GIFT ～Girls Idol Festival Tokyo～」",
@@ -1931,7 +2349,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12313?ima=1337&year=2026&mont=11&day=28",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12313?ima=2532&year=2026&mont=11&day=28",
     "solo": true
    }
   ],
@@ -2056,6 +2474,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2607&year=2026&mont=11&day=29",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ミート＆グリート",
     "time": "",
     "title": "18thシングル『イチャイチャ虫』発売記念 forTUNE meets オンラインミート＆グリート（個別トーク会）※森本茉莉のみ",
@@ -2070,7 +2499,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12321?ima=1337&year=2026&mont=11&day=29",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12321?ima=2532&year=2026&mont=11&day=29",
     "solo": true
    }
   ],
@@ -2084,6 +2513,17 @@
      "矢田萌華"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107516"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4604?ima=2601&year=2026&mont=11&day=30",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -2117,7 +2557,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4425?ima=1347&year=2026&mont=11&day=30",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4425?ima=2541&year=2026&mont=11&day=30",
     "solo": true
    },
    {
@@ -2128,7 +2568,7 @@
     "members": [
      "齋藤飛鳥"
     ],
-    "url": "https://asukasaito.jp/s/m15/media/detail/4426?ima=1347&year=2026&mont=11&day=30",
+    "url": "https://asukasaito.jp/s/m15/media/detail/4426?ima=2541&year=2026&mont=11&day=30",
     "solo": true
    },
    {
@@ -2139,7 +2579,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12138?ima=1337&year=2026&mont=11&day=30",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12138?ima=2532&year=2026&mont=11&day=30",
     "solo": true
    },
    {
@@ -2149,6 +2589,17 @@
     "title": "bayfm「清水理央のCheer up！」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2607&year=2026&mont=11&day=30",
+    "solo": true
    }
   ],
   "2026-12-01": [
@@ -2228,13 +2679,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=01",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1338&year=2026&mont=12&day=01",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2533&year=2026&mont=12&day=01",
     "solo": true
    }
   ],
@@ -2267,6 +2729,17 @@
    },
    {
     "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2555&year=2026&mont=12&day=02",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
     "kind": "ラジオ",
     "time": "25:00〜27:00",
     "title": "ニッポン放送「乃木坂46のオールナイトニッポン」",
@@ -2282,6 +2755,17 @@
     "title": "「6期生全国ツアー2026 福岡公演」",
     "members": [],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107630"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=02",
+    "solo": true
    }
   ],
   "2026-12-03": [
@@ -2313,7 +2797,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1345&year=2026&mont=12&day=03",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=2540&year=2026&mont=12&day=03",
     "solo": true
    },
    {
@@ -2357,6 +2841,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=03",
+    "solo": true
    }
   ],
   "2026-12-04": [
@@ -2433,6 +2928,17 @@
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107703"
    },
    {
+    "g": "乃木坂46",
+    "kind": "その他",
+    "time": "",
+    "title": "Prime Original ドラマ「神のクイズ」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4618?ima=2602&year=2026&mont=12&day=04",
+    "solo": true
+   },
+   {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
     "time": "",
@@ -2471,6 +2977,17 @@
     "title": "J-WAVE「SONY SONPO QUEST FOR THE FUTURE」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10111"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=04",
+    "solo": true
    },
    {
     "g": "日向坂46",
@@ -2535,6 +3052,17 @@
     "title": "エフエム山陰「日向坂46 平尾帆夏のひら砲らじお」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10118"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2608&year=2026&mont=12&day=05",
+    "solo": true
    }
   ],
   "2026-12-06": [
@@ -2650,11 +3178,33 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2608&year=2026&mont=12&day=06",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ミート＆グリート",
     "time": "",
     "title": "18thシングル『イチャイチャ虫』発売記念 forTUNE meets オンラインミート＆グリート（個別トーク会）",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12254"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "その他",
+    "time": "12月6日（日）〜12月22日（火）",
+    "title": "舞台「赤ひげ」 東京公演",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/11788?ima=2608&year=2026&mont=12&day=06",
+    "solo": true
    }
   ],
   "2026-12-07": [
@@ -2667,6 +3217,17 @@
      "長嶋凛桜"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107517"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4605?ima=2602&year=2026&mont=12&day=07",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -2696,7 +3257,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12139?ima=1338&year=2026&mont=12&day=07",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12139?ima=2533&year=2026&mont=12&day=07",
     "solo": true
    },
    {
@@ -2706,6 +3267,17 @@
     "title": "bayfm「清水理央のCheer up！」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=07",
+    "solo": true
    },
    {
     "g": "日向坂46",
@@ -2767,13 +3339,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=08",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1338&year=2026&mont=12&day=08",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2533&year=2026&mont=12&day=08",
     "solo": true
    }
   ],
@@ -2795,6 +3378,17 @@
      "小川彩"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2555&year=2026&mont=12&day=09",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -2834,6 +3428,17 @@
     "title": "「ひなくり2026」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12342"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=09",
+    "solo": true
    }
   ],
   "2026-12-10": [
@@ -2865,7 +3470,7 @@
     "members": [
      "生田絵梨花"
     ],
-    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=1345&year=2026&mont=12&day=10",
+    "url": "https://erikaikuta.jp/s/m12/media/detail/4536?ima=2540&year=2026&mont=12&day=10",
     "solo": true
    },
    {
@@ -2927,6 +3532,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=10",
+    "solo": true
    }
   ],
   "2026-12-11": [
@@ -3042,6 +3658,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=11",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「FRIDAY」",
@@ -3085,6 +3712,17 @@
     "title": "エフエム山陰「日向坂46 平尾帆夏のひら砲らじお」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10118"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2608&year=2026&mont=12&day=12",
+    "solo": true
    }
   ],
   "2026-12-13": [
@@ -3207,6 +3845,17 @@
     "title": "Lemino「まだまだ！日向坂で会いましょう」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/11806"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2608&year=2026&mont=12&day=13",
+    "solo": true
    }
   ],
   "2026-12-14": [
@@ -3219,6 +3868,17 @@
      "矢田萌華"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107516"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4606?ima=2602&year=2026&mont=12&day=14",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -3248,7 +3908,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12140?ima=1338&year=2026&mont=12&day=14",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12140?ima=2533&year=2026&mont=12&day=14",
     "solo": true
    },
    {
@@ -3258,6 +3918,17 @@
     "title": "bayfm「清水理央のCheer up！」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=14",
+    "solo": true
    }
   ],
   "2026-12-15": [
@@ -3335,13 +4006,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=15",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1338&year=2026&mont=12&day=15",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2533&year=2026&mont=12&day=15",
     "solo": true
    },
    {
@@ -3371,6 +4053,17 @@
      "小川彩"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2555&year=2026&mont=12&day=16",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -3405,6 +4098,17 @@
      "山田桃実"
     ],
     "url": "https://sakurazaka46.com/s/s46/media/list"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=16",
+    "solo": true
    }
   ],
   "2026-12-17": [
@@ -3497,6 +4201,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=17",
+    "solo": true
    }
   ],
   "2026-12-18": [
@@ -3622,6 +4337,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=18",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「FRIDAY」",
@@ -3675,6 +4401,17 @@
     "title": "エフエム山陰「日向坂46 平尾帆夏のひら砲らじお」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10118"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2608&year=2026&mont=12&day=19",
+    "solo": true
    },
    {
     "g": "日向坂46",
@@ -3818,6 +4555,17 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2608&year=2026&mont=12&day=20",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "雑誌",
     "time": "",
     "title": "「non-no」",
@@ -3839,6 +4587,17 @@
    {
     "g": "乃木坂46",
     "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4607?ima=2602&year=2026&mont=12&day=21",
+    "solo": true
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
     "time": "25:29〜25:59",
     "title": "日本テレビ「乃木坂スター誕生！SIX」",
     "members": [
@@ -3854,7 +4613,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12141?ima=1338&year=2026&mont=12&day=21",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12141?ima=2533&year=2026&mont=12&day=21",
     "solo": true
    },
    {
@@ -3864,6 +4623,17 @@
     "title": "bayfm「清水理央のCheer up！」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=21",
+    "solo": true
    }
   ],
   "2026-12-22": [
@@ -3935,13 +4705,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=22",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1338&year=2026&mont=12&day=22",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2533&year=2026&mont=12&day=22",
     "solo": true
    }
   ],
@@ -3963,6 +4744,17 @@
      "小川彩"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/106548"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "深夜24:30〜",
+    "title": "テレ東「溺愛カレシの作り方」",
+    "members": [
+     "与田祐希"
+    ],
+    "url": "https://yuukiyoda.com/s/m18/media/detail/4511?ima=2555&year=2026&mont=12&day=23",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -4001,6 +4793,17 @@
     "title": "「ひなくり2026」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12342"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=23",
+    "solo": true
    },
    {
     "g": "日向坂46",
@@ -4064,7 +4867,7 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12298?ima=1338&year=2026&mont=12&day=24",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12298?ima=2533&year=2026&mont=12&day=24",
     "solo": true
    },
    {
@@ -4082,6 +4885,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=24",
+    "solo": true
    }
   ],
   "2026-12-25": [
@@ -4148,6 +4962,17 @@
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107494"
    },
    {
+    "g": "乃木坂46",
+    "kind": "映画",
+    "time": "",
+    "title": "映画『 巨頭オ 』",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4609?ima=2602&year=2026&mont=12&day=25",
+    "solo": true
+   },
+   {
     "g": "櫻坂46",
     "kind": "ファンクラブ",
     "time": "",
@@ -4195,7 +5020,18 @@
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12299?ima=1338&year=2026&mont=12&day=25",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/12299?ima=2533&year=2026&mont=12&day=25",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=25",
     "solo": true
    },
    {
@@ -4259,6 +5095,17 @@
     "title": "エフエム山陰「日向坂46 平尾帆夏のひら砲らじお」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10118"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "ラジオ",
+    "time": "19:00〜19:30",
+    "title": "TBSラジオ「丹生明里 HAPPY CARAVAN」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12056?ima=2608&year=2026&mont=12&day=26",
+    "solo": true
    },
    {
     "g": "日向坂46",
@@ -4407,6 +5254,17 @@
     "title": "Lemino「まだまだ！日向坂で会いましょう」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/11806"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "25:50〜",
+    "title": "テレビ東京「あにレコTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12175?ima=2608&year=2026&mont=12&day=27",
+    "solo": true
    }
   ],
   "2026-12-28": [
@@ -4419,6 +5277,17 @@
      "矢田萌華"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107516"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "22:00〜",
+    "title": "カンテレ・フジテレビ系「南田南弁護士は天才肌」",
+    "members": [
+     "久保史緒里"
+    ],
+    "url": "https://shiorikubo.com/s/m19/media/detail/4608?ima=2602&year=2026&mont=12&day=28",
+    "solo": true
    },
    {
     "g": "乃木坂46",
@@ -4437,6 +5306,17 @@
     "title": "bayfm「清水理央のCheer up！」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/10858"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=28",
+    "solo": true
    }
   ],
   "2026-12-29": [
@@ -4480,13 +5360,24 @@
    },
    {
     "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=29",
+    "solo": true
+   },
+   {
+    "g": "日向坂46",
     "kind": "ラジオ",
     "time": "27:00〜28:30",
     "title": "ニッポン放送「松田好花のオールナイトニッポン0」",
     "members": [
      "松田好花"
     ],
-    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=1338&year=2026&mont=12&day=29",
+    "url": "https://konokamatsuda-official.com/s/sf2/media/detail/11402?ima=2533&year=2026&mont=12&day=29",
     "solo": true
    }
   ],
@@ -4518,6 +5409,17 @@
      "井上和"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107638"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=30",
+    "solo": true
    }
   ],
   "2026-12-31": [
@@ -4562,6 +5464,17 @@
     "title": "ニッポン放送「日向坂46・正源司陽子のオールナイトニッポンX(クロス)」",
     "members": [],
     "url": "https://www.hinatazaka46.com/s/official/media/detail/12122"
+   },
+   {
+    "g": "日向坂46",
+    "kind": "テレビ",
+    "time": "26:35〜",
+    "title": "テレビ東京「推しエンタTV！」",
+    "members": [
+     "丹生明里"
+    ],
+    "url": "https://akarinibu.com/s/an/media/detail/12245?ima=2608&year=2026&mont=12&day=31",
+    "solo": true
    },
    {
     "g": "日向坂46",

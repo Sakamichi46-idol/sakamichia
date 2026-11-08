@@ -224,6 +224,19 @@ SOLO_SITES = [
     ("生田絵梨花", "乃木坂46", "https://erikaikuta.jp", "/s/m12", "daygroup"),
     ("齋藤飛鳥", "乃木坂46", "https://asukasaito.jp", "/s/m15", "daygroup"),
     ("山下美月", "乃木坂46", "https://mizukiyamashita.com", "/s/m16", "listdata"),
+    # 2026-11-08 合同会社ポータル（n46llc-seedandflowerllc.com）から追加
+    ("伊藤万理華", "乃木坂46", "https://itomarika.com", "/s/m03", "daygroup"),
+    ("中元日芽香", "乃木坂46", "https://nakamotohimeka.com", "/s/m02", "daygroup"),
+    ("桜井玲香", "乃木坂46", "https://reikasakurai.com", "/s/m08", "daygroup"),
+    ("中田花奈", "乃木坂46", "https://kananakada.jp", "/s/ectp51", "daygroup"),
+    ("与田祐希", "乃木坂46", "https://yuukiyoda.com", "/s/m03", "daygroup"),
+    ("高山一実", "乃木坂46", "https://kazumitakayama.com", "/s/m11", "postlist"),
+    ("樋口日奈", "乃木坂46", "https://higuchihina.jp", "/s/m14", "archivelist"),
+    ("久保史緒里", "乃木坂46", "https://shiorikubo.com", "/s/m19", "postlist"),
+    ("梅澤美波", "乃木坂46", "https://minamiumezawa.jp", "/s/m20", "daygroup"),
+    ("佐々木久美", "日向坂46", "https://kumisasaki.com", "/s/sf1", "list"),
+    ("丹生明里", "日向坂46", "https://akarinibu.com", "/s/an", "daygroup"),
+    ("河田陽菜", "日向坂46", "https://hinakawata-official.com", "/s/sf3", "list"),
 ]
 
 
@@ -312,6 +325,54 @@ def _parse_listdata(site, ym: str, h: str) -> list[dict]:
     return items
 
 
+def _parse_postlist(site, ym: str, h: str) -> list[dict]:
+    """postlist バリアント（m11/m19）。日付ごとの <ul class="postlist"> に
+    .time（時刻）/.cate（種別）/p.text（タイトル）が入る。"""
+    items = []
+    seen = set()
+    for block in re.findall(r'<ul class="postlist[^"]*">(.*?)</ul>', h, re.S):
+        href_m = re.search(r'href="([^"]*/media/detail/[^"]*)"', block)
+        tit = re.search(r'<p class="text">(.*?)</p>', block, re.S)
+        if not (href_m and tit):
+            continue
+        href = unescape(href_m.group(1))
+        if href in seen:
+            continue
+        seen.add(href)
+        dstr = _solo_date(href, ym)
+        if not dstr:
+            continue
+        tim = re.search(r'class="time">([^<]*)<', block)
+        cat = re.search(r'class="cate">([^<]*)<', block)
+        items.append(_solo_item(site, dstr,
+                                solo_kind(cat.group(1)) if cat else "",
+                                solo_time(tim.group(1)) if tim else "",
+                                clean(tit.group(1)), href))
+    return items
+
+
+def _parse_archivelist(site, ym: str, h: str) -> list[dict]:
+    """scheduleArchiveListItem バリアント（m14）。この型では .date が時刻、
+    .cate が種別、.title がタイトルを保持する。"""
+    items = []
+    for block in re.findall(r'<li class="scheduleArchiveListItem">(.*?)</li>', h, re.S):
+        href_m = re.search(r'href="([^"]*/media/detail/[^"]*)"', block)
+        tit = re.search(r'class="title">(.*?)</h3>', block, re.S)
+        if not (href_m and tit):
+            continue
+        href = unescape(href_m.group(1))
+        dstr = _solo_date(href, ym)
+        if not dstr:
+            continue
+        tim = re.search(r'class="date">([^<]*)<', block)
+        cat = re.search(r'class="cate">([^<]*)<', block)
+        items.append(_solo_item(site, dstr,
+                                solo_kind(cat.group(1)) if cat else "",
+                                solo_time(tim.group(1)) if tim else "",
+                                clean(tit.group(1)), href))
+    return items
+
+
 def _parse_list(site, ym: str, h: str) -> list[dict]:
     """schedule_list バリアント（sf2）。 .category cate-* / .time / .title。"""
     items = []
@@ -335,7 +396,8 @@ def _parse_list(site, ym: str, h: str) -> list[dict]:
 
 
 _SOLO_PARSERS = {"daygroup": _parse_daygroup, "listdata": _parse_listdata,
-                 "list": _parse_list}
+                 "list": _parse_list, "postlist": _parse_postlist,
+                 "archivelist": _parse_archivelist}
 
 
 def _solo_marker_ok(variant: str, ym: str, h: str) -> bool:
@@ -348,6 +410,11 @@ def _solo_marker_ok(variant: str, ym: str, h: str) -> bool:
     if variant == "listdata":
         return ("is-schedule" in h
                 and re.search(r'<span class="active">\s*' + monthstr + r"\s*</span>", h) is not None)
+    if variant == "postlist":
+        return re.search(r'schedule_this_time[^>]*>\s*' + monthstr, h) is not None
+    if variant == "archivelist":
+        return ("monthChangeBtnList" in h
+                and re.search(r"<span>\s*" + monthstr + r"\s*</span>", h) is not None)
     return re.search(r'class="is-current">\s*' + monthstr + r"\s*<", h) is not None
 
 
