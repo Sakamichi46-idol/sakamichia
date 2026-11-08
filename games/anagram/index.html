@@ -2,19 +2,19 @@
 <title>アナグラム | サカミチア</title><meta name="description" content="バラバラになったカタカナのタイルを並べ替えて、メンバー名や楽曲タイトルを当てるアナグラムクイズ。最大10問。"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="アナグラム | サカミチア"><meta property="og:description" content="カタカナのタイルを並べ替えてメンバー名・曲名を当てるクイズ。最大10問。"><meta property="og:url" content="https://sakamichia.pages.dev/games/anagram/"><link rel="canonical" href="https://sakamichia.pages.dev/games/anagram/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=77"><style>
 .ag-head{display:flex;justify-content:space-between;gap:8px;max-width:430px;margin:0 auto;color:var(--muted);font-size:14px}
 .ag-clue{max-width:430px;margin:6px auto 0;text-align:center;color:var(--muted);font-size:13px}
-.ag-answer{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:430px;margin:14px auto 4px;min-height:46px}
+.ag-answer{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;max-width:430px;margin:14px auto 4px;min-height:46px}
 .ag-rows{max-width:430px;margin:14px auto 4px;display:flex;flex-direction:column;gap:10px}
-.ag-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;min-height:46px;padding:8px 6px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
+.ag-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;align-items:center;min-height:46px;padding:8px 6px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
 .ag-row.on{border-color:var(--n);background:var(--bg)}
 .ag-rownum{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--muted);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .ag-row.on .ag-rownum{background:var(--n)}
-.ag-pool{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:430px;margin:10px auto;min-height:46px}
+.ag-pool{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;max-width:430px;margin:10px auto;min-height:46px}
 .ag-tile{width:var(--agtw,clamp(34px,9.6vw,44px));height:var(--agtw,clamp(34px,9.6vw,44px));flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:calc(var(--agtw,40px)*.52);font-weight:700;padding:0;margin:0;cursor:pointer;line-height:1;box-shadow:none;-webkit-tap-highlight-color:transparent}
 .ag-tile:active{transform:scale(.94)}
 .ag-slot{border-style:dashed;color:var(--muted);cursor:default}
 .ag-tile.placed{background:var(--bg);border-color:var(--n)}
 .ag-tile.locked{background:var(--n);border-color:var(--n);color:#fff;cursor:default}
-.ag-rowlabel{max-width:430px;margin:10px auto 0;color:var(--muted);font-size:12px;text-align:center}
+.ag-rowlabel{max-width:430px;margin:10px auto 0;color:var(--muted);font-size:12px;text-align:left}
 .ag-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:430px;margin:12px auto 0}
 .ag-msg{max-width:430px;margin:10px auto;color:var(--muted);font-size:13px;text-align:center;min-height:1.4em}
 .ag-verdict{max-width:430px;margin:12px auto 0;text-align:center}
