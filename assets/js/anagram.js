@@ -348,11 +348,13 @@ function startQuestion() {
   const tiles = new Map();
   const pool = [];
   q.text.split("").forEach((ch, i) => { const id = "t" + i; tiles.set(id, ch); pool.push(id); });
-  // タイルの初期表示順はランダムにする。検証済み文字列（q.text）は辞書の単語を
+  // タイルの初期表示順は原則ランダムにする。検証済み文字列（q.text）は辞書の単語を
   // 連結した並びなので、そのまま並べると単語の塊が読めてしまうため、表示順だけを
   // 並べ替える（q.text 自体はデータとして保持する）。この初期順序は問題ごとに
-  // 保持し、タイルを戻したとき・リセットしたときの復元先になる
-  agShuffle(pool);
+  // 保持し、タイルを戻したとき・リセットしたときの復元先になる。
+  // ただし「読める文章」の問題（q.d あり）では、キャプションの文がタイルでも
+  // そのまま読めるよう、文の並び順どおりに置く。
+  if (!q.d) agShuffle(pool);
   cur = {
     q, kata: q.kata, base: 100 * q.items.length, tiles, pool,
     initialPool: [...pool],
