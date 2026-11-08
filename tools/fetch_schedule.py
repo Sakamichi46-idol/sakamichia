@@ -237,6 +237,9 @@ SOLO_SITES = [
     ("佐々木久美", "日向坂46", "https://kumisasaki.com", "/s/sf1", "list"),
     ("丹生明里", "日向坂46", "https://akarinibu.com", "/s/an", "daygroup"),
     ("河田陽菜", "日向坂46", "https://hinakawata-official.com", "/s/sf3", "list"),
+    # 加藤史帆：サイト側の /s/sk/media/list が Not Found を返すため現在は0件。
+    # 公式側で復活すれば自動で流れ込むよう、取得対象には登録しておく
+    ("加藤史帆", "日向坂46", "https://shihokato.com", "/s/sk", "list"),
 ]
 
 
