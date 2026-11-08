@@ -36,6 +36,10 @@ def _fetch_once(url):
             status = int(code.strip())
             if status >= 400:
                 raise urllib.error.HTTPError(url, status, f'HTTP {status}', None, None)
+            if status == 202:
+                # AWS WAF のチャレンジ応答（本文が空 or チャレンジページ）。
+                # 成功と誤認すると「記事なし」に化けるため失敗として扱う（2026-11-08 乃木坂ブログ取りこぼしの教訓）
+                raise urllib.error.HTTPError(url, status, 'HTTP 202 (WAF challenge)', None, None)
             return body
         if p.returncode != 2:
             raise OSError(f"curl exit {p.returncode}: "
@@ -43,6 +47,8 @@ def _fetch_once(url):
         # exit 2 はオプション解釈エラー等の環境問題なので urllib にフォールバック
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=30) as r:
+        if r.status == 202:
+            raise urllib.error.HTTPError(url, 202, 'HTTP 202 (WAF challenge)', None, None)
         raw = r.read()
         # chunked の途中切断は read() が IncompleteRead を投げるのでここには来ない。
         # Content-Length がある場合は読み切りを照合する。
@@ -62,6 +68,9 @@ def fetch(url, attempts=3):
     for i in range(attempts):
         try:
             data = _fetch_once(url).decode('utf-8', 'ignore')
+            if not data.strip():
+                # 空応答を「記事なし」と誤認させない（WAF の空応答対策）
+                raise OSError('empty response')
             if os.environ.get('BF_DEBUG'):
                 print(f'fetch {time.time()-t0:.1f}s {len(data)}B {url[:90]}', file=sys.stderr, flush=True)
             return data
@@ -751,7 +760,13 @@ def _feed_cards(site, page):
     """全メンバー横断の新着一覧（フィード）をパースする。page は1始まり。"""
     posts = []
     if site == 'nogi':
-        h = fetch(f'https://www.nogizaka46.com/s/n46/diary/MEMBER/list?page={page - 1}')
+        feed_url = f'https://www.nogizaka46.com/s/n46/diary/MEMBER/list?page={page - 1}'
+    elif site == 'saku':
+        feed_url = f'https://www.sakurazaka46.com/s/s46/diary/blog/list?page={page - 1}'
+    else:
+        feed_url = f'https://www.hinatazaka46.com/s/official/diary/member/list?page={page - 1}'
+    if site == 'nogi':
+        h = fetch(feed_url)
         for c in re.findall(r'<a class="bl--card.*?</a>', h, re.S):
             dm = re.search(r'diary/detail/(\d+)', c)
             tm = re.search(r'bl--card__ttl">(.*?)</p>', c, re.S)
@@ -766,7 +781,7 @@ def _feed_cards(site, page):
                           'thumb': sm.group(1) if sm and 'none.png' not in sm.group(1) else None,
                           'url': f'https://www.nogizaka46.com/s/n46/diary/detail/{dm.group(1)}'})
     elif site == 'saku':
-        h = fetch(f'https://www.sakurazaka46.com/s/s46/diary/blog/list?page={page - 1}')
+        h = fetch(feed_url)
         for detail, inner in re.findall(r'<li class="box"><a href="/s/s46/diary/detail/(\d+)[^"]*">(.*?)</a>', h, re.S):
             tm = re.search(r'<h3 class="title">(.*?)</h3>', inner, re.S)
             dtm = re.search(r'<p class="date[^"]*">([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})</p>', inner)
@@ -781,7 +796,7 @@ def _feed_cards(site, page):
                           'imgs': None, 'thumb': sm.group(1) if sm else None,
                           'url': f'https://sakurazaka46.com/s/s46/diary/detail/{detail}'})
     else:
-        h = fetch(f'https://www.hinatazaka46.com/s/official/diary/member/list?page={page - 1}')
+        h = fetch(feed_url)
         for b in re.split(r'<div class="p-blog-article">', h)[1:]:
             tm = re.search(r'c-blog-article__title">\s*(.*?)\s*</div>', b, re.S)
             dtm = re.search(r'c-blog-article__date">\s*([0-9]{4})\.([0-9]{1,2})\.([0-9]{1,2})(?:\s+([0-9]{1,2}):([0-9]{2}))?', b)
@@ -802,6 +817,10 @@ def _feed_cards(site, page):
                           'time': f'{int(dtm.group(4)):02d}:{dtm.group(5)}' if dtm.group(4) else None, 'thumb': imgs[0] if imgs else None,
                           'url': url,
                           'blocks': extract_body_blocks(url, b)})
+    if page == 1 and not posts:
+        # 全メンバー横断フィードの1ページ目が0件なのは通常あり得ない。
+        # マークアップ変更やチャレンジページのすり抜けを「新着なし」と誤認させないための検知
+        FETCH_FAILURES.append({'url': feed_url, 'error': 'feed page 1 parsed 0 cards'})
     return posts
 
 
