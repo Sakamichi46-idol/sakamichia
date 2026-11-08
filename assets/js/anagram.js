@@ -176,8 +176,11 @@ window.agClueText = agClueText;
 // entry.shuffles から rng で1つ選ぶ。戻り値 {kata, text, parts}
 function buildAnagramQuestion(entry, rng) {
   const r = rng || Math.random;
-  const s = entry.shuffles[Math.floor(r() * entry.shuffles.length)];
-  return { kata: entry.kata, text: s.t, parts: [...s.w] };
+  // 「読める文章」シャッフル（d＝表記つき）があれば、そちらから選ぶ
+  const sent = entry.shuffles.filter(s => s.d);
+  const pool = sent.length ? sent : entry.shuffles;
+  const s = pool[Math.floor(r() * pool.length)];
+  return { kata: entry.kata, text: s.t, parts: [...s.w], d: s.d || null };
 }
 window.buildAnagramQuestion = buildAnagramQuestion;
 
@@ -297,7 +300,7 @@ function pickQuestions(mode) {
     }
     return picks.map(it => {
       const q = buildAnagramQuestion(it.e);
-      return { items: [agSingleItem(it.e, it.kind)], kind: it.kind, kata: it.e.kata, text: q.text, parts: q.parts };
+      return { items: [agSingleItem(it.e, it.kind)], kind: it.kind, kata: it.e.kata, text: q.text, parts: q.parts, d: q.d };
     });
   }
   const count = agSettings.count;
@@ -420,6 +423,7 @@ function renderQuestion(msg) {
   <p class="ag-rowlabel">${multi ? "解答欄（行をタップで選択・タイルは選択中の行へ）" : "解答欄（タップで戻す）"}</p>
   ${answerHtml}
   <p class="ag-rowlabel">タイル（タップで解答欄へ）</p>
+  ${q.d ? `<p class="ag-phrase">並びの読み：『${esc(q.d)}』</p>` : ""}
   <div class="ag-pool" id="agPool" style="--agtw:${tw}px">${cur.pool.map(id => `<button type="button" class="ag-tile" data-tile="${id}" ${cur.judged ? "disabled" : ""}>${esc(cur.tiles.get(id))}</button>`).join("")}</div>
   <div class="ag-btns">
     <button type="button" class="btn sub" id="agHint" ${cur.judged ? "disabled" : ""}>ヒント（−${AG_HINT_COST}点）</button>
@@ -696,6 +700,7 @@ function startPanel() {
   <p style="color:var(--muted)"><b>手がかり</b>：最初は種別と個数だけが表示され、ボタンで段階的に開けます（1段階−${AG_HINT_COST}点で、ヒントとは別の勘定です）<br>・複数個の問題：グループ → 文字数 → リリース年の順<br>・1つだけの問題：文字数は解答欄のマスの数で分かるので、代わりに楽曲はリリース年、メンバーは生まれ年が出ます</p>
   <p style="color:var(--muted)"><b>複数個の問題</b>：解答欄が素材ごとの行に分かれます。行をタップして選んで入力できます（各行は文字数自由で、文字数の手がかりを表示すると各行のマスの数が分かります）</p>
   <p style="color:var(--muted)">並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。</p>
+  <p style="color:var(--muted)"><b>並びの読み</b>：楽曲の問題では、バラバラにした並び自体が文章として読めることがあります。その場合はタイルの上に読みを表示します（答えとは別物です）。</p>
   <p style="color:var(--muted)">出題するグループ（複数選択可）と、メンバーの卒業生あり／なし、混ぜる個数は下で選べます。</p>`;
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   ${howHtml}
