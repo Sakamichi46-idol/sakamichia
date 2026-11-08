@@ -365,7 +365,10 @@ function slotStr() { return cur.rows.flat().map(id => cur.tiles.get(id)).join(""
 // タイルの一辺（px）：n 個が1行に収まるよう、文字数と画面幅から決める。
 // 最大44px、間隔6px、コンテナ幅は最大430px（画面幅から余白24pxを引いた値）として計算する
 function agTileSize(n, vw) {
-  const avail = Math.min(430, (vw || 430) - 24);
+  // 使える幅は画面幅から .wrap の左右パディング（16px×2）を引いた分。
+  // 以前は -24 で見積もっていたため、想定より実幅が狭く、収まるはずの
+  // 文字数でも折り返してしまっていた（例：360px幅で7・8文字）。
+  const avail = Math.min(430, (vw || 430) - 32);
   return Math.max(24, Math.min(44, Math.floor((avail - 6 * (n - 1)) / n)));
 }
 window.agTileSize = agTileSize;
