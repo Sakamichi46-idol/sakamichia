@@ -427,6 +427,358 @@ def parse_solo(site, ym: str):
     return _SOLO_PARSERS[variant](site, ym, h)
 
 
+# ---------------- その他の卒業生サイト（サイトごとに形式が違う） ----------------
+
+# (名前, 卒業グループ, kind, base, opt)
+SOLO_WEB = [
+    ("中村麗乃", "乃木坂46", "officialfc", "https://nakamurareno.officialfc.jp", ""),
+    ("山崎怜奈", "乃木坂46", "officialfc", "https://yamazakirena.jp", ""),
+    ("秋元真夏", "乃木坂46", "officialfc", "https://www.akimotomanatsu-fc.jp", ""),
+    ("北野日奈子", "乃木坂46", "officialfc", "https://www.kitanohinako-fc.jp", ""),
+    ("阪口珠美", "乃木坂46", "officialfc", "https://tamamisakaguchi.jp", ""),
+    ("佐々木美玲", "日向坂46", "officialfc", "https://mireisasaki.officialfc.jp", ""),
+    ("渡邉美穂", "日向坂46", "officialfc", "https://mihowatanabe.jp", ""),
+    ("堀未央奈", "乃木坂46", "hori", "https://hori-miona.com", ""),
+    ("佐々木琴子", "乃木坂46", "kotoko", "https://sasakikotoko.com", ""),
+    ("相楽伊織", "乃木坂46", "sagara", "https://sagara-iori.jp", ""),
+    ("菅井友香", "櫻坂46", "topcoat", "https://topcoat.co.jp", ""),
+    ("齋藤冬優花", "櫻坂46", "infinity", "https://infinity-dance.jp", "saito-fuyuka"),
+    ("長濱ねる", "欅坂46", "flamme", "https://www.flamme.co.jp", "5941"),
+    ("小林由依", "櫻坂46", "sony", "https://www.sonymusic.co.jp", "YuiKobayashi,yousti"),
+]
+
+HORI_CATE = {"TV": "テレビ", "Web": "WEB", "Radio": "ラジオ", "Magazine": "雑誌",
+             "Event": "イベント", "Stage": "舞台/ミュージカル", "Movie": "映画",
+             "Live": "ライブ", "Other": "その他"}
+FLAMME_CATE = {2: "映画", 3: "テレビ", 4: "WEB", 5: "CM", 6: "舞台/ミュージカル",
+               7: "ラジオ", 8: "雑誌", 9: "WEB", 10: "その他", 13: "その他"}
+SONY_CATE = {"tv": "テレビ", "radio": "ラジオ", "magazine": "雑誌", "web": "WEB"}
+MONTH_EN = ["", "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY",
+            "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]
+
+_WEB_CACHE: dict = {}
+
+
+def _web_item(name, group, dstr, kind, time_s, title, url):
+    return {"_date": dstr, "g": group, "kind": kind, "time": time_s,
+            "title": title, "members": [name], "url": url, "solo": True}
+
+
+def _strip_tags(s: str) -> str:
+    return clean(re.sub(r"<[^>]+>", "", unescape(s or "")))
+
+
+def _infer_md_date(month: int, day: int):
+    """年が無い月日だけの予定に、今日を基準に最も自然な年を当てる。"""
+    today = date.today()
+    try:
+        cand = date(today.year, month, day)
+    except ValueError:
+        return None
+    if cand < today - timedelta(days=45):
+        cand = date(today.year + 1, month, day)
+    elif cand > today + timedelta(days=200):
+        cand = date(today.year - 1, month, day)
+    return cand
+
+
+def _fetch_officialfc(entry, ym: str):
+    """officialfc.jp 系FCの月別カレンダー（/calendars/<年>/<月>）。"""
+    name, group, _kind, base, _opt = entry
+    y, m = ym[:4], int(ym[4:])
+    code, h = fetch_status(f"{base}/calendars/{y}/{m}")
+    if code != 200 or "SCHEDULE" not in h or "/calendars/" not in h:
+        return None
+    items = []
+    for href, block in re.findall(
+            r'<a href="(/schedules/[0-9a-f-]{36})">(.*?)</a>', h, re.S):
+        dm = re.search(r">(\d{1,2})/(\d{1,2})</p>", block)
+        if not dm or int(dm.group(1)) != m:
+            continue
+        cat = re.search(r"bg-themeSecondary[^>]*>([^<]+)</p>", block)
+        tit = re.search(r"min-w-0[^>]*>(.*?)</p>", block, re.S)
+        if not tit:
+            continue
+        dstr = f"{y}-{int(dm.group(1)):02d}-{int(dm.group(2)):02d}"
+        items.append(_web_item(name, group, dstr,
+                               solo_kind(cat.group(1)) if cat else "",
+                               "", _strip_tags(tit.group(1)), base + href))
+    return items
+
+
+def _fetch_sagara(entry, ym: str):
+    """相楽伊織サイトの月別カレンダー（/schedule?month=YYYY-MM）。
+    日セルにリンクや段落が増えた場合だけ予定として拾う（空月は0件）。"""
+    name, group, _kind, base, _opt = entry
+    y, m = int(ym[:4]), int(ym[4:])
+    code, h = fetch_status(f"{base}/schedule?month={y}-{m:02d}")
+    if code != 200 or f"{MONTH_EN[m]} {y}" not in h:
+        return None
+    items = []
+    for cell in re.findall(r'<li class="item[^"]*">(.*?)</li>', h, re.S):
+        dm = re.search(r'class="day">(\d+)</div>', cell)
+        if not dm:
+            continue
+        rest = cell[dm.end():]
+        if "<a" not in rest and "<p" not in rest:
+            continue
+        title = _strip_tags(rest)
+        if not title:
+            continue
+        href = re.search(r'href="([^"]+)"', rest)
+        if href and href.group(1).startswith("/"):
+            url = base + href.group(1)
+        elif href:
+            url = href.group(1)
+        else:
+            url = f"{base}/schedule?month={y}-{m:02d}"
+        dstr = f"{y}-{m:02d}-{int(dm.group(1)):02d}"
+        items.append(_web_item(name, group, dstr, "", "", title, url))
+    return items
+
+
+def _fetch_hori_all(entry):
+    """堀未央奈サイトの予定一覧（/schedule/list、月日＋年なし）。"""
+    name, group, _kind, base, _opt = entry
+    code, h = fetch_status(f"{base}/schedule/list")
+    if code != 200 or "list--schedule" not in h:
+        return None
+    items = []
+    for block in re.findall(r'<li class="category--\d+[^"]*">(.*?)</li>', h, re.S):
+        mm = re.search(r'class="m">(\d{1,2})</span>', block)
+        dd = re.search(r'class="d">(\d{1,2})</span>', block)
+        tit = re.search(r'class="tit">(.*?)</p>', block, re.S)
+        if not (mm and dd and tit):
+            continue
+        cat = re.search(r'class="category">([^<]*)</p>', block)
+        cat_t = clean(cat.group(1)) if cat else ""
+        href = re.search(r'href="(/schedule/detail/\d+)"', block)
+        items.append({"md": (int(mm.group(1)), int(dd.group(1))),
+                      "g": group, "kind": HORI_CATE.get(cat_t, cat_t),
+                      "time": "", "title": _strip_tags(tit.group(1)),
+                      "members": [name],
+                      "url": base + (href.group(1) if href else "/schedule/list"),
+                      "solo": True})
+    return items
+
+
+def _fetch_kotoko_all(entry):
+    """佐々木琴子サイトのトップに載る直近の予定（日付に年あり）。"""
+    name, group, _kind, base, _opt = entry
+    code, h = fetch_status(base + "/")
+    if code != 200 or "anchor-top-schedule" not in h:
+        return None
+    items = []
+    pat = (r'<a href="(/schedule/[A-Za-z0-9_-]+)" external '
+           r'class="flex items-start[^"]*">(.*?)</a>')
+    for href, block in re.findall(pat, h, re.S):
+        dm = re.search(r">(\d{1,2})\.(\d{1,2})</div>", block)
+        tit = re.search(r"line-clamp-2 break-words\">([^<]+)<", block)
+        if not (dm and tit):
+            continue
+        cat = re.search(r"truncate text-center leading-snug\">([^<]+)<", block)
+        ym2 = re.search(r"(?:MON|TUE|WED|THU|FRI|SAT|SUN)\s*(\d{4})", block)
+        it = {"g": group, "kind": clean(cat.group(1)) if cat else "",
+              "time": "", "title": _strip_tags(tit.group(1)),
+              "members": [name], "url": base + href, "solo": True}
+        if ym2:
+            it["_date"] = (f"{int(ym2.group(1)):04d}-{int(dm.group(1)):02d}"
+                           f"-{int(dm.group(2)):02d}")
+        else:
+            it["md"] = (int(dm.group(1)), int(dm.group(2)))
+        items.append(it)
+    return items
+
+
+def _fetch_topcoat_all(entry):
+    """トップコートの予定一覧（/contents/schedule）から本人の分だけ。
+    日付と時刻は本文テキスト（○月○日＋時刻範囲）から読む。"""
+    name, group, _kind, base, _opt = entry
+    code, h = fetch_status(f"{base}/contents/schedule")
+    if code != 200 or "contents-list-item" not in h:
+        return None
+    items = []
+    for block in re.findall(r'<li class="contents-list-item">(.*?)</li>', h, re.S):
+        if f'contents-list-artist">{name}' not in block:
+            continue
+        tit = re.search(
+            r'<h3 class="contents-list-title title hidden-xs">(.*?)</h3>',
+            block, re.S)
+        if not tit:
+            continue
+        body = re.search(r'<div class="body index-\d+">(.*?)</div>', block, re.S)
+        btext = _strip_tags(body.group(1)) if body else ""
+        dm = re.search(r"(\d{1,2})月(\d{1,2})日", btext)
+        if not dm:
+            continue
+        tm = re.search(r"(\d{1,2}:\d{2})\s*[〜~]\s*(\d{1,2}:\d{2})", btext)
+        items.append({"md": (int(dm.group(1)), int(dm.group(2))),
+                      "g": group, "kind": "",
+                      "time": solo_time(f"{tm.group(1)}〜{tm.group(2)}") if tm else "",
+                      "title": _strip_tags(tit.group(1)), "members": [name],
+                      "url": f"{base}/contents/schedule", "solo": True})
+    return items
+
+
+def _fetch_infinity_all(entry):
+    """INFINITY の予定一覧（/schedule/?artist=<slug>）。本人の分だけ拾う。"""
+    name, group, _kind, base, opt = entry
+    code, h = fetch_status(f"{base}/schedule/?artist={opt}")
+    if code != 200 or 'id="content" class="schedule"' not in h:
+        return None
+    items = []
+    for block in re.findall(r'<li class="item[^"]*">(.*?)</li>', h, re.S):
+        if f"/artist/{opt}/" not in block:
+            continue
+        dm = re.search(r'class="date">(\d{4})\.(\d{1,2})\.(\d{1,2})<', block)
+        tit = re.search(r'<p class="txt">([^<]+)</p>', block)
+        if not (dm and tit):
+            continue
+        dstr = (f"{int(dm.group(1)):04d}-{int(dm.group(2)):02d}"
+                f"-{int(dm.group(3)):02d}")
+        items.append(_web_item(name, group, dstr, "", "",
+                               _strip_tags(tit.group(1)),
+                               f"{base}/schedule/?artist={opt}"))
+    return items
+
+
+def _fetch_flamme_all(entry):
+    """FLaMme の WordPress REST（/wp-json/wp/v2/schedule）。
+    本人名で検索し、acf.sched_name（opt=人物ID）で照合する。"""
+    from urllib.parse import quote
+    name, group, _kind, base, opt = entry
+    code, h = fetch_status(
+        f"{base}/wp-json/wp/v2/schedule?per_page=100&search={quote(name)}")
+    if code != 200:
+        return None
+    try:
+        records = json.loads(h)
+    except Exception:
+        return None
+    if not isinstance(records, list):
+        return None
+    items = []
+    for rec in records:
+        acf = rec.get("acf") or {}
+        if str(acf.get("sched_name")) != opt:
+            continue
+        title = _strip_tags((rec.get("title") or {}).get("rendered", ""))
+        title = re.sub(r"^[\s\U0001F000-\U0001FAFF☀-➿️]+", "", title)
+        if name in title and "|" in title:
+            title = title.split("|", 1)[1].strip()
+        if not title:
+            continue
+        kind = FLAMME_CATE.get(acf.get("sched_category"), "")
+        special = acf.get("sched_special_date_format") or ""
+        sm = re.match(r"(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}:\d{2})?", special)
+        for dayent in acf.get("sched_specific_day") or []:
+            dv = str((dayent or {}).get("sched_specific_day_day") or "")
+            if not re.fullmatch(r"\d{8}", dv):
+                continue
+            dstr = f"{dv[:4]}-{dv[4:6]}-{dv[6:]}"
+            time_s = ""
+            if sm and (f"{int(sm.group(1)):04d}-{int(sm.group(2)):02d}"
+                       f"-{int(sm.group(3)):02d}") == dstr:
+                time_s = sm.group(4) or ""
+            items.append(_web_item(name, group, dstr, kind, time_s, title,
+                                   rec.get("link") or base))
+    return items
+
+
+def _fetch_sony_all(entry):
+    """小林由依：Sony Music のアーティストJSON（media と live の2フィード、
+    小林由依名義と yousti 名義の両方）を予定に変換する。"""
+    name, group, _kind, base, opt = entry
+    sched_url = "https://www.yuikobayashi-yousti.jp/kobayashi_yui/schedule/"
+    items = []
+    for code_name in opt.split(","):
+        for feed in ("media", "live"):
+            code, h = fetch_status(
+                f"{base}/json/v2/artist/{code_name}/{feed}/start/0/count/100")
+            if code != 200:
+                return None
+            m = re.match(r"\s*callback\((.*)\)\s*;?\s*$", h, re.S)
+            try:
+                data = json.loads(m.group(1) if m else h)
+            except Exception:
+                return None
+            raw = data.get("items")
+            if feed == "media":
+                if not isinstance(raw, dict):
+                    continue
+                for cat, vals in raw.items():
+                    for v in vals or []:
+                        d = (v.get("date") or "").replace(".", "-")
+                        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
+                            continue
+                        st, et = v.get("startTime") or "", v.get("endTime") or ""
+                        time_s = solo_time(f"{st}〜{et}") if st and et else st
+                        title = clean(v.get("program") or "")
+                        media = clean(v.get("media") or "")
+                        if media and media not in title:
+                            title = f"{title}（{media}）" if title else media
+                        if not title:
+                            continue
+                        items.append(_web_item(name, group, d,
+                                               SONY_CATE.get(cat, ""), time_s,
+                                               title, sched_url))
+            else:
+                if not isinstance(raw, list):
+                    continue
+                for tour in raw:
+                    for li in tour.get("liveItem") or []:
+                        d = (li.get("date") or "").replace(".", "-")
+                        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
+                            continue
+                        title = clean(li.get("tourName") or "")
+                        place = clean(li.get("place") or "")
+                        if place and place not in title:
+                            title = f"{title}（{place}）" if title else place
+                        if not title:
+                            continue
+                        link = li.get("link") or ""
+                        url = ("https://www.sonymusic.co.jp" + link
+                               if link.startswith("/") else sched_url)
+                        items.append(_web_item(name, group, d, "イベント",
+                                               clean(li.get("start") or ""),
+                                               title, url))
+    return items
+
+
+def parse_solo_web(entry, ym: str):
+    """SOLO_WEB の1人×1月分。成功したら items、失敗したら None。
+    一覧型のサイトは全件を1回だけ取得してキャッシュし、月で絞る。"""
+    _name, _group, kind, base, opt = entry
+    if kind == "officialfc":
+        return _fetch_officialfc(entry, ym)
+    if kind == "sagara":
+        return _fetch_sagara(entry, ym)
+    key = (kind, base, opt)
+    if key not in _WEB_CACHE:
+        fn = {"hori": _fetch_hori_all, "kotoko": _fetch_kotoko_all,
+              "topcoat": _fetch_topcoat_all, "infinity": _fetch_infinity_all,
+              "flamme": _fetch_flamme_all, "sony": _fetch_sony_all}[kind]
+        _WEB_CACHE[key] = fn(entry)
+    all_items = _WEB_CACHE[key]
+    if all_items is None:
+        return None
+    prefix = f"{ym[:4]}-{ym[4:]}"
+    out = []
+    for it in all_items:
+        d = it.get("_date")
+        if d is None:
+            md = it.get("md")
+            if not md:
+                continue
+            cand = _infer_md_date(md[0], md[1])
+            if cand is None:
+                continue
+            d = cand.isoformat()
+        if d.startswith(prefix):
+            out.append({k: v for k, v in it.items() if k != "md"} | {"_date": d})
+    return out
+
+
 def start_key(it: dict) -> tuple:
     m = re.search(r"(\d{1,2}):(\d{2})", it.get("time") or "")
     t = (int(m.group(1)) * 60 + int(m.group(2))) if m else 9999
@@ -463,6 +815,11 @@ def main() -> int:
             items = parse_solo(site, ym)
             if items is not None:
                 solo_got.setdefault(site[0], {})[ym] = items
+    for entry in SOLO_WEB:
+        for ym in months():
+            items = parse_solo_web(entry, ym)
+            if items is not None:
+                solo_got.setdefault(entry[0], {})[ym] = items
     # 取得できたグループは当月・翌月分を入れ替え、失敗したグループは前回分を保持
     # （ソロのアイテムは g がグループ名でもここでは保持し、下のソロ用マージで扱う）
     days: dict[str, list[dict]] = {}
@@ -484,8 +841,7 @@ def main() -> int:
             seen.add((dkey, key))
             days.setdefault(dkey, []).append(it)
     # 卒業生ソロのマージ：取得成功した人×月だけ、その人の既存アイテムを置換する
-    for site in SOLO_SITES:
-        name = site[0]
+    for name in [s[0] for s in SOLO_SITES] + [s[0] for s in SOLO_WEB]:
         per_month = solo_got.get(name)
         if not per_month:
             continue
