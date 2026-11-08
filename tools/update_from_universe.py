@@ -59,6 +59,13 @@ TYPE_OVERRIDES = {'ひらがなけやき': 'カップリング曲（全員）', 
                   '僕たちは付き合っている': 'カップリング曲（全員）', 'それでも歩いてる': 'カップリング曲（全員）',
                   'イマニミテイロ': 'カップリング曲（全員）', 'ハッピーオーラ': 'カップリング曲（全員）',
                   '君に話しておきたいこと': 'カップリング曲（全員）'}
+# 読みの上書き：出典CSVの誤記を正す（2026-11-09の全曲監査で、タイトルの表記・
+# うたてんのよみ・ファンWiki・カラオケ登録読みなど複数サイトと照合して確定）。
+YOMI_OVERRIDES = {'私のために 誰かのために': 'わたしのためにだれかのために',
+                  '僕が行かなきゃ誰が行くんだ？': 'ぼくがいかなきゃだれがいくんだ',
+                  'タイムマシーンでYeah!': 'たいむましーんでいぇい',
+                  'もう一曲 欲しいのかい？': 'もういっきょくほしいのかい',
+                  '嵐の前、世界の終わり': 'あらしのまえせかいのおわり'}
 GROUP_PREFIX = {'乃木坂46': 'nogi', '櫻坂46': 'sakura', '欅坂46': 'keyaki', '日向坂46': 'hinata', 'けやき坂46': 'hiragana'}
 FAM_OF_PREFIX = {'nogi': 'N', 'sakura': 'S', 'keyaki': 'S', 'hinata': 'H', 'hiragana': 'H'}
 
@@ -81,9 +88,25 @@ def norm(s):
     # 固有名詞の表記は公式優先のため、保存されるタイトル自体は変更しない（2026-11-06）。
     return (s or '').replace(' ', '').replace('　', '').replace('’', "'").replace('‘', "'")
 
-def song_yomi(reading):
-    """楽曲シートの reading（「本読み、略称」形式）から本読みだけを取り、ひらがなに統一する。"""
-    r = (reading or '').split('、')[0].strip()
+def song_yomi(reading, title=''):
+    """楽曲シートの reading（「本読み、略称」形式）から本読みだけを取り、ひらがなに統一する。
+
+    ただし読み自体に「、」が含まれる曲（例：「嵐の前、世界の終わり」の読みは
+    「あらしのまえ、せかいのおわり」）では、最初の部分だけではタイトル全体を
+    カバーできない。タイトルの日本語文字数を目安に、読みがそれより短い間は
+    次の部分を連結する（略称は通常この条件では連結されない）。
+    """
+    parts = [p.strip() for p in (reading or '').split('、')]
+    parts = [p for p in parts if p]
+    if not parts:
+        return ''
+    core = re.split(r'[（(]', title or '')[0]  # 「(6期生 ver.)」等の注記は読みに含まれない
+    jp = len([c for c in core if 'ぁ' <= c <= 'ヶ' or '一' <= c <= '龯' or c in '々ー'])
+    r = parts[0]
+    i = 1
+    while len(r) < jp and i < len(parts):
+        r += parts[i]
+        i += 1
     r = re.sub(r'^[！!？?・〜~\s]+|[！!？?・〜~\s]+$', '', r)
     return ''.join(chr(ord(c) - 0x60) if 'ァ' <= c <= 'ヶ' else c for c in r)
 
@@ -257,7 +280,7 @@ def update_songs_and_formations(summary):
     for sf in ['Nsongs', 'Ssongs', 'Hsongs']:
         for r in rows(sf):
             if r.get('title') and r.get('reading'):
-                readings[norm(r['title'])] = song_yomi(r['reading'])
+                readings[norm(r['title'])] = song_yomi(r['reading'], r['title'])
     writers, arrangers = defaultdict(list), defaultdict(list)
     for sf, wf, af in [('Nsongs', 'Nwriter', 'Narranger'), ('Ssongs', 'Swriter', 'Sarranger'), ('Hsongs', 'Hwriter', 'Harranger')]:
         s_map = {r['songid']: r['title'] for r in rows(sf)}
@@ -296,7 +319,7 @@ def update_songs_and_formations(summary):
                      'year': int(date[:4]) if date[:4].isdigit() else 0, 'date': date,
                      'type': song_type(r.get('genre'), r.get('release')), 'center': '', 'release': r.get('release') or '',
                      'writers': writers.get(t, []), 'arrangers': arrangers.get(t, []),
-                     'ord': None, 'genre': r.get('genre') or '', 'yomi': song_yomi(r.get('reading'))}
+                     'ord': None, 'genre': r.get('genre') or '', 'yomi': song_yomi(r.get('reading'), r['title'])}
             if special:
                 entry['special'] = special
             f = csv_forms.get(t)
@@ -322,6 +345,10 @@ def update_songs_and_formations(summary):
         s = by_title.get(norm(title))
         if s:
             s['type'] = typ
+    for title, yomi in YOMI_OVERRIDES.items():
+        s = by_title.get(norm(title))
+        if s:
+            s['yomi'] = yomi
     # センター表記を名簿の正式表記に統一する（川崎桜→川﨑桜などの異体字ゆれ対策）
     _VAR = {'﨑': '崎', '神': '神', '髙': '高', '邊': '辺', '邉': '辺', '齋': '斉', '齊': '斉', '澤': '沢', '眞': '真', '櫻': '桜', '檜': '桧', '嶋': '島', '瀨': '瀬', '惠': '恵', '寬': '寛', '增': '増', '榮': '栄', '龍': '竜', '學': '学', '舘': '館', '德': '徳', '內': '内', '綠': '緑', '緖': '緒', '啟': '啓', '祿': '禄'}
     def _nn(s):
