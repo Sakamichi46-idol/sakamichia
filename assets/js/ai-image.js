@@ -1,7 +1,7 @@
 // AI画像クイズ（プレビュー）：曲名の字面だけでAI生成した画像から元の曲を当てるクイズ（全10問）
 // 択一式＝1問100点・ヒントなし／記述式＝1問300点・段階ヒントで減点、サジェスト＋「回答する」ボタンでのみ確定
 const AIQ_N = 10;
-const AIQ_PTS = [300, 240, 180, 120, 60];
+const AIQ_PTS = [300, 260, 220, 180, 140, 100, 60];
 let SONGS = [], GROUPS = [];
 let mode = "choice", groupSel = "all";
 let qs = [], qi = 0, score = 0, results = [], hintsOpen = 0, answered = false;
@@ -9,13 +9,15 @@ function shuffle(a) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const
 function poolNow() { return groupSel === "all" ? SONGS : SONGS.filter(s => s.group === groupSel); }
 function bestKey() { return `aiq:${mode}:${groupSel}`; }
 function condText() { return `${mode === "choice" ? "択一式" : "記述式"}・${groupSel === "all" ? "全グループ" : groupSel}`; }
-// 画像は同じ曲でも直近3回に出たものを避ける（端末に記録）
-function pickImage(song) {
+// 画像は同じ曲でも直近3回に出たものを避ける（端末に記録）。exclude は出題中の画像で、ヒント用の別の絵を選ぶときに使う
+function pickImage(song, exclude) {
   let store = {};
   try { store = JSON.parse(localStorage.getItem("sakamichia-aiq-img") || "{}"); } catch (e) {}
   const recent = store[song.id] || [];
-  let cand = song.images.map((f, i) => i).filter(i => !recent.includes(i));
-  if (!cand.length) cand = song.images.map((f, i) => i).filter(i => i !== recent[recent.length - 1]);
+  const ok = i => song.images[i] !== exclude;
+  let cand = song.images.map((f, i) => i).filter(i => ok(i) && !recent.includes(i));
+  if (!cand.length) cand = song.images.map((f, i) => i).filter(i => ok(i) && i !== recent[recent.length - 1]);
+  if (!cand.length) cand = song.images.map((f, i) => i).filter(ok);
   if (!cand.length) cand = [0];
   const idx = cand[Math.floor(Math.random() * cand.length)];
   store[song.id] = [...recent, idx].slice(-3);
@@ -30,21 +32,25 @@ function pickSongs(pool, n) {
   return picks.slice(0, n).map(song => ({ song, img: pickImage(song) }));
 }
 function hintStages(song) {
-  // ヒントは全問題で4つ固定。
-  // 絞り込みなし：グループ→リリース年→分類→センター（ない曲は文字数）
-  // グループ絞り込み中：リリース年→分類→文字数→センター（ない曲は最初の文字）
-  const st = [];
+  // ヒントは全問題で6つ固定。1つ目は同じ曲の別の絵、最後はタイトルの文字。
+  // 絞り込みなし：別の絵→グループ→リリース年→分類→センター（ない曲は文字数）→最初の文字
+  // グループ絞り込み中：別の絵→リリース年→分類→文字数→センター（ない曲は最初の文字）→最初の文字（出ていれば2文字目）
+  const st = [{ lab: "別の絵", img: true }];
   if (groupSel === "all") {
     st.push({ lab: "グループ", val: song.group });
     st.push({ lab: "リリース年", val: song.year + "年" });
     st.push({ lab: "分類", val: song.type });
     if (song.center) st.push({ lab: "センター", val: song.center });
     else st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
+    st.push({ lab: "最初の文字", val: `タイトルの最初の文字：${[...song.title][0]}` });
   } else {
     st.push({ lab: "リリース年", val: song.year + "年" });
     st.push({ lab: "分類", val: song.type });
     st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
+    let firstUsed = false;
     if (song.center) st.push({ lab: "センター", val: song.center });
+    else { st.push({ lab: "最初の文字", val: `タイトルの最初の文字：${[...song.title][0]}` }); firstUsed = true; }
+    if (firstUsed) st.push({ lab: "2文字目", val: `タイトルの2文字目：${[...song.title][1]}` });
     else st.push({ lab: "最初の文字", val: `タイトルの最初の文字：${[...song.title][0]}` });
   }
   return st;
@@ -110,7 +116,7 @@ function render() {
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span id="aiqPtsLab">今答えると${AIQ_PTS[0]}点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
       <p class="aiq-cap">AIが生成した画像です</p>
-      <div class="aiq-hints">${stages.map((h, i) => `<div class="aiq-hint"><span class="aiq-hint-lab">ヒント${i + 1}</span><span id="aiqHintVal${i}" style="display:none">${esc(h.lab)}：${esc(h.val)}</span><button type="button" class="btn sub" data-hint="${i}">ヒントを開く（${esc(h.lab)}）</button></div>`).join("")}</div>
+      <div class="aiq-hints">${stages.map((h, i) => `<div class="aiq-hint"><span class="aiq-hint-lab">ヒント${i + 1}</span><span id="aiqHintVal${i}" style="display:none">${h.img ? "" : `${esc(h.lab)}：${esc(h.val)}`}</span><button type="button" class="btn sub" data-hint="${i}">ヒントを開く（${esc(h.lab)}）</button></div>`).join("")}</div>
       <div class="aiq-input"><input type="text" id="aiqInput" placeholder="曲名を入力" autocomplete="off"><div class="aiq-sugg" id="aiqSugg" style="display:none"></div></div>
       <button type="button" class="primary aiq-submit" id="aiqSubmit">回答する</button>
       <p class="mz-msg" id="aiqMsg"></p>`;
@@ -120,7 +126,12 @@ function render() {
     main.querySelectorAll("[data-hint]").forEach(btn => btn.addEventListener("click", () => {
       if (answered) return;
       const i = +btn.dataset.hint;
-      document.getElementById("aiqHintVal" + i).style.display = "";
+      const valEl = document.getElementById("aiqHintVal" + i);
+      if (stages[i].img && !valEl.dataset.done) {
+        valEl.innerHTML = `<img class="aiq-hint-img" src="${BASE}assets/ai-quiz/${pickImage(song, img)}" alt="AI生成画像"><span class="aiq-cap" style="display:block;text-align:left;margin:4px 0 0">AIが生成した画像です</span>`;
+        valEl.dataset.done = "1";
+      }
+      valEl.style.display = "";
       btn.style.display = "none";
       hintsOpen++;
       updPts();
@@ -170,7 +181,7 @@ function startPanel() {
   const main = document.getElementById("aiqMain");
   const lite = document.documentElement.dataset.lite === "1";
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">${lite ? `曲名の字面だけで作ったAI画像から元の曲を当てる全${AIQ_N}問。択一式と記述式が選べます。` : `画像は曲名の字面だけをもとにAIが作ったもので、曲名の文字は入っていません。1曲に10枚の画像があり、出題ごとに1枚がランダムで出ます。全${AIQ_N}問。<br>択一式は正解で100点（ヒントなし）。記述式はヒントなしで正解＝300点、ヒントを開くごとに240／180／120／60点と下がります。ヒントは全問題で4つ固定で、グループ→リリース年→分類→センターの順です。センターがない曲では、最後のヒントが「曲名の文字数（表記）」になります。グループで絞っているときはグループのヒントがなくなり、代わりに「曲名の文字数（表記）」が入ります（センターがない曲では最後が「タイトルの最初の文字」）。各ヒントは、開く前に種類がボタンに書いてあります。記述式は候補から選んでも確定せず、「回答する」ボタンを押したときだけ回答になります。`}</p>
+  <p style="color:var(--muted)">${lite ? `曲名の字面だけで作ったAI画像から元の曲を当てる全${AIQ_N}問。択一式と記述式が選べます。` : `画像は曲名の字面だけをもとにAIが作ったもので、曲名の文字は入っていません。1曲に10枚の画像があり、出題ごとに1枚がランダムで出ます。全${AIQ_N}問。<br>択一式は正解で100点（ヒントなし）。記述式はヒントなしで正解＝300点、ヒントを開くごとに40点ずつ下がります（260／220／180／140／100／60点）。ヒントは全問題で6つ固定で、最初は同じ曲の別の絵、続いてグループ→リリース年→分類→センターの順で、最後が「タイトルの最初の文字」です。センターがない曲では、センターの代わりに「曲名の文字数（表記）」が入ります。グループで絞っているときはグループのヒントがなくなり、代わりに「曲名の文字数（表記）」が入ります（センターがない曲では「タイトルの最初の文字」がセンターの位置に入り、最後は「タイトルの2文字目」になります）。各ヒントは、開く前に種類がボタンに書いてあります。記述式は候補から選んでも確定せず、「回答する」ボタンを押したときだけ回答になります。`}</p>
   <div class="aiq-set">
     <div><h4>回答方法</h4><div class="aiq-chips" id="aiqModeChips">
       <button type="button" class="ychip ${mode === "choice" ? "on" : ""}" data-m="choice">択一式</button>
