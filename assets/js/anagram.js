@@ -335,11 +335,14 @@ function pickQuestions(mode) {
   }
   quizSeenTouch("anagram", picked.map(cKey));
   return picked.map(c => {
-    const s = c.shuffles[Math.floor(Math.random() * c.shuffles.length)];
+    // 単体と同じく、「読める文章」シャッフル（d つき）があればそちらから選ぶ
+    const sent = c.shuffles.filter(s => s.d);
+    const pool = sent.length ? sent : c.shuffles;
+    const s = pool[Math.floor(Math.random() * pool.length)];
     const items = c.items.map(agComboItem);
     const allM = items.every(it => it.kind === "member");
     const allS = items.every(it => it.kind === "song");
-    return { items, kind: allM ? "member" : allS ? "song" : "mix", kata: c.kata, text: s.t, parts: [...s.w] };
+    return { items, kind: allM ? "member" : allS ? "song" : "mix", kata: c.kata, text: s.t, parts: [...s.w], d: s.d || null };
   });
 }
 
@@ -702,7 +705,7 @@ function startPanel() {
   <p style="color:var(--muted)"><b>手がかり</b>：最初は種別と個数だけが表示され、ボタンで段階的に開けます（1段階−${AG_HINT_COST}点で、ヒントとは別の勘定です）<br>・複数個の問題：グループ → 文字数 → リリース年の順<br>・1つだけの問題：文字数は解答欄のマスの数で分かるので、代わりに楽曲はリリース年、メンバーは生まれ年が出ます</p>
   <p style="color:var(--muted)"><b>複数個の問題</b>：解答欄が素材ごとの行に分かれます。行をタップして選んで入力できます（各行は文字数自由で、文字数の手がかりを表示すると各行のマスの数が分かります）</p>
   <p style="color:var(--muted)">並べた結果が別のメンバー名・曲名の読みと一致した場合も正解になります。</p>
-  <p style="color:var(--muted)"><b>並びの読み</b>：楽曲の問題では、バラバラにした並び自体が文章として読めることがあります。その場合はタイルの上に読みを表示します（答えとは別物です）。</p>
+  <p style="color:var(--muted)"><b>並びの読み</b>：楽曲の問題（複数の曲を混ぜた問題を含む）では、バラバラにした並び自体が文章として読めることがあります。その場合はタイルの上に読みを表示し、タイルもその文の順に並びます（答えとは別物です）。</p>
   <p style="color:var(--muted)">出題するグループ（複数選択可）と、メンバーの卒業生あり／なし、混ぜる個数は下で選べます。</p>`;
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
   ${howHtml}
