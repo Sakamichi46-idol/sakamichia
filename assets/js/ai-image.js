@@ -45,10 +45,12 @@ function render() {
   const imgUrl = BASE + "assets/ai-quiz/" + img;
   if (mode === "choice") {
     const others = shuffle(poolNow().filter(s => s.id !== song.id && s.group === song.group));
-    const rest = shuffle(poolNow().filter(s => s.id !== song.id && s.group !== song.group));
-    const choices = shuffle([song, ...others.concat(rest).slice(0, 3)]);
+    const sameType = shuffle(poolNow().filter(s => s.id !== song.id && s.group !== song.group && s.type === song.type));
+    const rest = shuffle(poolNow().filter(s => s.id !== song.id && s.group !== song.group && s.type !== song.type));
+    const choices = shuffle([song, ...others, ...sameType, ...rest].slice(0, 4));
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span>正解で100点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
+      <p class="aiq-cap">AIが生成した画像です</p>
       <div class="mz-choices">${choices.map(c => `<button type="button" class="mz-choice" data-id="${esc(c.id)}">${esc(c.title)}</button>`).join("")}</div>
       <p class="mz-msg" id="aiqMsg"></p>`;
     main.querySelectorAll(".mz-choice").forEach(b => b.addEventListener("click", () => {
@@ -68,6 +70,7 @@ function render() {
     const stages = hintStages(song);
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span id="aiqPtsLab">今答えると${AIQ_PTS[0]}点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
+      <p class="aiq-cap">AIが生成した画像です</p>
       <div class="aiq-hints">${stages.map((h, i) => `<div class="aiq-hint"><span class="aiq-hint-lab">ヒント${i + 1}</span><span id="aiqHintVal${i}" style="display:none">${esc(h.lab)}：${esc(h.val)}</span><button type="button" class="btn sub" data-hint="${i}">ヒントを開く（${esc(h.lab)}）</button></div>`).join("")}</div>
       <div class="aiq-input"><input type="text" id="aiqInput" placeholder="曲名を入力" autocomplete="off"><div class="aiq-sugg" id="aiqSugg" style="display:none"></div></div>
       <button type="button" class="primary aiq-submit" id="aiqSubmit">回答する</button>

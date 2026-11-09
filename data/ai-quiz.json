@@ -263,6 +263,50 @@
     "s-kz040-09.jpg",
     "s-kz040-10.jpg"
    ]
+  },
+  {
+   "id": "H-HK002",
+   "title": "誰よりも高く跳べ！",
+   "yomi": "だれよりもたかくとべ",
+   "group": "けやき坂46",
+   "year": 2016,
+   "type": "カップリング曲（全員）",
+   "center": "長濱ねる・柿崎芽実",
+   "chars": 9,
+   "images": [
+    "h-hk002-01.jpg",
+    "h-hk002-02.jpg",
+    "h-hk002-03.jpg",
+    "h-hk002-04.jpg",
+    "h-hk002-05.jpg",
+    "h-hk002-06.jpg",
+    "h-hk002-07.jpg",
+    "h-hk002-08.jpg",
+    "h-hk002-09.jpg",
+    "h-hk002-10.jpg"
+   ]
+  },
+  {
+   "id": "H-HK015",
+   "title": "ハロウィンのカボチャが割れた",
+   "yomi": "はろうぃんのかぼちゃがわれた",
+   "group": "けやき坂46",
+   "year": 2018,
+   "type": "ユニット曲",
+   "center": "",
+   "chars": 14,
+   "images": [
+    "h-hk015-01.jpg",
+    "h-hk015-02.jpg",
+    "h-hk015-03.jpg",
+    "h-hk015-04.jpg",
+    "h-hk015-05.jpg",
+    "h-hk015-06.jpg",
+    "h-hk015-07.jpg",
+    "h-hk015-08.jpg",
+    "h-hk015-09.jpg",
+    "h-hk015-10.jpg"
+   ]
   }
  ]
 }
