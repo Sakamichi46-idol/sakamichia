@@ -47,7 +47,7 @@ function render() {
     const others = shuffle(poolNow().filter(s => s.id !== song.id && s.group === song.group));
     const rest = shuffle(poolNow().filter(s => s.id !== song.id && s.group !== song.group));
     const choices = shuffle([song, ...others.concat(rest).slice(0, 3)]);
-    main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span>スコア：${score}点</span><span>正解で100点</span></div>
+    main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span>正解で100点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
       <div class="mz-choices">${choices.map(c => `<button type="button" class="mz-choice" data-id="${esc(c.id)}">${esc(c.title)}</button>`).join("")}</div>
       <p class="mz-msg" id="aiqMsg"></p>`;
@@ -57,6 +57,7 @@ function render() {
       const ok = b.dataset.id === song.id;
       const pts = ok ? 100 : 0;
       score += pts;
+      document.getElementById("aiqScore").textContent = `スコア：${score}点`;
       const mine = choices.find(c => c.id === b.dataset.id).title;
       results.push({ song, mine, ok, pts, hints: 0 });
       main.querySelectorAll(".mz-choice").forEach(x => { x.disabled = true; if (x.dataset.id === song.id) x.classList.add("ok"); else if (x === b) x.classList.add("ng"); });
@@ -65,7 +66,7 @@ function render() {
     }));
   } else {
     const stages = hintStages(song);
-    main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span>スコア：${score}点</span><span id="aiqPtsLab">今答えると${AIQ_PTS[0]}点</span></div>
+    main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span id="aiqPtsLab">今答えると${AIQ_PTS[0]}点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
       <div class="aiq-hints">${stages.map((h, i) => `<div class="aiq-hint"><span class="aiq-hint-lab">ヒント${i + 1}</span><span id="aiqHintVal${i}" style="display:none">${esc(h.lab)}：${esc(h.val)}</span><button type="button" class="btn sub" data-hint="${i}">ヒントを開く（${esc(h.lab)}）</button></div>`).join("")}</div>
       <div class="aiq-input"><input type="text" id="aiqInput" placeholder="曲名を入力" autocomplete="off"><div class="aiq-sugg" id="aiqSugg" style="display:none"></div></div>
@@ -99,6 +100,7 @@ function render() {
       const ok = norm(mine) === norm(song.title) || norm(mine) === norm(song.yomi);
       const pts = ok ? AIQ_PTS[Math.min(hintsOpen, AIQ_PTS.length - 1)] : 0;
       score += pts;
+      document.getElementById("aiqScore").textContent = `スコア：${score}点`;
       results.push({ song, mine, ok, pts, hints: hintsOpen });
       input.disabled = true;
       document.getElementById("aiqSubmit").disabled = true;
