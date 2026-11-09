@@ -1,0 +1,268 @@
+{
+ "songs": [
+  {
+   "id": "N-1",
+   "title": "ぐるぐるカーテン",
+   "yomi": "ぐるぐるかーてん",
+   "group": "乃木坂46",
+   "year": 2012,
+   "type": "表題曲",
+   "center": "生駒里奈",
+   "chars": 6,
+   "images": [
+    "n-1-01.jpg",
+    "n-1-02.jpg",
+    "n-1-03.jpg",
+    "n-1-04.jpg",
+    "n-1-05.jpg",
+    "n-1-06.jpg",
+    "n-1-07.jpg",
+    "n-1-08.jpg",
+    "n-1-09.jpg",
+    "n-1-10.jpg"
+   ]
+  },
+  {
+   "id": "N-106",
+   "title": "裸足でSummer",
+   "yomi": "はだしでさまー",
+   "group": "乃木坂46",
+   "year": 2016,
+   "type": "表題曲",
+   "center": "齋藤飛鳥",
+   "chars": 9,
+   "images": [
+    "n-106-01.jpg",
+    "n-106-02.jpg",
+    "n-106-03.jpg",
+    "n-106-04.jpg",
+    "n-106-05.jpg",
+    "n-106-06.jpg",
+    "n-106-07.jpg",
+    "n-106-08.jpg",
+    "n-106-09.jpg",
+    "n-106-10.jpg"
+   ]
+  },
+  {
+   "id": "N-151",
+   "title": "僕の衝動",
+   "yomi": "ぼくのしょうどう",
+   "group": "乃木坂46",
+   "year": 2017,
+   "type": "期別曲",
+   "center": "伊藤理々杏",
+   "chars": 4,
+   "images": [
+    "n-151-01.jpg",
+    "n-151-02.jpg",
+    "n-151-03.jpg",
+    "n-151-04.jpg",
+    "n-151-05.jpg",
+    "n-151-06.jpg",
+    "n-151-07.jpg",
+    "n-151-08.jpg",
+    "n-151-09.jpg",
+    "n-151-10.jpg"
+   ]
+  },
+  {
+   "id": "N-312",
+   "title": "ビリヤニ",
+   "yomi": "びりやに",
+   "group": "乃木坂46",
+   "year": 2025,
+   "type": "表題曲",
+   "center": "瀬戸口心月・矢田萌華",
+   "chars": 4,
+   "images": [
+    "n-312-01.jpg",
+    "n-312-02.jpg",
+    "n-312-03.jpg",
+    "n-312-04.jpg",
+    "n-312-05.jpg",
+    "n-312-06.jpg",
+    "n-312-07.jpg",
+    "n-312-08.jpg",
+    "n-312-09.jpg",
+    "n-312-10.jpg"
+   ]
+  },
+  {
+   "id": "S-SZ034",
+   "title": "桜月",
+   "yomi": "さくらづき",
+   "group": "櫻坂46",
+   "year": 2023,
+   "type": "表題曲",
+   "center": "守屋麗奈",
+   "chars": 2,
+   "images": [
+    "s-sz034-01.jpg",
+    "s-sz034-02.jpg",
+    "s-sz034-03.jpg",
+    "s-sz034-04.jpg",
+    "s-sz034-05.jpg",
+    "s-sz034-06.jpg",
+    "s-sz034-07.jpg",
+    "s-sz034-08.jpg",
+    "s-sz034-09.jpg",
+    "s-sz034-10.jpg"
+   ]
+  },
+  {
+   "id": "S-SZ015",
+   "title": "流れ弾",
+   "yomi": "ながれだま",
+   "group": "櫻坂46",
+   "year": 2021,
+   "type": "表題曲",
+   "center": "田村保乃",
+   "chars": 3,
+   "images": [
+    "s-sz015-01.jpg",
+    "s-sz015-02.jpg",
+    "s-sz015-03.jpg",
+    "s-sz015-04.jpg",
+    "s-sz015-05.jpg",
+    "s-sz015-06.jpg",
+    "s-sz015-07.jpg",
+    "s-sz015-08.jpg",
+    "s-sz015-09.jpg",
+    "s-sz015-10.jpg"
+   ]
+  },
+  {
+   "id": "H-HZ007",
+   "title": "ドレミソラシド",
+   "yomi": "どれみそらしど",
+   "group": "日向坂46",
+   "year": 2019,
+   "type": "表題曲",
+   "center": "小坂菜緒",
+   "chars": 7,
+   "images": [
+    "h-hz007-01.jpg",
+    "h-hz007-02.jpg",
+    "h-hz007-03.jpg",
+    "h-hz007-04.jpg",
+    "h-hz007-05.jpg",
+    "h-hz007-06.jpg",
+    "h-hz007-07.jpg",
+    "h-hz007-08.jpg",
+    "h-hz007-09.jpg",
+    "h-hz007-10.jpg"
+   ]
+  },
+  {
+   "id": "H-HZ008",
+   "title": "キツネ",
+   "yomi": "きつね",
+   "group": "日向坂46",
+   "year": 2019,
+   "type": "カップリング曲（全員）",
+   "center": "小坂菜緒",
+   "chars": 3,
+   "images": [
+    "h-hz008-01.jpg",
+    "h-hz008-02.jpg",
+    "h-hz008-03.jpg",
+    "h-hz008-04.jpg",
+    "h-hz008-05.jpg",
+    "h-hz008-06.jpg",
+    "h-hz008-07.jpg",
+    "h-hz008-08.jpg",
+    "h-hz008-09.jpg",
+    "h-hz008-10.jpg"
+   ]
+  },
+  {
+   "id": "H-HZ020",
+   "title": "青春の馬",
+   "yomi": "せいしゅんのうま",
+   "group": "日向坂46",
+   "year": 2020,
+   "type": "カップリング曲（全員）",
+   "center": "小坂菜緒",
+   "chars": 4,
+   "images": [
+    "h-hz020-01.jpg",
+    "h-hz020-02.jpg",
+    "h-hz020-03.jpg",
+    "h-hz020-04.jpg",
+    "h-hz020-05.jpg",
+    "h-hz020-06.jpg",
+    "h-hz020-07.jpg",
+    "h-hz020-08.jpg",
+    "h-hz020-09.jpg",
+    "h-hz020-10.jpg"
+   ]
+  },
+  {
+   "id": "S-KZ001",
+   "title": "サイレントマジョリティー",
+   "yomi": "さいれんとまじょりてぃー",
+   "group": "欅坂46",
+   "year": 2016,
+   "type": "表題曲",
+   "center": "平手友梨奈",
+   "chars": 12,
+   "images": [
+    "s-kz001-01.jpg",
+    "s-kz001-02.jpg",
+    "s-kz001-03.jpg",
+    "s-kz001-04.jpg",
+    "s-kz001-05.jpg",
+    "s-kz001-06.jpg",
+    "s-kz001-07.jpg",
+    "s-kz001-08.jpg",
+    "s-kz001-09.jpg",
+    "s-kz001-10.jpg"
+   ]
+  },
+  {
+   "id": "S-KZ013",
+   "title": "二人セゾン",
+   "yomi": "ふたりせぞん",
+   "group": "欅坂46",
+   "year": 2016,
+   "type": "表題曲",
+   "center": "平手友梨奈",
+   "chars": 5,
+   "images": [
+    "s-kz013-01.jpg",
+    "s-kz013-02.jpg",
+    "s-kz013-03.jpg",
+    "s-kz013-04.jpg",
+    "s-kz013-05.jpg",
+    "s-kz013-06.jpg",
+    "s-kz013-07.jpg",
+    "s-kz013-08.jpg",
+    "s-kz013-09.jpg",
+    "s-kz013-10.jpg"
+   ]
+  },
+  {
+   "id": "S-KZ040",
+   "title": "ガラスを割れ！",
+   "yomi": "がらすをわれ",
+   "group": "欅坂46",
+   "year": 2018,
+   "type": "表題曲",
+   "center": "平手友梨奈",
+   "chars": 7,
+   "images": [
+    "s-kz040-01.jpg",
+    "s-kz040-02.jpg",
+    "s-kz040-03.jpg",
+    "s-kz040-04.jpg",
+    "s-kz040-05.jpg",
+    "s-kz040-06.jpg",
+    "s-kz040-07.jpg",
+    "s-kz040-08.jpg",
+    "s-kz040-09.jpg",
+    "s-kz040-10.jpg"
+   ]
+  }
+ ]
+}

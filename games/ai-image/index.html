@@ -1,0 +1,28 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI画像クイズ | サカミチア</title><meta name="description" content="曲名の字面だけでAIが作った画像を見て、元の曲を当てるクイズ。画像の中に曲名の文字は入っていません。"><link rel="icon" href="../../favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="AI画像クイズ | サカミチア"><meta property="og:description" content="曲名の字面だけで作ったAI画像から、元の曲を当てよう。"><meta property="og:url" content="https://sakamichia.pages.dev/games/ai-image/"><link rel="canonical" href="https://sakamichia.pages.dev/games/ai-image/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../../assets/css/style.css?v=77">
+<style>
+.aiq-stage{display:flex;justify-content:center;margin:4px 0 12px}
+.aiq-stage img{width:min(88vw,420px);height:auto;border-radius:16px;border:1px solid var(--line);background:#f1eaf7}
+.aiq-hints{display:grid;gap:8px;margin:10px 0}
+.aiq-hint{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:14.5px}
+.aiq-hint .aiq-hint-lab{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.aiq-hint button{margin-left:auto}
+.aiq-input{position:relative;margin-top:12px}
+.aiq-input input{width:100%;padding:13px 14px;font-size:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);box-sizing:border-box}
+.aiq-sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;z-index:5;box-shadow:0 8px 24px rgba(60,40,90,.12)}
+.aiq-sugg button{display:block;width:100%;text-align:left;padding:11px 14px;background:none;border:none;border-bottom:1px solid var(--line);font-size:15px;color:var(--ink);cursor:pointer}
+.aiq-sugg button:last-child{border-bottom:none}
+.aiq-submit{margin-top:12px;width:100%}
+.aiq-set{display:grid;gap:14px;margin:12px 0}
+.aiq-set h4{margin:0 0 6px;font-size:14px;color:var(--muted)}
+.aiq-chips{display:flex;flex-wrap:wrap;gap:8px}
+</style></head>
+<body data-base="../../">
+<header class="site"><div class="wrap nav"><a class="logo" href="../../"><img class="logo-mark" src="../../favicon.svg" alt="">サカミチ<span class="grad">ア</span></a><nav>
+<a href="../../">ホーム</a><a href="../../songs/">楽曲図鑑</a><a href="../../live/">歴代ライブ</a><a href="../../blog/">ブログ</a><a href="../../members/">メンバー</a><a href="../" class="on">ミニゲーム</a><a href="../../formation/">マイフォーメーション</a><a href="../../setlist/">マイセットリスト</a><a href="../../news/">お知らせ</a></nav></div></header>
+<main class="wrap"><section class="page"><p style="margin:0 0 6px"><a href="../">← ミニゲーム</a></p><div class="sec-head page-head"><span class="sec-en">AI IMAGE QUIZ</span><h2 class="sec-ja">AI画像クイズ</h2></div><p class="sec-lead" data-lite-text="曲名の字面だけで作ったAI画像から元の曲を当てる全10問クイズです。">曲名の字面だけをAIに絵にしてもらいました。その画像を見て、元の曲を当てる全10問のクイズです。画像の中に曲名の文字は入っていません。1曲につき10枚の画像があり、出題ごとにその中から1枚が出ます。</p>
+<div id="aiqMain"><p style="color:var(--muted)">読み込み中…</p></div>
+</section></main>
+<footer><div class="wrap">サカミチアは個人運営の非公式ファンサイトです。公式運営とは関係ありません。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
+<script src="../../assets/js/common.js"></script><script src="../../assets/js/ai-image.js"></script>
+</body></html>
