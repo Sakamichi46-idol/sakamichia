@@ -9,12 +9,25 @@ function shuffle(a) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const
 function poolNow() { return groupSel === "all" ? SONGS : SONGS.filter(s => s.group === groupSel); }
 function bestKey() { return `aiq:${mode}:${groupSel}`; }
 function condText() { return `${mode === "choice" ? "択一式" : "記述式"}・${groupSel === "all" ? "全グループ" : groupSel}`; }
+// 画像は同じ曲でも直近3回に出たものを避ける（端末に記録）
+function pickImage(song) {
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem("sakamichia-aiq-img") || "{}"); } catch (e) {}
+  const recent = store[song.id] || [];
+  let cand = song.images.map((f, i) => i).filter(i => !recent.includes(i));
+  if (!cand.length) cand = song.images.map((f, i) => i).filter(i => i !== recent[recent.length - 1]);
+  if (!cand.length) cand = [0];
+  const idx = cand[Math.floor(Math.random() * cand.length)];
+  store[song.id] = [...recent, idx].slice(-3);
+  try { localStorage.setItem("sakamichia-aiq-img", JSON.stringify(store)); } catch (e) {}
+  return song.images[idx];
+}
 function pickSongs(pool, n) {
   let picks = quizPick("aiq", pool, Math.min(n, pool.length), s => s.id);
   const cyc = shuffle(pool);
   let i = 0;
   while (picks.length < n && cyc.length) { picks.push(cyc[i % cyc.length]); i++; }
-  return picks.slice(0, n).map(song => ({ song, img: song.images[Math.floor(Math.random() * song.images.length)] }));
+  return picks.slice(0, n).map(song => ({ song, img: pickImage(song) }));
 }
 function hintStages(song) {
   // ヒントは全問題で4つ固定。
