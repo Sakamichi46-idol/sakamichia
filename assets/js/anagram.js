@@ -788,6 +788,24 @@ function useHint() {
     : (free.find(ii => consistent(ii)) ?? (free.includes(r) ? r : free[0]));
   if (targetIdx == null) targetIdx = r;
   const targetRow = items[targetIdx].kata;
+  // 盤面連動の追加チェック：この行の答えが、すでに他の行で入力中（文字の
+  // マルチセットで見て不足が1文字以内まで揃っている）なら、その曲は発見済み
+  // なので、文字は確定せずヒントも消費しない（4文字以上の答えに限る）
+  if (multi && targetRow.length >= 4) {
+    const need = {};
+    for (const ch of targetRow) need[ch] = (need[ch] || 0) + 1;
+    for (let r2 = 0; r2 < cur.rows.length; r2++) {
+      if (r2 === r) continue;
+      const have = {};
+      for (const id of cur.rows[r2]) { const ch = cur.tiles.get(id); have[ch] = (have[ch] || 0) + 1; }
+      let missing = 0;
+      for (const ch in need) missing += Math.max(0, need[ch] - (have[ch] || 0));
+      if (missing <= 1) {
+        renderQuestion("ヒント：その行の答えは、すでに他の行で入力中の曲です（ヒントは消費していません）");
+        return;
+      }
+    }
+  }
   const row = cur.rows[r];
   // 選択中の行の中で、目標に対してまだ正しくない最初の位置を探す
   let p = 0;
