@@ -1,7 +1,7 @@
 // AI画像クイズ（プレビュー）：曲名の字面だけでAI生成した画像から元の曲を当てるクイズ（全10問）
 // 択一式＝1問100点・ヒントなし／記述式＝1問300点・段階ヒントで減点、サジェスト＋「回答する」ボタンでのみ確定
 const AIQ_N = 10;
-const AIQ_PTS = [300, 250, 200, 150, 100, 50];
+const AIQ_PTS = [300, 240, 180, 120, 60];
 let SONGS = [], GROUPS = [];
 let mode = "choice", groupSel = "all";
 let qs = [], qi = 0, score = 0, results = [], hintsOpen = 0, answered = false;
@@ -16,20 +16,24 @@ function pickSongs(pool, n) {
   while (picks.length < n && cyc.length) { picks.push(cyc[i % cyc.length]); i++; }
   return picks.slice(0, n).map(song => ({ song, img: song.images[Math.floor(Math.random() * song.images.length)] }));
 }
-function monthDay(date) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date || "");
-  return m ? `${+m[2]}月${+m[3]}日` : "";
-}
 function hintStages(song) {
-  // ヒントは全問題で5つ固定：グループ（絞り込み中は発売日）→リリース年→分類→文字数（表記）→センター（ない曲はタイトルの最初の文字）
+  // ヒントは全問題で4つ固定。
+  // 絞り込みなし：グループ→リリース年→分類→センター（ない曲は文字数）
+  // グループ絞り込み中：リリース年→分類→文字数→センター（ない曲は最初の文字）
   const st = [];
-  if (groupSel === "all") st.push({ lab: "グループ", val: song.group });
-  else st.push({ lab: "発売日", val: monthDay(song.date) });
-  st.push({ lab: "リリース年", val: song.year + "年" });
-  st.push({ lab: "分類", val: song.type });
-  st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
-  if (song.center) st.push({ lab: "センター", val: song.center });
-  else st.push({ lab: "最初の文字", val: `タイトルの最初の文字：${[...song.title][0]}` });
+  if (groupSel === "all") {
+    st.push({ lab: "グループ", val: song.group });
+    st.push({ lab: "リリース年", val: song.year + "年" });
+    st.push({ lab: "分類", val: song.type });
+    if (song.center) st.push({ lab: "センター", val: song.center });
+    else st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
+  } else {
+    st.push({ lab: "リリース年", val: song.year + "年" });
+    st.push({ lab: "分類", val: song.type });
+    st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
+    if (song.center) st.push({ lab: "センター", val: song.center });
+    else st.push({ lab: "最初の文字", val: `タイトルの最初の文字：${[...song.title][0]}` });
+  }
   return st;
 }
 function norm(s) { return kanaNorm(s).replace(/[\s　]/g, ""); }
@@ -153,7 +157,7 @@ function startPanel() {
   const main = document.getElementById("aiqMain");
   const lite = document.documentElement.dataset.lite === "1";
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">${lite ? `曲名の字面だけで作ったAI画像から元の曲を当てる全${AIQ_N}問。択一式と記述式が選べます。` : `画像は曲名の字面だけをもとにAIが作ったもので、曲名の文字は入っていません。1曲に10枚の画像があり、出題ごとに1枚がランダムで出ます。全${AIQ_N}問。<br>択一式は正解で100点（ヒントなし）。記述式はヒントなしで正解＝300点、ヒントを開くごとに250／200／150／100／50点と下がります。ヒントは全問題で5つ固定で、グループ→リリース年→分類→曲名の文字数（表記）→センターの順です。グループで絞っているときは、1つ目が「発売日」になります。センターがない曲では、最後のヒントが「タイトルの最初の文字」になります。各ヒントは、開く前に種類がボタンに書いてあります。記述式は候補から選んでも確定せず、「回答する」ボタンを押したときだけ回答になります。`}</p>
+  <p style="color:var(--muted)">${lite ? `曲名の字面だけで作ったAI画像から元の曲を当てる全${AIQ_N}問。択一式と記述式が選べます。` : `画像は曲名の字面だけをもとにAIが作ったもので、曲名の文字は入っていません。1曲に10枚の画像があり、出題ごとに1枚がランダムで出ます。全${AIQ_N}問。<br>択一式は正解で100点（ヒントなし）。記述式はヒントなしで正解＝300点、ヒントを開くごとに240／180／120／60点と下がります。ヒントは全問題で4つ固定で、グループ→リリース年→分類→センターの順です。センターがない曲では、最後のヒントが「曲名の文字数（表記）」になります。グループで絞っているときはグループのヒントがなくなり、代わりに「曲名の文字数（表記）」が入ります（センターがない曲では最後が「タイトルの最初の文字」）。各ヒントは、開く前に種類がボタンに書いてあります。記述式は候補から選んでも確定せず、「回答する」ボタンを押したときだけ回答になります。`}</p>
   <div class="aiq-set">
     <div><h4>回答方法</h4><div class="aiq-chips" id="aiqModeChips">
       <button type="button" class="ychip ${mode === "choice" ? "on" : ""}" data-m="choice">択一式</button>
