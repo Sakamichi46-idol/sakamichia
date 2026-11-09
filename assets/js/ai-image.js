@@ -26,6 +26,16 @@ function hintStages(song) {
   return st;
 }
 function norm(s) { return kanaNorm(s).replace(/[\s　]/g, ""); }
+// タイトルの似てい度：共通する文字の割合＋連続2文字の一致ボーナス
+function titleSim(a, b) {
+  const A = new Set([...a]), B = new Set([...b]);
+  let common = 0; A.forEach(c => { if (B.has(c)) common++; });
+  const jac = common / ((A.size + B.size - common) || 1);
+  const bg = s => { const r = new Set(); for (let i = 0; i < s.length - 1; i++) r.add(s.slice(i, i + 2)); return r; };
+  const ba = bg(a), bb = bg(b);
+  let bc = 0; ba.forEach(x => { if (bb.has(x)) bc++; });
+  return jac + bc * 0.5;
+}
 function render() {
   const main = document.getElementById("aiqMain");
   if (qi >= qs.length) {
@@ -44,10 +54,15 @@ function render() {
   hintsOpen = 0; answered = false;
   const imgUrl = BASE + "assets/ai-quiz/" + img;
   if (mode === "choice") {
-    const others = shuffle(poolNow().filter(s => s.id !== song.id && s.group === song.group));
-    const sameType = shuffle(poolNow().filter(s => s.id !== song.id && s.group !== song.group && s.type === song.type));
-    const rest = shuffle(poolNow().filter(s => s.id !== song.id && s.group !== song.group && s.type !== song.type));
-    const choices = shuffle([song, ...others, ...sameType, ...rest].slice(0, 4));
+    const cand = poolNow().filter(s => s.id !== song.id);
+    // タイトルが似た曲を優先して選択肢に入れる（対象は現在のプールの範囲内＝グループ絞り込みが効く）
+    const sims = cand.map(s => ({ s, v: titleSim(song.title, s.title) })).filter(x => x.v >= 0.25).sort((a, b) => b.v - a.v);
+    const simPicks = shuffle(sims.slice(0, 6).map(x => x.s)).slice(0, 3);
+    const used = new Set(simPicks.map(s => s.id));
+    const others = shuffle(cand.filter(s => !used.has(s.id) && s.group === song.group));
+    const sameType = shuffle(cand.filter(s => !used.has(s.id) && s.group !== song.group && s.type === song.type));
+    const rest = shuffle(cand.filter(s => !used.has(s.id) && s.group !== song.group && s.type !== song.type));
+    const choices = shuffle([song, ...simPicks, ...others, ...sameType, ...rest].slice(0, 4));
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span>正解で100点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
       <p class="aiq-cap">AIが生成した画像です</p>
