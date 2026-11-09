@@ -23,22 +23,6 @@ function pickQuestions() {
   });
 }
 function pointsNow() { return ratio <= 0 ? 100 : Math.max(5, Math.round(100 * (1 - ratio))); }
-const base = document.createElement("canvas"); base.width = SC_W; base.height = SC_H;
-function loadToBase(url) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => {
-      const ctx = base.getContext("2d");
-      const scale = Math.max(SC_W / img.width, SC_H / img.height);
-      const w = img.width * scale, h = img.height * scale;
-      ctx.clearRect(0, 0, SC_W, SC_H);
-      ctx.drawImage(img, (SC_W - w) / 2, 0, w, h);
-      res();
-    };
-    img.onerror = rej;
-    img.src = url;
-  });
-}
 const samp = document.createElement("canvas"); samp.width = 48; samp.height = 64;
 function measureRatio(coverCv) {
   const sctx = samp.getContext("2d", { willReadFrequently: true });
@@ -67,11 +51,11 @@ function render() {
   ratio = 0; answered = false; scratching = false; lastPt = null;
   main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${SC_N}問</span><span>スコア：${score}点</span><span id="scPtsLab">今答えると100点</span></div>
     <div class="sc-meter"><div class="sc-meter-bar" id="scMeter"></div></div>
-    <div class="mz-stage sc-stage"><canvas id="scPhoto" width="${SC_W}" height="${SC_H}"></canvas><canvas id="scCover" width="${SC_W}" height="${SC_H}"></canvas>
+    <div class="mz-stage sc-stage"><img id="scPhoto" alt=""><canvas id="scCover" width="${SC_W}" height="${SC_H}"></canvas>
     <div class="sc-cover-label" id="scCoverLabel"><span class="sc-cover-en">SCRATCH</span><span>こすってめくる</span></div></div>
     <div class="mz-choices">${q.choices.map(c => `<button type="button" class="mz-choice" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>
     <p class="mz-msg" id="scMsg"></p>`;
-  const photoCv = document.getElementById("scPhoto");
+  const photoImg = document.getElementById("scPhoto");
   const coverCv = document.getElementById("scCover");
   const cctx = coverCv.getContext("2d");
   cctx.globalCompositeOperation = "source-over";
@@ -138,15 +122,14 @@ function render() {
     main.appendChild(nav);
     document.getElementById("scGoNext").addEventListener("click", () => { qi++; render(); });
   };
-  loadToBase(galLatestURL(q.name)).then(() => {
-    photoCv.getContext("2d").drawImage(base, 0, 0);
-  }).catch(() => {
+  photoImg.addEventListener("error", () => {
     if (answered) return;
     answered = true;
     document.getElementById("scMsg").textContent = "写真を読み込めませんでした。この問題は不正解になります。";
     results.push({ name: q.name, mine: "（写真を表示できませんでした）", ok: false, pts: 0, pct: 0 });
     showNext();
   });
+  photoImg.src = galLatestURL(q.name);
   main.querySelectorAll(".mz-choice").forEach(b => b.addEventListener("click", () => {
     if (answered) return;
     answered = true;
