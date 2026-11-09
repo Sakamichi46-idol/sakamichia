@@ -41,10 +41,10 @@ function render() {
     const bestNow = quizBest("scratch");
     main.innerHTML = `<div class="mz-result"><h3>結果：${score}点 ／ ${max}点</h3>
       ${bestNow > 0 ? `<p style="color:var(--muted)">${bestIsNew ? "自己ベスト更新！" : `自己ベスト：${bestNow}点`}</p>` : ""}
-      <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.mine)} ― ${r.ok ? `<b>${r.pts}点</b>（削った割合 ${r.pct}%）` : `不正解（正解は${esc(r.name)}）`}</p>`).join("")}</div>
+      <div class="mz-rows">${results.map((r, i) => `<p>${i + 1}問目：${esc(r.mine)} ― ${r.ok ? `<b>${r.pts}点</b>（削った割合 ${r.pct}%）` : `不正解（正解は${esc(r.name)}／削った割合 ${r.pct}%）`}</p>`).join("")}</div>
       <div class="gacha-btns"><button type="button" class="btn" id="scRetry">もう一度遊ぶ</button><button type="button" class="btn sub" id="scShare">結果を共有する</button></div></div>`;
     document.getElementById("scRetry").addEventListener("click", start);
-    document.getElementById("scShare").addEventListener("click", e => shareScoreImage({ game: "スクラッチクイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.mine}：${r.ok ? r.pts + "点（削った割合" + r.pct + "%）" : "不正解（正解は" + r.name + "）"}`) }, e.target));
+    document.getElementById("scShare").addEventListener("click", e => shareScoreImage({ game: "スクラッチクイズ", score: `${score}点／${max}点`, lines: results.map((r, i) => `${i + 1}問目 ${r.mine}：${r.ok ? r.pts + "点（削った割合" + r.pct + "%）" : "不正解（正解は" + r.name + "／削った割合" + r.pct + "%）"}`) }, e.target));
     return;
   }
   const q = qs[qi];
@@ -145,7 +145,7 @@ function render() {
     const lbl = document.getElementById("scCoverLabel");
     if (lbl) lbl.style.display = "none";
     main.querySelectorAll(".mz-choice").forEach(x => { x.disabled = true; if (x.dataset.c === q.name) x.classList.add("ok"); else if (x === b) x.classList.add("ng"); });
-    document.getElementById("scMsg").innerHTML = ok ? `<b>正解！ ${pts}点</b>（${esc(q.name)}／削った割合 ${pct}%）` : `残念…正解は <b>${esc(q.name)}</b> でした`;
+    document.getElementById("scMsg").innerHTML = ok ? `<b>正解！ ${pts}点</b>（${esc(q.name)}／削った割合 ${pct}%）` : `残念…正解は <b>${esc(q.name)}</b> でした（削った割合 ${pct}%）`;
     showNext();
   }));
 }
