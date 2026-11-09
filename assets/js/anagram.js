@@ -282,6 +282,180 @@ function __agState() {
 }
 window.__agState = __agState;
 
+// 在庫の組み合わせ1件を問題オブジェクトにする
+function agStockComboQuestion(c) {
+  // 単体と同じく、「読める文章」シャッフル（d つき）があればそちらから選ぶ
+  const sent = c.shuffles.filter(s => s.d);
+  const pool = sent.length ? sent : c.shuffles;
+  const s = pool[Math.floor(Math.random() * pool.length)];
+  const items = c.items.map(agComboItem);
+  const allM = items.every(it => it.kind === "member");
+  const allS = items.every(it => it.kind === "song");
+  return { items, kind: allM ? "member" : allS ? "song" : "mix", kata: c.kata, text: s.t, parts: [...s.w], d: s.d || null };
+}
+
+// ---- 楽曲の組み合わせの「その場生成」（ワーカーで裏側に作る） ----
+// 方式（2026-11-09ユーザー決定）：複数曲モードでは最初の3問だけ在庫から出し、
+// 残りは遊んでいる間にブラウザ内で新しい組み合わせを生成する。
+// 1曲だけのモードと、メンバー・ミックスの組み合わせは従来どおり全て在庫。
+// 曲被り防止：1ゲームの中で同じ曲は2つの問題に使わない（素材の割り当て時点で防ぐ）。
+let rtWorker = null, rtGameSeq = 0, rtState = null, rtWaitQ = null, rtWaitTimer = null;
+
+function rtPickSongEntries(count, usedKatas, prevKatas) {
+  const byKata = new Map();
+  for (const it of agFilteredSources("song")) if (!byKata.has(it.e.kata)) byKata.set(it.e.kata, it.e);
+  const all = [...byKata.values()];
+  if (all.length < count) return null;
+  const recent = new Set();
+  for (const key of quizSeenGet("anagram")) {
+    const p = String(key).split(":")[1];
+    if (p) p.split("+").forEach(k => recent.add(k));
+  }
+  const tiers = [
+    e => !usedKatas.has(e.kata) && !recent.has(e.kata),
+    e => !usedKatas.has(e.kata),
+    e => !(prevKatas || new Set()).has(e.kata),
+    () => true,
+  ];
+  for (const ok of tiers) {
+    const cand = agShuffle(all.filter(ok));
+    if (cand.length >= count) return cand.slice(0, count);
+  }
+  return null;
+}
+
+function rtMakeSlot(count, usedKatas, prevKatas) {
+  const entries = rtPickSongEntries(count, usedKatas, prevKatas);
+  if (!entries) return null;
+  entries.forEach(e => usedKatas.add(e.kata));
+  const items = entries.map(e => ({ kind: "song", label: e.title, group: e.group, year: e.year, kata: e.kata }));
+  return { items, kind: "song", kata: items.map(i => i.kata).join(""), text: null, parts: null, d: null, rt: true, ready: false, tries: 0, rtId: 0 };
+}
+
+function rtBegin(qs) {
+  const slots = qs.filter(q => q.rt);
+  rtGameSeq++;
+  rtWaitQ = null;
+  if (rtWaitTimer) { clearTimeout(rtWaitTimer); rtWaitTimer = null; }
+  if (!slots.length) { rtState = null; return; }
+  rtState = {
+    game: rtGameSeq, slots, queue: [...slots], busy: false, ready: false, current: null, qs,
+    usedKatas: new Set(qs.flatMap(q => q.items.map(i => i.kata))), count: agSettings.count,
+  };
+  const game = rtGameSeq;
+  setTimeout(() => { if (rtState && rtState.game === game && !rtState.ready) rtFailAll(); }, 30000);
+  try {
+    if (rtWorker) rtWorker.terminate();
+    if (typeof Worker === "undefined") throw new Error("no worker");
+    rtWorker = new Worker(BASE + "assets/js/anagram-worker.js");
+  } catch (e) { rtWorker = null; rtFailAll(); return; }
+  rtWorker.onmessage = rtOnMessage;
+  rtWorker.onerror = () => rtFailAll();
+  rtWorker.postMessage({ type: "init", dictUrl: new URL(BASE + "assets/anagram-dict-v1.json", location.href).href });
+}
+
+function rtPump() {
+  if (!rtState || !rtState.ready || rtState.busy || !rtWorker) return;
+  const slot = rtState.queue.shift();
+  if (!slot) return;
+  rtState.busy = true;
+  rtState.current = slot;
+  slot.rtId++;
+  rtWorker.postMessage({ type: "gen", id: slot.rtId, game: rtState.game, katas: slot.items.map(i => i.kata) });
+}
+
+function rtOnMessage(e) {
+  const m = e.data || {};
+  if (!rtState) return;
+  if (m.type === "ready") { rtState.ready = true; rtPump(); return; }
+  if (m.type === "init-error") { rtFailAll(); return; }
+  if (m.type !== "result" || m.game !== rtState.game) return;
+  const slot = rtState.current;
+  rtState.current = null;
+  rtState.busy = false;
+  if (slot && m.id === slot.rtId) {
+    if (m.out) rtFillSlot(slot, m.out);
+    else rtRetryOrFallback(slot);
+  }
+  rtPump();
+}
+
+function rtFillSlot(slot, out) {
+  slot.text = out.text;
+  slot.parts = out.parts;
+  slot.d = out.d || null;
+  slot.ready = true;
+  quizSeenTouch("anagram", [slot.items.length + ":" + slot.items.map(i => i.kata).slice().sort().join("+")]);
+  if (rtWaitQ === slot) {
+    rtWaitQ = null;
+    if (rtWaitTimer) { clearTimeout(rtWaitTimer); rtWaitTimer = null; }
+    startQuestion();
+  }
+}
+
+function rtRetryOrFallback(slot) {
+  slot.tries++;
+  if (rtState && slot.tries <= 3) {
+    // 別の曲の組み合わせで作り直す（今の割り当てを一度手放してから引き直す）
+    slot.items.forEach(i => rtState.usedKatas.delete(i.kata));
+    const prev = new Set(slot.items.map(i => i.kata));
+    const entries = rtPickSongEntries(rtState.count, rtState.usedKatas, prev);
+    if (entries) {
+      entries.forEach(e => rtState.usedKatas.add(e.kata));
+      slot.items = entries.map(e => ({ kind: "song", label: e.title, group: e.group, year: e.year, kata: e.kata }));
+      slot.kata = slot.items.map(i => i.kata).join("");
+      rtState.queue.unshift(slot);
+      return;
+    }
+    prev.forEach(k => rtState.usedKatas.add(k));
+  }
+  rtFallbackSlot(slot);
+}
+
+function rtFallbackSlot(slot) {
+  const all = (rtState && rtState.qs) || questions;
+  const combos = agFilteredCombos("song", agSettings.count);
+  const used = rtState ? rtState.usedKatas : new Set();
+  const own = new Set(slot.items.map(i => i.kata));
+  const fresh = combos.filter(c => c.items.every(it => !used.has(it.kata) || own.has(it.kata)) && !all.some(q => q !== slot && q.kata === c.kata));
+  const anyC = combos.filter(c => !all.some(q => q !== slot && q.kata === c.kata));
+  const src = fresh.length ? fresh : anyC;
+  const pick = src.length ? src[Math.floor(Math.random() * src.length)] : null;
+  if (pick) {
+    const q = agStockComboQuestion(pick);
+    slot.items = q.items; slot.kata = q.kata; slot.text = q.text; slot.parts = q.parts; slot.d = q.d;
+  } else {
+    // 在庫も無い最終手段：このゲームの最初の完成済み問題をそのまま使う
+    const done = all.find(q => q !== slot && q.text);
+    if (done) { slot.items = done.items; slot.kata = done.kata; slot.text = done.text; slot.parts = [...done.parts]; slot.d = done.d; }
+  }
+  if (slot.text) {
+    slot.ready = true;
+    if (rtWaitQ === slot) {
+      rtWaitQ = null;
+      if (rtWaitTimer) { clearTimeout(rtWaitTimer); rtWaitTimer = null; }
+      startQuestion();
+    }
+  }
+}
+
+function rtFailAll() {
+  if (!rtState) return;
+  const slots = rtState.slots.filter(q => !q.ready);
+  rtState.queue = [];
+  rtState.current = null;
+  rtState.busy = false;
+  for (const s of slots) rtFallbackSlot(s);
+}
+
+function rtWaitFor(q) {
+  rtWaitQ = q;
+  const main = document.getElementById("agMain");
+  main.innerHTML = `<div class="card"><h3>${qIdx + 1}問目</h3><p style="color:var(--muted)">新しい組み合わせを作成中です。少しだけお待ちください…</p></div>`;
+  if (rtWaitTimer) clearTimeout(rtWaitTimer);
+  rtWaitTimer = setTimeout(() => { if (rtWaitQ === q && !q.ready) rtFallbackSlot(q); }, 25000);
+}
+
 function pickQuestions(mode) {
   if (agSettings.count === 1) {
     // 同じ読みは1ゲームに1問まで（素材を読みで一意化してから、出題済みを避けて引く）
@@ -312,42 +486,62 @@ function pickQuestions(mode) {
   const ordered = [...agShuffle(combos.filter(c => !seenSet.has(cKey(c)))),
     ...combos.filter(c => seenSet.has(cKey(c))).sort((a, b) => seenArr.indexOf(cKey(a)) - seenArr.indexOf(cKey(b)))];
   const usedKatas = new Set(), picked = [], rest = [];
+  // 楽曲の組み合わせは最初の3問だけ在庫から出し、残りはその場生成にする（2026-11-09ユーザー決定）
+  const stockLimit = mode === "song" ? 3 : AG_TOTAL;
   for (const c of ordered) {
     const itemKatas = c.items.map(it => it.kata);
     if (itemKatas.some(k => usedKatas.has(k))) { rest.push(c); continue; }
     itemKatas.forEach(k => usedKatas.add(k));
     picked.push(c);
-    if (picked.length >= AG_TOTAL) break;
+    if (picked.length >= stockLimit) break;
   }
-  // 同じ素材の再利用を避けると目標数に届かない場合は、残りから補充する
-  for (const c of rest) {
-    if (picked.length >= Math.min(AG_TOTAL, combos.length)) break;
-    if (!picked.includes(c)) picked.push(c);
-  }
-  // それでも10問に届かない（プール自体が10件未満）場合は、組み合わせを繰り返し使って10問出す。
-  // 繰り返しのたびにシャッフルは選び直されるので、並びは毎回変わりうる
-  while (picked.length < AG_TOTAL && combos.length) {
-    for (const c of agShuffle([...combos])) {
-      if (picked.length >= AG_TOTAL) break;
-      if (combos.length > 1 && picked[picked.length - 1] === c) continue;
-      picked.push(c);
+  if (mode !== "song") {
+    // 同じ素材の再利用を避けると目標数に届かない場合は、残りから補充する
+    for (const c of rest) {
+      if (picked.length >= Math.min(AG_TOTAL, combos.length)) break;
+      if (!picked.includes(c)) picked.push(c);
+    }
+    // それでも10問に届かない（プール自体が10件未満）場合は、組み合わせを繰り返し使って10問出す。
+    // 繰り返しのたびにシャッフルは選び直されるので、並びは毎回変わりうる
+    while (picked.length < AG_TOTAL && combos.length) {
+      for (const c of agShuffle([...combos])) {
+        if (picked.length >= AG_TOTAL) break;
+        if (combos.length > 1 && picked[picked.length - 1] === c) continue;
+        picked.push(c);
+      }
     }
   }
   quizSeenTouch("anagram", picked.map(cKey));
-  return picked.map(c => {
-    // 単体と同じく、「読める文章」シャッフル（d つき）があればそちらから選ぶ
-    const sent = c.shuffles.filter(s => s.d);
-    const pool = sent.length ? sent : c.shuffles;
-    const s = pool[Math.floor(Math.random() * pool.length)];
-    const items = c.items.map(agComboItem);
-    const allM = items.every(it => it.kind === "member");
-    const allS = items.every(it => it.kind === "song");
-    return { items, kind: allM ? "member" : allS ? "song" : "mix", kata: c.kata, text: s.t, parts: [...s.w], d: s.d || null };
-  });
+  const qs = picked.map(agStockComboQuestion);
+  if (mode === "song") {
+    // 残りの枠はその場生成。素材の曲はここで割り当て、ゲーム内での曲被りを防ぐ
+    let prevKatas = picked.length ? new Set(picked[picked.length - 1].items.map(it => it.kata)) : new Set();
+    while (qs.length < AG_TOTAL) {
+      const slot = rtMakeSlot(count, usedKatas, prevKatas);
+      if (!slot) break;
+      prevKatas = new Set(slot.items.map(i => i.kata));
+      qs.push(slot);
+    }
+    // 素材の曲が足りず枠が埋まらない場合は、在庫の繰り返しで補う
+    while (qs.length < AG_TOTAL && combos.length) {
+      for (const c of agShuffle([...combos])) {
+        if (qs.length >= AG_TOTAL) break;
+        const q = agStockComboQuestion(c);
+        if (combos.length > 1 && qs.length && qs[qs.length - 1].kata === q.kata) continue;
+        qs.push(q);
+      }
+      if (!combos.length) break;
+    }
+    rtBegin(qs);
+  }
+  return qs;
 }
 
 function startQuestion() {
   const q = questions[qIdx];
+  if (q.rt && !q.ready) { rtWaitFor(q); return; }
+  if (rtWaitTimer) { clearTimeout(rtWaitTimer); rtWaitTimer = null; }
+  rtWaitQ = null;
   const tiles = new Map();
   const pool = [];
   q.text.split("").forEach((ch, i) => { const id = "t" + i; tiles.set(id, ch); pool.push(id); });
@@ -732,15 +926,22 @@ function startPanel() {
     document.querySelectorAll("#agStatus .ychip").forEach(ch => ch.classList.toggle("on", ch.dataset.s === agSettings.status));
     // 現役・卒業の選択はメンバー素材にのみ効くので、楽曲モードでは隠す
     document.getElementById("agStatusWrap").style.display = selMode === "song" ? "none" : "";
-    const pool = agPoolCount(selMode);
-    const n = pool === 0 ? 0 : AG_TOTAL;
+    // 楽曲の組み合わせはその場生成が本線なので、プール数は「組み合わせを作れる曲の数」で見る
+    const rtMode = selMode === "song" && agSettings.count > 1;
+    const songKinds = rtMode ? new Set(agFilteredSources("song").map(it => it.e.kata)).size : 0;
+    const pool = rtMode ? songKinds : agPoolCount(selMode);
+    const n = (rtMode ? songKinds >= agSettings.count : pool > 0) ? AG_TOTAL : 0;
     document.getElementById("agHowN").textContent = String(n);
-    document.getElementById("agPoolNote").textContent = pool === 0
-      ? "選んだ条件では出題できる対象が0件です。条件を変えてください。"
-      : pool < AG_TOTAL
-        ? `対象は${pool}件です。10問に届かない分は、同じ対象が繰り返し出題されます。全${n}問が出題されます。`
-        : `対象は${pool}件です。全${n}問が出題されます。`;
-    document.getElementById("agStart").disabled = pool === 0;
+    document.getElementById("agPoolNote").textContent = rtMode
+      ? songKinds < agSettings.count
+        ? "選んだ条件では、組み合わせを作れる曲が足りません。条件を変えてください。"
+        : `対象は楽曲${songKinds}曲です。組み合わせは遊ぶたびに新しく作られます。全${n}問が出題されます。`
+      : pool === 0
+        ? "選んだ条件では出題できる対象が0件です。条件を変えてください。"
+        : pool < AG_TOTAL
+          ? `対象は${pool}件です。10問に届かない分は、同じ対象が繰り返し出題されます。全${n}問が出題されます。`
+          : `対象は${pool}件です。全${n}問が出題されます。`;
+    document.getElementById("agStart").disabled = rtMode ? songKinds < agSettings.count : pool === 0;
     const b = quizBest(agBestKey());
     document.getElementById("agBestLine").textContent = b > 0 ? `この条件の自己ベスト：${b}点` : "";
   };
