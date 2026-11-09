@@ -114,7 +114,7 @@ function render() {
   } else {
     const stages = hintStages(song);
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span id="aiqPtsLab">今答えると${AIQ_PTS[0]}点</span></div>
-      <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
+      <div class="aiq-stage" id="aiqStage"><img src="${imgUrl}" alt="AI生成画像"></div>
       <p class="aiq-cap">AIが生成した画像です</p>
       <div class="aiq-hints">${stages.map((h, i) => `<div class="aiq-hint"><span class="aiq-hint-lab">ヒント${i + 1}</span><span id="aiqHintVal${i}" style="display:none">${h.img ? "" : `${esc(h.lab)}：${esc(h.val)}`}</span><button type="button" class="btn sub" data-hint="${i}">ヒントを開く（${esc(h.lab)}）</button></div>`).join("")}</div>
       <div class="aiq-input"><input type="text" id="aiqInput" placeholder="曲名を入力" autocomplete="off"><div class="aiq-sugg" id="aiqSugg" style="display:none"></div></div>
@@ -128,7 +128,13 @@ function render() {
       const i = +btn.dataset.hint;
       const valEl = document.getElementById("aiqHintVal" + i);
       if (stages[i].img && !valEl.dataset.done) {
-        valEl.innerHTML = `<img class="aiq-hint-img" src="${BASE}assets/ai-quiz/${pickImage(song, img)}" alt="AI生成画像"><span class="aiq-cap" style="display:block;text-align:left;margin:4px 0 0">AIが生成した画像です</span>`;
+        const stage = document.getElementById("aiqStage");
+        stage.classList.add("duo");
+        const im = document.createElement("img");
+        im.src = BASE + "assets/ai-quiz/" + pickImage(song, img);
+        im.alt = "AI生成画像";
+        stage.appendChild(im);
+        valEl.textContent = "問題の絵の隣に表示しました";
         valEl.dataset.done = "1";
       }
       valEl.style.display = "";
