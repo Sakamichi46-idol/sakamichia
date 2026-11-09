@@ -1033,8 +1033,11 @@
     "kind": "ラジオ",
     "time": "18:00〜18:30",
     "title": "文化放送「乃木坂46の「の」」",
-    "members": [],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/107515"
+    "members": [
+     "海邉朱莉",
+     "柴田柚菜"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107704"
    },
    {
     "g": "乃木坂46",
@@ -1051,8 +1054,12 @@
     "kind": "ラジオ",
     "time": "20:05〜22:55",
     "title": "NHK AM「らじらー！サンデー」",
-    "members": [],
-    "url": "https://www.nogizaka46.com/s/n46/media/detail/106124"
+    "members": [
+     "川﨑桜",
+     "井上和",
+     "瀬戸口心月"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107705"
    },
    {
     "g": "乃木坂46",
