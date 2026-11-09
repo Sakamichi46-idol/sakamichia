@@ -763,9 +763,20 @@ function insertFlat(i, id) {
 function useHint() {
   if (!cur || cur.judged) return;
   const multi = cur.q.items.length > 1;
-  const r = multi ? cur.activeRow : 0;
+  let r = multi ? cur.activeRow : 0;
   const items = cur.q.items;
   const rowStr = rr => cur.rows[rr].map(id => cur.tiles.get(id)).join("");
+  // 同グループの行への振り替え：手がかりの「グループ」を開けているとき、選択中の
+  // 行の素材と同じグループの行のうち、未完成（入力がどの素材の読みとも一致して
+  // いない行）がちょうど1行だけなら、その行をヒントの対象にする。手がかり1だけ
+  // では同グループの行の割り当てが確定しないため、片方が完成済みのときに残りの
+  // 行のつもりで完成済みの行へヒントを使ってしまう無駄を防ぐ（2026-11-09ユーザー提案）
+  let redirected = false;
+  if (multi && agClueShow().g) {
+    const unfinished = items.map((_, r2) => r2).filter(r2 =>
+      items[r2].group === items[r].group && !items.some(it => it.kata === rowStr(r2)));
+    if (unfinished.length === 1 && unfinished[0] !== r) { r = unfinished[0]; redirected = true; }
+  }
   // すでに完成している行は、その素材を「占有」したものとして扱う（判定が並び順フリーなのに合わせる）
   if (multi && items.some(it => it.kata === rowStr(r))) {
     renderQuestion(`${r + 1}行目は完成しています。別の行を選んでください`);
@@ -787,6 +798,9 @@ function useHint() {
   let targetIdx = free.includes(r) && consistent(r) ? r
     : (free.find(ii => consistent(ii)) ?? (free.includes(r) ? r : free[0]));
   if (targetIdx == null) targetIdx = r;
+  // 振り替え時は、対象行に割り当てられた素材そのものを目標にする（その行の答えの
+  // 文字を確定するのが目的なので、置かれたタイルからの推定はしない）
+  if (redirected) targetIdx = r;
   const targetRow = items[targetIdx].kata;
   // 盤面連動の追加チェック：この行の答えが、すでに他の行で入力中（文字の
   // マルチセットで見て不足が1文字以内まで揃っている）なら、その曲は発見済み
