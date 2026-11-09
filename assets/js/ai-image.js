@@ -57,6 +57,21 @@ function hintStages(song) {
 }
 function norm(s) { return kanaNorm(s).replace(/[\s　]/g, ""); }
 // タイトルの似てい度：共通する文字の割合＋連続2文字の一致ボーナス
+// 画像タップで拡大表示（横並びで小さくなった絵を見やすくするため）。タップで閉じる
+function openZoom(src) {
+  let ov = document.getElementById("aiqZoom");
+  if (!ov) {
+    ov = document.createElement("div");
+    ov.id = "aiqZoom";
+    ov.innerHTML = `<img alt="AI生成画像"><span class="aiq-zoom-cap">AIが生成した画像です（タップで閉じる）</span>`;
+    ov.addEventListener("click", () => { ov.style.display = "none"; });
+    document.body.appendChild(ov);
+  }
+  ov.querySelector("img").src = src;
+  ov.style.display = "flex";
+}
+function wireZoom(img) { if (img) img.addEventListener("click", () => openZoom(img.src)); }
+
 function titleSim(a, b) {
   const A = new Set([...a]), B = new Set([...b]);
   let common = 0; A.forEach(c => { if (B.has(c)) common++; });
@@ -95,9 +110,10 @@ function render() {
     const choices = shuffle([song, ...simPicks, ...others, ...sameType, ...rest].slice(0, 4));
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span>正解で100点</span></div>
       <div class="aiq-stage"><img src="${imgUrl}" alt="AI生成画像"></div>
-      <p class="aiq-cap">AIが生成した画像です</p>
+      <p class="aiq-cap">AIが生成した画像です（タップで拡大）</p>
       <div class="mz-choices">${choices.map(c => `<button type="button" class="mz-choice" data-id="${esc(c.id)}">${esc(c.title)}</button>`).join("")}</div>
       <p class="mz-msg" id="aiqMsg"></p>`;
+    wireZoom(main.querySelector(".aiq-stage img"));
     main.querySelectorAll(".mz-choice").forEach(b => b.addEventListener("click", () => {
       if (answered) return;
       answered = true;
@@ -115,11 +131,12 @@ function render() {
     const stages = hintStages(song);
     main.innerHTML = `<div class="mz-head"><span>第${qi + 1}問 ／ ${AIQ_N}問</span><span id="aiqScore">スコア：${score}点</span><span id="aiqPtsLab">今答えると${AIQ_PTS[0]}点</span></div>
       <div class="aiq-stage" id="aiqStage"><img src="${imgUrl}" alt="AI生成画像"></div>
-      <p class="aiq-cap">AIが生成した画像です</p>
+      <p class="aiq-cap">AIが生成した画像です（タップで拡大）</p>
       <div class="aiq-hints">${stages.map((h, i) => `<div class="aiq-hint"><span class="aiq-hint-lab">ヒント${i + 1}</span><span id="aiqHintVal${i}" style="display:none">${h.img ? "" : `${esc(h.lab)}：${esc(h.val)}`}</span><button type="button" class="btn sub" data-hint="${i}">ヒントを開く（${esc(h.lab)}）</button></div>`).join("")}</div>
       <div class="aiq-input"><input type="text" id="aiqInput" placeholder="曲名を入力" autocomplete="off"><div class="aiq-sugg" id="aiqSugg" style="display:none"></div></div>
       <button type="button" class="primary aiq-submit" id="aiqSubmit">回答する</button>
       <p class="mz-msg" id="aiqMsg"></p>`;
+    wireZoom(main.querySelector("#aiqStage img"));
     const input = document.getElementById("aiqInput");
     const sugg = document.getElementById("aiqSugg");
     const updPts = () => { const el = document.getElementById("aiqPtsLab"); if (el) el.textContent = `今答えると${AIQ_PTS[Math.min(hintsOpen, AIQ_PTS.length - 1)]}点`; };
@@ -134,6 +151,7 @@ function render() {
         im.src = BASE + "assets/ai-quiz/" + pickImage(song, img);
         im.alt = "AI生成画像";
         stage.appendChild(im);
+        wireZoom(im);
         valEl.textContent = "問題の絵の隣に表示しました";
         valEl.dataset.done = "1";
       }
