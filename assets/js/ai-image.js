@@ -1,7 +1,7 @@
 // AI画像クイズ（プレビュー）：曲名の字面だけでAI生成した画像から元の曲を当てるクイズ（全10問）
 // 択一式＝1問100点・ヒントなし／記述式＝1問300点・段階ヒントで減点、サジェスト＋「回答する」ボタンでのみ確定
 const AIQ_N = 10;
-const AIQ_PTS = [300, 240, 180, 120, 60];
+const AIQ_PTS = [300, 250, 200, 150, 100, 50];
 let SONGS = [], GROUPS = [];
 let mode = "choice", groupSel = "all";
 let qs = [], qi = 0, score = 0, results = [], hintsOpen = 0, answered = false;
@@ -17,12 +17,14 @@ function pickSongs(pool, n) {
   return picks.slice(0, n).map(song => ({ song, img: song.images[Math.floor(Math.random() * song.images.length)] }));
 }
 function hintStages(song) {
+  // ヒントは全問題で5つ固定：グループ→リリース年→分類→文字数（表記）→センター（ない曲はタイトルの最初の文字）
   const st = [];
-  if (groupSel === "all") st.push({ lab: "グループ", val: song.group });
+  st.push({ lab: "グループ", val: song.group });
   st.push({ lab: "リリース年", val: song.year + "年" });
   st.push({ lab: "分類", val: song.type });
+  st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
   if (song.center) st.push({ lab: "センター", val: song.center });
-  else st.push({ lab: "文字数", val: `曲名の文字数（表記）：${song.chars}文字` });
+  else st.push({ lab: "最初の文字", val: `タイトルの最初の文字：${[...song.title][0]}` });
   return st;
 }
 function norm(s) { return kanaNorm(s).replace(/[\s　]/g, ""); }
@@ -146,7 +148,7 @@ function startPanel() {
   const main = document.getElementById("aiqMain");
   const lite = document.documentElement.dataset.lite === "1";
   main.innerHTML = `<div class="card"><h3>遊び方</h3>
-  <p style="color:var(--muted)">${lite ? `曲名の字面だけで作ったAI画像から元の曲を当てる全${AIQ_N}問。択一式と記述式が選べます。` : `画像は曲名の字面だけをもとにAIが作ったもので、曲名の文字は入っていません。1曲に10枚の画像があり、出題ごとに1枚がランダムで出ます。全${AIQ_N}問。<br>択一式は正解で100点（ヒントなし）。記述式はヒントなしで正解＝300点、ヒントを開くごとに240／180／120／60点と下がります。ヒントはグループ→リリース年→分類→センターの順で、センターがない曲では代わりに「曲名の文字数（表記）」が出ます。グループを絞るとグループのヒントは出ません。記述式は候補から選んでも確定せず、「回答する」ボタンを押したときだけ回答になります。`}</p>
+  <p style="color:var(--muted)">${lite ? `曲名の字面だけで作ったAI画像から元の曲を当てる全${AIQ_N}問。択一式と記述式が選べます。` : `画像は曲名の字面だけをもとにAIが作ったもので、曲名の文字は入っていません。1曲に10枚の画像があり、出題ごとに1枚がランダムで出ます。全${AIQ_N}問。<br>択一式は正解で100点（ヒントなし）。記述式はヒントなしで正解＝300点、ヒントを開くごとに250／200／150／100／50点と下がります。ヒントは全問題で5つ固定で、グループ→リリース年→分類→曲名の文字数（表記）→センターの順です。センターがない曲では、最後のヒントが「タイトルの最初の文字」になります。記述式は候補から選んでも確定せず、「回答する」ボタンを押したときだけ回答になります。`}</p>
   <div class="aiq-set">
     <div><h4>回答方法</h4><div class="aiq-chips" id="aiqModeChips">
       <button type="button" class="ychip ${mode === "choice" ? "on" : ""}" data-m="choice">択一式</button>
