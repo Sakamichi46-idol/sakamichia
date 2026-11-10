@@ -55,6 +55,11 @@ jobs:
       - name: Build member latest blog index (favorites)
         run: python3 tools/build_member_latest.py
 
+      - name: Install Japanese fonts for OGP images
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+
       - name: Build member pages and OGP images
         run: |
           pip install --quiet pillow

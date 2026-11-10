@@ -141,19 +141,26 @@ def main():
     if have_pil:
         FB = "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"
         FR = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
-        if not os.path.exists(FB):
+        # 既定パスに無い環境では fc-match で Noto Sans CJK JP を探す
+        if not os.path.exists(FB) or not os.path.exists(FR):
             import subprocess
-            try:
-                out = subprocess.run(["fc-list", ":style=Bold", "family=Noto Sans CJK JP", "file"],
-                                     capture_output=True, text=True).stdout.splitlines()
-                if out:
-                    FB = out[0].split(":")[0]
-                out = subprocess.run(["fc-list", ":style=Regular", "family=Noto Sans CJK JP", "file"],
-                                     capture_output=True, text=True).stdout.splitlines()
-                if out:
-                    FR = out[0].split(":")[0]
-            except Exception:
-                pass
+            def _fc(style, fallback):
+                try:
+                    out = subprocess.run(["fc-match", "-f", "%{file}", f"Noto Sans CJK JP:style={style}"],
+                                         capture_output=True, text=True).stdout.strip()
+                    if out and os.path.exists(out) and "CJK" in os.path.basename(out):
+                        return out
+                except Exception:
+                    pass
+                return fallback
+            if not os.path.exists(FB):
+                FB = _fc("Bold", FB)
+            if not os.path.exists(FR):
+                FR = _fc("Regular", FR)
+        # 日本語フォントが無い環境では、文字化けした画像で上書きせず既存のOGPを保持する
+        if not (os.path.exists(FB) and os.path.exists(FR)):
+            have_pil = False
+            print("WARN: 日本語フォントが見つからないため OGP 画像は生成しません")
         INK = (43, 36, 48)
         GRAY = (110, 102, 118)
         NC, SC, HC = (126, 87, 194), (231, 122, 155), (90, 169, 214)
