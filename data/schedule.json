@@ -15,6 +15,26 @@
    },
    {
     "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "17:45〜",
+    "title": "SHOWROOM「のぎおび」",
+    "members": [
+     "岡本姫奈"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107706"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "19:30〜",
+    "title": "YouTube「週刊乃木坂ニュース」",
+    "members": [
+     "菅原咲月"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107707"
+   },
+   {
+    "g": "乃木坂46",
     "kind": "ラジオ",
     "time": "22:00〜25:00",
     "title": "文化放送「レコメン！」",
@@ -132,6 +152,16 @@
     ],
     "url": "https://itomarika.com/s/m03/media/detail/4458?ima=3029&year=2026&mont=11&day=10",
     "solo": true
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "WEB",
+    "time": "18:30〜",
+    "title": "SHOWROOM「のぎおび」",
+    "members": [
+     "一ノ瀬美空"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107709"
    },
    {
     "g": "乃木坂46",
@@ -862,6 +892,16 @@
      "柴田柚菜"
     ],
     "url": "https://www.nogizaka46.com/s/n46/media/detail/107704"
+   },
+   {
+    "g": "乃木坂46",
+    "kind": "テレビ",
+    "time": "18:30〜20:50",
+    "title": "テレビ東京系「後世に残したい！ニッポン神ワザ職人名鑑2」",
+    "members": [
+     "池田瑛紗"
+    ],
+    "url": "https://www.nogizaka46.com/s/n46/media/detail/107708"
    },
    {
     "g": "乃木坂46",
