@@ -97,16 +97,30 @@
   // 今後の予定（公式スケジュール：グループ出演分＋卒業生のソロ分）
   const schedBox = document.getElementById("memberSched");
   if (schedBox) {
-    const now = new Date(), pad = n => String(n).padStart(2, "0");
-    const tstr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const now = new Date();
     fetch("../../data/schedule.json").then(r => (r.ok ? r.json() : null)).then(data => {
       if (!data || !data.days) return;
+      // 予定は終了時刻を過ぎたら外す。24時以降の表記は翌日として計算し、
+      // 終了時刻が無い予定は開始から2時間、時刻自体が無い予定はその日の終わりまで出す
+      const dtOf = (date, h, m) => { const [y, mo, da] = date.split("-").map(Number); const d = new Date(y, mo - 1, da); d.setHours(h, m, 0, 0); return d; };
       const rows = [];
       for (const [date, items] of Object.entries(data.days)) {
-        if (date < tstr) continue;
-        for (const it of items) if ((it.members || []).includes(name)) rows.push({ date, ...it });
+        for (const it of items) {
+          if (!(it.members || []).includes(name)) continue;
+          const ts = String(it.time || "").match(/\d{1,2}:\d{2}/g) || [];
+          let end;
+          if (!ts.length) { const [y, mo, da] = date.split("-").map(Number); end = new Date(y, mo - 1, da, 23, 59, 59); }
+          else {
+            const [eh, em] = ts[ts.length - 1].split(":").map(Number);
+            end = dtOf(date, eh, em);
+            if (ts.length === 1) end = new Date(end.getTime() + 2 * 60 * 60 * 1000);
+          }
+          if (end < now) continue;
+          const [sh, sm] = (ts[0] || "0:00").split(":").map(Number);
+          rows.push({ date, ...it, _start: dtOf(date, sh, sm) });
+        }
       }
-      rows.sort((a, b) => (a.date === b.date ? String(a.time || "").localeCompare(String(b.time || "")) : (a.date < b.date ? -1 : 1)));
+      rows.sort((a, b) => a._start - b._start);
       if (!rows.length) return;
       const wd = "日月火水木金土";
       const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
