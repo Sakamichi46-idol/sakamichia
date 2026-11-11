@@ -789,6 +789,15 @@ def start_key(it: dict) -> tuple:
     return (g, t)
 
 
+# テレビ番組の放送枠（番組表で確認済み）。公式スケジュール側に時刻が無い番組だけ補う
+TV_TIME_OVERRIDES = [
+    ("ヒルナンデス", "11:55〜13:55"),          # 日本テレビ 月〜金
+    ("超調査チューズデイ", "19:00〜21:00"),    # フジテレビ 火曜
+    ("NHK高校講座 日本史探究", "10:20〜10:40"),  # NHK Eテレ 水曜
+    ("よるのブランチ", "23:56〜24:55"),        # TBS 水曜
+]
+
+
 def main() -> int:
     today = date.today()
     window = (today, today + timedelta(days=10))
@@ -870,7 +879,16 @@ def main() -> int:
                 days.setdefault(dkey, []).append(it)
     # 保持範囲：前日〜翌月末
     horizon_start = (today - timedelta(days=1)).isoformat()
-    days = {d: sorted(v, key=start_key) for d, v in sorted(days.items()) if d >= horizon_start}
+    days = {d: v for d, v in sorted(days.items()) if d >= horizon_start}
+    # テレビ番組は放送時間が決まっているため、公式側に時刻が無い番組は番組表で確認した枠を補う
+    for lst in days.values():
+        for it in lst:
+            if it.get("kind") == "テレビ" and not (it.get("time") or "").strip():
+                for needle, t in TV_TIME_OVERRIDES:
+                    if needle in (it.get("title") or ""):
+                        it["time"] = t
+                        break
+    days = {d: sorted(v, key=start_key) for d, v in days.items()}
     OUT.write_text(json.dumps({"updated": today.isoformat(), "days": days},
                               ensure_ascii=False, indent=1), encoding="utf-8")
     total = sum(len(v) for v in days.values())
