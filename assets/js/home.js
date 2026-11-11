@@ -228,7 +228,11 @@ function renderTicker(meta){
   if (rels.length) items.push({t: `本日発売『${rels[0].title}』（${rels[0].group}）`, href: `songs/${String(rels[0].id).toLowerCase()}/`, g: rels[0].group});
   const livesToday = (DB.lives || []).filter(l => l.date === tstr);
   if (livesToday.length) items.push({t: `本日開催：${livesToday[0].title}`, href: "live/", g: livesToday[0].group});
-  for (const it of todaySchedule()) items.push({t: `${it.time ? it.time + " " : ""}${it.title}（${it.g}）`, href: it.url, ext: true, g: it.g});
+  for (const it of todaySchedule()){
+    // 卒業生のソロ予定はグループ名でなく本人の名前を付ける（グループの出演と誤解されないように）
+    const who = it.solo && it.members && it.members.length ? it.members.join("・") : it.g;
+    items.push({t: `${it.time ? it.time + " " : ""}${it.title}（${who}）`, href: it.url, ext: true, g: it.g});
+  }
   for (const n of (DB.news || []).slice(0, 3)) items.push({t: n.title, href: n.url || "news/", ext: !!n.url, g: n.g});
   const upd = document.querySelector(".site-updates-mini li");
   if (upd) items.push({t: "更新：" + upd.textContent.trim()});
