@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   deploy:
@@ -27,9 +28,20 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p /tmp/img/assets
           rsync -a assets/ai-quiz /tmp/img/assets/
+          set +e
           # プロジェクトが無い環境では deploy が対話プロンプトで失敗するため、先に作成しておく（既存なら失敗するので無視）
-          npx --yes wrangler@3 pages project create sakamichia-img --production-branch=main || true
-          npx --yes wrangler@3 pages deploy /tmp/img --project-name=sakamichia-img --branch=main
+          npx --yes wrangler@3 pages project create sakamichia-img --production-branch=main > /tmp/create.log 2>&1
+          echo "create exit: $?"
+          npx --yes wrangler@3 pages deploy /tmp/img --project-name=sakamichia-img --branch=main > /tmp/deploy.log 2>&1
+          code=$?
+          echo "deploy exit: $code"
+          if [ $code -ne 0 ]; then
+            # 失敗時は wrangler の出力を Issue に残す（Actions ログを外部から読めないため）
+            { echo 'deploy-img failed.'; echo; echo '== create.log (tail) =='; tail -c 3000 /tmp/create.log; echo; echo '== deploy.log (tail) =='; tail -c 6000 /tmp/deploy.log; } > /tmp/issue.md
+            gh issue create --title "deploy-img failure log" --body-file /tmp/issue.md || true
+            exit $code
+          fi
