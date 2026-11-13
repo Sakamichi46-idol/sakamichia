@@ -127,7 +127,7 @@
       const rowHtml = rows.slice(0, 10).map(r => {
         const dt = new Date(r.date + "T00:00:00");
         const dl = `${dt.getMonth() + 1}/${dt.getDate()}（${wd[dt.getDay()]}）`;
-        return `<a href="${esc(r.url)}" target="_blank" rel="noopener" style="display:flex;gap:10px;align-items:baseline;padding:9px 2px;border-bottom:1px solid var(--line,#e7e2ef);text-decoration:none;color:inherit"><span style="font-weight:700;white-space:nowrap">${dl}</span><span style="white-space:nowrap;color:var(--muted)">${esc(r.time || "")}</span><span style="white-space:nowrap;font-size:12px;border:1px solid var(--line,#e7e2ef);border-radius:999px;padding:1px 8px">${esc(r.kind || "")}</span><span>${esc(r.title)}</span></a>`;
+        return `<a href="${esc(r.url)}" target="_blank" rel="noopener" style="display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;padding:9px 2px;border-bottom:1px solid var(--line,#e7e2ef);text-decoration:none;color:inherit"><span style="font-weight:700;white-space:nowrap;order:1">${dl}</span><span style="white-space:nowrap;color:var(--muted);order:2">${esc(r.time || "")}</span><span style="white-space:nowrap;font-size:12px;border:1px solid var(--line,#e7e2ef);border-radius:999px;padding:1px 8px;order:3">${esc(r.kind || "")}</span><span style="order:4;flex:1 1 180px">${esc(r.title)}</span></a>`;
       }).join("");
       schedBox.innerHTML = `<h3 class="home-ghead">今後の予定</h3><div>${rowHtml}</div>` +
         (rows.length > 10 ? `<p style="color:var(--muted);font-size:12px;margin:6px 0 0">ほか${rows.length - 10}件</p>` : "") +

@@ -194,12 +194,12 @@ a.tk-item:active{opacity:.6}
 
 /* プレビュー9：今日の予定（公式スケジュール） */
 .sched-list{margin-bottom:4px}
-.sch-row{display:flex;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:12px;padding:9px 12px;margin-bottom:8px;color:inherit;text-decoration:none}
-.sch-time{font-weight:800;flex:none;min-width:76px;font-size:13.5px}
-.sch-main{flex:1;min-width:0}
+.sch-row{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:12px;padding:9px 12px;margin-bottom:8px;color:inherit;text-decoration:none}
+.sch-time{font-weight:800;flex:none;min-width:76px;font-size:13.5px;order:1}
+.sch-main{flex:1 1 180px;min-width:0;order:3}
 .sch-title{font-weight:700;font-size:14px;line-height:1.45}
 .sch-mem{color:var(--muted);font-size:12.5px;margin-top:1px;line-height:1.5}
-.sch-kind{flex:none;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted)}
+.sch-kind{flex:none;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted);order:2;margin-left:auto}
 
 /* プレビュー9：キービジュアル・スライダー（時間で切り替わる大きな見出し） */
 .kv{position:relative;border-radius:20px;overflow:hidden;margin-top:18px;aspect-ratio:2/1;background:#241f2e;box-shadow:0 10px 26px rgba(30,20,50,.16)}
