@@ -2,6 +2,8 @@
 // 択一式＝1問100点・ヒントなし／記述式＝1問300点・段階ヒントで減点、サジェスト＋「回答する」ボタンでのみ確定
 const AIQ_N = 10;
 const AIQ_PTS = [300, 260, 220, 180, 140, 100, 60];
+// 画像は専用プロジェクト sakamichia-img から配信する（本体サイトの Pages 20,000ファイル上限対策で2026-11-13に分離）
+const AIQ_IMG_BASE = "https://sakamichia-img.pages.dev/assets/ai-quiz/";
 let SONGS = [], GROUPS = [];
 let mode = "choice", groupSel = "all";
 let qs = [], qi = 0, score = 0, results = [], hintsOpen = 0, answered = false;
@@ -97,7 +99,7 @@ function render() {
   }
   const { song, img } = qs[qi];
   hintsOpen = 0; answered = false;
-  const imgUrl = BASE + "assets/ai-quiz/" + img;
+  const imgUrl = AIQ_IMG_BASE + img;
   if (mode === "choice") {
     const cand = poolNow().filter(s => s.id !== song.id);
     // タイトルが似た曲を優先して選択肢に入れる（対象は現在のプールの範囲内＝グループ絞り込みが効く）
@@ -148,7 +150,7 @@ function render() {
         const stage = document.getElementById("aiqStage");
         stage.classList.add("duo");
         const im = document.createElement("img");
-        im.src = BASE + "assets/ai-quiz/" + pickImage(song, img);
+        im.src = AIQ_IMG_BASE + pickImage(song, img);
         im.alt = "AI生成画像";
         stage.appendChild(im);
         wireZoom(im);

@@ -92,5 +92,5 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           mkdir -p /tmp/site
-          rsync -a --exclude tools --exclude .git --exclude .github ./ /tmp/site/
+          rsync -a --exclude tools --exclude .git --exclude .github --exclude assets/ai-quiz ./ /tmp/site/
           npx --yes wrangler@3 pages deploy /tmp/site --project-name=sakamichia --branch=main
