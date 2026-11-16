@@ -794,6 +794,7 @@ TV_TIME_OVERRIDES = [
     ("ヒルナンデス", "11:55〜13:55"),          # 日本テレビ 月〜金
     ("超調査チューズデイ", "19:00〜21:00"),    # フジテレビ 火曜
     ("NHK高校講座 日本史探究", "10:20〜10:40"),  # NHK Eテレ 水曜
+    ("NHK高校講座世界史探究", "10:40〜11:00"),  # NHK Eテレ 水曜（山崎怜奈のソロ予定は種別が空欄で来る）
     ("よるのブランチ", "23:56〜24:55"),        # TBS 水曜
 ]
 
@@ -845,6 +846,7 @@ EVENT_TIME_OVERRIDES = {
     ("2026-11-14", "ラブライブ！フェス"): "16:30～",
     ("2026-11-28", "蓮ノ空"): "16:30～",
     ("2026-11-21", "一日下関警察署長"): "10:00／13:30",
+    ("2026-11-21", "アップデート偉人伝"): "16:00〜17:15",  # テレビ東京系列 特番（テレビ愛知PRで確認、山崎怜奈）
     ("2026-11-20", "発売記念トークイベント"): "20:00～",
     ("2026-11-30", "『my hood』"): "14:30／18:30",
     ("2026-11-30", "『neighbourhood』サイン会"): "16:30頃～",
@@ -937,9 +939,10 @@ def main() -> int:
     horizon_start = (today - timedelta(days=1)).isoformat()
     days = {d: v for d, v in sorted(days.items()) if d >= horizon_start}
     # テレビ番組は放送時間が決まっているため、公式側に時刻が無い番組は番組表で確認した枠を補う
+    # （卒業生ソロ由来の予定は種別が空欄で来ることがあるため、種別空欄も対象にする）
     for lst in days.values():
         for it in lst:
-            if it.get("kind") == "テレビ" and not (it.get("time") or "").strip():
+            if it.get("kind") in ("テレビ", "") and not (it.get("time") or "").strip():
                 for needle, t in TV_TIME_OVERRIDES:
                     if needle in (it.get("title") or ""):
                         it["time"] = t
