@@ -23,6 +23,10 @@ def sba_html_to_blocks(html, base_url=''):
         return f'\x01{len(imgs) - 1}\x01'
 
     s = _IMG_TAG_RE.sub(_sub, html)
+    # <style>/<script> の中身はタグ除去後にテキストとして残るため、先に丸ごと落とす
+    s = re.sub(r'<(style|script)\b[^>]*>.*?</\1\s*>', '', s, flags=re.I | re.S)
+    s = re.sub(r'<!--.*?-->', '', s, flags=re.S)
+    s = re.sub(r'<xml\b[^>]*>.*?</xml\s*>', '', s, flags=re.I | re.S)
     s = re.sub(r'<br\s*/?>', '\n', s, flags=re.I)
     s = re.sub(r'<[^>]+>', '', s)
     s = _html_lib.unescape(s)

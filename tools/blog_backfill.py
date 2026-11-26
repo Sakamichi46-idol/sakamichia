@@ -485,6 +485,12 @@ def html_to_blocks(inner, base_url):
         return f'\x01{len(imgs) - 1}\x01'
 
     s = _IMG_TAG_RE.sub(_sub, inner)
+    # <style>/<script> の中身はタグ除去後にテキストとして残ってしまうため、先に丸ごと落とす
+    # （公式ブログにはメンバーが貼った Apple リッチテキスト由来の <style> が混ざることがある）
+    s = re.sub(r'<(style|script)\b[^>]*>.*?</\1\s*>', '', s, flags=re.I | re.S)
+    # Word貼り付け由来のコメント内XML島・<xml>島も、中のテキストが残るため丸ごと落とす
+    s = re.sub(r'<!--.*?-->', '', s, flags=re.S)
+    s = re.sub(r'<xml\b[^>]*>.*?</xml\s*>', '', s, flags=re.I | re.S)
     s = re.sub(r'<br\s*/?>', '\n', s, flags=re.I)
     s = re.sub(r'</p\s*>|<p[^>]*>', '\n\n', s, flags=re.I)
     s = re.sub(r'<[^>]+>', '', s)
