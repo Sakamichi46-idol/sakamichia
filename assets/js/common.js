@@ -627,9 +627,9 @@ document.addEventListener("DOMContentLoaded",()=>{
   const list=document.createElement("nav");list.className="drawer-links";
   // 4カテゴリ型の階層でドロワーを構成する：ホーム／調べる／遊ぶ／作る／お知らせ（2026-11-05決定）
   const NAV_GROUPS=[
-    {label:"調べる", keys:["songs/","live/","blog/","members/"]},
-    {label:"遊ぶ", keys:["games/"]},
-    {label:"作る", keys:["formation/","setlist/"]},
+    {label:"調べる", keys:["songs/","live/","blog/","members/"], extras:[["tenure/","在籍日数ランキング"],["formation-history/","フォーメーションの変遷"],["penlight/","サイリウムカラー"]]},
+    {label:"遊ぶ", keys:["games/"], extras:[["games/penlight-quiz/","サイリウムクイズ"]]},
+    {label:"作る", keys:["formation/","setlist/"], extras:[["my-lives/","参戦記録"],["my-nine/","私を構成する9人・9曲"]]},
   ];
   const items=links.map(a=>{
     let path="/";
@@ -647,10 +647,17 @@ document.addEventListener("DOMContentLoaded",()=>{
   items.filter(it=>keyOf(it)==="/").forEach(appendLink);
   for(const g of NAV_GROUPS){
     const members=g.keys.map(k=>items.find(it=>keyOf(it)===k)).filter(Boolean);
-    if(!members.length) continue;
+    const extras=g.extras||[];
+    if(!members.length && !extras.length) continue;
     const h=document.createElement("div");h.className="drawer-glabel";h.textContent=g.label;
     list.appendChild(h);
     members.forEach(appendLink);
+    for(const [path,label] of extras){
+      const c=document.createElement("a");
+      c.href=BASE+path;c.textContent=label;
+      if(location.pathname.replace(/\/?$/,"/")===("/"+path)) c.className="on";
+      list.appendChild(c);
+    }
   }
   items.filter(it=>!used.has(it)).forEach(appendLink);
   drawer.appendChild(list);
