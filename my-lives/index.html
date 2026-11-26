@@ -1,13 +1,11 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>参戦記録 | サカミチア</title><meta name="description" content="行ったライブを記録すると、現地で聴いた曲や参加していたメンバーを集計できる参戦記録。記録はこの端末にだけ保存されます。"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="icon" type="image/png" sizes="48x48" href="../favicon-48x48.png"><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="参戦記録 | サカミチア"><meta property="og:description" content="行ったライブから、聴いた曲を集計する参戦記録。"><meta property="og:url" content="https://sakamichia.pages.dev/my-lives/"><link rel="canonical" href="https://sakamichia.pages.dev/my-lives/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../assets/css/style.css?v=77"><style>
-.ml-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface,#fff);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;color:var(--ink)}
-.ml-row.on{border-color:#b9a8dd;background:#f3eefc}
-html[data-theme="dark"] .ml-row.on{background:#3a2d55}
+<title>参戦記録 | サカミチア</title><meta name="description" content="歴代ライブで付けた参戦・配信の記録から、聴いた曲や会えたメンバーを集計する参戦記録。記録はこの端末にだけ保存されます。"><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="icon" type="image/png" sizes="48x48" href="../favicon-48x48.png"><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#faf9fb"><meta property="og:type" content="website"><meta property="og:site_name" content="サカミチア"><meta property="og:title" content="参戦記録 | サカミチア"><meta property="og:description" content="参戦記録から、聴いた曲や会えたメンバーを集計。"><meta property="og:url" content="https://sakamichia.pages.dev/my-lives/"><link rel="canonical" href="https://sakamichia.pages.dev/my-lives/"><meta property="og:image" content="https://sakamichia.pages.dev/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="../assets/css/style.css?v=77"><style>
+.ml-row{display:flex;align-items:center;gap:10px;width:100%;background:var(--surface,#fff);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;color:var(--ink)}
 .ml-date{font-weight:700;white-space:nowrap;font-size:13.5px}
 .ml-main{flex:1;min-width:0}
 .ml-title{font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ml-sub{color:var(--muted);font-size:12.5px}
-.ml-mark{font-weight:700;white-space:nowrap;color:#6a45ad}
+.ml-acts{display:flex;gap:6px;flex:none}
 .ml-stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .ml-stat{background:var(--surface,#fff);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:13px;color:var(--muted)}
 .ml-stat b{display:block;font-size:19px;color:var(--ink)}
@@ -16,13 +14,11 @@ html[data-theme="dark"] .ml-row.on{background:#3a2d55}
 </style></head>
 <body data-base="../">
 <header class="site"><div class="wrap nav"><a class="logo" href="../"><img class="logo-mark" src="../favicon.svg" alt="">サカミチ<span class="grad">ア</span></a><nav><a href="../">ホーム</a><a href="../news/">お知らせ</a><a href="../songs/">楽曲図鑑</a><a href="../live/">歴代ライブ</a><a href="../blog/">ブログ</a><a href="../members/">メンバー</a><a href="../games/">ミニゲーム</a><a href="../formation/">マイフォーメーション</a><a href="../setlist/">マイセットリスト</a></nav></div></header>
-<main class="wrap"><section class="page"><div class="sec-head page-head"><span class="sec-en">MY LIVE RECORDS</span><h2 class="sec-ja">参戦記録</h2></div><p class="sec-lead" data-lite-text="行ったライブを選ぶと、聴いた曲を集計します。">行ったライブを選んで記録すると、そのセットリストから「現地で聴いた曲」や「参加していたメンバー」を集計します。記録はこの端末にだけ保存されます。</p>
+<main class="wrap"><section class="page"><div class="sec-head page-head"><span class="sec-en">MY LIVE RECORDS</span><h2 class="sec-ja">参戦記録</h2></div><p class="sec-lead" data-lite-text="参戦記録から聴いた曲などを集計。">歴代ライブの各公演の詳細で付けた「参戦した」「配信で見た」の記録をもとに、聴いた曲や現地で会えたメンバーを集計します。記録は歴代ライブと共通で、この端末にだけ保存されます。</p>
 <div id="mlStats"></div>
-<div class="filters"><span id="mlGroups"></span></div>
-<div class="filters"><input type="search" id="mlQuery" placeholder="公演名・会場で探す" autocomplete="off" style="flex:1;min-width:150px"><select id="mlYear"><option value="">すべての年</option></select></div>
-<p id="mlCount" style="color:var(--muted);margin:4px 0 10px"></p>
-<div id="mlList"></div>
 <div id="mlDetail"></div>
+<h3 class="home-ghead">記録したライブ</h3>
+<div id="mlList"></div>
 </section></main>
 <footer><div class="wrap">記録はこの端末のブラウザに保存されます。サカミチアは個人運営の非公式ファンサイトです。公式運営とは関係ありません。記事・写真・楽曲の権利は各権利者に帰属します。</div></footer>
 <script src="../assets/js/common.js"></script><script src="../assets/js/my-lives.js"></script>
